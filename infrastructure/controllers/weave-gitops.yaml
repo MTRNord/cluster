@@ -34,11 +34,13 @@ spec:
     #    cpu: 1
     #    memory: 512Mi
     adminUser:
-      create: false
+      create: true
+      username: mtrnord
+      passwordHash: $2a$10$smVGWN9U0qRRzMMNLAipYO0wU12ADk/m2g.fLAVmPiw2Y478ohesi
     oidcSecret:
       create: false
-    additionalArgs:
-      - --auth-methods=oidc
+    #additionalArgs:
+    #  - --auth-methods=oidc
     ingress:
       enabled: true
       annotations:
