@@ -1,0 +1,21 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-ingress
+  labels:
+    name: webhook-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+spec:
+  rules:
+    - host: webhook.kubernetes.midnightthoughts.space
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: webhook-receiver
+                port:
+                  number: 80
