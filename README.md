@@ -144,6 +144,9 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
   - [ ] Traefik
   - [ ] Certmanager
   - [ ] External DNS
+  - [ ] Synapse
+  - [ ] Mjolnir
+  - [ ] Keycloak
   - [ ] ...
 - Port validate script
 - Setup CI for github and woodpecker
