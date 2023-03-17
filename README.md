@@ -142,7 +142,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
   - [ ] Woodpecker
   - [ ] Docker repo
   - [ ] Traefik
-  - [ ] Certmanager
+  - [x] Certmanager
   - [ ] External DNS
   - [ ] Synapse
   - [ ] Mjolnir
