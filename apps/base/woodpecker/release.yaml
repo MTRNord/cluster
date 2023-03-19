@@ -37,6 +37,12 @@ spec:
       WOODPECKER_DEBUG_PRETTY: "true"
       WOODPECKER_LOG_LEVEL: debug
 
+    persistentVolume:
+      enabled: true
+      size: 10Gi
+      mountPath: "/var/lib/woodpecker"
+      storageClass: "nfs-client"
+
     # Docker-in-Docker is normally not needed as Woodpecker natively supports Kubernetes
     dind:
       enabled: false
