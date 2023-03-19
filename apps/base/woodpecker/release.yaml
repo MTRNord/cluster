@@ -19,6 +19,11 @@ spec:
   # https://github.com/stefanprodan/podinfo/blob/master/charts/podinfo/values.yaml
   values:
     replicaCount: 1
+    updateStrategy:
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 0
+      type: RollingUpdate
 
     image:
       repository: woodpeckerci/woodpecker-agent
@@ -29,10 +34,8 @@ spec:
     env:
       WOODPECKER_SERVER: "woodpecker-woodpecker-server.woodpecker.svc.cluster.local:9000"
       WOODPECKER_BACKEND: kubernetes
-      WOODPECKER_BACKEND_K8S_NAMESPACE: woodpecker
-      WOODPECKER_BACKEND_K8S_STORAGE_CLASS: "nfs-client"
-      WOODPECKER_BACKEND_K8S_VOLUME_SIZE: 10G
-      WOODPECKER_BACKEND_K8S_STORAGE_RWX: true
+      WOODPECKER_GITEA: true
+      WOODPECKER_GITHUB: false
       WOODPECKER_MAX_PROCS: "8"
       WOODPECKER_DEBUG_PRETTY: "true"
       WOODPECKER_LOG_LEVEL: debug
@@ -52,27 +55,10 @@ spec:
       resources: {}
 
     extraSecretNamesForEnvFrom:
+      - woodpecker-gitea-client
+      - woodpecker-gitea-secret
       - woodpecker-secret
 
     serviceAccount:
       # Specifies whether a service account should be created (also see RBAC subsection)
       create: true
-      # Annotations to add to the service account
-      annotations: {}
-      # The name of the service account to use.
-      # If not set and create is true, a name is generated using the fullname template
-      name: ""
-      rbac:
-        # If your cluster has RBAC enabled and you're using the Kubernetes agent-
-        # backend you'll need this. (this is true for almost all production clusters)
-        # only change this if you have a non CNCF compliant cluster, missing the RBAC endpoints
-        # the Role and RoleBinding are only created if serviceAccount.create is also true
-        create: true
-        # additional annotations and labels in role and roleBinding are only needed, if you
-        # are using additional tooling to manage / verify roles or roleBindings (OPA, etc.)
-        role:
-          annotations: {}
-          labels: {}
-        roleBinding:
-          annotations: {}
-          labels: {}
