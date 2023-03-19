@@ -2,12 +2,34 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
+  name: apps-secrets
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  dependsOn:
+    - name: infra-configs
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/production/secrets
+  prune: false
+  wait: true
+  timeout: 5m0s
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
   name: apps
   namespace: flux-system
 spec:
   interval: 10m0s
   dependsOn:
     - name: infra-configs
+    - name: apps-secrets
   sourceRef:
     kind: GitRepository
     name: flux-system
