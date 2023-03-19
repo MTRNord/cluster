@@ -1,15 +1,4 @@
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: GitRepository
-metadata:
-  name: flux-monitoring
-  namespace: flux-system
-spec:
-  interval: 30m0s
-  ref:
-    branch: main
-  url: https://github.com/fluxcd/flux2
----
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
 metadata:
