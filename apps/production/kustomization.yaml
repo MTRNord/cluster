@@ -3,5 +3,8 @@ kind: Kustomization
 resources:
   - ../base/vaultwarden
   - ../base/cosign
+  - ../base/woodpecker
 patchesStrategicMerge:
+  - cosign-values.yaml
   - vaultwarden-values.yaml
+  - woodpecker-values.yaml

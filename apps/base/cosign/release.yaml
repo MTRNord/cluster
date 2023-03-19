@@ -18,14 +18,13 @@ spec:
   # Default values
   # https://github.com/stefanprodan/podinfo/blob/master/charts/podinfo/values.yaml
   values:
-    policy-controller:
-      cosign:
-        secretKeyRef:
-          name: cosign-secret
-      serviceMonitor:
-        enabled: true
-      imagePullSecrets:
-        - name: docker
+    cosign:
+      secretKeyRef:
+        name: cosign-secret
+    serviceMonitor:
+      enabled: true
+    imagePullSecrets:
+      - name: docker
 ---
 apiVersion: policy.sigstore.dev/v1beta1
 kind: ClusterImagePolicy
