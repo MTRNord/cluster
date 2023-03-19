@@ -19,6 +19,9 @@ spec:
     crds: CreateReplace
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
   values:
+    prometheus:
+      prometheusSpec:
+        podMonitorSelectorNilUsesHelmValues: false
     alertmanager:
       alertmanagerSpec:
         useExistingSecret: true
@@ -67,11 +70,6 @@ spec:
                 path: /var/lib/grafana/dashboards/nats
       dashboards:
         monitoring:
-          prometheus-blackbox-exporter:
-            # Ref: https://grafana.com/dashboards/7587
-            gnetId: 7587
-            revision: 3
-            datasource: Prometheus
           cilium-dashboard:
             url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
           cilium-operator-dashboard:

@@ -139,7 +139,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
 
 - Migrate old deployments here
   - [ ] Gitea
-  - [ ] Woodpecker
+  - [x] Woodpecker
   - [ ] Docker repo
   - [ ] Traefik
   - [x] Certmanager
@@ -147,6 +147,8 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
   - [ ] Synapse
   - [ ] Mjolnir
   - [ ] Keycloak
+  - [x] Prometheus/grafana
+  - [x] Cosign
   - [ ] ...
 - Port validate script
 - Setup CI for github and woodpecker
