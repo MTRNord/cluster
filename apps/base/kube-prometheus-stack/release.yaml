@@ -22,6 +22,15 @@ spec:
     prometheus:
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: nfs-client
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                request:
+                  storage: 50Gi
+            selector: {}
     alertmanager:
       alertmanagerSpec:
         useExistingSecret: true
