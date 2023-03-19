@@ -1,0 +1,58 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: cosign
+  namespace: cosign-system
+spec:
+  releaseName: cosign-system
+  chart:
+    spec:
+      chart: policy-controller
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  # Default values
+  # https://github.com/stefanprodan/podinfo/blob/master/charts/podinfo/values.yaml
+  values:
+    policy-controller:
+      cosign:
+        secretKeyRef:
+          name: cosign-secret
+      serviceMonitor:
+        enabled: true
+      imagePullSecrets:
+        - name: docker
+---
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: redis-cluster-policy
+  namespace: cosign-system
+spec:
+  images:
+    - glob: "index.docker.io/library/redis**"
+  authorities:
+    - static:
+        action: pass
+    - key:
+        secretRef:
+          name: cosign-secret
+---
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: mariadb-cluster-policy
+  namespace: cosign-system
+spec:
+  images:
+    - glob: "index.docker.io/library/mariadb**"
+  authorities:
+    - static:
+        action: pass
+    - key:
+        secretRef:
+          name: cosign-secret
