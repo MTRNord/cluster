@@ -7,23 +7,24 @@ spec:
   chart:
     spec:
       version: "0.15.6"
-      persistentVolume:
+  values:
+    persistentVolume:
+      enabled: true
+      existingClaim: woodpecker-woodpecker-server
+    env:
+      WOODPECKER_ADMIN: "mtrnord"
+      WOODPECKER_HOST: https://ci.nordgedanken.dev
+      WOODPECKER_GITEA_URL: https://git.nordgedanken.dev
+      ingress:
         enabled: true
-        existingClaim: woodpecker-woodpecker-server
-      env:
-        WOODPECKER_ADMIN: "mtrnord"
-        WOODPECKER_HOST: https://ci.nordgedanken.dev
-        WOODPECKER_GITEA_URL: https://git.nordgedanken.dev
-        ingress:
-          enabled: true
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt-dns
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-dns
 
-          hosts:
-            - host: ci.nordgedanken.dev
-              paths:
-                - path: /
-          tls:
-            - secretName: ci.nordgedanken.dev-tls
-              hosts:
-                - ci.nordgedanken.dev
+        hosts:
+          - host: ci.nordgedanken.dev
+            paths:
+              - path: /
+        tls:
+          - secretName: ci.nordgedanken.dev-tls
+            hosts:
+              - ci.nordgedanken.dev
