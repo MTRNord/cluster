@@ -1,0 +1,134 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      version: "45.x"
+      chart: kube-prometheus-stack
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      interval: 60m
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+  values:
+    alertmanager:
+      alertmanagerSpec:
+        useExistingSecret: true
+    namespaceOverride: monitoring
+    grafana:
+      extraSecretMounts:
+        - name: auth-generic-oauth-secret-mount
+          secretName: auth-generic-oauth-secret
+          defaultMode: 0440
+          mountPath: /etc/secrets/auth_generic_oauth
+          readOnly: true
+      defaultDashboardsTimezone: Europe/Berlin
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+            - name: "monitoring"
+              orgId: 1
+              folder: "Monitoring"
+              type: file
+              disableDeletion: true
+              editable: false
+              updateIntervalSeconds: 10
+              allowUiUpdates: false
+              options:
+                path: /var/lib/grafana/dashboards/monitoring
+            - name: "matrix"
+              orgId: 1
+              folder: "Matrix"
+              type: file
+              disableDeletion: true
+              editable: false
+              updateIntervalSeconds: 10
+              allowUiUpdates: false
+              options:
+                path: /var/lib/grafana/dashboards/matrix
+            - name: "nats"
+              orgId: 1
+              folder: "Nats"
+              type: file
+              disableDeletion: true
+              editable: false
+              updateIntervalSeconds: 10
+              allowUiUpdates: false
+              options:
+                path: /var/lib/grafana/dashboards/nats
+      dashboards:
+        monitoring:
+          prometheus-blackbox-exporter:
+            # Ref: https://grafana.com/dashboards/7587
+            gnetId: 7587
+            revision: 3
+            datasource: Prometheus
+          cilium-dashboard:
+            url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
+          cilium-operator-dashboard:
+            url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-operator-dashboard.json
+          hubble-dashboard:
+            url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/hubble-dashboard.json
+        nats:
+          nats-jetstream:
+            url: https://gitlab.nordgedanken.dev/grafana/dashboards/-/raw/main/nats.json
+        matrix:
+          synapse-dashboard:
+            url: https://raw.githubusercontent.com/matrix-org/synapse/master/contrib/grafana/synapse.json
+          dendrite-dashboard:
+            url: https://gitlab.nordgedanken.dev/grafana/dashboards/-/raw/main/dendrite.json
+      grafana.ini:
+        paths:
+          data: /var/lib/grafana/
+          logs: /var/log/grafana
+          plugins: /var/lib/grafana/plugins
+          provisioning: /etc/grafana/provisioning
+        analytics:
+          check_for_updates: true
+        log:
+          mode: console
+        grafana_net:
+          url: https://grafana.net
+        auth.generic_oauth:
+          enabled: true
+          scopes: openid email profile roles
+          name: OAuth
+          allow_sign_up: true
+          client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+          client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+          auth_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth"
+          token_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token"
+          api_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo"
+          role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
+      imageRenderer:
+        enabled: true
+    kubeProxy:
+      enabled: false
+
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              # Ignore these objects from Flux diff as they are mutated from chart hooks
+              kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
+              name: kube-prometheus-stack-admission
+            patch: |
+              - op: add
+                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                value: disabled
+          - target:
+              # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
+              kind: PrometheusRule
+            patch: |
+              - op: add
+                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                value: disabled
