@@ -18,25 +18,23 @@ spec:
   # Default values
   # https://github.com/stefanprodan/podinfo/blob/master/charts/podinfo/values.yaml
   values:
+    image:
+      registry: docker.io
+      repository: woodpeckerci/woodpecker-server
+      pullPolicy: Always
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "next"
     replicaCount: 1
+
     updateStrategy:
       rollingUpdate:
         maxUnavailable: 1
         maxSurge: 0
       type: RollingUpdate
 
-    image:
-      repository: woodpeckerci/woodpecker-server
-      pullPolicy: Always
-      # Overrides the image tag whose default is the chart appVersion.
-      tag: "next"
-
     env:
-      WOODPECKER_SERVER: "woodpecker-woodpecker-server.woodpecker.svc.cluster.local:9000"
-      WOODPECKER_BACKEND: kubernetes
       WOODPECKER_GITEA: true
       WOODPECKER_GITHUB: false
-      WOODPECKER_MAX_PROCS: "8"
       WOODPECKER_DEBUG_PRETTY: "true"
       WOODPECKER_LOG_LEVEL: debug
 
@@ -45,14 +43,6 @@ spec:
       size: 10Gi
       mountPath: "/var/lib/woodpecker"
       storageClass: "nfs-client"
-
-    # Docker-in-Docker is normally not needed as Woodpecker natively supports Kubernetes
-    dind:
-      enabled: false
-      image: "docker:20.10.12-dind"
-      env:
-        DOCKER_DRIVER: "overlay2"
-      resources: {}
 
     extraSecretNamesForEnvFrom:
       - woodpecker-gitea-client
