@@ -1,0 +1,60 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: vaultwarden
+  namespace: k8s-at-home
+spec:
+  releaseName: vaultwarden
+  chart:
+    spec:
+      chart: vaultwarden
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  # Default values
+  # https://github.com/stefanprodan/podinfo/blob/master/charts/podinfo/values.yaml
+  values:
+    image:
+      tag: 1.27.0
+    env:
+      TZ: "Europe/Berlin"
+      SIGNUPS_ALLOWED: false
+      ADMIN_TOKEN:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-envs
+            key: admin-token
+      WEBSOCKET_ENABLED: true
+      SMTP_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-envs
+            key: smtp-password
+      DATABASE_URL:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-envs
+            key: database-url
+    persistence:
+      config:
+        enabled: true
+
+    postgresql:
+      enabled: true
+      auth:
+        existingSecret: vaultwarden-postgresql
+        database: vaultwarden
+      persistence:
+        enabled: true
+    service:
+      main:
+        ports:
+          http:
+            port: 80
+          websocket:
+            enabled: true
+            port: 3012
