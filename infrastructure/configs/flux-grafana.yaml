@@ -1,0 +1,53 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: flux-monitoring
+  namespace: flux-system
+spec:
+  interval: 30m0s
+  ref:
+    branch: main
+  url: https://github.com/fluxcd/flux2
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: monitoring-config
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: apps
+  interval: 1h0m0s
+  path: ./manifests/monitoring/monitoring-config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-monitoring
+  timeout: 1m0s
+  wait: true
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  providerRef:
+    name: grafana
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: "*"
+      namespace: flux-system
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  type: grafana
+  address: "http://kube-prometheus-grafana.monitoring/api/annotations"
+  secretRef:
+    name: grafana-auth
