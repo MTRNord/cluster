@@ -1,0 +1,16 @@
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: docker-registry
+value: 1900000000
+globalDefault: false
+description: "This priority class should be used for things related to the docker registry only. It runs after cluster-critical stuff."
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: gitea
+value: 1800000000
+globalDefault: false
+description: "This priority class should be used for things related to the gitea instance only. It contains the configurations and therefor is highly important."
