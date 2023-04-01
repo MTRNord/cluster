@@ -1,0 +1,33 @@
+---
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  labels:
+    team: matrix
+  name: matrix
+  namespace: matrix
+spec:
+  allowedSourceRanges: []
+  databases:
+    synapse: synapse
+  enableConnectionPooler: true
+  enableReplicaConnectionPooler: true
+  numberOfInstances: 2
+  postgresql:
+    version: '15'
+    parameters:
+      password_encryption: scram-sha-256
+  resources:
+    limits:
+      cpu: 500m
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  teamId: matrix
+  users:
+    synapse: []
+  volume:
+    iops: 3000
+    size: 10Gi
+    throughput: 125
