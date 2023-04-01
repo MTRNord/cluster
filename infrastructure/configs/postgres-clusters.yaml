@@ -1,11 +1,16 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: matrix-postgres-cluster
+---
 apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
   labels:
     team: matrix
   name: matrix-postgres-cluster
-  namespace: matrix
+  namespace: matrix-postgres-cluster
 spec:
   allowedSourceRanges: []
   databases:
