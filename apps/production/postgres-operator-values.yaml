@@ -26,9 +26,7 @@ spec:
         cert-manager.io/cluster-issuer: letsencrypt-dns
       hosts:
         - host: postgres-ui.midnightthoughts.space
-          paths:
-            - path:
-                - /
+          paths: [""]
       tls:
         - secretName: postgres-ui.midnightthoughts.space-tls
           hosts:
