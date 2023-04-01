@@ -137,19 +137,25 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
 
 ## TODOs
 
-- Migrate old deployments here
+- [ ] Migrate old deployments here
   - [ ] Gitea
   - [x] Woodpecker
   - [ ] Docker repo
   - [ ] Traefik
   - [x] Certmanager
   - [ ] External DNS
-  - [ ] Synapse
-  - [ ] Mjolnir
+  - [ ] Matrix
+    - [ ] Media Repo
+      - [ ] Move DB to DB Cluster
+    - [ ] Synapse
+      - [ ] Move DB to DB Cluster
+    - [ ] Mjolnir
+    - [ ] Bridges
+      - [ ] Move DBs to DB Cluster
   - [ ] Keycloak
   - [x] Prometheus/grafana
   - [x] Cosign
   - [ ] ...
-- Port validate script
-- Setup CI for github and woodpecker
-- Verify sops is working as expected and then publish repo
+- [ ]  Port validate script
+- [x] ~~Setup CI for github and woodpecker~~ (Fluxcd can pull it)
+- [x] Verify sops is working as expected and then publish repo
