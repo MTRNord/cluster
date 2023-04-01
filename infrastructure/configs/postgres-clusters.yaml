@@ -4,7 +4,7 @@ kind: postgresql
 metadata:
   labels:
     team: matrix
-  name: matrix
+  name: matrix-postgres-cluster
   namespace: matrix
 spec:
   allowedSourceRanges: []
@@ -14,7 +14,7 @@ spec:
   enableReplicaConnectionPooler: true
   numberOfInstances: 2
   postgresql:
-    version: '15'
+    version: "15"
     parameters:
       password_encryption: scram-sha-256
   resources:
