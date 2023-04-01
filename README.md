@@ -155,6 +155,8 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
   - [ ] Keycloak
   - [x] Prometheus/grafana
   - [x] Cosign
+  - [ ] Mailu (<https://just-4.fun/blog/howto/oc-k8s-mailu/> with <https://github.com/fastlorenzo/helm-charts-1/tree/master/mailu>)
+    - [ ] Imapsync from old server to new server
   - [ ] ...
 - [ ]  Port validate script
 - [x] ~~Setup CI for github and woodpecker~~ (Fluxcd can pull it)
