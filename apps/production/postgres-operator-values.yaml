@@ -23,6 +23,7 @@ spec:
     ingress:
       enabled: true
       annotations:
+        traefik.ingress.kubernetes.io/router.middlewares: traefik-ingress-sso@kubernetescrd
         cert-manager.io/cluster-issuer: letsencrypt-dns
       hosts:
         - host: postgres-ui.midnightthoughts.space
