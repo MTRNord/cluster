@@ -1,0 +1,34 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-operator
+  namespace: postgres-operator
+spec:
+  chart:
+    spec:
+      version: "1.9.x"
+  #values: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-operator-ui
+  namespace: postgres-operator
+spec:
+  chart:
+    spec:
+      version: "1.9.x"
+  values:
+    ingress:
+      enabled: true
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+      hosts:
+        - host: postgres-ui.midnightthoughts.space
+          paths:
+            - path: [""]
+      tls:
+        - secretName: postgres-ui.midnightthoughts.space-tls
+          hosts:
+            - postgres-ui.midnightthoughts.space

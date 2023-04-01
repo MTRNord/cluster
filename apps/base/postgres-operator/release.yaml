@@ -1,0 +1,38 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-operator
+  namespace: postgres-operator
+spec:
+  releaseName: postgres-operator
+  chart:
+    spec:
+      chart: postgres-operator
+      sourceRef:
+        kind: HelmRepository
+        name: postgres-operator
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  #values: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: postgres-operator-ui
+  namespace: postgres-operator
+spec:
+  releaseName: postgres-operator-ui
+  chart:
+    spec:
+      chart: postgres-operator-ui
+      sourceRef:
+        kind: HelmRepository
+        name: postgres-operator-ui
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  #values: {}
