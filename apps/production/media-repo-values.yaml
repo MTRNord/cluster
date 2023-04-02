@@ -56,10 +56,10 @@ spec:
                 persistence:
                     existingClaim: local-data-matrix-media-repo-postgresql-1
         externalPostgresql:
-            host: postgres
+            host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
             port: 5432
             username: matrix_media_repo
-            password: ENC[AES256_GCM,data:3T2u1XY5jArtWt5XFlQyMNuzpeDjnLkmOlVllzKOJTe6UKMyLAfJuczsRZumgiEwSyZ6X0FFIHqJBaOGlf72Ng==,iv:bTyMm6bzT8Lf2UwuVsYBOlmwJ6nUQEwISxKn1uEiC4M=,tag:fSgeyr60GJfdTiIsHMaiIA==,type:str]
+            password: ENC[AES256_GCM,data:Jh3sl9wJUnJmo9R3NLtLWNwX7r7uosqU4Mww/9XxwFj2eniMD6meDZzNKkSF07OB1UG/QvnAW05PsnfUcVz7Qw==,iv:FpF0lY/R6gidQtBq1paB/dnZXAEB3Em4EzSt8paliyk=,tag:C/2U8CHksRW+mIMeT2DxrA==,type:str]
             database: matrix_media_repo
             sslMode: require
         persistence:
@@ -75,14 +75,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBEMUhNTGZMQW9RMXJLcCsz
-            Vk8yRVFLUllwN1hqamVXc2creW5XSVRXZ2pNCjhYY0hUWnFOV3NOZzVHcTRBemky
-            OHJjcGdTOXQ3RWV3ZjRPaDJFdlA0ZFEKLS0tIHVjMnUvTDVnMFR5Y3Rnb3RVSWw0
-            bEdwS0NBUWhBaHRQRXhMZVJ1ako1M0kKSO6q6Gw+Rwv+OSMgsaiXJNCdiSjQRWyy
-            iF75P5zz9PzQbAIdyAVCRDGwHmj7BnEXZSVAgIYOeT/NyFpKQJmUdQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPeWNlaXBqeGlqM0tmVWxV
+            cEYrVEtpUG4rT2FKYnpVcWRYdjVwVFV5cHdBCjRySG93a3JQaXYrQ2g1L2FZOHpO
+            TEl1NW1tRWt2c2RiMjNqRGhOMWp6LzgKLS0tIE5VRnZaY3JWTTVNbFR1MjNWeWtT
+            QVJzSUNLQjVqMzgySk1XcWdrblJLaUkKQ9iAW1FtLBCGflQ64L80FnM9hdwAcE2g
+            i6ClXKpw6s3DWO1noDRf2LBnTv7UD6QZb/OM4Q1EBJspbcLpqzpMSg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-04-02T14:30:54Z"
-    mac: ENC[AES256_GCM,data:Z6I3XIFmsTq1V9DTzLGJphy7XcRFq6u3QPNV6zpscaCTy4wypgYgNiAVdk9zJg5qCFG2kLl81OBus2dSJXoJ/qTKlWn8pTIscQaRzb5G7atc4Dq1T63TVgvQeWWqfuPglollZJ89TF1t8jJEl6nvpiMBMccgDw1VvtfRx+vepJc=,iv:9WHck2oEpkfrHYAJRBsRjhjkKK0TlziyQ9BIJdtop0E=,tag:yC7ukicckMpPA5qRqXuiyQ==,type:str]
+    lastmodified: "2023-04-02T14:36:16Z"
+    mac: ENC[AES256_GCM,data:z/3q/fSEh51qVjVHO9c+ppOV2CX0d7DYMM7eFdQyOA4pB1VyYEY5LMxG8Daht2KIj2qNZzDBtFTRC9ay5gi8+lH7LRUShdOR5/nzb/A3xUZDKDnMIA+wI2gE0xAN5DJFhj3+jCNjMf5U/YXbyFdUbhoOPTXCmEo6eskl5Us3YoY=,iv:kwRWegX31poyGv98IrLqAyx5CnjSBI83m5KMhIjQ9Rg=,tag:TENfW5I4ZFJ8BhtBRhXYQw==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|password)$
     version: 3.7.3
