@@ -1,0 +1,207 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: matrix-media-repo
+  namespace: matrix
+spec:
+  releaseName: matrix-media-repo
+  chart:
+    spec:
+      chart: matrix-media-repo
+      sourceRef:
+        kind: HelmRepository
+        name: ananace-charts
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    replicaCount: 1
+    image:
+      repository: coreharbor.kubernetes.midnightthoughts.space/turt2live/matrix-media-repo
+      tag: latest
+      pullPolicy: Always
+    config:
+      datastores:
+        - type: file
+          enabled: true
+          forKinds: ["all"]
+          opts:
+            path: /media
+      federation:
+        backoffAt: 20
+      timeouts:
+        urlPreviewTimeoutSeconds: 10
+        federationTimeoutSeconds: 120
+        clientServerTimeoutSeconds: 30
+      featureSupport:
+        MSC2448:
+          enabled: true
+          maxWidth: 1024
+          maxHeight: 1024
+          thumbWidth: 64
+          thumbHeight: 64
+          xComponents: 4
+          yComponents: 3
+          punch: 1
+      quarantine:
+        replaceThumbnails: true
+        replaceDownloads: false
+        thumbnailPath: ""
+        allowLocalAdmins: true
+      identicons:
+        enabled: true
+      thumbnails:
+        maxSourceBytes: 1048576000
+        numWorkers: 10
+        maxPixels: 1048576000
+        sizes:
+          - width: 32
+            height: 32
+          - width: 96
+            height: 96
+          - width: 320
+            height: 240
+          - width: 640
+            height: 480
+          - width: 768
+            height: 240
+          - width: 800
+            height: 600
+          - width: 1000000
+            height: 1000000
+        dynamicSizing: true
+        types:
+          - "image/jpeg"
+          - "image/jpg"
+          - "image/png"
+          - "image/gif"
+          - "image/heif"
+          - "image/webp"
+          - "image/svg+xml"
+          - "audio/mpeg"
+          - "audio/ogg"
+          - "audio/wav"
+          - "audio/flac"
+          - "video/mp4"
+        allowAnimated: true
+        defaultAnimated: true
+        maxAnimateSizeBytes: 10485760
+        stillFrame: 0.5
+        expireAfterDays: 0
+      urlPreviews:
+        enabled: true
+        maxPageSizeBytes: 10485760
+        previewUnsafeCertificates: false
+        numWords: 50
+        maxLength: 200
+        numTitleWords: 30
+        maxTitleLength: 150
+        filePreviewTypes:
+          - "image/*"
+        numWorkers: 10
+        disallowedNetworks:
+          - 127.0.0.1/8
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+          - 100.64.0.0/10
+          - 169.254.0.0/16
+          - ::1/128
+          - fe80::/64
+          - fc00::/7
+        allowedNetworks:
+          - 0.0.0.0/0
+          - "::/0"
+        expireAfterDays: 10
+        defaultLanguage: en-US,en
+        oEmbed: true
+      downloads:
+        maxBytes: 104857600
+        numWorkers: 10
+        failureCacheMinutes: 5
+        cache:
+          enabled: true
+          maxSizeBytes: 1048576000
+          maxFileSizeBytes: 1048576000
+          trackedMinutes: 30
+          minDownloads: 2
+          minCacheTimeSeconds: 300
+          minEvictedTimeSeconds: 60
+        expireAfterDays: 14
+      uploads:
+        maxBytes: 1048576000
+        minBytes: 100
+        reportedMaxBytes: 0
+
+    postgresql:
+      sslMode: disable
+      volumePermissions:
+        enabled: true
+
+      primary:
+        persistence:
+          size: 16G
+        extendedConfiguration: |
+          # Connectivity
+          max_connections = 40
+          superuser_reserved_connections = 3
+          # Memory Settings
+          shared_buffers = '16384 MB'
+          work_mem = '64 MB'
+          maintenance_work_mem = '620 MB'
+          huge_pages = try   # NB! requires also activation of huge pages via kernel params, see here for more: https://www.postgresql.org/docs/current/static/kernel-resources.html#LINUX-HUGE-PAGES
+          effective_cache_size = '45 GB'
+          effective_io_concurrency = 200 # concurrent IO only really activated if OS supports posix_fadvise function
+          random_page_cost = 1.25 # speed of random disk access relative to sequential access (1.0)
+          # Monitoring
+          shared_preload_libraries = 'pg_stat_statements'    # per statement resource usage stats
+          track_io_timing=on        # measure exact block IO times
+          track_functions=pl        # track execution times of pl-language procedures if any
+          # Replication
+          wal_level = replica		# consider using at least 'replica'
+          max_wal_senders = 0
+          synchronous_commit = off
+          # Checkpointing: 
+          checkpoint_timeout  = '15 min' 
+          checkpoint_completion_target = 0.9
+          max_wal_size = '1024 MB'
+          min_wal_size = '512 MB'
+          # WAL writing
+          wal_compression = on
+          wal_buffers = -1    # auto-tuned by Postgres till maximum of segment size (16MB by default)
+          # Background writer
+          bgwriter_delay = 200ms
+          bgwriter_lru_maxpages = 100
+          bgwriter_lru_multiplier = 2.0
+          bgwriter_flush_after = 0
+          # Parallel queries: 
+          max_worker_processes = 6
+          max_parallel_workers_per_gather = 3
+          max_parallel_maintenance_workers = 3
+          max_parallel_workers = 6
+          parallel_leader_participation = on
+          # Advanced features 
+          enable_partitionwise_join = on 
+          enable_partitionwise_aggregate = on
+          jit = on
+          max_slot_wal_keep_size = '1000 MB'
+          track_wal_io_timing = on
+          maintenance_io_concurrency = 200
+          wal_recycle = on
+    extraRepo:
+      useForwardedHost: false
+
+    redis:
+      architecture: replication
+      auth:
+        enabled: false
+      commonConfiguration: |-
+        # Enable AOF https://redis.io/topics/persistence#append-only-file
+        appendonly yes
+        # Disable RDB persistence, AOF persistence already enabled.
+        save ""
+        # Set maxmemory
+        maxmemory 1gb
+        # Make sure we clear stuff properly
+        maxmemory-policy allkeys-lfu

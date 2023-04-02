@@ -1,0 +1,62 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: matrix-media-repo
+  namespace: matrix
+spec:
+  chart:
+    spec:
+      version: "2.0.x"
+  values:
+    config:
+      admins:
+        - "@lexi:midnightthoughts.space"
+    ## Per-domain configuration.
+    ## Ref: https://github.com/turt2live/matrix-media-repo/blob/master/docs/config.md
+    ##
+    homeservers:
+      midnightthoughts.space:
+        csApi: "https://matrix.midnightthoughts.space"
+        backoffAt: 10
+        adminApiKind: "synapse"
+        identicons:
+          enabled: true
+      art.midnightthoughts.space:
+        csApi: "https://matrix.art.midnightthoughts.space"
+        backoffAt: 10
+        adminApiKind: "synapse"
+        identicons:
+          enabled: true
+    ## Ingress configuration.
+    ##
+    ingress:
+      enabled: false
+      className: traefik
+      annotations:
+        #    traefik.ingress.kubernetes.io/router.tls: "true"
+        #    traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-redirect-https@kubernetescrd
+        traefik.ingress.kubernetes.io/router.middlewares: redirect-media@kubernetescrd
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+      hosts:
+        - host: matrix.midnightthoughts.space
+          paths:
+            - "/_matrix/media"
+      tls:
+        - secretName: midnightthoughts-tls-secret
+          hosts:
+            - matrix.midnightthoughts.space
+            - midnightthoughts.space
+    postgresql:
+      enabled: true
+      auth:
+        existingSecret: matrix-media-repo-postgresql
+        username: matrix_media_repo
+        database: matrix_media_repo
+      primary:
+        persistence:
+          existingClaim: local-data-matrix-media-repo-postgresql-1
+
+    persistence:
+      existingClaim: local-matrix-media-repo
+    redis:
+      enabled: true
