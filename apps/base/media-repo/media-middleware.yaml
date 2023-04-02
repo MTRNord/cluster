@@ -1,0 +1,28 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-media-midnightthoughts
+  namespace: matrix
+spec:
+  headers:
+    customRequestHeaders:
+      Host: "midnightthoughts.space"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-media-art-midnightthoughts
+  namespace: matrix
+spec:
+  headers:
+    customRequestHeaders:
+      Host: "art.midnightthoughts.space"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: body-limit
+spec:
+  buffering:
+    maxRequestBodyBytes: 2000000000
