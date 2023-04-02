@@ -1,63 +1,88 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: matrix-media-repo
-  namespace: matrix
+    name: matrix-media-repo
+    namespace: matrix
 spec:
-  chart:
-    spec:
-      version: "2.0.x"
-  values:
-    config:
-      admins:
-        - "@lexi:midnightthoughts.space"
-    ## Per-domain configuration.
-    ## Ref: https://github.com/turt2live/matrix-media-repo/blob/master/docs/config.md
-    ##
-    homeservers:
-      midnightthoughts.space:
-        csApi: "https://matrix.midnightthoughts.space"
-        backoffAt: 10
-        adminApiKind: "synapse"
-        identicons:
-          enabled: true
-      art.midnightthoughts.space:
-        csApi: "https://matrix.art.midnightthoughts.space"
-        backoffAt: 10
-        adminApiKind: "synapse"
-        identicons:
-          enabled: true
-    ## Ingress configuration.
-    ##
-    ingress:
-      enabled: false
-      className: traefik
-      annotations:
-        #    traefik.ingress.kubernetes.io/router.tls: "true"
-        #    traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-redirect-https@kubernetescrd
-        traefik.ingress.kubernetes.io/router.middlewares: redirect-media@kubernetescrd
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-      hosts:
-        - host: matrix.midnightthoughts.space
-          paths:
-            - "/_matrix/media"
-      tls:
-        - secretName: midnightthoughts-tls-secret
-          hosts:
-            - matrix.midnightthoughts.space
-            - midnightthoughts.space
-    postgresql:
-      enabled: true
-      auth:
-        existingSecret: matrix-media-repo-postgresql
-        username: matrix_media_repo
-        database: matrix_media_repo
-      primary:
+    chart:
+        spec:
+            version: 2.0.x
+    values:
+        config:
+            admins:
+                - '@lexi:midnightthoughts.space'
+        ## Per-domain configuration.
+        ## Ref: https://github.com/turt2live/matrix-media-repo/blob/master/docs/config.md
+        ##
+        homeservers:
+            midnightthoughts.space:
+                csApi: https://matrix.midnightthoughts.space
+                backoffAt: 10
+                adminApiKind: synapse
+                identicons:
+                    enabled: true
+            art.midnightthoughts.space:
+                csApi: https://matrix.art.midnightthoughts.space
+                backoffAt: 10
+                adminApiKind: synapse
+                identicons:
+                    enabled: true
+        ## Ingress configuration.
+        ##
+        ingress:
+            enabled: false
+            className: traefik
+            annotations:
+                #    traefik.ingress.kubernetes.io/router.tls: "true"
+                #    traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-redirect-https@kubernetescrd
+                traefik.ingress.kubernetes.io/router.middlewares: redirect-media@kubernetescrd
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hosts:
+                - host: matrix.midnightthoughts.space
+                  paths:
+                    - /_matrix/media
+            tls:
+                - secretName: midnightthoughts-tls-secret
+                  hosts:
+                    - matrix.midnightthoughts.space
+                    - midnightthoughts.space
+        postgresql:
+            enabled: false
+            auth:
+                existingSecret: matrix-media-repo-postgresql
+                username: matrix_media_repo
+                database: matrix_media_repo
+            primary:
+                persistence:
+                    existingClaim: local-data-matrix-media-repo-postgresql-1
+        externalPostgresql:
+            host: postgres
+            port: 5432
+            username: matrix_media_repo
+            password: ENC[AES256_GCM,data:3T2u1XY5jArtWt5XFlQyMNuzpeDjnLkmOlVllzKOJTe6UKMyLAfJuczsRZumgiEwSyZ6X0FFIHqJBaOGlf72Ng==,iv:bTyMm6bzT8Lf2UwuVsYBOlmwJ6nUQEwISxKn1uEiC4M=,tag:fSgeyr60GJfdTiIsHMaiIA==,type:str]
+            database: matrix_media_repo
+            sslMode: require
         persistence:
-          existingClaim: local-data-matrix-media-repo-postgresql-1
-
-    persistence:
-      existingClaim: local-matrix-media-repo
-    redis:
-      enabled: true
+            existingClaim: local-matrix-media-repo
+        redis:
+            enabled: true
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBEMUhNTGZMQW9RMXJLcCsz
+            Vk8yRVFLUllwN1hqamVXc2creW5XSVRXZ2pNCjhYY0hUWnFOV3NOZzVHcTRBemky
+            OHJjcGdTOXQ3RWV3ZjRPaDJFdlA0ZFEKLS0tIHVjMnUvTDVnMFR5Y3Rnb3RVSWw0
+            bEdwS0NBUWhBaHRQRXhMZVJ1ako1M0kKSO6q6Gw+Rwv+OSMgsaiXJNCdiSjQRWyy
+            iF75P5zz9PzQbAIdyAVCRDGwHmj7BnEXZSVAgIYOeT/NyFpKQJmUdQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-04-02T14:30:54Z"
+    mac: ENC[AES256_GCM,data:Z6I3XIFmsTq1V9DTzLGJphy7XcRFq6u3QPNV6zpscaCTy4wypgYgNiAVdk9zJg5qCFG2kLl81OBus2dSJXoJ/qTKlWn8pTIscQaRzb5G7atc4Dq1T63TVgvQeWWqfuPglollZJ89TF1t8jJEl6nvpiMBMccgDw1VvtfRx+vepJc=,iv:9WHck2oEpkfrHYAJRBsRjhjkKK0TlziyQ9BIJdtop0E=,tag:yC7ukicckMpPA5qRqXuiyQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password)$
+    version: 3.7.3
