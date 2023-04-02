@@ -8,6 +8,8 @@ resources:
   - ../base/rook
   - ../base/postgres-operator
   - ../base/media-repo
+  - ../base/sliding-proxy
+  - sliding-proxy-ingress.yaml
 patchesStrategicMerge:
   - cosign-values.yaml
   - vaultwarden-values.yaml
@@ -15,3 +17,4 @@ patchesStrategicMerge:
   - kube-prometheus-stack-values.yaml
   - postgres-operator-values.yaml
   - media-repo-values.yaml
+  - sliding-proxy-values.yaml

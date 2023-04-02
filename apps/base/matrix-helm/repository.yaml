@@ -1,3 +1,4 @@
+---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
@@ -6,3 +7,12 @@ metadata:
 spec:
   interval: 5m
   url: https://ananace.gitlab.io/charts
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: sliding-proxy
+  namespace: matrix
+spec:
+  image: ghcr.io/matrix-org/sliding-sync
+  interval: 1m0s

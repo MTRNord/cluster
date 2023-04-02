@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sliding-proxy-midnightthoughts
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sliding-proxy-midnightthoughts
+  template:
+    metadata:
+      labels:
+        app: sliding-proxy-midnightthoughts
+    spec:
+      containers:
+        - image: ghcr.io/matrix-org/sliding-sync:v0.99.1 # {"$imagepolicy": "matrix:sliding-proxy"}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /client/server.json
+              port: 8888
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          name: sliding-proxy-midnightthoughts-container
+          envFrom:
+            - secretRef:
+                name: sliding-proxy-env
+          env:
+            - name: SYNCV3_BINDADDR
+              value: "0.0.0.0:8888"
+          ports:
+            - containerPort: 8888
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /client/server.json
+              port: 8888
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            #runAsNonRoot: true
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: sliding-proxy
+  namespace: matrix
+spec:
+  imageRepositoryRef:
+    name: sliding-proxy
+  policy:
+    semver:
+      range: ">=v0.99.1 <v1.0.0"
