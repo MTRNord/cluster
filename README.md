@@ -146,7 +146,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
   - [ ] External DNS
   - [ ] Matrix
     - [x] Media Repo
-      - [ ] Move DB to DB Cluster
+      - [x] Move DB to DB Cluster
     - [ ] Synapse
       - [ ] Move DB to DB Cluster
     - [ ] Mjolnir
