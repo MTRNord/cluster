@@ -148,11 +148,14 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
     - [x] Media Repo
       - [x] Move DB to DB Cluster
     - [ ] Synapse
+      - [x] Prepare DB in DB Cluster
       - [ ] Move DB to DB Cluster
     - [x] Sliding Proxy
+      - [x] Prepare DB in DB Cluster
       - [ ] Move DB to DB Cluster
     - [ ] Mjolnir
     - [ ] Bridges
+      - [x] Prepare DBs in DB Cluster
       - [ ] Move DBs to DB Cluster
   - [ ] Keycloak
   - [x] Prometheus/grafana
