@@ -4,6 +4,7 @@ metadata:
     name: matrix-synapse
     namespace: matrix
 spec:
+    releaseName: matrix-synapse
     chart:
         spec:
             version: 3.0.x
@@ -31,7 +32,7 @@ spec:
             trustedKeyServers:
                 - server_name: matrix.org
         extraConfig:
-            registration_shared_secret: ENC[AES256_GCM,data:0dWtir4RJk2RpoiZOHnoCpUbb398CtM6/HWlgAQ+pwozAXs9/L2NwOnf9LLM9dKhvnRrQoQIJjo/6NZItg4qKg==,iv:Y6qPy317YF/zxIMznJxUDwN256Sj1s9AHOTGs6UEo2E=,tag:/RrDo1H3X64RztOY/75V5A==,type:str]
+            registration_shared_secret: ENC[AES256_GCM,data:n7LBIiS7eNbG2KY7WNUGuxbTua0nqRIc4r6cHqwZmYnGPL5mpwttk49QOBSxGFr/IRB4XpsVnBbJtzEN1zMPSg==,iv:l/pEI8v1vxj21uBpD3LNYbRdsqeFquhKBUX5se9kiOA=,tag:P/vYxvebuJVznhonU3FfLg==,type:str]
             app_service_config_files:
                 - /data/whatsapp-registration.yaml
                 - /data/instagram-registration.yaml
@@ -40,7 +41,7 @@ spec:
         modules:
             - module: shared_secret_authenticator.SharedSecretAuthProvider
               config:
-                shared_secret: ENC[AES256_GCM,data:a1usH1y0NLBfz2GisYUwHrLkEHohmJp4kGjck1r9HTasRSgDHtrrdKH9cynyx+nsjgfsfVvBWyBzvD+2rLwEdg==,iv:hHziDd2zSs3kZb7sBCKB080oldfHIwWyUDO4yyIgViY=,tag:wDcx2WlWUSI/VGwdHUQmew==,type:str]
+                shared_secret: ENC[AES256_GCM,data:m1U0Wtn/jtpkiWMkHPpW+ltXI+2Oucn8vnRgx3lo0R8sC/yxN1257rWl6vnVsVlih+uqAJpAo6nl/OHNKtoM2g==,iv:imz1jdE3zSDFZnHfdMg2gZmWOWUihuIsR1DOREhHIWI=,tag:iaM/f2onKkeEX88bfPo0AQ==,type:str]
         ingress:
             traefikPaths: true
             tls:
@@ -121,14 +122,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBuRWI4Y1NmclB0Y1dJNGFO
-            NVVwWktDOFlWVzJKQzBkakQxQ3RtVXlhSW5nCmNsWlFYTmVWM0t1ckRXKzhXTjFw
-            SldDUnp3TWx4RU9laEVZNjExdHpPeEkKLS0tICtRY3doZU1iVlgwMFVxMHNBaHBG
-            S1F4K0RtZFVuQUNadHl2SlFyVi84M28K0KGVf10oakWcRWHAzG6DsRpqELwK6v68
-            /qYHBMUSnqz0PedIIADbbQKG58rD8fUMgfGyItAsKVMDYmRd9cg0TA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5d1hYM2pzMGpYRVU0SnIz
+            WEtFTVAyQzdodFM5aytFS3pkZEdnNS9DUVhBCjRpQUZYNWdab3VVWnY2NlpQSVJn
+            WXNMTkF3M29UMTdUVzBnMVpsdUk1VmsKLS0tIEhrQ3hmdG9Ed2swRGVUc1dQWk1R
+            U2JQTFBMZ244dTRjajQrbVRsbHU2bmMKoL9HhVSLJIc0Fl+att4XR0++l1QfXrpB
+            958fZrn9dD5NvaA3eNQOyfJk9sjwPi1Rq43Jot/O608Qkh5fAnZMfw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-04-03T18:32:34Z"
-    mac: ENC[AES256_GCM,data:vSYvXj11IRlCepz35YUyo1EANW69GpYvuwh8zDxRN5KBMmkmqC+jgGLR4JyyIIENiguI9gkDBNB2BlD98xXKblazIpEuEI7FHWIXixsoulRyUxbggFHY5sDWqRDM/oiAkz3ws4MuuQGImjQ8hUL5LjtVWeG3qGOr57oTlXuanAQ=,iv:q1iuW8dVBhKRMzmnzDQEt3MsvXurLcTKZ+qZ+hOvLFA=,tag:7/5dfmOyZdPUBZvQ+biJrQ==,type:str]
+    lastmodified: "2023-04-03T19:22:36Z"
+    mac: ENC[AES256_GCM,data:LoDqi24D7kfoBiOIa4zksMqTziWxNSzLJeyweCZskLqZFqCp/keGtnaxuurb9rZ0Sn0MtdmRZ5eDLZ6oybYVkA+SPh/ypxo5m6k6UTkqfjVCKl5g+tCswgG6j2LCBRuPzjZiT/uvg/KvsiBKtSAdkbDIdFJ7DmjnocI0GTbz4OI=,iv:ydlIiu4i1R4rdauBKDYun4sA69S77rZoi2rZ/dDA7TA=,tag:8lYZchG13ycGqod179gm+A==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
     version: 3.7.3
