@@ -149,7 +149,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
       - [x] Move DB to DB Cluster
     - [ ] Synapse
       - [ ] Move DB to DB Cluster
-    - [ ] Sliding Proxy
+    - [x] Sliding Proxy
       - [ ] Move DB to DB Cluster
     - [ ] Mjolnir
     - [ ] Bridges
