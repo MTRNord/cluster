@@ -147,12 +147,12 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
   - [ ] Matrix
     - [x] Media Repo
       - [x] Move DB to DB Cluster
-    - [ ] Synapse
+    - [x] Synapse
       - [x] Prepare DB in DB Cluster
-      - [ ] Move DB to DB Cluster
+      - [x] Move DB to DB Cluster
     - [x] Sliding Proxy
       - [x] Prepare DB in DB Cluster
-      - [ ] Move DB to DB Cluster
+      - [x] Move DB to DB Cluster
     - [ ] Mjolnir
     - [ ] Bridges
       - [x] Prepare DBs in DB Cluster
