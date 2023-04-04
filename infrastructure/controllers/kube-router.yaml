@@ -23,6 +23,7 @@ spec:
       containers:
         - name: kube-router
           image: docker.io/cloudnativelabs/kube-router
+          tag: v2.0.0-rc3
           imagePullPolicy: Always
           args:
             - "--run-router=true"
@@ -33,6 +34,7 @@ spec:
             - "--enable-pod-egress=false"
             - "--enable-ibgp=true"
             - "--enable-overlay=true"
+            - "--enable-ipv6=true"
             #- "--peer-router-ips=<CHANGE ME>"
             #- "--peer-router-asns=<CHANGE ME>"
             #- "--cluster-asn=<CHANGE ME>"
