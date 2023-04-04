@@ -1,0 +1,258 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: matrix-synapse
+  namespace: matrix
+spec:
+  chart:
+    spec:
+      chart: matrix-synapse
+      sourceRef:
+        kind: HelmRepository
+        name: ananace-charts
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    wellknown:
+      enabled: true
+      extraData:
+        support:
+          admins:
+            - email_address: "support@nordgedanken.dev"
+              role: "admin"
+    image:
+      pullSecrets:
+        - name: docker
+    extraConfig:
+      federation_sender_instances:
+        - federation-sender-1
+        - federation-sender-2
+      enable_metrics: true
+      federation_metrics_domains:
+        - matrix.org
+        - t2bot.io
+        - t2l.io
+        - maunium.net
+      enable_media_repo: false
+      require_auth_for_profile_requests: true
+      limit_profile_requests_to_users_who_share_rooms: false
+      allow_public_rooms_without_auth: true
+      allow_public_rooms_over_federation: true
+      experimental_features:
+        msc2409_to_device_messages_enabled: true
+        msc2716_enabled: true
+    persistence:
+      size: 30Gi
+    volumePermissions:
+      enabled: true
+
+    workers:
+      federation_reader:
+        replicaCount: 2
+        enabled: true
+        generic: true
+        listeners: [federation]
+        paths:
+          - "/_matrix/federation/v1/send/"
+
+      synchrotron:
+        enabled: true
+        generic: true
+        listeners: [client]
+        csPaths:
+          - "/_matrix/client/(v2_alpha|r0|v3)/sync"
+          - "/_matrix/client/(api/v1|v2_alpha|r0|v3)/events"
+          - "/_matrix/client/(api/v1|r0|v3)/initialSync"
+          - "/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync"
+
+      generic_worker:
+        replicaCount: 2
+        enabled: true
+        generic: true
+        listeners: [client, federation]
+        csPaths:
+          ## Sync requests
+          # - "/_matrix/client/(r0|v3)/sync$"
+          #- "/_matrix/client/(api/v1|r0|v3)/events$"
+          # - "/_matrix/client/(api/v1|r0|v3)/initialSync$"
+          # - "/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$"
+
+          ## Client API requests
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/createRoom$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/joined_members$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/context/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/members$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$"
+          - "/_matrix/client/v1/rooms/.*/hierarchy$"
+          - "/_matrix/client/unstable/org.matrix.msc2716/rooms/.*/batch_send$"
+          - "/_matrix/client/unstable/im.nheko.summary/rooms/.*/summary$"
+          - "/_matrix/client/(r0|v3|unstable)/account/3pid$"
+          - "/_matrix/client/(r0|v3|unstable)/account/whoami$"
+          - "/_matrix/client/(r0|v3|unstable)/devices$"
+          - "/_matrix/client/versions$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/voip/turnServer$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/search$"
+
+          ## Encryption requests
+          - "/_matrix/client/(r0|v3|unstable)/keys/query$"
+          - "/_matrix/client/(r0|v3|unstable)/keys/changes$"
+          - "/_matrix/client/(r0|v3|unstable)/keys/claim$"
+          - "/_matrix/client/(r0|v3|unstable)/room_keys/"
+
+          ## Registration/login requests
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/login$"
+          - "/_matrix/client/(r0|v3|unstable)/register$"
+          - "/_matrix/client/v1/register/m.login.registration_token/validity$"
+
+          ## Event sending requests
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/join/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/profile/"
+
+          ## User directory search requests
+          #- "/_matrix/client/(r0|v3|unstable)/user_directory/search"
+
+          ## Worker event streams
+          ## See https://matrix-org.github.io/synapse/latest/workers.html#stream-writers
+          ##
+
+          ## The typing event stream
+          # - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/typing"
+
+          ## The to_device event stream
+          # - "/_matrix/client/(r0|v3|unstable)/sendToDevice/"
+
+          ## The account_data event stream
+          # - "/_matrix/client/(r0|v3|unstable)/.*/tags"
+          # - "/_matrix/client/(r0|v3|unstable)/.*/account_data"
+
+          ## The receipts event stream
+          # - "/_matrix/client/(r0|v3|unstable)/rooms/.*/receipt"
+          # - "/_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers"
+
+          ## The presence event stream
+          # - "/_matrix/client/(api/v1|r0|v3|unstable)/presence/"
+
+        paths:
+          ## Federation requests
+          - "/_matrix/federation/v1/event/"
+          - "/_matrix/federation/v1/state/"
+          - "/_matrix/federation/v1/state_ids/"
+          - "/_matrix/federation/v1/backfill/"
+          - "/_matrix/federation/v1/get_missing_events/"
+          - "/_matrix/federation/v1/publicRooms"
+          - "/_matrix/federation/v1/query/"
+          - "/_matrix/federation/v1/make_join/"
+          - "/_matrix/federation/v1/make_leave/"
+          - "/_matrix/federation/(v1|v2)/send_join/"
+          - "/_matrix/federation/(v1|v2)/send_leave/"
+          - "/_matrix/federation/(v1|v2)/invite/"
+          - "/_matrix/federation/v1/event_auth/"
+          - "/_matrix/federation/v1/exchange_third_party_invite/"
+          - "/_matrix/federation/v1/user/devices/"
+          - "/_matrix/key/v2/query"
+          - "/_matrix/federation/v1/hierarchy/"
+
+          ## Inbound federation transaction request
+          #- "/_matrix/federation/v1/send/"
+
+      pusher:
+        enabled: true
+      appservice:
+        enabled: true
+      federation_sender_1:
+        app: federation_sender
+        name: federation-sender-1
+        enabled: true
+      federation_sender_2:
+        app: federation_sender
+        name: federation-sender-2
+        enabled: true
+      #federation_sender_3:
+      #  app: federation_sender
+      #  name: federation-sender-3
+      #  enabled: true
+      # federation_sender_4:
+      #   app: federation_sender
+      #   name: federation-sender-4
+      #   enabled: true
+      # federation_sender_5:
+      #   app: federation_sender
+      #   name: federation-sender-5
+      #   enabled: true
+      # federation_sender_6:
+      #   app: federation_sender
+      #   name: federation-sender-6
+      #  enabled: true
+      user_dir:
+        enabled: true
+        listeners: [client]
+        csPaths:
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/user_directory/search$"
+      frontend_proxy:
+        enabled: true
+        listeners: [client]
+        csPaths:
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/keys/upload"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/presence/[^/]+/status"
+
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/path: "/_synapse/metrics"
+          prometheus.io/port: "9090"
+        extraEnv:
+          - name: LD_PRELOAD
+            value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+          - name: SYNAPSE_CACHE_FACTOR
+            value: "1.0"
+
+    synapse:
+      ## Liveness probe configuration to use
+      ##
+      livenessProbe:
+        timeoutSeconds: 60
+        failureThreshold: 5
+        httpGet:
+          path: /health
+          port: http
+
+      ## Readiness probe configuration to use
+      ##
+      readinessProbe:
+        timeoutSeconds: 60
+        failureThreshold: 5
+        httpGet:
+          path: /health
+          port: http
+
+      extraCommands: []
+      extraEnv:
+        - name: LD_PRELOAD
+          value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+        - name: SYNAPSE_CACHE_FACTOR
+          value: "2"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/_synapse/metrics"
+        prometheus.io/port: "9090"
+
+    redis:
+      architecture: replication
+    postgresql:
+      enabled: false
+    externalPostgresql:
+      host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+      port: 5432
+
+      ## Password key to be retrieved from existing secret
+      existingSecretPasswordKey: password
+      sslmode: require
