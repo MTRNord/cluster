@@ -35,14 +35,14 @@ spec:
           annotations:
             description: replication for {{ template "prometheus-postgres-exporter.fullname" . }} PostgreSQL is lagging by {{ "{{ $value }}" }} hour(s).
             summary: PostgreSQL replication is lagging by {{ "{{ $value }}" }} hour(s).
-      config:
-        datasource:
-          host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
-          user: postgres
-          passwordSecret:
-            name: postgres-secret
-            key: password
-          port: "5432"
-          sslmode: require
-          database: "postgres"
-        autoDiscoverDatabases: true
+    config:
+      datasource:
+        host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+        user: postgres
+        passwordSecret:
+          name: postgres-secret
+          key: password
+        port: "5432"
+        sslmode: require
+        database: "postgres"
+      autoDiscoverDatabases: true
