@@ -19,9 +19,9 @@ spec:
     serviceMonitor:
       # When set true then use a ServiceMonitor to configure scraping
       enabled: true
+      namespace: monitoring
     prometheusRule:
       enabled: true
-      additionalLabels: {}
       namespace: "monitoring"
       rules:
         - alert: HugeReplicationLag
