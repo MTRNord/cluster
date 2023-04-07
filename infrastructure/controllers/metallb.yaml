@@ -59,5 +59,6 @@ metadata:
 spec:
   interfaces:
     - enp35s0
-  nodeSelector:
-    - kubernetes.io/hostname: "nordgedanken.dev"
+  nodeSelectors:
+    - matchLabels:
+        kubernetes.io/hostname: "nordgedanken.dev"
