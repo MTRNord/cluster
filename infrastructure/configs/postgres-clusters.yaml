@@ -12,21 +12,27 @@ metadata:
   name: matrix-postgres-cluster
   namespace: matrix-postgres-cluster
 spec:
-  allowedSourceRanges: []
+  enableShmVolume: true
   databases:
     synapse: synapse
     matrix_media_repo: matrix_media_repo
     syncv3: syncv3
     signal_bridge: signal_bridge
     instagram_bridge: instagram_bridge
-  enableConnectionPooler: false
-  enableReplicaConnectionPooler: false
-  numberOfInstances: 1
+  numberOfInstances: 2
+  resources:
+    requests:
+      cpu: 10m
+      memory: 100Mi
+    limits:
+      cpu: 500m
+      memory: 500Mi
   postgresql:
     version: "15"
     parameters:
       password_encryption: scram-sha-256
-      max_connections: "400"
+      max_connections: "200"
+      log_statement: "all"
   teamId: matrix
   users:
     synapse: []
