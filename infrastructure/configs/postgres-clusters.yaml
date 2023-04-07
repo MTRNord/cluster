@@ -32,7 +32,6 @@ spec:
     parameters:
       password_encryption: scram-sha-256
       max_connections: "200"
-      log_statement: "all"
   teamId: matrix
   users:
     synapse: []
@@ -47,7 +46,7 @@ spec:
     loop_wait: 10
     retry_timeout: 10
     failsafe_mode: true
-    synchronous_mode: true
-    synchronous_mode_strict: false
-    synchronous_node_count: 1
-    maximum_lag_on_failover: 33554432
+    #synchronous_mode: true
+    #synchronous_mode_strict: false
+    #synchronous_node_count: 1
+    maximum_lag_on_failover: 150
