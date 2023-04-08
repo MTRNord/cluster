@@ -9,7 +9,7 @@ metadata:
     checkov.io/skip1: CKV_K8S_19=The container needs to modify host network rules.
     checkov.io/skip2: CKV_K8S_35=The container needs to know values from the node.
     prometheus.io/scrape: "true"
-    prometheus.io/port: "20244"
+    prometheus.io/port: "8080"
   name: kube-router
   namespace: kube-system
 spec:
@@ -51,7 +51,7 @@ spec:
             #- "--peer-router-asns=<CHANGE ME>"
             #- "--cluster-asn=<CHANGE ME>"
             # Metrics
-            - "--metrics-port=20244"
+            - "--metrics-port=8080"
           env:
             - name: NODE_NAME
               valueFrom:
@@ -64,7 +64,7 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 3
           ports:
-            - containerPort: 20244
+            - containerPort: 8080
               name: monitoring
           resources:
             requests:
