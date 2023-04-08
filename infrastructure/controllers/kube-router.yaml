@@ -5,6 +5,11 @@ metadata:
   labels:
     k8s-app: kube-router
     tier: node
+  annotations:
+    checkov.io/skip1: CKV_K8S_19=The container needs to modify host network rules.
+    checkov.io/skip2: CKV_K8S_35=The container needs to know values from the node.
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "20244"
   name: kube-router
   namespace: kube-system
 spec:
@@ -45,6 +50,8 @@ spec:
             #- "--peer-router-ips=<CHANGE ME>"
             #- "--peer-router-asns=<CHANGE ME>"
             #- "--cluster-asn=<CHANGE ME>"
+            # Metrics
+            - "--metrics-port=20244"
           env:
             - name: NODE_NAME
               valueFrom:
@@ -56,6 +63,9 @@ spec:
               port: 20244
             initialDelaySeconds: 10
             periodSeconds: 3
+          ports:
+            - containerPort: 20244
+              name: monitoring
           resources:
             requests:
               cpu: 250m
@@ -135,3 +145,20 @@ subjects:
   - kind: ServiceAccount
     name: kube-router
     namespace: kube-system
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: kube-router
+  namespace: kube-system
+spec:
+  namespaceSelector:
+    matchNames:
+      - "kube-system"
+  podMetricsEndpoints:
+    - interval: 5s
+      path: /metrics
+      port: monitoring
+  selector:
+    matchLabels:
+      k8s-app: kube-router
