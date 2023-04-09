@@ -11,7 +11,7 @@ metadata:
     checkov.io/skip3: CKV_K8S_38=The container needs to know values from the node.
     checkov.io/skip4: CKV_K8S_28=The container does bgp.
     prometheus.io/scrape: "true"
-    prometheus.io/port: "8080"
+    prometheus.io/port: "8081"
   name: kube-router
   namespace: kube-system
 spec:
@@ -53,7 +53,7 @@ spec:
             #- "--peer-router-asns=<CHANGE ME>"
             #- "--cluster-asn=<CHANGE ME>"
             # Metrics
-            - "--metrics-port=8080"
+            - "--metrics-port=8081"
           env:
             - name: NODE_NAME
               valueFrom:
@@ -66,7 +66,7 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 3
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
               name: monitoring
           resources:
             requests:
