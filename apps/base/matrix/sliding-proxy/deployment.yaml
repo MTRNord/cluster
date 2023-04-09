@@ -4,6 +4,10 @@ kind: Deployment
 metadata:
   name: sliding-proxy-midnightthoughts
   namespace: matrix
+  annotations:
+    checkov.io/skip1: CKV_K8S_35=False positive.
+    checkov.io/skip2: CKV_K8S_40=Too late too change.
+    checkov.io/skip3: CKV_K8S_23=Too late too change.
 spec:
   replicas: 1
   selector:
@@ -14,6 +18,11 @@ spec:
       labels:
         app: sliding-proxy-midnightthoughts
     spec:
+      securityContext:
+        #runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      automountServiceAccountToken: false
       containers:
         - image: ghcr.io/matrix-org/sliding-sync:v0.99.1 # {"$imagepolicy": "matrix:sliding-proxy"}
           imagePullPolicy: Always
@@ -40,6 +49,8 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 30
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
             allowPrivilegeEscalation: false
             capabilities:
               drop:

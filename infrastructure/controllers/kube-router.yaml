@@ -6,8 +6,10 @@ metadata:
     k8s-app: kube-router
     tier: node
   annotations:
-    checkov.io/skip1: CKV_K8S_19=The container needs to modify host network rules.
-    checkov.io/skip2: CKV_K8S_35=The container needs to know values from the node.
+    checkov.io/skip1: CKV_K8S_20=The container needs to modify host network rules.
+    checkov.io/skip2: CKV_K8S_19=The container needs to modify host network rules.
+    checkov.io/skip3: CKV_K8S_38=The container needs to know values from the node.
+    checkov.io/skip4: CKV_K8S_28=The container does bgp.
     prometheus.io/scrape: "true"
     prometheus.io/port: "8080"
   name: kube-router
