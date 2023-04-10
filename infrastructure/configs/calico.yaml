@@ -37,7 +37,7 @@ metadata:
   name: felix-metrics-svc
   namespace: calico-system
 spec:
-  clusterIP: None
+  ipFamilyPolicy: PreferDualStack
   selector:
     k8s-app: calico-node
   ports:
@@ -51,7 +51,7 @@ metadata:
   name: typha-metrics-svc
   namespace: calico-system
 spec:
-  clusterIP: None
+  ipFamilyPolicy: PreferDualStack
   selector:
     k8s-app: calico-typha
   ports:
