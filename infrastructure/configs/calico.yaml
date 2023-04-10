@@ -6,6 +6,10 @@ metadata:
 spec:
   # Configures Calico networking.
   calicoNetwork:
+    nodeAddressAutodetectionV4:
+      kubernetes: NodeInternalIP
+    nodeAddressAutodetectionV6:
+      kubernetes: NodeInternalIP
     # Note: The ipPools section cannot be modified post-install.
     ipPools:
       - blockSize: 24
