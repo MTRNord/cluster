@@ -84,10 +84,10 @@ spec:
   endpoints:
     - port: metrics
       relabelings:
-        - source_labels: [__meta_kubernetes_service_name]
+        - sourceLabels: [__meta_kubernetes_service_name]
           regex: typha-metrics-svc
           replacement: $1
           action: keep
-        - source_labels: [__meta_kubernetes_pod_container_port_name]
+        - sourceLabels: [__meta_kubernetes_pod_container_port_name]
           regex: calico-typha
           action: drop
