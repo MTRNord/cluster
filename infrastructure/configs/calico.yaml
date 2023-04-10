@@ -1,0 +1,93 @@
+---
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  # Configures Calico networking.
+  calicoNetwork:
+    # Note: The ipPools section cannot be modified post-install.
+    ipPools:
+      - blockSize: 24
+        cidr: 10.244.0.0/16
+        encapsulation: VXLANCrossSubnet
+        natOutgoing: Enabled
+        nodeSelector: all()
+      - blockSize: 116
+        cidr: fc00:0::/96
+        encapsulation: VXLANCrossSubnet
+        natOutgoing: Enabled
+        nodeSelector: all()
+---
+# This section configures the Calico API server.
+# For more information, see: https://projectcalico.docs.tigera.io/master/reference/installation/api#operator.tigera.io/v1.APIServer
+apiVersion: operator.tigera.io/v1
+kind: APIServer
+metadata:
+  name: default
+spec: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: felix-metrics-svc
+  namespace: calico-system
+spec:
+  clusterIP: None
+  selector:
+    k8s-app: calico-node
+  ports:
+    - port: 9091
+      targetPort: 9091
+      name: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: typha-metrics-svc
+  namespace: calico-system
+spec:
+  clusterIP: None
+  selector:
+    k8s-app: calico-typha
+  ports:
+    - port: 9093
+      targetPort: 9093
+      name: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: felix-metrics
+  namespace: calico-system
+spec:
+  selector:
+    matchLabels:
+      app: felix-metrics-svc
+  endpoints:
+    - port: metrics
+      relabelings:
+        - source_labels: [__meta_kubernetes_service_name]
+          regex: felix-metrics-svc
+          replacement: $1
+          action: keep
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: typha-metrics
+  namespace: calico-system
+spec:
+  selector:
+    matchLabels:
+      app: typha-metrics-svc
+  endpoints:
+    - port: metrics
+      relabelings:
+        - source_labels: [__meta_kubernetes_service_name]
+          regex: typha-metrics-svc
+          replacement: $1
+          action: keep
+        - source_labels: [__meta_kubernetes_pod_container_port_name]
+          regex: calico-typha
+          action: drop
