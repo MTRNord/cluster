@@ -35,64 +35,43 @@ spec: {}
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    k8s-app: calico-felix
   name: felix-metrics-svc
   namespace: calico-system
 spec:
-  ipFamilyPolicy: PreferDualStack
+  clusterIP: None
+  ports:
+    - name: metrics-port
+      port: 9091
   selector:
     k8s-app: calico-node
-  ports:
-    - port: 9091
-      targetPort: 9091
-      name: metrics
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    k8s-app: calico-typha
   name: typha-metrics-svc
   namespace: calico-system
 spec:
-  ipFamilyPolicy: PreferDualStack
+  clusterIP: None
+  ports:
+    - name: metrics-port
+      port: 9093
   selector:
     k8s-app: calico-typha
-  ports:
-    - port: 9093
-      targetPort: 9093
-      name: metrics
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: felix-metrics
+  name: calico
   namespace: calico-system
 spec:
-  selector:
-    matchLabels:
-      app: felix-metrics-svc
   endpoints:
-    - port: metrics
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_service_name]
-          regex: felix-metrics-svc
-          replacement: $1
-          action: keep
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: typha-metrics
-  namespace: calico-system
-spec:
+    - port: metrics-port
   selector:
-    matchLabels:
-      app: typha-metrics-svc
-  endpoints:
-    - port: metrics
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_service_name]
-          regex: typha-metrics-svc
-          replacement: $1
-          action: keep
-        - sourceLabels: [__meta_kubernetes_pod_container_port_name]
-          regex: calico-typha
-          action: drop
+    matchExpressions:
+      - key: k8s-app
+        operator: In
+        values: ["calico-node", "calico-typha", "calico-kube-controllers"]
