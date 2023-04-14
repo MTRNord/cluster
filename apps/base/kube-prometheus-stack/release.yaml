@@ -17,6 +17,9 @@ spec:
     crds: Create
   upgrade:
     crds: CreateReplace
+    # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+    # causing spurious drift detection
+    force: true
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
   values:
     prometheus:
