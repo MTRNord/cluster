@@ -24,6 +24,44 @@ spec:
         natOutgoing: Enabled
         nodeSelector: all()
 ---
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  annotations:
+    projectcalico.org/metadata: '{"uid":"97ec4c07-4a0e-47c5-9774-edf72c1fe0de","creationTimestamp":"2023-04-09T20:03:11Z"}'
+  creationTimestamp: "2023-04-09T20:03:11Z"
+  name: default-ipv4-ippool
+  uid: efbc8cb5-aee0-4686-9ffa-955d888fed2b
+spec:
+  allowedUses:
+    - Workload
+    - Tunnel
+  blockSize: 24
+  cidr: 10.244.0.0/16
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: CrossSubnet
+---
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  annotations:
+    projectcalico.org/metadata: '{"uid":"d12ff40b-eae6-4923-9646-2e62633c54de","creationTimestamp":"2023-04-09T20:03:11Z"}'
+  creationTimestamp: "2023-04-09T20:03:11Z"
+  name: default-ipv6-ippool
+  uid: b749fcca-8f0d-4729-8625-cb012d85a467
+spec:
+  allowedUses:
+    - Workload
+    - Tunnel
+  blockSize: 116
+  cidr: fc00::/96
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: CrossSubnet
+---
 # This section configures the Calico API server.
 # For more information, see: https://projectcalico.docs.tigera.io/master/reference/installation/api#operator.tigera.io/v1.APIServer
 apiVersion: operator.tigera.io/v1
