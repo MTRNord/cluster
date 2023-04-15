@@ -34,6 +34,7 @@ spec:
 
       stream_writers:
         events: event_persister
+      run_background_tasks_on: background_worker
       federation_sender_instances:
         - federation-sender-1
         - federation-sender-2
@@ -67,6 +68,11 @@ spec:
         enabled: true
         generic: true
         listeners: [replication]
+
+      background_worker:
+        replicaCount: 1
+        enabled: true
+        generic: true
 
       synchrotron:
         enabled: false
