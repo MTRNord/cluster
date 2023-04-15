@@ -64,12 +64,14 @@ spec:
         paths:
           - "/_matrix/federation/v1/send/"
       event_persister:
+        name: event_persister
         replicaCount: 1
         enabled: true
         generic: true
         listeners: [replication]
 
       background_worker:
+        name: background_worker
         replicaCount: 1
         enabled: true
         generic: true
