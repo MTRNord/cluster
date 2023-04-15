@@ -1,138 +1,163 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: matrix-synapse
-  namespace: matrix
+    name: matrix-synapse
+    namespace: matrix
 spec:
-  releaseName: matrix-synapse
-  chart:
-    spec:
-      version: 3.0.x
-  values:
-    signingkey:
-      job:
-        enabled: false
-      existingSecret: matrix-synapse-signingkey
-      existingSecretKey: signing.key
-    image:
-      repository: coreharbor.kubernetes.midnightthoughts.space/matrixdotorg/synapse
-      # TODO update properly again
-      tag: 48969d50
-    serverName: midnightthoughts.space
-    publicServerName: matrix.midnightthoughts.space
-    wellknown:
-      client:
-        m.homeserver:
-          base_url: https://matrix.midnightthoughts.space
-        org.matrix.msc3575.proxy:
-          url: https://sliding.matrix.midnightthoughts.space
-    config:
-      reportStats: true
-      enableRegistration: false
-      trustedKeyServers:
-        - server_name: matrix.org
-    extraConfig:
-      registration_shared_secret: ENC[AES256_GCM,data:ko6UvcEIySzjyFP82sYMUROIZgLbKKNPg93H/Csd7RKZdAoO/7CAfN5bZ5gF1E4U4VC6U+yo/NgVv+z3EsdKUQ==,iv:ir3GT14m7jCqEMozpSNCWRxw9HNWi+JBhVmbTfPLLPc=,tag:HMn9szn1eGmxJQlN0uFRxg==,type:str]
-      app_service_config_files:
-        - /data/whatsapp-registration.yaml
-        - /data/instagram-registration.yaml
-        - /data/signal-registration.yaml
-        - /data/hookshot-registration.yaml
-    modules:
-      - module: shared_secret_authenticator.SharedSecretAuthProvider
+    releaseName: matrix-synapse
+    chart:
+        spec:
+            version: 3.0.x
+    values:
+        signingkey:
+            job:
+                enabled: false
+            existingSecret: matrix-synapse-signingkey
+            existingSecretKey: signing.key
+        image:
+            repository: coreharbor.kubernetes.midnightthoughts.space/matrixdotorg/synapse
+            # TODO update properly again
+            tag: 48969d50
+        serverName: midnightthoughts.space
+        publicServerName: matrix.midnightthoughts.space
+        wellknown:
+            client:
+                m.homeserver:
+                    base_url: https://matrix.midnightthoughts.space
+                org.matrix.msc3575.proxy:
+                    url: https://sliding.matrix.midnightthoughts.space
         config:
-          shared_secret: ENC[AES256_GCM,data:SJ+mCqsZkFqt/+ivpFCrGs5/BnS8goWRGFV+Pl76mEU/ch/7qB50UBZy/fN0BjXXa248ZDf/Tj9by0Jk59DAgQ==,iv:V4bePppD7v/s7JU6Thr0R0UOjTApalh5uzUBP1DrVxs=,tag:YDiKt+P+QPx8nWLwUZT69Q==,type:str]
-    ingress:
-      traefikPaths: true
-      hosts:
-        - midnightthoughts.space
-        - matrix.midnightthoughts.space
-      tls:
-        - hosts:
-            - midnightthoughts.space
-            - matrix.midnightthoughts.space
-          secretName: midnightthoughts-synapse-tls-secret
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-        traefik.ingress.kubernetes.io/router.tls: "true"
-        traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
-    workers:
-      default:
-        volumeMounts:
-          - mountPath: /data/whatsapp-registration.yaml
-            subPath: registration.yaml
-            name: whatsapp-config-volume
-          - mountPath: /data/instagram-registration.yaml
-            subPath: registration.yaml
-            name: instagram-config-volume
-          - mountPath: /data/signal-registration.yaml
-            subPath: registration.yaml
-            name: signal-config-volume
-          - mountPath: /data/hookshot-registration.yaml
-            subPath: registration.yaml
-            name: hookshot-config-volume
-        volumes:
-          - name: whatsapp-config-volume
-            configMap:
-              name: whatsapp-bridge-config
-          - name: instagram-config-volume
-            configMap:
-              name: instagram-bridge-config
-          - name: signal-config-volume
-            configMap:
-              name: signal-bridge-config
-          - name: hookshot-config-volume
-            configMap:
-              name: hookshot-config
-    synapse:
-      extraVolumeMounts:
-        - mountPath: /data/whatsapp-registration.yaml
-          subPath: registration.yaml
-          name: whatsapp-config-volume
-        - mountPath: /data/instagram-registration.yaml
-          subPath: registration.yaml
-          name: instagram-config-volume
-        - mountPath: /data/signal-registration.yaml
-          subPath: registration.yaml
-          name: signal-config-volume
-        - mountPath: /data/hookshot-registration.yaml
-          subPath: registration.yaml
-          name: hookshot-config-volume
-      extraVolumes:
-        - name: whatsapp-config-volume
-          configMap:
-            name: whatsapp-bridge-config
-        - name: instagram-config-volume
-          configMap:
-            name: instagram-bridge-config
-        - name: signal-config-volume
-          configMap:
-            name: signal-bridge-config
-        - name: hookshot-config-volume
-          configMap:
-            name: hookshot-config
-    externalPostgresql:
-      username: synapse
-      ## The name of an existing secret with postgresql credentials
-      existingSecret: synapse-midnightthoughts-postgresql
-      database: synapse
+            reportStats: true
+            enableRegistration: false
+            trustedKeyServers:
+                - server_name: matrix.org
+        extraConfig:
+            registration_shared_secret: ENC[AES256_GCM,data:lnbYOGb3EeoiTY+dZXH09YeV0VXIHG49lrH4tfmD6X9k3iTK/Rt9Ro/vpI0H3XU0VCEv4codUvT1cFU999eD1A==,iv:wM78fM6yLmgVyBdxt6iVd6Is8rcUaFYm/VU7bTRd4EY=,tag:N975y5H/a2RU/mI5V6L4fQ==,type:str]
+            app_service_config_files:
+                - /data/whatsapp-registration.yaml
+                - /data/instagram-registration.yaml
+                - /data/signal-registration.yaml
+                - /data/hookshot-registration.yaml
+        modules:
+            - module: shared_secret_authenticator.SharedSecretAuthProvider
+              config:
+                shared_secret: ENC[AES256_GCM,data:4lHuO7A3xBgBEsKVgycNz+Jp5fuOucPvfdRZ90bPf07nlYiVfj7I7WkuAEP2a80fDNOyJURHKi0xEn8Z/XCeVw==,iv:RSBrFSq4kFT8MHfaPLDE/yffjFF6yMy+p+BAgAUHJz8=,tag:wX0dgqe1C3CZCL6Z17+URg==,type:str]
+        ingress:
+            traefikPaths: true
+            hosts:
+                - midnightthoughts.space
+                - matrix.midnightthoughts.space
+            tls:
+                - hosts:
+                    - midnightthoughts.space
+                    - matrix.midnightthoughts.space
+                  secretName: midnightthoughts-synapse-tls-secret
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+                traefik.ingress.kubernetes.io/router.tls: "true"
+                traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
+        workers:
+            default:
+                volumeMounts:
+                    - mountPath: /data/whatsapp-registration.yaml
+                      subPath: registration.yaml
+                      name: whatsapp-config-volume
+                    - mountPath: /data/instagram-registration.yaml
+                      subPath: registration.yaml
+                      name: instagram-config-volume
+                    - mountPath: /data/signal-registration.yaml
+                      subPath: registration.yaml
+                      name: signal-config-volume
+                    - mountPath: /data/hookshot-registration.yaml
+                      subPath: registration.yaml
+                      name: hookshot-config-volume
+                volumes:
+                    - name: whatsapp-config-volume
+                      configMap:
+                        name: whatsapp-bridge-config
+                    - name: instagram-config-volume
+                      configMap:
+                        name: instagram-bridge-config
+                    - name: signal-config-volume
+                      configMap:
+                        name: signal-bridge-config
+                    - name: hookshot-config-volume
+                      configMap:
+                        name: hookshot-config
+        synapse:
+            extraVolumeMounts:
+                - mountPath: /data/whatsapp-registration.yaml
+                  subPath: registration.yaml
+                  name: whatsapp-config-volume
+                - mountPath: /data/instagram-registration.yaml
+                  subPath: registration.yaml
+                  name: instagram-config-volume
+                - mountPath: /data/signal-registration.yaml
+                  subPath: registration.yaml
+                  name: signal-config-volume
+                - mountPath: /data/hookshot-registration.yaml
+                  subPath: registration.yaml
+                  name: hookshot-config-volume
+            extraVolumes:
+                - name: whatsapp-config-volume
+                  configMap:
+                    name: whatsapp-bridge-config
+                - name: instagram-config-volume
+                  configMap:
+                    name: instagram-bridge-config
+                - name: signal-config-volume
+                  configMap:
+                    name: signal-bridge-config
+                - name: hookshot-config-volume
+                  configMap:
+                    name: hookshot-config
+        externalPostgresql:
+            username: synapse
+            ## The name of an existing secret with postgresql credentials
+            existingSecret: synapse-midnightthoughts-postgresql
+            database: synapse
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     meta.helm.sh/release-name: matrix-synapse
+#     meta.helm.sh/release-namespace: matrix
+#   labels:
+#     app.kubernetes.io/instance: matrix-synapse
+#     app.kubernetes.io/name: matrix-synapse
+#   name: matrix-synapse-event-persister
+#   namespace: matrix
+# spec:
+#   internalTrafficPolicy: Cluster
+#   ipFamilyPolicy: PreferDualStack
+#   ports:
+#     - name: event_persister
+#       port: 8034
+#       protocol: TCP
+#       targetPort: 8034
+#   selector:
+#     app.kubernetes.io/component: synapse
+#     app.kubernetes.io/instance: matrix-synapse
+#     app.kubernetes.io/name: matrix-synapse
+#   type: ClusterIP
 sops:
-  kms: []
-  gcp_kms: []
-  azure_kv: []
-  hc_vault: []
-  age:
-    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxV25raWEzaGoreHBxa1hj
-        SmVuK2o0cnpFeWtmY0E3VUVOQklKbnNxNWk4Cko4QXVHM1lCNFZoa3MxWEU1WUZR
-        dHgyYW1KQkMzZTM3YU13RGlETXk0bEEKLS0tIFRoeTZpT0h5cnJpMkhuNTZCNGJ4
-        ZVQ3cXd5cmFYbGRIbHRCRWVGdlF5TWMKfGpLx72RqwAxPbhTicJPPIOG+MJLyd/o
-        uIEr3Cs1maqm+Vp51hQ5GDLVsVJMTdcRZ+Cd0+bOYrOirgCdxgwXBA==
-        -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2023-04-10T01:34:12Z"
-  mac: ENC[AES256_GCM,data:20DpslNyZ9iEKmOKGs/XXQdl7zftZW0f7kKoMoICMOq+e4Yc0Br5aAqOnfp6kmtTDfKYjpalh9pMUPGX1br+KXwCkR08zGqyRILbI22amCOHPb8uG7flNxkwlWSfwxQEd9WwqpR6ZURDPE+3qaQNGl+aV5326kFQNvyQt/bTiJo=,iv:tmWRhqteljLHHG/l8QS4xhnafgc+TQ2bj0akYljTboY=,tag:lEXQhXUWhkbX5QlXzGxxjg==,type:str]
-  pgp: []
-  encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
-  version: 3.7.3
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDUXo2OEJqRHNvQU82Vlht
+            NE5jcCtBTHV5SDFMWkI2WnhkZjJ4Rm5lZWpFCm4wc2lRbnp0cHl4VUhuSUFWV1VN
+            MThyVXBaLzFMSzMxd1ROVHRpUXlqdlEKLS0tIGVkZjN3b2VDUHIydElPMFBWU0o1
+            dUFOUEdCeG9uMmZ3NUdpTmNXa3lCWGcKrKK1VJ9CtOQVZCTvn9MhVNkINenJzUYa
+            g473i0lG82dcYtQA2+iRrjxLRj7J8lCPu5vxHPJwXZg1Wia/7O1Efw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-04-15T12:37:32Z"
+    mac: ENC[AES256_GCM,data:GOIYLrnB4+/WAzO27GQxClFF/lsKZ7cd6GMvhpRL8TtIJozX9XZgdYsq8A0+aLAkxZWVn0hrdlH99Gzo81xfpv2iaTkNlxzQI3KZmw5dmdOiqeHjz97uM74YcYXjN2/8SwXjE3pU0ywNefljR20PEsb+F4Aq/kwMm/E9GSJUYew=,iv:8/hxn0s7MnDyeqzgpayt9TTIzKHvuJr4AYY4MUYbh1c=,tag:9f3bVAcM2SQz1hb/3r7NMQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
+    version: 3.7.3

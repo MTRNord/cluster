@@ -27,6 +27,13 @@ spec:
       pullSecrets:
         - name: docker
     extraConfig:
+      instance_map:
+        event_persister:
+          host: event_persister.matrix.svc.cluster.local
+          port: 8083
+
+      stream_writers:
+        events: event_persister
       federation_sender_instances:
         - federation-sender-1
         - federation-sender-2
@@ -55,6 +62,11 @@ spec:
         listeners: [federation]
         paths:
           - "/_matrix/federation/v1/send/"
+      event_persister:
+        replicaCount: 1
+        enabled: true
+        generic: true
+        listeners: [replication]
 
       synchrotron:
         enabled: false
