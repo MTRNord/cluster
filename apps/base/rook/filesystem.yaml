@@ -52,6 +52,8 @@ spec:
       # are already enabled by other settings in the cluster CR.
       - name: pg_autoscaler
         enabled: true
+      - name: rook
+        enabled: true
   # enable the ceph dashboard for viewing cluster status
   dashboard:
     enabled: true
@@ -533,4 +535,5 @@ spec:
           service:
             name: rook-ceph-mgr-dashboard
             port:
-              name: https-dashboard
+              name: http-dashboard
+
