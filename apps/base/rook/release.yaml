@@ -45,7 +45,7 @@ spec:
     crds: CreateReplace
   values:
     toolbox:
-      enabled: true
+      enabled: false
     monitoring:
       enabled: true
       createPrometheusRules: true
@@ -80,7 +80,7 @@ spec:
         # port: 8443
         # Serve the dashboard using SSL (if using ingress to expose the dashboard and `ssl: true` you need to set
         # the corresponding "backend protocol" annotation(s) for your ingress controller of choice)
-        ssl: true
+        ssl: false
       storage:
         useAllNodes: false
         nodes:
@@ -167,7 +167,8 @@ spec:
           cert-manager.io/cluster-issuer: letsencrypt-dns
         host:
           name: dashboard.ceph.midnightthoughts.space
-          path: "/ceph-dashboard(/|$)(.*)"
+          #path: "/ceph-dashboard(/|$)(.*)"
+          path: /
         tls:
         - hosts:
             - dashboard.ceph.midnightthoughts.space
