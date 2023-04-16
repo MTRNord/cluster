@@ -406,6 +406,10 @@ spec:
     activeStandby: true
     # The affinity rules to apply to the mds deployment
     placement:
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
       #  nodeAffinity:
       #    requiredDuringSchedulingIgnoredDuringExecution:
       #      nodeSelectorTerms:
