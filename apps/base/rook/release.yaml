@@ -90,6 +90,12 @@ spec:
           - name: "control-plane-3"
             devices:
               - name: "sdb"
+    placement:
+      all:
+        tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/control-plane
+            operator: Exists
     ingress:
       # -- Enable an ingress for the ceph-dashboard
       dashboard:
