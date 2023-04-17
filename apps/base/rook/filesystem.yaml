@@ -304,10 +304,24 @@ spec:
     nodes:
       - name: "control-plane-2"
         devices: # specific devices to use for storage can be specified for each node
-          - name: "sdb"
+          - name: "/dev/sdb"
+            resources:
+              limits:
+                cpu: "2"
+                memory: "4096Mi"
+              requests:
+                cpu: "0"
+                memory: "0Mi"
       - name: "control-plane-3"
         devices: # specific devices to use for storage can be specified for each node
-          - name: "sdb"
+          - name: "/dev/sdb"
+            resources:
+              limits:
+                cpu: "2"
+                memory: "4096Mi"
+              requests:
+                cpu: "0"
+                memory: "0Mi"
     #       - name: "nvme01" # multiple osds can be created on high performance devices
     #         config:
     #           osdsPerDevice: "5"
