@@ -384,7 +384,7 @@ spec:
   # The metadata pool spec. Must use replication.
   metadataPool:
     replicated:
-      size: 3
+      size: 2
       requireSafeReplicaSize: true
     parameters:
       # Inline compression mode for the data pool
@@ -399,7 +399,7 @@ spec:
     - name: replicated
       failureDomain: host
       replicated:
-        size: 3
+        size: 2
         # Disallow setting pool with replica 1, this could lead to data loss without recovery.
         # Make sure you're *ABSOLUTELY CERTAIN* that is what you want
         requireSafeReplicaSize: true
