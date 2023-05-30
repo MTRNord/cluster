@@ -39,6 +39,7 @@ metadata:
   name: default
   namespace: metallb-system
 spec:
+  autoAssign: false
   addresses:
     - 116.202.1.213/32
     - 65.21.116.73/32
@@ -62,6 +63,7 @@ spec:
     - 10.0.0.3/32 # CP-2
     - 65.109.5.159/32 # CP-2
     - 2a01:4f9:c012:550::1/64 # CP-2
+  autoAssign: false
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -69,6 +71,7 @@ metadata:
   name: control-plane-3
   namespace: metallb-system
 spec:
+  autoAssign: false
   addresses:
     - 10.0.0.4/32 # CP-2
     - 37.27.7.20/32 # CP-3
