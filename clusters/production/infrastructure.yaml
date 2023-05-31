@@ -43,10 +43,32 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
+  name: apps-secrets
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  dependsOn:
+    - name: apps-namespaces
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps/production/secrets
+  prune: false
+  wait: true
+  timeout: 5m0s
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
   name: infra-configs
   namespace: flux-system
 spec:
   dependsOn:
+    - name: apps-secrets
     - name: infra-controllers
   interval: 1h
   retryInterval: 1m

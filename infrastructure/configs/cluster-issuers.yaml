@@ -19,6 +19,10 @@ spec:
             tsigSecretSecretRef:
               key: tsig-secret
               name: tsig-secret
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
