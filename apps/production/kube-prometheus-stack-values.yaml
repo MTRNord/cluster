@@ -6,6 +6,19 @@ metadata:
 spec:
   values:
     grafana:
+      alerting:
+        contactpoints.yaml:
+          - orgId: 1
+            name: 'MidnightThoughts Ops'
+            receivers:
+              - uid: '1'
+                name: 'MidnightThoughts Ops'
+                type: 'email'
+                sendReminder: true
+                frequency: '1m'
+                settings:
+                  addresses:
+                    - 'ops@nordgedanken.dev'
       ingress:
         enabled: true
         hosts:
