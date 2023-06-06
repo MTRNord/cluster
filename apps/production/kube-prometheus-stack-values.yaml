@@ -30,7 +30,7 @@ spec:
                             type: loki
                             uid: loki
                         editorMode: builder
-                        expr: count_over_time({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
+                        expr: rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
                         hide: false
                         intervalMs: 1000
                         maxDataPoints: 43200
@@ -93,7 +93,7 @@ spec:
                         expression: Count
                         intervalMs: 1000
                         maxDataPoints: 43200
-                        reducer: mean
+                        reducer: last
                         refId: A
                         settings:
                             mode: replaceNN
