@@ -24,6 +24,7 @@ spec:
                       relativeTimeRange:
                         from: 600
                         to: 0
+                      datasourceUid: loki
                       model:
                         datasource:
                             type: loki
@@ -111,6 +112,13 @@ spec:
                   frequency: '1m'
                   settings:
                     addresses: 'ops@nordgedanken.dev'
+        policies.yaml:
+          apiVersion: 1
+          policies:
+            - orgId: 1
+              receiver: 'MidnightThoughts Ops'
+              group_by: ['grafana_folder', 'alertname']
+
       ingress:
         enabled: true
         hosts:
