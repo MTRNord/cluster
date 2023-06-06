@@ -17,9 +17,9 @@ spec:
               rules:
                 - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
                   title: DNSQueryRefusedError
-                  condition: C
+                  condition: Thresh
                   data:
-                    - refId: A
+                    - refId: Count
                       queryType: range
                       relativeTimeRange:
                         from: 600
@@ -28,43 +28,16 @@ spec:
                       model:
                         datasource:
                             type: loki
-                        editorMode: code
-                        expr: count(rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [$__interval]))
+                            uid: loki
+                        editorMode: builder
+                        expr: count_over_time({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
                         hide: false
                         intervalMs: 1000
                         maxDataPoints: 43200
                         queryType: range
-                        refId: A
-                    - refId: B
-                      relativeTimeRange:
-                        from: 600
-                        to: 0
-                      datasourceUid: __expr__
-                      model:
-                        conditions:
-                            - evaluator:
-                                params: []
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - B
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
-                        datasource:
-                            type: __expr__
-                            uid: __expr__
-                        expression: A
-                        hide: false
-                        intervalMs: 1000
-                        maxDataPoints: 43200
-                        reducer: mean
-                        refId: B
-                        type: reduce
-                    - refId: C
+                        range: true
+                        refId: Count
+                    - refId: Thresh
                       relativeTimeRange:
                         from: 600
                         to: 0
@@ -87,12 +60,45 @@ spec:
                         datasource:
                             type: __expr__
                             uid: __expr__
-                        expression: B
+                        expression: A
                         hide: false
                         intervalMs: 1000
                         maxDataPoints: 43200
-                        refId: C
+                        refId: Thresh
                         type: threshold
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params:
+                                    - 0
+                                    - 0
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params: []
+                              reducer:
+                                params: []
+                                type: avg
+                              type: query
+                        datasource:
+                            name: Expression
+                            type: __expr__
+                            uid: __expr__
+                        expression: Count
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: mean
+                        refId: A
+                        settings:
+                            mode: replaceNN
+                            replaceWithValue: 0
+                        type: reduce
                   noDataState: NoData
                   execErrState: Error
                   for: 5m
