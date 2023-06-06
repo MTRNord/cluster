@@ -1,157 +1,183 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: kube-prometheus
-  namespace: monitoring
+    name: kube-prometheus
+    namespace: monitoring
 spec:
-  interval: 5m
-  chart:
-    spec:
-      version: "46.6.x"
-      chart: kube-prometheus-stack
-      sourceRef:
-        kind: HelmRepository
-        name: prometheus-community
-      interval: 60m
-  install:
-    crds: Create
-  upgrade:
-    crds: CreateReplace
-    # Force recreation due to Helm not properly patching Deployment with e.g. added port,
-    # causing spurious drift detection
-    force: true
-  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-  values:
-    smtp:
-      existingSecret: "smtp-auth-secret"
-    prometheus:
-      prometheusSpec:
-        podMonitorSelectorNilUsesHelmValues: false
-        serviceMonitorSelectorNilUsesHelmValues: false
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: nfs-client
-              accessModes: ["ReadWriteOnce"]
-              resources:
-                requests:
-                  storage: 50Gi
-            selector: {}
-    alertmanager:
-      alertmanagerSpec:
-        useExistingSecret: true
-    namespaceOverride: monitoring
-    grafana:
-      extraSecretMounts:
-        - name: auth-generic-oauth-secret-mount
-          secretName: auth-generic-oauth-secret
-          defaultMode: 0440
-          mountPath: /etc/secrets/auth_generic_oauth
-          readOnly: true
-      defaultDashboardsTimezone: Europe/Berlin
-      dashboardProviders:
-        dashboardproviders.yaml:
-          apiVersion: 1
-          providers:
-            - name: "monitoring"
-              orgId: 1
-              folder: "Monitoring"
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/monitoring
-            - name: "matrix"
-              orgId: 1
-              folder: "Matrix"
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/matrix
-            - name: "nats"
-              orgId: 1
-              folder: "Nats"
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/nats
-      dashboards:
-        monitoring:
-          felix-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/felix-dashboard.json
-          typha-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/typha-dashboard.json
-          cilium-dashboard:
-            url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
-          cilium-operator-dashboard:
-            url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-operator-dashboard.json
-          hubble-dashboard:
-            url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/hubble-dashboard.json
-          postgres-dashboard:
-            url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
-          kube-router-dashboard:
-            url: https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/dashboard/kube-router.json
-        nats:
-          nats-jetstream:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/nats.json
-        matrix:
-          synapse-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
-          dendrite-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/dendrite.json
-          matrix-media-repo-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/matrix-media-repo.json
-      grafana.ini:
-        paths:
-          data: /var/lib/grafana/
-          logs: /var/log/grafana
-          plugins: /var/lib/grafana/plugins
-          provisioning: /etc/grafana/provisioning
-        analytics:
-          check_for_updates: true
-        log:
-          mode: console
-        grafana_net:
-          url: https://grafana.net
-        auth.generic_oauth:
-          enabled: true
-          scopes: openid email profile roles
-          name: OAuth
-          allow_sign_up: true
-          client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
-          client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
-          auth_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth"
-          token_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token"
-          api_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo"
-          role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
-      imageRenderer:
-        enabled: true
-    kubeProxy:
-      enabled: false
-
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              # Ignore these objects from Flux diff as they are mutated from chart hooks
-              kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
-              name: kube-prometheus-stack-admission
-            patch: |
-              - op: add
-                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
-                value: disabled
-          - target:
-              # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
-              kind: PrometheusRule
-            patch: |
-              - op: add
-                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
-                value: disabled
+    interval: 5m
+    chart:
+        spec:
+            version: 46.6.x
+            chart: kube-prometheus-stack
+            sourceRef:
+                kind: HelmRepository
+                name: prometheus-community
+            interval: 60m
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+    values:
+        smtp:
+            existingSecret: smtp-auth-secret
+        prometheus:
+            prometheusSpec:
+                podMonitorSelectorNilUsesHelmValues: false
+                serviceMonitorSelectorNilUsesHelmValues: false
+                storageSpec:
+                    volumeClaimTemplate:
+                        spec:
+                            storageClassName: nfs-client
+                            accessModes:
+                                - ReadWriteOnce
+                            resources:
+                                requests:
+                                    storage: 50Gi
+                        selector: {}
+        alertmanager:
+            alertmanagerSpec:
+                useExistingSecret: true
+        namespaceOverride: monitoring
+        grafana:
+            extraSecretMounts:
+                - name: auth-generic-oauth-secret-mount
+                  secretName: auth-generic-oauth-secret
+                  defaultMode: 288
+                  mountPath: /etc/secrets/auth_generic_oauth
+                  readOnly: true
+            defaultDashboardsTimezone: Europe/Berlin
+            dashboardProviders:
+                dashboardproviders.yaml:
+                    apiVersion: 1
+                    providers:
+                        - name: monitoring
+                          orgId: 1
+                          folder: Monitoring
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/monitoring
+                        - name: matrix
+                          orgId: 1
+                          folder: Matrix
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/matrix
+                        - name: nats
+                          orgId: 1
+                          folder: Nats
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/nats
+            dashboards:
+                monitoring:
+                    felix-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/felix-dashboard.json
+                    typha-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/typha-dashboard.json
+                    cilium-dashboard:
+                        url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
+                    cilium-operator-dashboard:
+                        url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-operator-dashboard.json
+                    hubble-dashboard:
+                        url: https://raw.githubusercontent.com/cilium/cilium/v1.13.1/examples/kubernetes/addons/prometheus/files/grafana-dashboards/hubble-dashboard.json
+                    postgres-dashboard:
+                        url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
+                    kube-router-dashboard:
+                        url: https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/dashboard/kube-router.json
+                nats:
+                    nats-jetstream:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/nats.json
+                matrix:
+                    synapse-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
+                    dendrite-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/dendrite.json
+                    matrix-media-repo-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/matrix-media-repo.json
+            grafana.ini:
+                smtp:
+                    enabled: true
+                    host: mail.nordgedanken.dev:465
+                    from_address: ops@nordgedanken.dev
+                    user: ops@nordgedanken.dev
+                    password: ENC[AES256_GCM,data:gAPdou+t52tu,iv:aKAchWRPLvmiTnGviUHz25C82yzPsAfcFPgTr30PxPo=,tag:dpFAHbVZPZrsru2k48Waow==,type:str]
+                paths:
+                    data: ENC[AES256_GCM,data:vSfZtzoRLiR4yHioUbFrS0c=,iv:lalX2QXqhf+v5zNnzYcPxlM/LjFO7C80FMA9PN5P5uo=,tag:+TDRv7goiSdKCSBFPVoxtA==,type:str]
+                    logs: /var/log/grafana
+                    plugins: /var/lib/grafana/plugins
+                    provisioning: /etc/grafana/provisioning
+                analytics:
+                    check_for_updates: true
+                log:
+                    mode: console
+                grafana_net:
+                    url: https://grafana.net
+                auth.generic_oauth:
+                    enabled: true
+                    scopes: openid email profile roles
+                    name: OAuth
+                    allow_sign_up: true
+                    client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+                    client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+                    auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
+                    token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
+                    api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
+                    role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
+            imageRenderer:
+                enabled: true
+        kubeProxy:
+            enabled: false
+    postRenderers:
+        - kustomize:
+            patches:
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated from chart hooks
+                    kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
+                    name: kube-prometheus-stack-admission
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
+                    kind: PrometheusRule
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBYSndZNyt4bzVPZUNGZ2R1
+            c2xhQmVtSnd5K2RFanJzaVNVaXdEU3ZZejFvCklqSTBiU2NXL0UyKzQxTGxrbnZo
+            OWxHeEpVc2p0RGRzd1R6OFFUUnJPUDQKLS0tIE54RkxDSWs5QXZ2QWVoeFJTOFpY
+            OHg4d3FycE9NWWc2WlVyS1NqUEtuNkEKjbwYqSr3FPBrPp71oYz/eKvG3QQVWXEs
+            //5ic9Uw/7tR0BrA1oc6SP6jtkJ+L5KCL02ZlEi5u1PQQBL7XEEAMA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-06-06T17:30:09Z"
+    mac: ENC[AES256_GCM,data:/om6L8cpAbNXVZ07J/UE90o6zexyGNmGqwxR6YpGhLBwHycyodaZT8pnYG12THR2FSbNJqIxsx4oEMJkbEvIX4pQenI9wjKYrGT+mXqHTHTR7UNctv7hVthy9Isly5tfu+vYkXc6/LQixgvSWYxVh09ziziFScLMrSWN2QL3Fmk=,iv:9ZZZ26CHmzveb3iCmh3pYXzmmZJZ2lo3juEknROKsJs=,tag:7kblnoA5KbycGjJNkh4bSg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
+    version: 3.7.3

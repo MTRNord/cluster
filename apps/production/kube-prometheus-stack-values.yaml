@@ -1,159 +1,132 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-    name: kube-prometheus
-    namespace: monitoring
+  name: kube-prometheus
+  namespace: monitoring
 spec:
-    values:
-        grafana:
-            alerting:
-                rules.yaml:
-                    apiVersion: 1
-                    groups:
-                        - orgId: 1
-                          name: Matrix Synapse
-                          folder: Matrix
-                          interval: 1m
-                          rules:
-                            - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
-                              title: DNSQueryRefusedError
-                              condition: C
-                              data:
-                                - refId: ENC[AES256_GCM,data:sA==,iv:flf1GEOSB3IEDlF8QhBqkZJPGYItij3Hl+KjxuF9bYI=,tag:Pzo6J+KbRumD3PQK0N5e4w==,type:str]
-                                  queryType: ENC[AES256_GCM,data:uGJQ+e8=,iv:h4/KwF3VyhBw5ZxqDieOvm0woTMLf/0TdVB0RFs8gjg=,tag:7db1tN1hWxWFmuRJAZb5+A==,type:str]
-                                  relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:nQ0d,iv:zuwIpU/kfljNJYrVz8gR5AMKlgsh/30rYAGZey0qF0E=,tag:0Rq6eUSYgxjKeS/CbCuAqg==,type:int]
-                                    to: ENC[AES256_GCM,data:pQ==,iv:L1/ENNSwOZGHLJ1BMuNe8HPwNCRoU/vx04/e7fvWjfg=,tag:e9tYi6JSxjo64+oG/AhlJg==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:Vpvh/A==,iv:WRPrkJAa3D6Ob5LlOKGyDaTRDTtIqgMbV+ZUUOW9sq4=,tag:vviLXdMchGT2Iehg3MJIEQ==,type:str]
-                                  model:
-                                    datasource:
-                                        type: ENC[AES256_GCM,data:50Q0fQ==,iv:psQQQN6Brwr7e5iHKdoKiG4574v2WhbfhfNPDjSzwk0=,tag:1jsJRO2AAWVb+QIPdesUUQ==,type:str]
-                                    editorMode: ENC[AES256_GCM,data:r7/R5g==,iv:qiUL+r3HnEXyLZ3J//aWpTcSqxzPdOElgu/B5nVI1rI=,tag:RLPAO/VcK5TIVbdpQsKt1Q==,type:str]
-                                    expr: ENC[AES256_GCM,data:gVgtzZ7RXUx2ZfnzHX02+42oPVx8+pymrjRl1qdVje6Bs/mXFkRXImGZt0heAMOcRcQUmJeyTSadvX5TVZiUuHY6O3V/8ojnoy4uyGEvzvll4MxrMPahRBmGBDztwxc=,iv:BHRWNWFexpkUAOz61XM0G1HQrCirwM0Ifib8RBvtnbw=,tag:mbpmipvVgneV3SDll8cAiA==,type:str]
-                                    hide: ENC[AES256_GCM,data:TIGwm6M=,iv:Cd6WAjCKRfZjFUx3i+jbQqY7uSBSYCfinw4y6fIrMBk=,tag:UXZV/EkMtf45biETW7DlLQ==,type:bool]
-                                    intervalMs: ENC[AES256_GCM,data:+DFzkw==,iv:HzIzj2upIXKOve6t8UqImqDoKRIN2fiCmEu50+dZe9U=,tag:fz8fOmefUnqc4NqhN2jTUw==,type:int]
-                                    maxDataPoints: ENC[AES256_GCM,data:oCoZNyg=,iv:HTrVAd/sUVgi1NORqW7geweWGA0kfOcl+t+VLOwMobI=,tag:q5HWux3PqMBbab5IhT9eig==,type:int]
-                                    queryType: ENC[AES256_GCM,data:ofEU2j8=,iv:v8e45NXq/GVaO2cHXycPWfAo7drtyJb7ZIUUWepfqy4=,tag:As011Ykh2YFdIS24ciQLOg==,type:str]
-                                    refId: ENC[AES256_GCM,data:Sg==,iv:uD8MLEZ0Dbu4vRMbYyYaOurd7EJWRJXWcgCOjm6/YoQ=,tag:WvCT5OsNbXMJ9ljltIgQpg==,type:str]
-                                - refId: ENC[AES256_GCM,data:bg==,iv:o0ay9T/VqYWxenLQVhB6Kdq0eEOx6HfvSxcBVcGyk+s=,tag:poVMsmSVtUo1WkXSW94ymQ==,type:str]
-                                  relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:xC2S,iv:vm1LRdnFhGfM5fe0Qsq5stOABTh0H2XskvXFEuRRVV8=,tag:9LB+HDHZcQeCqFQQjDz9Jg==,type:int]
-                                    to: ENC[AES256_GCM,data:Zw==,iv:/Y+t8T9RrTnbLGbEtckx7CEqUISMoO1LgWvOa4CB1cg=,tag:xeW8OPq/dNng3Yua9O+zLQ==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:17+qleDQMuA=,iv:8tl/ztQ/YBk0Ucd8y64DHu53qZPHPo2Hfwh4GywCT+I=,tag:ZdjKfUOtU0gPgZENcMMNbg==,type:str]
-                                  model:
-                                    conditions:
-                                        - evaluator:
-                                            params: []
-                                            type: ENC[AES256_GCM,data:1to=,iv:SFKfUNeE1JwWErkE+C2IER5o/wkMFPI/5s1y7Gjv5OE=,tag:g443DikMyjrNmd5XD8SAbQ==,type:str]
-                                          operator:
-                                            type: ENC[AES256_GCM,data:hXFP,iv:m0hiSOm8Y/7u0iXhc0655oExneYQzIP55EAvu0LZY3o=,tag:gcdgr1e9rVEsw41UdTFCFg==,type:str]
-                                          query:
-                                            params:
-                                                - ENC[AES256_GCM,data:iA==,iv:YAO8Qqm/3Q1Qii/aXon1xZeAzh4Azu65R2Cc5t3HmMY=,tag:F+ud0CiX8pqjFyGhOlnJgg==,type:str]
-                                          reducer:
-                                            params: []
-                                            type: ENC[AES256_GCM,data:yJnEHQ==,iv:n9SRFJh4zeAsNV3zPza6F4xXganI3J9EkeNKou9FLxU=,tag:XYRk1ePRL15jugxMsTUaVw==,type:str]
-                                          type: ENC[AES256_GCM,data:4d1sP98=,iv:a/IODm3PSh+iDe7MQWjmDL9RGbrMUCSBoWHgrSdkIY0=,tag:NsETwelK5+r4gbC61LUWKw==,type:str]
-                                    datasource:
-                                        type: ENC[AES256_GCM,data:5bAZ9jeyIPI=,iv:7tfXltlFxwjqPbaonH7MQ3Wlb5anaxpOJgwOy5x7ZcM=,tag:BN1cvck0Z4D2E9+apVHWAw==,type:str]
-                                        uid: ENC[AES256_GCM,data:Y4bQK1NWIL4=,iv:wlEoZkCuyjy5sieoJN8HRF8MJ1Bs48PiZ12F0zvwmyo=,tag:+Cp0pFmihrt6uaEhUHWMQA==,type:str]
-                                    expression: ENC[AES256_GCM,data:zw==,iv:Z1CwZKj73VoZ5rJuUCIZBI/d4IQwHIbmnCR/6g4I+LI=,tag:eYybBgFm4AZzmygMin1vGw==,type:str]
-                                    hide: ENC[AES256_GCM,data:I31y0SU=,iv:Ib2R1+u6V582WKIEWGoJQ4NaPqMlS4zpr8jb5yEwflc=,tag:xgKefx6CegJlMcNuTbiQAQ==,type:bool]
-                                    intervalMs: ENC[AES256_GCM,data:u+YZ9g==,iv:IJRC8EhDYVIKXMD8I9m6kC4Pa+7aQHAmy9+JxUTv+AU=,tag:zC6Y5MjF6ZwXs9Dh1BLbpg==,type:int]
-                                    maxDataPoints: ENC[AES256_GCM,data:e8TdEe4=,iv:er7mb+MymTf8kWXEsUWUoby22umXt9RmCbi7PqN5IKk=,tag:gNwQhHFvP4KH1Q1njIfpMg==,type:int]
-                                    reducer: ENC[AES256_GCM,data:pGs5Ag==,iv:OXmFJSvGVyOq5TE9Y34KhO1c/VkzGgJJEC2JCkASVhs=,tag:qAi6CDUz6p2wJ0K5OnAwDA==,type:str]
-                                    refId: ENC[AES256_GCM,data:iA==,iv:5pP+7KFwDLL7k3vSAb3nE76+/vuysmrJnQnghBwoNPg=,tag:Iz6IQVcTzYF9WX5spcF/2w==,type:str]
-                                    type: ENC[AES256_GCM,data:NhDuQHO0,iv:0RYRi79ADo/cHVYP75jCJiu3RM2D5rpuM308D2o6MBE=,tag:JuHk6DiNsAf/9Dp99HU6fg==,type:str]
-                                - refId: ENC[AES256_GCM,data:+g==,iv:6pFRdQbcdba7Kl+VBStNR0PvBhdmtHAylitM4T7J6+s=,tag:4DmByXwld6MgFxHwGCATWg==,type:str]
-                                  relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:wBsn,iv:uNvWjaJTfgk9eA6PYOJKbBbGgEFC2ICpc+iJVBJVPLs=,tag:lCE7jKmUrQAcdUEp7kx57w==,type:int]
-                                    to: ENC[AES256_GCM,data:YA==,iv:b3Qdvxokd0SZuROnEGT+DV/qCx3qrPm9y/SLO1+L+vM=,tag:OXwU8lB481uAXpezcgqVPQ==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:pyrN5rDjtLA=,iv:srTUsBuIKXrhYHbUN4VQS/Qa+MXp2ZTUKZpPgVEcD00=,tag:lXzLuegRRIJyuy6abWVjnQ==,type:str]
-                                  model:
-                                    conditions:
-                                        - evaluator:
-                                            params:
-                                                - ENC[AES256_GCM,data:zw==,iv:hABFzXNS9zk4kywnFxCIQ8byF+V9gpHh3FxEBg0oLE8=,tag:8U3+2TFq6Q+f3qXV0J0TFQ==,type:int]
-                                            type: ENC[AES256_GCM,data:OK0=,iv:chAL8qFLjYLsDqMhKyeBny6MzhMKp0OhY4SKf4lV0oU=,tag:KzsNzlDdlqtF7Y2dletMlQ==,type:str]
-                                          operator:
-                                            type: ENC[AES256_GCM,data:MXNg,iv:j4oojrOXR3K4G0BL+6pU/I5yWd3acZgyc8vHXwSaalQ=,tag:7LWL2gFNYOTvGYhV4w0t3Q==,type:str]
-                                          query:
-                                            params:
-                                                - ENC[AES256_GCM,data:tA==,iv:bxoAikXjDRKrF5FPgFZDtZ26VpoZa6B35YL3UKaD7iU=,tag:W405kW14wUkiiwsxIQpwuQ==,type:str]
-                                          reducer:
-                                            params: []
-                                            type: ENC[AES256_GCM,data:1qEKlA==,iv:6HHNU4opEEgVWysYe9nR11OS5fqdghp7RhZSRZzjOIE=,tag:2d/gQKmK16yXLJwbfW2PpA==,type:str]
-                                          type: ENC[AES256_GCM,data:fpOD9r8=,iv:mqKdrKvbsPpYlbOSIU0Kpd0Ok4GRtpf019hmIBVs/vc=,tag:7hbd4jwiU9pdl/AuwODJoQ==,type:str]
-                                    datasource:
-                                        type: ENC[AES256_GCM,data:vfMGd734gFc=,iv:fN4tdhbcBzDwqCMyxY0t0EHUdJzEoviNH4GNniZAxTs=,tag:8krK6rs9ZGytP7aJFyMH+Q==,type:str]
-                                        uid: ENC[AES256_GCM,data:2oICRJAavY8=,iv:AxGNeHH8CzDx/uNQB7XkKkbxslcR8yhFxJOk3jwraWo=,tag:MXTAW1l+jYLWMJN9lF8foA==,type:str]
-                                    expression: ENC[AES256_GCM,data:iw==,iv:geuVpfpMnmZvsGhzXgbFlX7IQoJWPZqp1lcbVThoOBk=,tag:whqsGWjZ0BfalSoc6D0l0w==,type:str]
-                                    hide: ENC[AES256_GCM,data:DmjwRJ4=,iv:dInm+RNA8E5/9bHdRiFHA5H0zDypZh4CZ2hYuOnrbuM=,tag:6ngxP14a9nswRnlONfhpIQ==,type:bool]
-                                    intervalMs: ENC[AES256_GCM,data:som69g==,iv:1rxjsk5JWPyQ7aEDVPDA1aRkL9bB2N4Uc/OV0Ps8Bmc=,tag:OuPa1Qbe0FFz29QJdoMFWA==,type:int]
-                                    maxDataPoints: ENC[AES256_GCM,data:OeB+ccY=,iv:YHegc5hgo4cKbxetIHxbGENazbgmiH70oFH7sosWxW4=,tag:bAijG6JXSHlClus/qTtVcA==,type:int]
-                                    refId: ENC[AES256_GCM,data:sQ==,iv:rGTae/4sJD4rzTebEmYAvNNmpusmzvu3UotEQjsBAlA=,tag:GY1luyGCjhHcq4M9q5JR8w==,type:str]
-                                    type: ENC[AES256_GCM,data:X9KCvfSw6Ht+,iv:WSGRVhUKsEOUsKzI5Z89UA1LtDZPNnA+okAlqcUwSJM=,tag:hCi0kdRa6H1iB3vs6oAPRw==,type:str]
-                              noDataState: NoData
-                              execErrState: Error
-                              for: 5m
-                              annotations:
-                                summary: Matrix Synapse DNS Errors are higher than usual
-                              isPaused: false
-                contactpoints.yaml:
-                    apiVersion: 1
-                    contactPoints:
-                        - orgId: 1
-                          name: MidnightThoughts Ops
-                          receivers:
-                            - uid: "1"
-                              name: MidnightThoughts Ops
-                              type: email
-                              sendReminder: true
-                              frequency: 1m
-                              settings:
-                                addresses: ops@nordgedanken.dev
-                policies.yaml:
-                    apiVersion: 1
-                    policies:
-                        - orgId: 1
-                          receiver: MidnightThoughts Ops
-                          group_by:
-                            - grafana_folder
-                            - alertname
-            ingress:
-                enabled: true
-                hosts:
-                    - grafana.midnightthoughts.space
-                tls:
-                    - secretName: grafana.midnightthoughts.space
-                      hosts:
-                        - grafana.midnightthoughts.space
-            grafana.ini:
-                server:
-                    root_url: https://grafana.midnightthoughts.space
-                smtp:
-                    enabled: true
-                    host: mail.nordgedanken.dev:465
-                    from_address: ops@nordgedanken.dev
-                    user: ops@nordgedanken.dev
-                    password: ENC[AES256_GCM,data:iJh2rOHRmLdg,iv:kkakPWtEvaRxp42/Sr1jLDjAApB8NL8U2hp6etpXEmo=,tag:CW9/GElkRJs6r5e7Ol5Maw==,type:str]
-sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3aDF1bUxkbExuME5EdUVZ
-            Z0RIdUVJQklZVWw1SVR3ZitmUlpzM3VUUW0wCkZSU3JhTVhLcHB5UFV6VnkyQ1dH
-            QThqWE0rU0hkYk9ab0tkeitkK3FRMncKLS0tIFFOajliWFNxT3BITWlwaHhZWlhF
-            MWlJZ3hHQ0MzZ09zMjdzQ3pOMFN4TTAKSEhycAUDJmiArUr2mtMPnMDBPQB8J97X
-            irSLyNcLdaNZvijwCZg3GEeWs1cJ3h0Rgapwg0dWCnvAN1Vt8O7hHA==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-06-06T17:21:21Z"
-    mac: ENC[AES256_GCM,data:29dHx9XHJPu+XZeZ3y5pUGNB42rE3sDiJTVMxFzB88zZC4PfjSLmv9+GcjahjUBYBPCexNo4+1piukEEnmxEioLn5GeKjvTETo4+svO482cGUZH99ohXXq0IowbfwMylc4UhNSG7fl0vxk2HEqErebzgowp1YSQ2aTQcJOrEqU8=,iv:FbqE1oFizAVObiWuvkui252JhFRdHCNYpquIA6u//9I=,tag:3OJ49cY2O+MEatvErlPOHw==,type:str]
-    pgp: []
-    encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
-    version: 3.7.3
+  values:
+    grafana:
+      alerting:
+        rules.yaml:
+          apiVersion: 1
+          groups:
+            - orgId: 1
+              name: 'Matrix Synapse'
+              folder: Matrix
+              interval: 1m
+              rules:
+                - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
+                  title: DNSQueryRefusedError
+                  condition: C
+                  data:
+                    - refId: A
+                      queryType: range
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: loki
+                      model:
+                        datasource:
+                            type: loki
+                        editorMode: code
+                        expr: count(rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [$__interval]))
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        refId: A
+                    - refId: B
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params: []
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params:
+                                    - B
+                              reducer:
+                                params: []
+                                type: last
+                              type: query
+                        datasource:
+                            type: __expr__
+                            uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: mean
+                        refId: B
+                        type: reduce
+                    - refId: C
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params:
+                                    - 1
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params:
+                                    - C
+                              reducer:
+                                params: []
+                                type: last
+                              type: query
+                        datasource:
+                            type: __expr__
+                            uid: __expr__
+                        expression: B
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: C
+                        type: threshold
+                  noDataState: NoData
+                  execErrState: Error
+                  for: 5m
+                  annotations:
+                    summary: Matrix Synapse DNS Errors are higher than usual
+                  isPaused: false
+        contactpoints.yaml:
+          apiVersion: 1
+          contactPoints:
+            - orgId: 1
+              name: 'MidnightThoughts Ops'
+              receivers:
+                - uid: '1'
+                  name: 'MidnightThoughts Ops'
+                  type: 'email'
+                  sendReminder: true
+                  frequency: '1m'
+                  settings:
+                    addresses: 'ops@nordgedanken.dev'
+        policies.yaml:
+          apiVersion: 1
+          policies:
+            - orgId: 1
+              receiver: 'MidnightThoughts Ops'
+              group_by: ['grafana_folder', 'alertname']
+
+      ingress:
+        enabled: true
+        hosts:
+          - grafana.midnightthoughts.space
+        tls:
+          - secretName: grafana.midnightthoughts.space
+            hosts:
+              - grafana.midnightthoughts.space
+      grafana.ini:
+        server:
+          root_url: https://grafana.midnightthoughts.space
