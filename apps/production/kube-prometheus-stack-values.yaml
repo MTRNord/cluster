@@ -7,6 +7,97 @@ spec:
   values:
     grafana:
       alerting:
+        rules.yaml:
+          apiVersion: 1
+          groups:
+            - orgId: 1
+              name: 'Matrix Synapse'
+              folder: Matrix
+              interval: 1m
+              rules:
+                - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
+                  title: DNSQueryRefusedError
+                  condition: C
+                  data:
+                    - refId: A
+                      queryType: range
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      model:
+                        datasource:
+                            type: loki
+                        editorMode: code
+                        expr: count(rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [$__interval]))
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        refId: A
+                    - refId: B
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params: []
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params:
+                                    - B
+                              reducer:
+                                params: []
+                                type: last
+                              type: query
+                        datasource:
+                            type: __expr__
+                            uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: mean
+                        refId: B
+                        type: reduce
+                    - refId: C
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params:
+                                    - 1
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params:
+                                    - C
+                              reducer:
+                                params: []
+                                type: last
+                              type: query
+                        datasource:
+                            type: __expr__
+                            uid: __expr__
+                        expression: B
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: C
+                        type: threshold
+                  noDataState: NoData
+                  execErrState: Error
+                  for: 5m
+                  annotations:
+                    summary: Matrix Synapse DNS Errors are higher than usual
+                  isPaused: false
         contactpoints.yaml:
           apiVersion: 1
           contactPoints:
