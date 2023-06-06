@@ -1,132 +1,153 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: kube-prometheus
-  namespace: monitoring
+    name: kube-prometheus
+    namespace: monitoring
 spec:
-  values:
-    grafana:
-      alerting:
-        rules.yaml:
-          apiVersion: 1
-          groups:
-            - orgId: 1
-              name: 'Matrix Synapse'
-              folder: Matrix
-              interval: 1m
-              rules:
-                - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
-                  title: DNSQueryRefusedError
-                  condition: C
-                  data:
-                    - refId: A
-                      queryType: range
-                      relativeTimeRange:
-                        from: 600
-                        to: 0
-                      datasourceUid: loki
-                      model:
-                        datasource:
-                            type: loki
-                        editorMode: code
-                        expr: count(rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [$__interval]))
-                        hide: false
-                        intervalMs: 1000
-                        maxDataPoints: 43200
-                        queryType: range
-                        refId: A
-                    - refId: B
-                      relativeTimeRange:
-                        from: 600
-                        to: 0
-                      datasourceUid: __expr__
-                      model:
-                        conditions:
-                            - evaluator:
-                                params: []
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - B
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
-                        datasource:
-                            type: __expr__
-                            uid: __expr__
-                        expression: A
-                        hide: false
-                        intervalMs: 1000
-                        maxDataPoints: 43200
-                        reducer: mean
-                        refId: B
-                        type: reduce
-                    - refId: C
-                      relativeTimeRange:
-                        from: 600
-                        to: 0
-                      datasourceUid: __expr__
-                      model:
-                        conditions:
-                            - evaluator:
-                                params:
-                                    - 1
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - C
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
-                        datasource:
-                            type: __expr__
-                            uid: __expr__
-                        expression: B
-                        hide: false
-                        intervalMs: 1000
-                        maxDataPoints: 43200
-                        refId: C
-                        type: threshold
-                  noDataState: NoData
-                  execErrState: Error
-                  for: 5m
-                  annotations:
-                    summary: Matrix Synapse DNS Errors are higher than usual
-                  isPaused: false
-        contactpoints.yaml:
-          apiVersion: 1
-          contactPoints:
-            - orgId: 1
-              name: 'MidnightThoughts Ops'
-              receivers:
-                - uid: '1'
-                  name: 'MidnightThoughts Ops'
-                  type: 'email'
-                  sendReminder: true
-                  frequency: '1m'
-                  settings:
-                    addresses: 'ops@nordgedanken.dev'
-        policies.yaml:
-          apiVersion: 1
-          policies:
-            - orgId: 1
-              receiver: 'MidnightThoughts Ops'
-              group_by: ['grafana_folder', 'alertname']
-
-      ingress:
-        enabled: true
-        hosts:
-          - grafana.midnightthoughts.space
-        tls:
-          - secretName: grafana.midnightthoughts.space
-            hosts:
-              - grafana.midnightthoughts.space
-      grafana.ini:
-        server:
-          root_url: https://grafana.midnightthoughts.space
+    values:
+        grafana:
+            alerting:
+                rules.yaml:
+                    apiVersion: 1
+                    groups:
+                        - orgId: 1
+                          name: Matrix Synapse
+                          folder: Matrix
+                          interval: 1m
+                          rules:
+                            - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
+                              title: DNSQueryRefusedError
+                              condition: C
+                              data:
+                                - refId: ENC[AES256_GCM,data:Aw==,iv:DjPjjWi/+tWAnqckw8vxJpd8WYYOrQdzSiq6pJJId+k=,tag:fzjnwSyduXv7zlyJmvD6Ig==,type:str]
+                                  queryType: ENC[AES256_GCM,data:LycpcXY=,iv:XuxlLWjdbaRTDRwuW1smjg4ACyV0O03Kya2eboVm2jo=,tag:ZR7vMFHpDChI4ntV3M/oZA==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:Qoc1,iv:vzMqwMJtxLU3fLvc5th9cX/Jx+naKFrb0SCQ1+Dqzbc=,tag:zfQ4H1lEAIT82CI/FUqriQ==,type:int]
+                                    to: ENC[AES256_GCM,data:4Q==,iv:K2PPZSGYjWOxIzw5Q/PL1UXxYfWkYSDqwGU+iRoN1oI=,tag:AN/JBVBF5EIepcBaPAGKSg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:fUr73Q==,iv:lw5lwVbOmQC9K3Kkpi/oOvfBA5lyJSeZ95prz0T43+c=,tag:PRReq4q11YZ8c6c52iZrkA==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:Nc7DIg==,iv:INDes4Htr4aKIlDFnJvTIocIzfvgSbJ23wc7F4gN3GQ=,tag:6FLCQc3q/SGJqS8hNozmjA==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:7TUsfQ==,iv:8HIqtT+m5SUVj6gMZ+Gf2JrH7UGUIFtmAAGKsTrEDLg=,tag:DYfEaNjJEp1il2ocrBH4xw==,type:str]
+                                    expr: ENC[AES256_GCM,data:lTDvkTYzDQ34XEFNCIzt9hbjlzpxAgi7l0LbkpyEv+Te3vl/2/yBoF7rJHB2WmAn6tJc+0GWmI1Ip0NNywPZBhKJG3+H1KnKUqh+9jl5VV76jQv8oem78Cwu2kCwVDU=,iv:ZSukbDVSyNTTklRwmLMVC6BsFx9ojTPbA/RjBi2JceY=,tag:stsGimGkFjK+cf4QwlzyQg==,type:str]
+                                    hide: ENC[AES256_GCM,data:c1QPmko=,iv:1S9P+L0e82OsHO1a4FY0u+CTiZTXtgiaSfQ7SZUFT/g=,tag:K2799ptm1Z/Cyk6lswDNrg==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:ZOPAIA==,iv:VwKvoXNPBga3gH3ezoEj2bXtkdvx7qfCAylxKIiFqCU=,tag:7/Ko4iOzyesKx31CfsXqbQ==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:LAxdosE=,iv:4sUfCNiDnZlHDyQF/cE3+is1HzxviO3JlY9ekqFGylQ=,tag:fCoe/+WIPzYe1z7DsN/sCg==,type:int]
+                                    queryType: ENC[AES256_GCM,data:RSeuFm8=,iv:vULn63/ANgqNGIbNo1yWBNIZNrKSDD2eNGzeK2ooSLs=,tag:6s12gp422JjA0PqLTltEXQ==,type:str]
+                                    refId: ENC[AES256_GCM,data:8A==,iv:JBJVfL7D49f4oo0L9KYRkGye603f1b9+h92D0uyoA2I=,tag:t6et+fsxkfsmgWCQvintdA==,type:str]
+                                - refId: ENC[AES256_GCM,data:aA==,iv:Y5u2cMpNCtY5dMd0zIoCkp7GP6CLgsgudVnpYBIUgGE=,tag:QR92xSsFHmWuv8syAnhWig==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:S3Kr,iv:4qfOfDsWR/Fgz34x0fkLoU/8gilerzqdj6HFQNSff3g=,tag:MVev06A1h1/BnHZ9bpjPTQ==,type:int]
+                                    to: ENC[AES256_GCM,data:Hg==,iv:uvgNQNZLlgIQ9qquLXWB5RF+1f1v+OxoCo+ohsT1AiY=,tag:pEnXlQ8VtRV+X4mSoF1udw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:U4pUzUqUXb4=,iv:+9yDt6o8RI+6XkoO59pyr5jDUcTecqoEZF52wSFcZXE=,tag:U9Fg9jPU9EEaZkchV5EbdQ==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:z+g=,iv:SwemC2oSV9BWQWxC3ser3v6UA2zyQUQz9LPANhfiO28=,tag:hjyaSZ0SIxAWbEPK/P3wZw==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:/Q8t,iv:nRNUdojW2id3ZoG0XL18dCxhQouEAiu+S/MWiZ0cxsI=,tag:xSiIsqd6tbhqj28tx5cgzA==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:aw==,iv:8y3tP/HYyu/78J76VnNRiAxuH+7NBEZyLVT0xb0xy/I=,tag:nYMritqps37n9IA0w6hBhQ==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:3d1ykg==,iv:KteG2/4YX0bUXuHsTYR+fLm3lnkSIg2ty9n1C2v1ye0=,tag:ABfPqyeG3oM/ZxxOLBzw1w==,type:str]
+                                          type: ENC[AES256_GCM,data:08gtcZE=,iv:iqTPfVl14cwbZfN0Jg6GHR7ksjT+9pq7XHXA29l4Gts=,tag:oKXmAvW6zcmlf6O5VGJYow==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:tM5kX0wE1v8=,iv:P13tE8f/eChhBXdbR/aArh9ZnV/HRu8GfokeLKfyVNI=,tag:sjE2UliQw10/uDdww0qMlg==,type:str]
+                                        uid: ENC[AES256_GCM,data:xVEkH/2B2wk=,iv:OrZjP5tIipyyPF48YJpPhjkMvdU9s2Nb6x6VdgOJM8k=,tag:/kdT6atbzSHQRVv9xlQhwQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:Ew==,iv:zp4CBRftlMg526zBDIM4FfdMoUNecbiOz+4jhJMGJTU=,tag:o3dteXOx8M209PvR6qkctg==,type:str]
+                                    hide: ENC[AES256_GCM,data:baNu47k=,iv:kTAo4WNt+6zk61KdfnF8ymKjsYFtAeCOCZbaVW6r/ZU=,tag:7D5n12YXTi/BYd2v0b6NQw==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:ynSRpA==,iv:WlrZ4QpdV8Y1TOUVVaaTceRYKln+1GbuoQlI/tjzhoE=,tag:LqnqJBwh4brbttv/Nn7j9w==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:SmmppsI=,iv:RhLA2I73gvTejgiisS7AnYcJyI8idlkmvxeuNbuVyJ0=,tag:erf60mtOuWJQAD7AC+kbdQ==,type:int]
+                                    reducer: ENC[AES256_GCM,data:gMY2xA==,iv:ZaLc/8fr4SXa9/QSJMJyKsWyP79qvzfzxz9l6WObdRA=,tag:o8n7lUAMywNS6cwR7AKUOw==,type:str]
+                                    refId: ENC[AES256_GCM,data:eA==,iv:9IJCn96ehOPVbNZagTtqVhOhreq2rKpPd6pk0BhXRjg=,tag:Uy6s3NvIwjLx5dPTopX2jw==,type:str]
+                                    type: ENC[AES256_GCM,data:uNprZPT+,iv:YLVfF/z7CFSNoUCF+wDhSm3AOpJ2Hr4jWneV2IU/fsg=,tag:rxZD1BDWHiJ/NaZCX0JLSA==,type:str]
+                                - refId: ENC[AES256_GCM,data:dA==,iv:6N0vROYbzeTQV8SZIzkAk7trx0ckUVIStynazcPaxe4=,tag:iH9hgLlsEuI9Gf1zeCrk3g==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:98U+,iv:boHV4ISg32pb/xb6AKp2UEGyTUYY8U3h5moYHoJZFQo=,tag:LqjkRTk/9I7UreUSQKf9EA==,type:int]
+                                    to: ENC[AES256_GCM,data:Jg==,iv:kvawlqhlS+kqQ6uQFw64R7pbgTRfqy1iONy7RoBHCEY=,tag:suNlkISSeXFLiOwZmAwyxw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:YwRiaGbRaLQ=,iv:pJfKr5Z5tS3jXxPcQo6un7xBa3I1w2IarvlZmV1BjPs=,tag:kFMojst5/l+AstUxnQv1Dw==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:Fg==,iv:tgz19yWwOgZ+877mM0MY0lbvpxuEeZ7DRTA6uNCIuO8=,tag:v32TZrM8+b5orkJ6cvXFlw==,type:int]
+                                            type: ENC[AES256_GCM,data:Vnk=,iv:mo7PF5LM4xR6Y8cvro69vGYroJkoXh6snON9xl3ZDps=,tag:R2KrYP9TSGd8obKtwf29Aw==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:8kWL,iv:fe6yy0hog1CoV6V8SakWKnYpNzzubF7P+zBwrCliLAY=,tag:UIuNMxwj3qk/qfib0p71zg==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:zw==,iv:bnKboMKbvpnpx0KV7kag+RH4vlcTxImUf0YfWSALhXc=,tag:Eereg4zc7dkyf6t10ZjRVw==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:6IfEXg==,iv:TVXLsKeud7dBRG6mqX36khXRX0y+FAGDhRUut01tgnM=,tag:RNRpTJ5GNKuBJS/CV0z0Ng==,type:str]
+                                          type: ENC[AES256_GCM,data:nei4c9Q=,iv:irbGp8seW3csOp+3psKgnjkBnbIKFQeIVXnGULwdQPk=,tag:gXPDQyMo/DunuNSe/E7Lyw==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:RqToCRrv7Ho=,iv:S3GLXwk0DG23RxuSdf/7UCv7WdHE2LL4oMQy1XndNyo=,tag:6FH+oN8v3NwzTadN3RQ+iA==,type:str]
+                                        uid: ENC[AES256_GCM,data:IaF85Tdl9kc=,iv:B+q1VL/FHbPKxWaN40+nWhyarVkt05dJF2uDycb3hqw=,tag:msb/XGbZM6slImPXaO8lGg==,type:str]
+                                    expression: ENC[AES256_GCM,data:SA==,iv:wxhbpIQuJWvowsNFb2La0c58QtDXhWypVmMDEYGqIro=,tag:QNeIhhKppmAC84Z/wNLujg==,type:str]
+                                    hide: ENC[AES256_GCM,data:QlLQxOI=,iv:hpEvuR9uQTGaNe45E0VePiXQKsxQ2q+RgZRDthke+a4=,tag:huvFJoe5Yq5WNMV45fjHNw==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:5rHVBw==,iv:kvs5FFAGN+g+/fauIJLxyBzJzMsZbm1W8flhxfVvYt8=,tag:NsSQlIC4EunQOsrhkcGanA==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:Wt20YFo=,iv:H7VAjOzE4liNwtLv6jAWyBhwy8xJI1tMwW5MyAtHNJg=,tag:FtOzQEe2EqKPguYc5KfaLA==,type:int]
+                                    refId: ENC[AES256_GCM,data:lw==,iv:byvupRo/+R1ooMNmJghKuB1nGyng7dKRjjp8Z4FepRE=,tag:Z0fkmyeySfMHA18QtF4lWQ==,type:str]
+                                    type: ENC[AES256_GCM,data:Nh3k5oBXebce,iv:x22JfY0MCeRUNpmxkoPiyymRaLX27RN+0z4ErjVF74Y=,tag:4hDNbJQhTbqQ/mf6VjTT2A==,type:str]
+                              noDataState: NoData
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Matrix Synapse DNS Errors are higher than usual
+                              isPaused: false
+                contactpoints.yaml:
+                    apiVersion: 1
+                    contactPoints:
+                        - orgId: 1
+                          name: MidnightThoughts Ops
+                          receivers:
+                            - uid: "1"
+                              name: MidnightThoughts Ops
+                              type: email
+                              sendReminder: true
+                              frequency: 1m
+                              settings:
+                                addresses: ops@nordgedanken.dev
+                policies.yaml:
+                    apiVersion: 1
+                    policies:
+                        - orgId: 1
+                          receiver: MidnightThoughts Ops
+                          group_by:
+                            - grafana_folder
+                            - alertname
+            ingress:
+                enabled: true
+                hosts:
+                    - grafana.midnightthoughts.space
+                tls:
+                    - secretName: grafana.midnightthoughts.space
+                      hosts:
+                        - grafana.midnightthoughts.space
+            grafana.ini:
+                server:
+                    root_url: https://grafana.midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmTnRQUG5kN3lKbHM3RnJ0
+            ZmorakFRWDVoeFF5Ym4vUy83a2VFSzlXQUdZCnduZ3pWZEJKQ1RMWXEyT09kMUlz
+            NWlranRtK1JVMHg2M21nZjVaWFhGL2sKLS0tIHZVdU03T0xtcUhoK3Jzb0RNRVFx
+            b1l6TEFTa0dkVDFSZE9qeTJpeGoyUWcKgIsXz5mgMNAwjesPERTZyfgOC0a8iw+o
+            GfIYCI6mQnhQM61UfIsQuGFb+5L1U+jtkkAQp6jHuvh6rh8RTBC3+Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-06-06T17:33:39Z"
+    mac: ENC[AES256_GCM,data:NsBrTTw5r7OwuLeCR+7xHVWDIHgb9a6YrRfXiyqNUn+ll8qx0O5hHtHSGtNkjHel3aTGuRBmnKCid98iyOxfO23ftBLC7TP/udSzg925B0GcpOGejRL29Orj4AywM4wRvm4r8z/7bo265cv7TRXb9dXNarmEm1F1sxhi5Q+WbF8=,iv:eLOBNFVwixjq3T65qNoG7kbTBh5F/lyRcSPgzgtPFU0=,tag:1+xvg1mUuQp5bEHr71zttQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
+    version: 3.7.3
