@@ -40,6 +40,8 @@ spec:
         useExistingSecret: true
     namespaceOverride: monitoring
     grafana:
+      plugins:
+        - grafana-piechart-panel
       smtp:
         existingSecret: "smtp-auth-secret"
       extraSecretMounts:
