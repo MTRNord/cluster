@@ -105,6 +105,96 @@ spec:
                   annotations:
                     summary: Matrix Synapse DNS Errors are higher than usual
                   isPaused: false
+                - uid: de30a1da-84da-45f4-a4a5-d641dbd92e6c
+                  title: psycopg2.errors.ReadOnlySqlTransaction
+                  condition: Thresh
+                  data:
+                    - refId: Count
+                      queryType: range
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: loki
+                      model:
+                        datasource:
+                            type: loki
+                            uid: loki
+                        editorMode: builder
+                        expr: rate({namespace="matrix", app="matrix-synapse"} |= `psycopg2.errors.ReadOnlySqlTransaction` [15m])
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        range: true
+                        refId: Count
+                    - refId: Thresh
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params:
+                                    - 0.1
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params:
+                                    - C
+                              reducer:
+                                params: []
+                                type: last
+                              type: query
+                        datasource:
+                            type: __expr__
+                            uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: Thresh
+                        type: threshold
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                            - evaluator:
+                                params:
+                                    - 0
+                                    - 0
+                                type: gt
+                              operator:
+                                type: and
+                              query:
+                                params: []
+                              reducer:
+                                params: []
+                                type: avg
+                              type: query
+                        datasource:
+                            name: Expression
+                            type: __expr__
+                            uid: __expr__
+                        expression: Count
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: A
+                        settings:
+                            mode: replaceNN
+                            replaceWithValue: 0
+                        type: reduce
+                  noDataState: NoData
+                  execErrState: Error
+                  for: 5m
+                  annotations:
+                    summary: Matrix Database rolled over but synapse crashed
+                  isPaused: false
         contactpoints.yaml:
           apiVersion: 1
           contactPoints:
