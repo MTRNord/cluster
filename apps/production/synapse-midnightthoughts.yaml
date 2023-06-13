@@ -17,8 +17,8 @@ spec:
         image:
             repository: coreharbor.kubernetes.midnightthoughts.space/matrixdotorg/synapse
             # TODO update properly again
-            tag: 48969d50
-            pullPolicy: Always
+            tag: v1.85.2
+            #pullPolicy: Always
         serverName: midnightthoughts.space
         publicServerName: matrix.midnightthoughts.space
         wellknown:
@@ -33,7 +33,7 @@ spec:
             trustedKeyServers:
                 - server_name: matrix.org
         extraConfig:
-            registration_shared_secret: ENC[AES256_GCM,data:lnbYOGb3EeoiTY+dZXH09YeV0VXIHG49lrH4tfmD6X9k3iTK/Rt9Ro/vpI0H3XU0VCEv4codUvT1cFU999eD1A==,iv:wM78fM6yLmgVyBdxt6iVd6Is8rcUaFYm/VU7bTRd4EY=,tag:N975y5H/a2RU/mI5V6L4fQ==,type:str]
+            registration_shared_secret: ENC[AES256_GCM,data:MAzWcVfAkE8i+0C2XWdrux4Y39GNkQFbTgE9Q1nby+1d8Wd5vHXUEdp8nLA7vBWYd6XtrdcnLerXs8FFR+Ijwg==,iv:CtldPrTANAgMUtsRDbpU9WsOAy9MMPMLQGbDMfjvhHE=,tag:ofyrm8Z5259YAWAgh2p5gg==,type:str]
             app_service_config_files:
                 - /data/whatsapp-registration.yaml
                 - /data/instagram-registration.yaml
@@ -42,7 +42,7 @@ spec:
         modules:
             - module: shared_secret_authenticator.SharedSecretAuthProvider
               config:
-                shared_secret: ENC[AES256_GCM,data:4lHuO7A3xBgBEsKVgycNz+Jp5fuOucPvfdRZ90bPf07nlYiVfj7I7WkuAEP2a80fDNOyJURHKi0xEn8Z/XCeVw==,iv:RSBrFSq4kFT8MHfaPLDE/yffjFF6yMy+p+BAgAUHJz8=,tag:wX0dgqe1C3CZCL6Z17+URg==,type:str]
+                shared_secret: ENC[AES256_GCM,data:B+lHmoD/41bw5GJFFHOySKmOWxRBzmNfxf+CCwc9VnHvSHUG3AUKkCU8ANO6pgK7P/5emCaJzu8mNc/UyDfMHQ==,iv:1f9sBA+eTOc3D7wM6250PDCrKou4remBKcn90LyBRN0=,tag:gVMsxRKVpttucdBubY5ymg==,type:str]
         ingress:
             traefikPaths: true
             hosts:
@@ -117,31 +117,6 @@ spec:
             ## The name of an existing secret with postgresql credentials
             existingSecret: synapse-midnightthoughts-postgresql
             database: synapse
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   annotations:
-#     meta.helm.sh/release-name: matrix-synapse
-#     meta.helm.sh/release-namespace: matrix
-#   labels:
-#     app.kubernetes.io/instance: matrix-synapse
-#     app.kubernetes.io/name: matrix-synapse
-#   name: matrix-synapse-event-persister
-#   namespace: matrix
-# spec:
-#   internalTrafficPolicy: Cluster
-#   ipFamilyPolicy: PreferDualStack
-#   ports:
-#     - name: event_persister
-#       port: 8034
-#       protocol: TCP
-#       targetPort: 8034
-#   selector:
-#     app.kubernetes.io/component: synapse
-#     app.kubernetes.io/instance: matrix-synapse
-#     app.kubernetes.io/name: matrix-synapse
-#   type: ClusterIP
 sops:
     kms: []
     gcp_kms: []
@@ -151,14 +126,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDUXo2OEJqRHNvQU82Vlht
-            NE5jcCtBTHV5SDFMWkI2WnhkZjJ4Rm5lZWpFCm4wc2lRbnp0cHl4VUhuSUFWV1VN
-            MThyVXBaLzFMSzMxd1ROVHRpUXlqdlEKLS0tIGVkZjN3b2VDUHIydElPMFBWU0o1
-            dUFOUEdCeG9uMmZ3NUdpTmNXa3lCWGcKrKK1VJ9CtOQVZCTvn9MhVNkINenJzUYa
-            g473i0lG82dcYtQA2+iRrjxLRj7J8lCPu5vxHPJwXZg1Wia/7O1Efw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNNDdrUms4clhTcks1S1Bm
+            K2lOSnhVZTJrNkg2Mk1ZWm0rMmJNR3hzZFhRCmJ2RFM5aytJbXl5ZXRYY3hQb0Yv
+            bDRHRisxcVFZdk9pK0xrYnM4aGJVUmMKLS0tIEZYeVhSN0xveGJ6YnFyK3V0K015
+            ZXdFbXBPa1c1OW8yelVFSXpqLzlYRW8K8z1OwxFmxBiDyfqt7G6r6DvIK1Ixj1Bv
+            Pi2+ZP1l+zP/7S0p3Xv+g5wXZVudFThxkuIzfWi+W34LSaWyre+XIA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-04-15T12:37:32Z"
-    mac: ENC[AES256_GCM,data:GOIYLrnB4+/WAzO27GQxClFF/lsKZ7cd6GMvhpRL8TtIJozX9XZgdYsq8A0+aLAkxZWVn0hrdlH99Gzo81xfpv2iaTkNlxzQI3KZmw5dmdOiqeHjz97uM74YcYXjN2/8SwXjE3pU0ywNefljR20PEsb+F4Aq/kwMm/E9GSJUYew=,iv:8/hxn0s7MnDyeqzgpayt9TTIzKHvuJr4AYY4MUYbh1c=,tag:9f3bVAcM2SQz1hb/3r7NMQ==,type:str]
+    lastmodified: "2023-06-13T14:00:43Z"
+    mac: ENC[AES256_GCM,data:J8IU7XESckAxMhCgwg7gWB+vVlOHosGm6TrkqucgIVHyYqOK3TsKMUIQ3eg7dStXg4mkD1NImS9ZQvyiUag3gTAq5l56T66+ESGGnSg3lSGaY3ugG4UWRAzrppYpaB1ggwnP38co442S4fXcS7sdlKDk77kvyPBIJ4Qm+D5i6GM=,iv:Gh1SWSb4+0iejC514BSrThS4HdBA8LDHmV5//elVFdY=,tag:fs7SNWfqWe6lzHD4h9bURw==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|password|registration_shared_secret|shared_secret)$
     version: 3.7.3
