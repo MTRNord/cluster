@@ -23,6 +23,10 @@ spec:
             operator: "Equal"
             value: "arm64"
             effect: "NoSchedule"
+      persistence:
+        storageClass: "rook-main-fs"
+        accessModes:
+          - ReadWriteMany
     memcached:
       tolerations:
         - key: "arch"
