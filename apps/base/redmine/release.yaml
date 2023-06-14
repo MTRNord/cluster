@@ -59,4 +59,6 @@ spec:
         volumeMounts:
           - name: redmine-data
             mountPath: /bitnami/redmine
-        command: ['sh', '-c', 'cd /bitnami/redmine/plugins && rm -r ./* && git clone https://github.com/devopskube/redmine_openid_connect.git']
+        command: ['sh', '-c', ' rm -r /bitnami/redmine/plugins && mkdir /bitnami/redmine/plugins && cd /bitnami/redmine/plugins && git clone https://github.com/devopskube/redmine_openid_connect.git']
+    volumePermissions:
+      enabled: true
