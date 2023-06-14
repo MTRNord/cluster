@@ -20,10 +20,11 @@ spec:
   values:
     postgresql:
       enabled: true
-      persistence:
-        storageClass: "rook-main-fs"
-        accessModes:
-          - ReadWriteMany
+      primary:
+        persistence:
+          storageClass: "rook-main-fs"
+          accessModes:
+            - ReadWriteMany
     service:
       type: ClusterIP
     ingress:
