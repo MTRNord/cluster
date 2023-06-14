@@ -16,6 +16,19 @@ spec:
     remediation:
       retries: 3
   values:
+    postgresql:
+      primary:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
+    memcached:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
     ## Whether to allocate persistent volume disk for the data directory.
     ## In case of node failure, the node data directory will still persist.
     ##
