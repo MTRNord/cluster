@@ -21,6 +21,11 @@ spec:
     postgresql:
       enabled: true
       primary:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
         persistence:
           storageClass: "rook-main-fs"
           accessModes:
