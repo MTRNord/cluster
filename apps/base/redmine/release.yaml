@@ -1,0 +1,40 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: redmine
+  namespace: redmine
+spec:
+  releaseName: redmine
+  chart:
+    spec:
+      chart: redmine
+      sourceRef:
+        kind: HelmRepository
+        name: redmine
+  interval: 50m
+  timeout: 25m
+  install:
+    timeout: 25m
+    remediation:
+      retries: 3
+  values:
+    postgresql:
+      enabled: true
+      persistence:
+        storageClass: "rook-main-fs"
+        accessModes:
+          - ReadWriteMany
+    service:
+      type: ClusterIP
+    ingress:
+      enabled: true
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+      tls: true
+    persistence:
+      storageClass: "rook-main-fs"
+      accessModes:
+        - ReadWriteMany
+    databaseType: postgresql
+    mariadb:
+      enabled: false
