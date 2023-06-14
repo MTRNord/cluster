@@ -1,0 +1,56 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: openproject
+    namespace: openproject
+spec:
+    chart:
+        spec:
+            version: 1.7.x
+    values:
+        ingress:
+            host: openproject.midnightthoughts.space
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            tls:
+                secretName: openproject.midnightthoughts.space-tls
+        memcached:
+            auth:
+                user: memcached
+                password: ENC[AES256_GCM,data:P6XOH88UYKPEzBrdHUWESWSX62pSA8vx5KsPB1pS/WsOswc1ACGYCPFOmRW2WFPCCt0RPzZvlxTOkCRDynJc5A==,iv:v46bOI3W8HXK40huBwgiEkwqRQ1RaZEZB1LVq6p9GIQ=,tag:k/jtAK7V+Wgn9OlVulhoaw==,type:str]
+        openproject:
+            oidc:
+                enabled: true
+                provider: Keycloak
+                host: keycloak.midnightthoughts.space
+                identifier: https://openproject.midnightthoughts.space
+                secret: ENC[AES256_GCM,data:jMy3oDmMlWnoyactBUisahkhRBEgS0QOFJypVKIPZvw=,iv:pXnWr5BUYH2aaZBQY00wl5nbMynaZSo2UyTOzYVF4/o=,tag:TDFflLjijfCnVZmKtpQ/EQ==,type:str]
+                authorizationEndpoint: /auth/realms/Gitea/protocol/openid-connect/auth
+                tokenEndpoint: /auth/realms/Gitea/protocol/openid-connect/token
+                userinfoEndpoint: /auth/realms/Gitea/protocol/openid-connect/userinfo
+                endSessionEndpoint: https://keycloak.midnightthoughts.space/realms/Gitea/protocol/openid-connect/logout
+                #scope: "[openid]"
+        postgresql:
+            auth:
+                password: ENC[AES256_GCM,data:AwuWgJ1307f8FG0FgRt3qK8pQJhgm3NNpmsLLkkrWLkBiUCvXBJtZi70Fqjy5QzD5LPNkQYm79OKevkRhfd0sA==,iv:wfOmgpl+tfwcvkwKlLheJfPiuIAztHoOGc0YFSlAJlM=,tag:LxyXhxtXzorfxtRiT9eAaA==,type:str]
+                postgresPassword: ENC[AES256_GCM,data:BsQoKyaoByl/JKWfAxiPAzcm3E12xIRC/wMzOaWo4YcMYmbwMg0pkgZhG52u5EYohP57i+JJJ0L4T23F7I17ag==,iv:fA08y+tKQTCPbOHfp44CPh2RCnVoZgwXC2zoO4eEjeU=,tag:rIF2lRyextAOJIqAfjrVwg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXZzgwSHZZc1hjT2xaNFE4
+            Y1c0Rkx2QU5aaHdFR1RNR1VIK2lpWXN5bFdRCjFUS2FGcmhZTHNrVFVTS3luUk5W
+            Y2tJMmdGNksrU0IrQSszLy9HdS9xcHcKLS0tIFVFcy96Zi8vTVoxRUhSWExueFI3
+            L1huN05ENDV1RFN2aU40QWMxUmF6MWsKYdm+vgO82+OtkP6JA+ajFIVnO0z7Jybe
+            FUpEL6Q3HGtMoBDcjDQId9XkgVo1UTXgnOCYAUo+K6kHBsoD4PnxNg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-06-14T15:51:22Z"
+    mac: ENC[AES256_GCM,data:VXz0EFDes7pOlyV+IJu0KXp3qpa3EmXX0BPNI0zSDkorMOTsDk1iluuRJLmvUAfELNaowzz5QAv02wIOGgMq3EkgUGrdLvUQMCuCt6we6O4MxNni7WlwDOyHhnndYSBqDgp9KItovO6QFcuqwdRrIknlgeEg8I75sAaauHGrnDw=,iv:NjgGEnfC3MgCbhLV7ZRdfDgkv/t3h0oxxmFYFhjtXQ8=,tag:vjOocx+Rlo6gURRGYGMZMA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password|postgresPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.7.3

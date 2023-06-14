@@ -1,0 +1,52 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: openproject
+  namespace: openproject
+spec:
+  releaseName: openproject
+  chart:
+    spec:
+      chart: openproject
+      sourceRef:
+        kind: HelmRepository
+        name: openproject
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    ## Whether to allocate persistent volume disk for the data directory.
+    ## In case of node failure, the node data directory will still persist.
+    ##
+    ## Ref.: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+    #
+    persistence:
+      ## Whether to enable session affinity or not. It is required by ingress.
+      #
+      enabled: true
+
+      ## Define the volume access modes:
+      ##
+      ## "ReadWriteOnce" => The volume can be mounted as read-write by a single node. ReadWriteOnce access mode still can
+      ##                    allow multiple pods to access the volume when the pods are running on the same node.
+      ## "ReadOnlyMany" => The volume can be mounted as read-only by many nodes.
+      ## "ReadWriteMany" => The volume can be mounted as read-write by many nodes.
+      ## "ReadWriteOncePod" => The volume can be mounted as read-write by a single Pod. Use ReadWriteOncePod access mode if
+      ##                       you want to ensure that only one pod across whole cluster can read that PVC or write to it.
+      #
+      accessModes:
+        - "ReadWriteMany"
+
+      ## Define custom storage annotations:
+      ##
+      annotations: {}
+
+      ## Define the volume size.
+      #
+      size: "5Gi"
+
+      ## Define the class of PV.
+      storageClassName: "rook-main-fs"
+    strategy:
+      type: "RollingUpdate"
