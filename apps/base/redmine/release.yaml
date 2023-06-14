@@ -44,5 +44,8 @@ spec:
     databaseType: postgresql
     mariadb:
       enabled: false
-
+    containerSecurityContext:
+      enabled: true
+      capabilities:
+        add: [SYS_CHROOT]
     resources: null
