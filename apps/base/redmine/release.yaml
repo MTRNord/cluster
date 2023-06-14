@@ -18,6 +18,11 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      registry: coreharbor.kubernetes.midnightthoughts.space
+      repository: bitnami/redmine
+      tag: latest
+      pullPolicy: Always
     postgresql:
       enabled: true
       primary:
@@ -52,29 +57,29 @@ spec:
       requests:
         cpu: 0m
         memory: 0Mi
-    initContainers:
-      - name: install-plugins
-        image: bitnami/redmine:5.0.5-debian-11-r23
-        imagePullPolicy: Always
-        env:
-          - name: REDMINE_DATABASE_TYPE
-            value: postgresql
-          - name: REDMINE_DATABASE_HOST
-            value: redmine-postgresql
-          - name: REDMINE_DATABASE_NAME
-            value: bitnami_redmine
-          - name: REDMINE_DATABASE_USER
-            value: bn_redmine
-          - name: REDMINE_DATABASE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: password
-                name: redmine-postgresql
-          - name: REDMINE_DATABASE_PORT_NUMBER
-            value: "5432"
-        volumeMounts:
-          - name: redmine-data
-            mountPath: /bitnami/redmine
-        command: ['/opt/bitnami/scripts/redmine/entrypoint.sh', 'source /opt/bitnami/scripts/redmine-env.sh && rm -r /bitnami/redmine/plugins && mkdir /bitnami/redmine/plugins && cd /bitnami/redmine/plugins && git clone https://github.com/devopskube/redmine_openid_connect.git && cd /opt/bitnami/redmine && bundle install && bundle exec rake redmine:plugins:migrate $REDMINE_ENV RAILS_ENV=production']
+    # initContainers:
+    #   - name: install-plugins
+    #     image: bitnami/redmine:5.0.5-debian-11-r23
+    #     imagePullPolicy: Always
+    #     env:
+    #       - name: REDMINE_DATABASE_TYPE
+    #         value: postgresql
+    #       - name: REDMINE_DATABASE_HOST
+    #         value: redmine-postgresql
+    #       - name: REDMINE_DATABASE_NAME
+    #         value: bitnami_redmine
+    #       - name: REDMINE_DATABASE_USER
+    #         value: bn_redmine
+    #       - name: REDMINE_DATABASE_PASSWORD
+    #         valueFrom:
+    #           secretKeyRef:
+    #             key: password
+    #             name: redmine-postgresql
+    #       - name: REDMINE_DATABASE_PORT_NUMBER
+    #         value: "5432"
+    #     volumeMounts:
+    #       - name: redmine-data
+    #         mountPath: /bitnami/redmine
+    #     command: ['/opt/bitnami/scripts/redmine/entrypoint.sh', 'source /opt/bitnami/scripts/redmine-env.sh && rm -r /bitnami/redmine/plugins && mkdir /bitnami/redmine/plugins && cd /bitnami/redmine/plugins && git clone https://github.com/devopskube/redmine_openid_connect.git && cd /opt/bitnami/redmine && bundle install && bundle exec rake redmine:plugins:migrate $REDMINE_ENV RAILS_ENV=production']
     volumePermissions:
       enabled: true
