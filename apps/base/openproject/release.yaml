@@ -50,3 +50,8 @@ spec:
       storageClassName: "rook-main-fs"
     strategy:
       type: "RollingUpdate"
+    tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
