@@ -54,7 +54,7 @@ spec:
         memory: 0Mi
     initContainers:
       - name: install-plugins
-        image: ruby:slim-bullseye
+        image: alpine/git:2.40.1
         imagePullPolicy: Always
         volumeMounts:
           - name: redmine-data
