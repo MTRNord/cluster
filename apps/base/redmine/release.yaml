@@ -52,3 +52,11 @@ spec:
       requests:
         cpu: 0m
         memory: 0Mi
+    initContainers:
+      - name: install_plugins
+        image: ruby:slim-bullseye
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: redmine-data
+            mountPath: /bitnami/redmine
+        command: ['sh', '-c', 'cd /bitnami/redmine/plugins && git clone https://github.com/devopskube/redmine_openid_connect.git']
