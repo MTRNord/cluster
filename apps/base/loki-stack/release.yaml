@@ -59,7 +59,8 @@ spec:
         uid: "loki"
 
     promtail:
-      tolerations: {}
+      tolerations: 
+        - operator: "Exists"
       enabled: true
       config:
         logLevel: debug
