@@ -154,6 +154,11 @@ spec:
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
           operator: Exists
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
+
 
   #     nodeAffinity:
   #       requiredDuringSchedulingIgnoredDuringExecution:
@@ -322,6 +327,16 @@ spec:
           requests:
             cpu: "0"
             memory: "0Mi"
+      - name: "worker-1"
+        devices: # specific devices to use for storage can be specified for each node
+          - name: "/dev/sdb"
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4096Mi"
+          requests:
+            cpu: "0"
+            memory: "0Mi"
     #       - name: "nvme01" # multiple osds can be created on high performance devices
     #         config:
     #           osdsPerDevice: "5"
@@ -426,6 +441,10 @@ spec:
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
           operator: Exists
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
       #  nodeAffinity:
       #    requiredDuringSchedulingIgnoredDuringExecution:
       #      nodeSelectorTerms:
