@@ -67,6 +67,8 @@ spec:
       size: 15Gi
       claimNameOverride: mailu-storage
     ingress:
+      # The default one is stupid af
+      enabled: false
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-dns
     front:
