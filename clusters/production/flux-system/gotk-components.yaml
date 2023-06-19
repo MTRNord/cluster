@@ -3499,6 +3499,11 @@ spec:
       labels:
         app: source-controller
     spec:
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
       containers:
       - args:
         - --events-addr=http://notification-controller.flux-system.svc.cluster.local./
@@ -5237,6 +5242,11 @@ spec:
       labels:
         app: kustomize-controller
     spec:
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
       containers:
       - args:
         - --events-addr=http://notification-controller.flux-system.svc.cluster.local./
@@ -6250,6 +6260,11 @@ spec:
       labels:
         app: helm-controller
     spec:
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
       containers:
       - args:
         - --events-addr=http://notification-controller.flux-system.svc.cluster.local./
@@ -7897,6 +7912,11 @@ spec:
       labels:
         app: notification-controller
     spec:
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
       containers:
       - args:
         - --watch-all-namespaces=true
@@ -8880,6 +8900,11 @@ spec:
       labels:
         app: image-reflector-controller
     spec:
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
       containers:
       - args:
         - --events-addr=http://notification-controller.flux-system.svc.cluster.local./
@@ -9286,6 +9311,11 @@ spec:
       labels:
         app: image-automation-controller
     spec:
+      tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
       containers:
       - args:
         - --events-addr=http://notification-controller.flux-system.svc.cluster.local./
