@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: mailu
+    namespace: mailu
+spec:
+    chart:
+        spec:
+            version: 1.2.x
+    values:
+        initialAccount:
+            enabled: true
+            username: mtrnord
+            domain: nordgedanken.dev
+            password: ENC[AES256_GCM,data:MKSx2G2SSvni,iv:InOvPg8mPz2znvWTqWPEVgZ5s5/tg3R8o72Z5CX6yPk=,tag:L4r4nm84rJYzPan2OzUVtA==,type:str]
+            mode: update
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBZYThOZ0kySWJMWnFnSldh
+            M0dKOWkvQ2grdDBMNzB3ZTlwM0lmNEJrMkFVCnJtMThTeHZBcnFGK1lIcC9uTE1Z
+            VjVKeVU4WmhvSWhOZk1ZS2NEYWFCSDAKLS0tIDZmUC9iRkszV0NnS1QzVDIrdkRK
+            Zzc0WVMwRHhuNGkvQnBIVzJWZG9ZOTQKDuutFVMguZNsnSBnhrPn3/v4+xMinP+J
+            FTnfk25T5/BEAnst4b2WG+jrYwzP1ieK/q7YM6uVemM5sm45pGWPLQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-06-19T11:50:03Z"
+    mac: ENC[AES256_GCM,data:8KT9+lFFIJP1bZ1d6OqHx6Yc+1K9A5vVIA8moQ17ZEdNjIVexs8t0vOsYmKfmqmX/0sXtjtZ+FwN9xtCY23QdeCpbVgMUKOr0Yr2x2HhpTHatgkzU7nQQdk4bmBYizsJUi8QjLCzEBaI/pkiysh67UMySNFNmp2Qqtr/JAppl38=,iv:XaBc1MfyFoMVvi+yfbjEll0FOd4RJ0Q97/+LqpYkIIg=,tag:woPk1MsDgMBxTkaWwwjPqA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password|postgresPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.7.3
