@@ -399,7 +399,7 @@ spec:
   # The metadata pool spec. Must use replication.
   metadataPool:
     replicated:
-      size: 2
+      size: 3
       requireSafeReplicaSize: true
     parameters:
       # Inline compression mode for the data pool
@@ -414,7 +414,7 @@ spec:
     - name: replicated
       failureDomain: host
       replicated:
-        size: 2
+        size: 3
         # Disallow setting pool with replica 1, this could lead to data loss without recovery.
         # Make sure you're *ABSOLUTELY CERTAIN* that is what you want
         requireSafeReplicaSize: true
@@ -512,6 +512,8 @@ kind: StorageClass
 metadata:
   name: rook-main-fs
   namespace: rook-cephfs
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
 # Change "rook-ceph" provisioner prefix to match the operator namespace if needed
 provisioner: rook-ceph.cephfs.csi.ceph.com # driver:namespace:operator
 parameters:
