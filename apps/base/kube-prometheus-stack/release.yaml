@@ -24,6 +24,7 @@ spec:
   values:
     prometheus:
       prometheusSpec:
+        enableRemoteWriteReceiver: true
         podMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:
@@ -85,6 +86,15 @@ spec:
               allowUiUpdates: false
               options:
                 path: /var/lib/grafana/dashboards/nats
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Tempo
+              type: tempo
+              access: proxy
+              url: http://tempo.monitoring.svc.cluster.local:16686
+              isDefault: talse
       dashboards:
         monitoring:
           felix-dashboard:
