@@ -4,15 +4,6 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
-    meta.helm.sh/release-name: mailu
-    meta.helm.sh/release-namespace: mailu
-  labels:
-    app.kubernetes.io/instance: mailu
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: mailu
-    helm.sh/chart: mailu-1.2.0
-    helm.toolkit.fluxcd.io/name: mailu
-    helm.toolkit.fluxcd.io/namespace: mailu
   name: mailu
   namespace: mailu
 spec:
