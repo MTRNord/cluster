@@ -26,8 +26,8 @@ spec:
       reportStats: true
       enableRegistration: false
     extraConfig:
-      #app_service_config_files:
-      #    - /data/draupnir-registration.yaml
+      app_service_config_files:
+        - /data/draupnir-registration.yaml
     ingress:
       traefikPaths: true
       hosts:
@@ -44,23 +44,23 @@ spec:
         traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
     workers:
       default:
-        volumeMounts:
-          #- mountPath: /data/draupnir-registration.yaml
-          #  subPath: registration.yaml
-          #  name: draupnir-config-volume
-        volumes:
-          #- name: draupnir-config-volume
-          #  configMap:
-          #    name: draupnir-bridge-config
+        extraVolumeMounts:
+          - name: configs
+            mountPath: "/data"
+            readOnly: true
+        extraVolumes:
+          - name: configs
+            secret:
+              secretName: draupnir-appservice
     synapse:
       extraVolumeMounts:
-        #- mountPath: /data/draupnir-registration.yaml
-        #  subPath: registration.yaml
-        #  name: draupnir-config-volume
+        - name: configs
+          mountPath: "/data"
+          readOnly: true
       extraVolumes:
-        #- name: draupnir-config-volume
-        #  configMap:
-        #    name: draupnir-bridge-config
+        - name: configs
+          secret:
+            secretName: draupnir-appservice
     externalPostgresql:
       username: draupnir_synapse
       ## The name of an existing secret with postgresql credentials

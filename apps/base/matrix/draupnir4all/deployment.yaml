@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: draupnir4all
+  namespace: matrix
+spec:
+  selector:
+    matchLabels:
+      app: draupnir4all
+  template:
+    metadata:
+      labels:
+        app: draupnir4all
+    spec:
+      containers:
+        - name: draupnir4all
+          image: gnuxie/draupnir:develop
+          command: ["appservice"]
+          args:
+            [
+              "-c",
+              "/data/config/config.appservice.yaml",
+              "-f",
+              "/data/config/draupnir-registration.yaml",
+              "-p",
+              "9000",
+            ]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 9001
+              name: widgets
+              protocol: TCP
+            - containerPort: 9000
+              name: appservice
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: "/data/config"
+              readOnly: true
+      volumes:
+        - name: configs
+          secret:
+            secretName: draupnir-appservice
