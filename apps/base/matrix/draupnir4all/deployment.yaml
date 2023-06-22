@@ -15,9 +15,10 @@ spec:
       containers:
         - name: draupnir4all
           image: gnuxie/draupnir:develop
-          command: ["appservice"]
+          command: ["./mjolnir-entrypoint.sh"]
           args:
             [
+              "appservice",
               "-c",
               "/data/config/config.appservice.yaml",
               "-f",
