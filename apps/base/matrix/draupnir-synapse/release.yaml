@@ -30,7 +30,19 @@ spec:
       size: 10Gi
     volumePermissions:
       enabled: true
+    workers:
+      default:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
     synapse:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
       ## Liveness probe configuration to use
       ##
       livenessProbe:
@@ -62,6 +74,12 @@ spec:
 
     redis:
       architecture: standalone
+      master:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
     postgresql:
       enabled: false
     externalPostgresql:
