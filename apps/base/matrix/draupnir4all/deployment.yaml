@@ -12,6 +12,11 @@ spec:
       labels:
         app: draupnir4all
     spec:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
       containers:
         - name: draupnir4all
           image: gnuxie/draupnir:develop
