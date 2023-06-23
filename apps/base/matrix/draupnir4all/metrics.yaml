@@ -1,0 +1,16 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: draupnir4all
+  namespace: matrix
+  labels:
+    app.kubernetes.io/component: appservice
+    app.kubernetes.io/instance: main-process
+    app.kubernetes.io/name: mjolnir4all
+spec:
+  selector:
+    matchLabels:
+      app: draupnir4all
+  endpoints:
+    - port: appservice
