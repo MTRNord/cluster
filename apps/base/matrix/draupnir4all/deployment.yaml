@@ -3,7 +3,16 @@ kind: Deployment
 metadata:
   name: draupnir4all
   namespace: matrix
+  labels:
+    app.kubernetes.io/component: appservice
+    app.kubernetes.io/instance: main-process
+    app.kubernetes.io/name: mjolnir4all
 spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   selector:
     matchLabels:
       app: draupnir4all
@@ -11,6 +20,9 @@ spec:
     metadata:
       labels:
         app: draupnir4all
+        app.kubernetes.io/component: appservice
+        app.kubernetes.io/instance: main-process
+        app.kubernetes.io/name: mjolnir4all
     spec:
       tolerations:
         - key: "arch"
@@ -19,7 +31,8 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: draupnir4all
-          image: gnuxie/draupnir:develop
+          image: coreharbor.kubernetes.midnightthoughts.space/gnuxie/draupnir:latest
+          imagePullPolicy: Always
           command: ["./mjolnir-entrypoint.sh"]
           args:
             [
@@ -46,6 +59,19 @@ spec:
             - name: configs
               mountPath: "/data/config"
               readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: appservice
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: appservice
+            failureThreshold: 30
+            periodSeconds: 10
       volumes:
         - name: configs
           secret:
