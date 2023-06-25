@@ -40,9 +40,10 @@ spec:
                 secretName: zammad-postgres
         zammadConfig:
             redis:
-                pass: ENC[AES256_GCM,data:iohvrJLYIs7dJPs3dxFbWdbJwkWHjX42u7zYIVSfaH6Td0NYpECciJe5VyrEtkA51Y+Z2PI3xvkCvH4IwTtmmg==,iv:co94nhcQcWRrmzWtPqUMsPAa2DiwsCcFQg6i3jnFga0=,tag:qwq9W63oWaQyLgfsdhzZrQ==,type:str]
+                pass: ENC[AES256_GCM,data:IZp0i0WKgi1w7bWO3Z71sflxftWS2sX4pVUEcvsMKhK92b+cHgMarb6sEaQDYQgGtlroRTHlWfBgTu53KGKP4Q==,iv:OtxWhPiut/07P75bA2o+ZTnc4bU81pUDYbmRcvKV13I=,tag:6JoMHqS2ZAF47KxgbBBw8Q==,type:str]
             postgresql:
                 enabled: false
+                db: zammad
                 host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
         persistence:
             enabled: true
@@ -58,10 +59,10 @@ spec:
                       effect: NoSchedule
             data:
                 tolerations:
-                    - key: ENC[AES256_GCM,data:jJShsw==,iv:r0ixuhzxo0JH1BSgA1uHurXq7V7RuWV+NlUzeNxEYbM=,tag:AJEG9mwNpU2RFvweSJdqZA==,type:str]
-                      operator: ENC[AES256_GCM,data:7asiFbo=,iv:jav1qbEjmHPLwmSTs85VG1Ub8ZYrZTVrw0GbeA6Z1iE=,tag:u8tdyOlrYG58d9ozMPh/5w==,type:str]
-                      value: ENC[AES256_GCM,data:c3QrMiA=,iv:jkdbX14Y+yavgzvExElMrQB+T7sGiF0bNks9inVYcr8=,tag:/bdTwhW6rdlKsRf7phmg/w==,type:str]
-                      effect: ENC[AES256_GCM,data:Y1bm4bsFlNX34g==,iv:hBASstbjVoYP55t/tkCwcvYgLZp0TDcbsykNubw84gI=,tag:2BUCmyGNOHHUTRjYoLaD0g==,type:str]
+                    - key: ENC[AES256_GCM,data:IeVBKQ==,iv:TDQySqKA2Vb8uj2b+2HSrX1QLRQz02nAaNSbEPDiimg=,tag:5o77ln7xqNXV03uwScKiZg==,type:str]
+                      operator: ENC[AES256_GCM,data:1gFVRmY=,iv:xnV1PFD+8T7oX/dJ1lbBTvXb1rX6z0iak+Oyr9Es1a8=,tag:K8HH6sulM1z++gaSh1LdMA==,type:str]
+                      value: ENC[AES256_GCM,data:DemAQhk=,iv:UhONKDzjbo1vGA+Yem69RStqSvr0fWr6ZymsGY98wNI=,tag:WVJYOV/T7OSs9y3sFS3D4Q==,type:str]
+                      effect: ENC[AES256_GCM,data:Hy/eD/346QNRdA==,iv:4tTCmkjC2N0miO1B6VQPkYoPpPOKDunOzK6p1OolpJw=,tag:/VYiE5N9Yr1sNkLlQqKeFg==,type:str]
             coordinating:
                 tolerations:
                     - key: arch
@@ -88,7 +89,7 @@ spec:
                   effect: NoSchedule
         redis:
             auth:
-                password: ENC[AES256_GCM,data:/8qZnAAvXJq/Ei00z1en5qEhlZY3/IxRXh/CNg9iFqGY6er3BSHv2/32+emlrr+7BOLwI4BO3d40TqY0fqlSqQ==,iv:eDED6ayABPBAYuzeIgHQ78nHgvh27vEX49ConH8oH3o=,tag:zp9txsobXwvgXDbawV6P3g==,type:str]
+                password: ENC[AES256_GCM,data:3LXCDwctAqnh2mvFIX5Z8+vF+T3PiD5vckDGW4wfzB+pX8SCQVos+R6Uf2ET6CqobqRDXW95bFwYVndfgPxlZA==,iv:ZnBf8+qy114kxyZgyNmN5lQAUACvGzh39KEomvi1neE=,tag:0de+225tbT5sHJbaWSe67g==,type:str]
             master:
                 tolerations:
                     - key: arch
@@ -104,14 +105,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpbkZuMHp1U0NwZmdUVlRR
-            aGdjZlA3UlRsYVRFeHJQNEpVL3RvSU4wT0JjCkUyTDNycmhqaU9ncXZzYnh1bU5Z
-            MkFQdlFxVG84SWpISUg5SFpySHFRaWcKLS0tIGIwSmxWSldibHlxYXRONEVnOXZW
-            ZGtHd0s2aFFoUGRxYWJYUWpmUTVveGcKFOSLyS8u0mpxN/3pDHQss6k5pzIo5MYu
-            X/fx1PEivzEEdqrqEyx0HjwpH24nYcgPkDa/QmmoBRD4tHOrjdfKXQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlLzVQUGJyRmpGb0dCYzg4
+            MHlCM0Z2a3FtMHVmYThkaE1SVmwwTjVDWHlZCjZrQ1NRaDA0L1JVSDJwMHpEc01K
+            alpHdS9SeDZmQmgzZ3dDWmJYLzNUWlkKLS0tIHo1TllteXNKOWhIRDdsb0xTcUto
+            RkprMm9lTE1DTmNLb29xZTFZQU1zdlkKVLCaJWQJHAEWAwoPQNU98Wc+sDB0B8is
+            PbAaVKc9RJgenHOqHUn8OEc0diaH17/Jw6ax3ERWElV6Ipesk8Zgtw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-06-25T12:10:49Z"
-    mac: ENC[AES256_GCM,data:3G17yyDq/vpl9gtOZhMTUHj5aT9TQgGfFwNYmXcyh9o6tY9zJVxWvMS6sIZDHPx6ZTqvJKZS+fvM7MoDBB9p0x9MdVThlV4RN03NE5/1eIvepSKyZJ55l4gDzqelGIO4+hklXWYPazPPB1rPW9Hda88a+X19KPdYZ21OOGiKRvs=,iv:0USlxPIm5s08jy24tSmoHB3npW5qiiz4wbi8QFBz2VQ=,tag:masy5oiE6HQhx8tmocyEmA==,type:str]
+    lastmodified: "2023-06-25T12:22:17Z"
+    mac: ENC[AES256_GCM,data:q4Uz6Iai8PFCyNcCR8BcH8xx35oHISTEx1bWSbPFpkxJChNywZtV/UzNXwtXniabP9Q/rsDSTymmnHjL6mjsi2a/jZQ57Q4ol9bSA+67HBSfdT2hska9zdcOw5yjnnvnWVj1LWKrrv9Wirt5x5dnC2Un/T3xEWblg5Yj44yjfzA=,iv:pNxBG+Td7vdB49lVyX9Dil+hkkYD6cH0UuyIQ9xIdJk=,tag:4YfWG9yyr9thY5IDceXwKA==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|password|pass|postgresPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.7.3
