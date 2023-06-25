@@ -1,0 +1,115 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: zammad
+    namespace: zammad
+spec:
+    interval: 5m
+    chart:
+        spec:
+            version: 9.0.x
+            chart: tempo
+            sourceRef:
+                kind: HelmRepository
+                name: zammad
+            interval: 60m
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    values:
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hosts:
+                - host: zammad.midnightthoughts.space
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+            tls:
+                - secretName: zammad.midnightthoughts.space-tls
+                  hosts:
+                    - zammad.midnightthoughts.space
+        secrets:
+            postgresql:
+                useExisting: true
+                secretName: zammad-postgres
+        zammadConfig:
+            postgresql:
+                enabled: false
+                host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+        persistence:
+            enabled: true
+            storageClass: rook-main-fs
+            accessModes:
+                - ReadWriteMany
+        elasticsearch:
+            master:
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
+            data:
+                tolerations:
+                    - key: ENC[AES256_GCM,data:RH8czg==,iv:IEUKn0Uv29UnnRXmoOh6H+kRPZYQc5y6HMgnqii47Bc=,tag:yH7uyLQCHfk6Essf2GDEGQ==,type:str]
+                      operator: ENC[AES256_GCM,data:O08m35g=,iv:ToxMXrhq7DLLQyEjyyqE28rWBMVGldFvTEhMEqc7TkI=,tag:Y4p7AtLfIhneY+1MoY2WTg==,type:str]
+                      value: ENC[AES256_GCM,data:zbsvT/g=,iv:91qDYqPsjnyM959aOFYgv71VgYLzg7RJGx5mrAuFYuw=,tag:9CJ+oPzomGBCGMjJN8/0Zw==,type:str]
+                      effect: ENC[AES256_GCM,data:mWZD3poKgvc8Iw==,iv:BR9MzFpl3GzO1GhsXXzi+1em37GFXwcXbOnsNAx2kRE=,tag:Xs538Fkta52dhk0yJkEi4Q==,type:str]
+            coordinating:
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
+            ingest:
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
+            metrics:
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
+        memcached:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        redis:
+            auth:
+                password: ENC[AES256_GCM,data:i1JTsYahbldvduLD2VhfzKTGM7BB3NCQJmmQ03mnGMMRdCyvryMMpsMUuEY3Au0pVXIvDPwpRmjvcfj5Ve8XRQ==,iv:iUKh51Zpul6r7+FWZxVmZ5zpL9E014/X3V8RH3CnrYg=,tag:11Q3Qp1BVe8rNJVM946YIA==,type:str]
+            master:
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkZk9hMzFqS3RQc2gwaEto
+            ZzJoNDZzT3JwaEFJc3AvbzdhT0k0aGMxeDM4CmRQVVRhbUh1azFpTFluZXpzV1Nn
+            SU50OTUrNWNhellaSC9kZDFxOWtpK2cKLS0tIElNMXBZZ2p5TWV0MkNTQTh4eVJ6
+            cUg5b2x3N3FyWXk5UVkrK1pUcERVVHMKwKXUPRWDzvx91eZli7dtgFwMFxQbio3q
+            ce3bPGqqDdXIMzfe2djLjlY7ksHF+gk/m934uVyjV8vJnnzc2qtPTw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-06-25T10:41:39Z"
+    mac: ENC[AES256_GCM,data:aPLNyRa8LbKVCJGwx4K3kULpZeLdXzFEAdzVZoQMVr8KRqWfzJEekdpgSBXXat0VTc9JEuUEbQJqMHA45ErYR/qPJLF4iKBZ/ET4M4qzsMBlRwwAUIYylwwnsB07N0fOevY4ReQgXz6zkx5uHEmk73Eui03Hp3Tm2PMr51aLbTs=,iv:UP3HOMS4/dwaDydTq/CsghFTHZpFoHrSBL+ciCcG8ck=,tag:19H81f5LC5f1+cPflEJAHw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|password|postgresPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.7.3
