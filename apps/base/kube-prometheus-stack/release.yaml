@@ -39,11 +39,11 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: nfs-client
-              accessModes: ["ReadWriteOnce"]
+              storageClassName: rook-main-fs
+              accessModes: ["ReadWriteMany"]
               resources:
                 requests:
-                  storage: 50Gi
+                  storage: 10Gi
             selector: {}
     alertmanager:
       alertmanagerSpec:
