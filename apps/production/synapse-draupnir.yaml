@@ -44,11 +44,11 @@ spec:
         traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
     workers:
       default:
-        extraVolumeMounts:
+        volumeMounts:
           - name: configs
             mountPath: "/data"
             readOnly: true
-        extraVolumes:
+        volumes:
           - name: configs
             secret:
               secretName: draupnir-appservice
