@@ -1,0 +1,24 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: draupnir-synapse
+  labels:
+    instance: draupnir4all
+spec:
+  jobLabel: "app.kubernetes.io/component"
+  namespaceSelector:
+    matchNames:
+      - "matrix"
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: draupnir-synapse
+      app.kubernetes.io/name: matrix-synapse
+  podMetricsEndpoints:
+    - port: metrics
+      path: "/_synapse/metrics"
+      interval: 5s
+      relabelings:
+        - sourceLabels:
+            - "__meta_kubernetes_namespace"
+          targetLabel: instance
