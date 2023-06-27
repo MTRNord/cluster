@@ -24,6 +24,15 @@ spec:
   values:
     prometheus:
       prometheusSpec:
+        resources:
+          requests:
+            cpu: "0m"
+            memory: "0Mi"
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
         enableRemoteWriteReceiver: true
         podMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelectorNilUsesHelmValues: false
