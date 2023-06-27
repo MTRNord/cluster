@@ -16,6 +16,10 @@ spec:
     remediation:
       retries: 3
   values:
+    extraConfig:
+      federation_sender_instances:
+        - federation-sender-1
+        - federation-sender-2
     wellknown:
       enabled: true
       extraData:
@@ -31,6 +35,27 @@ spec:
     volumePermissions:
       enabled: true
     workers:
+      federation_reader:
+        replicaCount: 2
+        enabled: true
+        generic: true
+        listeners: [federation]
+        paths:
+          - "/_matrix/federation/v1/send/"
+      appservice:
+        enabled: true
+      federation_sender_1:
+        labels:
+          synapse-component: federation-sender
+        app: federation_sender
+        name: federation-sender-1
+        enabled: true
+      federation_sender_2:
+        labels:
+          synapse-component: federation-sender
+        app: federation_sender
+        name: federation-sender-2
+        enabled: true
       default:
         tolerations:
           - key: "arch"
