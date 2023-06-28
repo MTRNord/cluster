@@ -16,7 +16,12 @@ spec:
   install:
     remediation:
       retries: 3
-  #values: {}
+  values:
+    tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
@@ -35,4 +40,9 @@ spec:
   install:
     remediation:
       retries: 3
-  #values: {}
+  values:
+    tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
