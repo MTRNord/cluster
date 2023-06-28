@@ -12,6 +12,11 @@ metadata:
   name: matrix-postgres-cluster
   namespace: matrix-postgres-cluster
 spec:
+  tolerations:
+    - key: "arch"
+      operator: "Equal"
+      value: "arm64"
+      effect: "NoSchedule"
   enableShmVolume: true
   databases:
     synapse: synapse
@@ -34,14 +39,14 @@ spec:
     parameters:
       password_encryption: scram-sha-256
       max_connections: "300"
-      superuser_reserved_connections: "6"
-      shared_buffers: "10240 MB"
-      work_mem: "128 MB"
-      maintenance_work_mem: "620 MB"
-      huge_pages: try
-      effective_cache_size: "45 GB"
-      effective_io_concurrency: "200"
-      random_page_cost: "1.25"
+      superuser_reserved_connections: "3"
+      shared_buffers: "2048 MB"
+      work_mem: "32 MB"
+      maintenance_work_mem: "320 MB"
+      huge_pages: off
+      effective_cache_size: "6 GB"
+      effective_io_concurrency: "150"
+      random_page_cost: "1.5"
       track_io_timing: on
       min_wal_size: "512 MB"
       max_wal_size: "1024 MB"
@@ -53,17 +58,17 @@ spec:
       bgwriter_lru_maxpages: "100"
       bgwriter_lru_multiplier: "2.0"
       bgwriter_flush_after: "0"
-      max_worker_processes: "16"
-      max_parallel_workers_per_gather: "8"
-      max_parallel_maintenance_workers: "8"
-      max_parallel_workers: "16"
+      max_worker_processes: "8"
+      max_parallel_workers_per_gather: "4"
+      max_parallel_maintenance_workers: "4"
+      max_parallel_workers: "8"
       parallel_leader_participation: "on"
       enable_partitionwise_join: "on"
       enable_partitionwise_aggregate: "on"
       jit: "on"
       max_slot_wal_keep_size: "1000 MB"
       track_wal_io_timing: "on"
-      maintenance_io_concurrency: "200"
+      maintenance_io_concurrency: "150"
       wal_recycle: "on"
   teamId: matrix
   users:
