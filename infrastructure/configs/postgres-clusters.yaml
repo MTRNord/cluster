@@ -38,10 +38,17 @@ spec:
   postgresql:
     version: "15"
     parameters:
+      wal_level: replica
+      max_wal_senders: "10"
       synchronous_commit: local
+      checkpoint_timeout: "15 min"
+      checkpoint_completion_target: "0.9"
+      archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart›
+      archive_command: "/bin/true" # not doing anything yet with WAL-s
+      wal_compression: "on"
       password_encryption: scram-sha-256
       max_connections: "300"
-      superuser_reserved_connections: "3"
+      superuser_reserved_connections: "6"
       shared_buffers: "2048 MB"
       work_mem: "32 MB"
       maintenance_work_mem: "320 MB"
@@ -49,7 +56,9 @@ spec:
       effective_cache_size: "6 GB"
       effective_io_concurrency: "150"
       random_page_cost: "1.5"
+      shared_preload_libraries: "pg_stat_statements"
       track_io_timing: on
+      track_functions: pl
       min_wal_size: "512 MB"
       max_wal_size: "1024 MB"
       wal_buffers: "-1"
