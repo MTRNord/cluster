@@ -40,63 +40,63 @@ spec:
                 secretName: zammad-postgres
         zammadConfig:
             redis:
-                pass: ENC[AES256_GCM,data:IZp0i0WKgi1w7bWO3Z71sflxftWS2sX4pVUEcvsMKhK92b+cHgMarb6sEaQDYQgGtlroRTHlWfBgTu53KGKP4Q==,iv:OtxWhPiut/07P75bA2o+ZTnc4bU81pUDYbmRcvKV13I=,tag:6JoMHqS2ZAF47KxgbBBw8Q==,type:str]
+                pass: ENC[AES256_GCM,data:pCwYE6tv296ShrCy3ZMcSmwjJxsvwCusxdVmzNKmkmL8QvJHqu3pGY5tCQTmrf47I1PciU2rwMM0zDkaRB1dqg==,iv:T5mMSiRdOgtV7H3gx58r1Dtwlrqmkg04WVe5JIdM2Fs=,tag:HVuBFtnIkih71Rv179i7kw==,type:str]
             postgresql:
                 enabled: false
                 db: zammad
                 host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
         persistence:
             enabled: true
-            storageClass: rook-main-fs
+            storageClass: nfs-client
             accessModes:
                 - ReadWriteMany
-        elasticsearch:
-            master:
-                tolerations:
-                    - key: arch
-                      operator: Equal
-                      value: arm64
-                      effect: NoSchedule
-            data:
-                tolerations:
-                    - key: ENC[AES256_GCM,data:IeVBKQ==,iv:TDQySqKA2Vb8uj2b+2HSrX1QLRQz02nAaNSbEPDiimg=,tag:5o77ln7xqNXV03uwScKiZg==,type:str]
-                      operator: ENC[AES256_GCM,data:1gFVRmY=,iv:xnV1PFD+8T7oX/dJ1lbBTvXb1rX6z0iak+Oyr9Es1a8=,tag:K8HH6sulM1z++gaSh1LdMA==,type:str]
-                      value: ENC[AES256_GCM,data:DemAQhk=,iv:UhONKDzjbo1vGA+Yem69RStqSvr0fWr6ZymsGY98wNI=,tag:WVJYOV/T7OSs9y3sFS3D4Q==,type:str]
-                      effect: ENC[AES256_GCM,data:Hy/eD/346QNRdA==,iv:4tTCmkjC2N0miO1B6VQPkYoPpPOKDunOzK6p1OolpJw=,tag:/VYiE5N9Yr1sNkLlQqKeFg==,type:str]
-            coordinating:
-                tolerations:
-                    - key: arch
-                      operator: Equal
-                      value: arm64
-                      effect: NoSchedule
-            ingest:
-                tolerations:
-                    - key: arch
-                      operator: Equal
-                      value: arm64
-                      effect: NoSchedule
-            metrics:
-                tolerations:
-                    - key: arch
-                      operator: Equal
-                      value: arm64
-                      effect: NoSchedule
-        memcached:
-            tolerations:
-                - key: arch
-                  operator: Equal
-                  value: arm64
-                  effect: NoSchedule
+        #elasticsearch:
+        #    master: null
+        #tolerations:
+        #    - key: arch
+        #      operator: Equal
+        #      value: arm64
+        #      effect: NoSchedule
+        #    data:
+        #tolerations:
+        #    - key: arch
+        #      operator: Equal
+        #      value: arm64
+        #      effect: NoSchedule
+        #    coordinating:
+        #tolerations:
+        #    - key: arch
+        #      operator: Equal
+        #      value: arm64
+        #      effect: NoSchedule
+        #    ingest:
+        #tolerations:
+        #    - key: arch
+        #      operator: Equal
+        #      value: arm64
+        #      effect: NoSchedule
+        #metrics:
+        #tolerations:
+        #    - key: arch
+        #      operator: Equal
+        #      value: arm64
+        #      effect: NoSchedule
+        # memcached:
+        #     tolerations:
+        #         - key: arch
+        #           operator: Equal
+        #           value: arm64
+        #           effect: NoSchedule
         redis:
             auth:
-                password: ENC[AES256_GCM,data:3LXCDwctAqnh2mvFIX5Z8+vF+T3PiD5vckDGW4wfzB+pX8SCQVos+R6Uf2ET6CqobqRDXW95bFwYVndfgPxlZA==,iv:ZnBf8+qy114kxyZgyNmN5lQAUACvGzh39KEomvi1neE=,tag:0de+225tbT5sHJbaWSe67g==,type:str]
-            master:
-                tolerations:
-                    - key: arch
-                      operator: Equal
-                      value: arm64
-                      effect: NoSchedule
+                password: ENC[AES256_GCM,data:4y3NybYHd5IZhlL4VEzzLfg0h2gIOc21qaaXKpS0aJXCnTJ9ZUkhBtDNXSrejiE+6bgfQ9/VEahovCmUFP+dAA==,iv:Pp8OFWfhrFuKweDp00AY7hKpEKvEnv62MT529NQUcyQ=,tag:syfjkh7Dc/qUaeORR7jGlQ==,type:str]
 sops:
+# master:
+#     tolerations:
+#         - key: arch
+#           operator: Equal
+#           value: arm64
+#           effect: NoSchedule
     kms: []
     gcp_kms: []
     azure_kv: []
@@ -105,14 +105,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlLzVQUGJyRmpGb0dCYzg4
-            MHlCM0Z2a3FtMHVmYThkaE1SVmwwTjVDWHlZCjZrQ1NRaDA0L1JVSDJwMHpEc01K
-            alpHdS9SeDZmQmgzZ3dDWmJYLzNUWlkKLS0tIHo1TllteXNKOWhIRDdsb0xTcUto
-            RkprMm9lTE1DTmNLb29xZTFZQU1zdlkKVLCaJWQJHAEWAwoPQNU98Wc+sDB0B8is
-            PbAaVKc9RJgenHOqHUn8OEc0diaH17/Jw6ax3ERWElV6Ipesk8Zgtw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBIYnA3Z0tocHg4QTRYTFR5
+            WUwrMnJVNEFqb0play9UNTNNNG5xdjh0SGpzCm1yUFhSbjZiZTBvcENkWG1vcjl5
+            QTBTM3M2OUE1VGRGbWpNOEcvTEZMTFUKLS0tIHpLcUJkQnZybktOTE1VekYxRzUv
+            Mk1yYkkyc2IzVlVlWEMzZFNZazV1NWcKjOSnHSIjL/7inEFBqLTUeOTNvozkNsde
+            483uHgjNUZZ9FWnP34UyBy93Cc0383V9U1muUe7EjKGv3XHipKNT/w==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-06-25T12:22:17Z"
-    mac: ENC[AES256_GCM,data:q4Uz6Iai8PFCyNcCR8BcH8xx35oHISTEx1bWSbPFpkxJChNywZtV/UzNXwtXniabP9Q/rsDSTymmnHjL6mjsi2a/jZQ57Q4ol9bSA+67HBSfdT2hska9zdcOw5yjnnvnWVj1LWKrrv9Wirt5x5dnC2Un/T3xEWblg5Yj44yjfzA=,iv:pNxBG+Td7vdB49lVyX9Dil+hkkYD6cH0UuyIQ9xIdJk=,tag:4YfWG9yyr9thY5IDceXwKA==,type:str]
+    lastmodified: "2023-07-18T11:05:48Z"
+    mac: ENC[AES256_GCM,data:OlRaHfjZ+sxsOAYkBLAVsxWMPN9Jf3covVR0K/+4VEJvpJaArVatla7p10xBePJRvsDgqQJEEfekdfeiLYxJor9U/0eNX5kFMzcKuP0qTcGXHPKZSEKAfg3y/TOy1yqPSWimV1rGQtlK+dNsz0Dp8I513Ay7HuIDTVOzrIkuT0c=,iv:mv/f6JZ8ONzC76nLfl3ARbOC3b1A1JypdsIRJTLFiBk=,tag:CgdA+ofwNMH/alFOjjMilg==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|password|pass|postgresPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.7.3
