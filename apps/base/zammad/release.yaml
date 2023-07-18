@@ -40,7 +40,7 @@ spec:
                 secretName: zammad-postgres
         zammadConfig:
             redis:
-                pass: ENC[AES256_GCM,data:pCwYE6tv296ShrCy3ZMcSmwjJxsvwCusxdVmzNKmkmL8QvJHqu3pGY5tCQTmrf47I1PciU2rwMM0zDkaRB1dqg==,iv:T5mMSiRdOgtV7H3gx58r1Dtwlrqmkg04WVe5JIdM2Fs=,tag:HVuBFtnIkih71Rv179i7kw==,type:str]
+                pass: ENC[AES256_GCM,data:Xv5SEbF3P04h2brNzWF8Pq22RncfR1mcWlrN2hBkjYYPwI09ToErbAYtNBak345c4l/mnj8X905ShYAJSFwzaA==,iv:HdNGal/VFx9QDghRrIcdAhWfmyHqPERFj7kyvjPnzF4=,tag:LslCEKRBApf+urbIs+2v7A==,type:str]
             postgresql:
                 enabled: false
                 db: zammad
@@ -50,6 +50,7 @@ spec:
             storageClass: nfs-client
             accessModes:
                 - ReadWriteMany
+            existingClaim: zammad-var-zammad-0-nfs-temp
         #elasticsearch:
         #    master: null
         #tolerations:
@@ -89,14 +90,8 @@ spec:
         #           effect: NoSchedule
         redis:
             auth:
-                password: ENC[AES256_GCM,data:4y3NybYHd5IZhlL4VEzzLfg0h2gIOc21qaaXKpS0aJXCnTJ9ZUkhBtDNXSrejiE+6bgfQ9/VEahovCmUFP+dAA==,iv:Pp8OFWfhrFuKweDp00AY7hKpEKvEnv62MT529NQUcyQ=,tag:syfjkh7Dc/qUaeORR7jGlQ==,type:str]
+                password: ENC[AES256_GCM,data:j7bUIwZKTrvrLherAO7g9U0F4ur9pbZQY5Jm/XlBfM1mVH+GuQGd3kKxVvdOV8P878yf6F+AB4Q+ZFo4L/MOFw==,iv:Eom00lKbSqPVDJA80SnkmoaAgTcpCKHUvqOwQnfSYg8=,tag:0CizVY5q40GOWpH5pNENFQ==,type:str]
 sops:
-# master:
-#     tolerations:
-#         - key: arch
-#           operator: Equal
-#           value: arm64
-#           effect: NoSchedule
     kms: []
     gcp_kms: []
     azure_kv: []
@@ -105,14 +100,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBIYnA3Z0tocHg4QTRYTFR5
-            WUwrMnJVNEFqb0play9UNTNNNG5xdjh0SGpzCm1yUFhSbjZiZTBvcENkWG1vcjl5
-            QTBTM3M2OUE1VGRGbWpNOEcvTEZMTFUKLS0tIHpLcUJkQnZybktOTE1VekYxRzUv
-            Mk1yYkkyc2IzVlVlWEMzZFNZazV1NWcKjOSnHSIjL/7inEFBqLTUeOTNvozkNsde
-            483uHgjNUZZ9FWnP34UyBy93Cc0383V9U1muUe7EjKGv3XHipKNT/w==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDSXJ6bmhrYVFaOEs0Nm1E
+            T3cwS2t1QUovY0lkek9YZ1hZNGwxY003T2owCkx4UDhtYTkrZUdLWENZSnJ6emI3
+            NjlhMGZ0UnJieml4VExuY0M2QkltM3MKLS0tIEpXTStwSTBTdDlTaG5SdmxRdExH
+            emJ6U2U3TGd0SGZ5UUZ6MCtFNWxIeFEKbhPIMkwpejFGoI2YHIqTamm35jrNG+FA
+            aRx/XJm6MxnmsKnccKikqLRNEeiBlZqDy5eOvh+kJ3xJF9d1zasGxA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-07-18T11:05:48Z"
-    mac: ENC[AES256_GCM,data:OlRaHfjZ+sxsOAYkBLAVsxWMPN9Jf3covVR0K/+4VEJvpJaArVatla7p10xBePJRvsDgqQJEEfekdfeiLYxJor9U/0eNX5kFMzcKuP0qTcGXHPKZSEKAfg3y/TOy1yqPSWimV1rGQtlK+dNsz0Dp8I513Ay7HuIDTVOzrIkuT0c=,iv:mv/f6JZ8ONzC76nLfl3ARbOC3b1A1JypdsIRJTLFiBk=,tag:CgdA+ofwNMH/alFOjjMilg==,type:str]
+    lastmodified: "2023-07-18T13:31:51Z"
+    mac: ENC[AES256_GCM,data:DoFIGIc+7r++4gIG9rM3Joribxx0OMdozR0sZELPhcU+GEHakPKQXdwhZYO3fWKPDA+sEXSpWJTJDJyA3eHN6sKKdj03O26g81g/rU2O19WGzP0xELvdZkMzgK1/SWKSu4G7gJDYqwywoFrnIyZJJPOyXkuZFMw1F5cp+jb9nus=,iv:lilVzKyt5VCrU9UEbKRtAjwkm+lHXjoKGuCsqf/a5DU=,tag:reVHd+sLriqjIhSM1zP6HQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|password|pass|postgresPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.7.3
