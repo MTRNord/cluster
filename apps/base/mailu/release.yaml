@@ -49,18 +49,18 @@ spec:
               echo "ALTER DATABASE \"${ROUNDCUBE_DB_NAME}\" OWNER TO \"${ROUNDCUBE_DB_USER}\"\;" | postgresql_execute "" "postgres" "$POSTGRES_POSTGRES_PASSWORD"
               info "Setting ownership for the 'public' schema database \"${ROUNDCUBE_DB_NAME}\" to \"${ROUNDCUBE_DB_USER}\""
               echo "ALTER SCHEMA public OWNER TO \"${ROUNDCUBE_DB_USER}\"\;" | postgresql_execute "$ROUNDCUBE_DB_NAME" "postgres" "$POSTGRES_POSTGRES_PASSWORD"
-        tolerations:
-          - key: "arch"
-            operator: "Equal"
-            value: "arm64"
-            effect: "NoSchedule"
+        #tolerations:
+        #  - key: "arch"
+        #    operator: "Equal"
+        #    value: "arm64"
+        #    effect: "NoSchedule"
         persistence:
           enabled: true
           subPath: "postgresql"
           existingClaim: mailu-storage
     persistence:
       single_pvc: true
-      storageClass: "rook-main-fs"
+      storageClass: "nfs-client"
       accessModes:
         - ReadWriteMany
       size: 15Gi
@@ -77,72 +77,67 @@ spec:
         enabled: false
         ports:
           pop3s: false
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
+      #tolerations:
+      #  - key: "arch"
+      #    operator: "Equal"
+      #    value: "arm64"
+      #    effect: "NoSchedule"
     redis:
       master:
         persistence:
           subPath: "redis"
           existingClaim: mailu-storage
-    admin:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    postfix:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    dovecot:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    rspamd:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    clamav:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    webmail:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    radicale:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    fetchmail:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    oletools:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-
-
-
-
-
+    #admin:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #postfix:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #dovecot:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #rspamd:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #clamav:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #webmail:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #radicale:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #fetchmail:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"
+    #oletools:
+    #tolerations:
+    #  - key: "arch"
+    #    operator: "Equal"
+    #    value: "arm64"
+    #    effect: "NoSchedule"

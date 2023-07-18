@@ -28,18 +28,18 @@ spec:
           requests:
             cpu: "0m"
             memory: "0Mi"
-        tolerations:
-          - key: "arch"
-            operator: "Equal"
-            value: "arm64"
-            effect: "NoSchedule"
+        #tolerations:
+        #  - key: "arch"
+        #    operator: "Equal"
+        #    value: "arm64"
+        #    effect: "NoSchedule"
         enableRemoteWriteReceiver: true
         podMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelectorNilUsesHelmValues: false
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: rook-main-fs
+              storageClassName: nfs-client
               accessModes: ["ReadWriteMany"]
               resources:
                 requests:
