@@ -26,7 +26,7 @@ spec:
             value: "arm64"
             effect: "NoSchedule"
         persistence:
-          storageClass: "rook-main-fs"
+          storageClass: "nfs-client"
           accessModes:
             - ReadWriteMany
     memcached:
@@ -66,7 +66,7 @@ spec:
       size: "5Gi"
 
       ## Define the class of PV.
-      storageClassName: "rook-main-fs"
+      storageClassName: "nfs-client"
     strategy:
       type: "RollingUpdate"
     tolerations:

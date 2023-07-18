@@ -32,7 +32,7 @@ spec:
             value: "arm64"
             effect: "NoSchedule"
         persistence:
-          storageClass: "rook-main-fs"
+          storageClass: "nfs-client"
           accessModes:
             - ReadWriteMany
     service:
@@ -43,7 +43,7 @@ spec:
         cert-manager.io/cluster-issuer: letsencrypt-dns
       tls: true
     persistence:
-      storageClass: "rook-main-fs"
+      storageClass: "nfs-client"
       accessModes:
         - ReadWriteMany
     databaseType: postgresql
