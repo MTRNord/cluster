@@ -104,6 +104,10 @@ spec:
               access: proxy
               url: http://tempo.monitoring.svc.cluster.local:16686
               isDefault: false
+              jsonData:
+                httpMethod: GET
+                serviceMap:
+                  datasourceUid: "prometheus"
       dashboards:
         monitoring:
           felix-dashboard:
