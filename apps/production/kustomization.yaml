@@ -3,14 +3,14 @@ kind: Kustomization
 resources:
   - ../base/vaultwarden
   - ../base/cosign
-  - ../base/woodpecker
+  #- ../base/woodpecker
   - ../base/kube-prometheus-stack
   - ../base/loki-stack
   - ../base/postgres-operator
   - ../base/matrix
   - ../base/postgres-exporter
-  - ../base/redmine
-  - ../base/mailu
+  #- ../base/redmine
+  #- ../base/mailu
   - ../base/tempo
   - ../base/zammad
   - sliding-proxy-ingress.yaml
@@ -18,7 +18,7 @@ resources:
 patchesStrategicMerge:
   - cosign-values.yaml
   - vaultwarden-values.yaml
-  - woodpecker-values.yaml
+  #- woodpecker-values.yaml
   - kube-prometheus-stack-values.yaml
   - loki-stack-values.yaml
   - postgres-operator-values.yaml
@@ -26,6 +26,6 @@ patchesStrategicMerge:
   - sliding-proxy-values.yaml
   - synapse-midnightthoughts.yaml
   - postgres-exporter-values.yaml
-  - redmine-values.yaml
-  - mailu-values.yaml
+  #- redmine-values.yaml
+  #- mailu-values.yaml
   - synapse-draupnir.yaml
