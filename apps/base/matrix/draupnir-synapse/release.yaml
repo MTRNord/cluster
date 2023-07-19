@@ -41,6 +41,12 @@ spec:
     volumePermissions:
       enabled: true
     workers:
+      default:
+        extraEnv:
+          opentracing:
+            enabled: true
+            homeserver_whitelist:
+              - "draupnir4all.matrix.svc.cluster.local"
       federation_reader:
         replicaCount: 2
         enabled: true
