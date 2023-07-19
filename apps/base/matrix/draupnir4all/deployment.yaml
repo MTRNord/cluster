@@ -33,6 +33,13 @@ spec:
         - name: draupnir4all
           image: git.nordgedanken.dev/kubernetes/gitops/gnuxie/draupnir:latest
           imagePullPolicy: Always
+          env:
+            - name: TRACING_ENABLED
+              value: "true"
+            - name: TRACING_TRACE_URL
+              value: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
+            - name: TRACING_METRIC_URL
+              value: http://tempo.monitoring.svc.cluster.local:4318/v1/metrics
           command: ["./mjolnir-entrypoint.sh"]
           args:
             [

@@ -140,7 +140,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
 - [ ] Migrate old deployments here
   - [ ] Gitea
   - [x] Woodpecker
-  - [ ] Docker repo
+  - [ ] ~~Docker repo~~ (Part of gitea now)
   - [ ] Traefik
   - [x] Certmanager
   - [ ] External DNS
