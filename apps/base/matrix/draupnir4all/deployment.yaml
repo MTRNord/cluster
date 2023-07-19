@@ -77,12 +77,13 @@ spec:
               path: /healthz
               port: appservice
               scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
           startupProbe:
             httpGet:
               path: /healthz
               port: appservice
+            initialDelaySeconds: 15
             failureThreshold: 30
             periodSeconds: 10
       volumes:
