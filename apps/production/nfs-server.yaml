@@ -34,6 +34,7 @@ spec:
     spec:
       nodeSelector:
         "kubernetes.io/hostname": "nordgedanken.dev"
+      priorityClassName: system-cluster-critical
       containers:
         - name: nfs-server
           image: git.nordgedanken.dev/kubernetes/gitops/itsthenetwork/nfs-server-alpine:latest
