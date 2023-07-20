@@ -16,7 +16,7 @@ spec:
       - blockSize: 24
         cidr: 10.244.0.0/16
         #encapsulation: VXLANCrossSubnet
-        encapsulation: IPIP
+        encapsulation: VXLAN
         natOutgoing: Enabled
         nodeSelector: all()
       - blockSize: 116
@@ -40,12 +40,12 @@ spec:
     - Tunnel
   blockSize: 24
   cidr: 10.244.0.0/16
-  #ipipMode: Never
-  ipipMode: Always
+  ipipMode: Never
+  #ipipMode: Always
   natOutgoing: true
   nodeSelector: all()
-  #vxlanMode: Always
-  vxlanMode: Never
+  vxlanMode: Always
+  #vxlanMode: Never
 ---
 apiVersion: crd.projectcalico.org/v1
 kind: IPPool
