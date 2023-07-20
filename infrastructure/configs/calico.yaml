@@ -1,28 +1,28 @@
----
-apiVersion: operator.tigera.io/v1
-kind: Installation
-metadata:
-  name: default
-spec:
-  typhaMetricsPort: 9093
-  # Configures Calico networking.
-  calicoNetwork:
-    nodeAddressAutodetectionV4:
-      kubernetes: NodeInternalIP
-    nodeAddressAutodetectionV6:
-      kubernetes: NodeInternalIP
-    # Note: The ipPools section cannot be modified post-install.
-    ipPools:
-      - blockSize: 24
-        cidr: 10.244.0.0/16
-        encapsulation: VXLANCrossSubnet
-        natOutgoing: Enabled
-        nodeSelector: all()
-      - blockSize: 116
-        cidr: fc00:0::/96
-        encapsulation: VXLANCrossSubnet
-        natOutgoing: Enabled
-        nodeSelector: all()
+# ---
+# apiVersion: operator.tigera.io/v1
+# kind: Installation
+# metadata:
+#   name: default
+# spec:
+#   typhaMetricsPort: 9093
+#   # Configures Calico networking.
+#   calicoNetwork:
+#     nodeAddressAutodetectionV4:
+#       kubernetes: NodeInternalIP
+#     nodeAddressAutodetectionV6:
+#       kubernetes: NodeInternalIP
+#     # Note: The ipPools section cannot be modified post-install.
+#     ipPools:
+#       - blockSize: 24
+#         cidr: 10.244.0.0/16
+#         encapsulation: VXLANCrossSubnet
+#         natOutgoing: Enabled
+#         nodeSelector: all()
+#       - blockSize: 116
+#         cidr: fc00:0::/96
+#         encapsulation: VXLANCrossSubnet
+#         natOutgoing: Enabled
+#         nodeSelector: all()
 ---
 apiVersion: crd.projectcalico.org/v1
 kind: IPPool
@@ -41,7 +41,7 @@ spec:
   ipipMode: Never
   natOutgoing: true
   nodeSelector: all()
-  vxlanMode: CrossSubnet
+  vxlanMode: Always
 ---
 apiVersion: crd.projectcalico.org/v1
 kind: IPPool
@@ -60,7 +60,7 @@ spec:
   ipipMode: Never
   natOutgoing: true
   nodeSelector: all()
-  vxlanMode: CrossSubnet
+  vxlanMode: Always
 ---
 # This section configures the Calico API server.
 # For more information, see: https://projectcalico.docs.tigera.io/master/reference/installation/api#operator.tigera.io/v1.APIServer
