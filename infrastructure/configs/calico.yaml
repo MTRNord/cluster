@@ -15,8 +15,7 @@ spec:
     ipPools:
       - blockSize: 24
         cidr: 10.244.0.0/16
-        #encapsulation: VXLANCrossSubnet
-        encapsulation: VXLAN
+        encapsulation: VXLANCrossSubnet
         natOutgoing: Enabled
         nodeSelector: all()
       - blockSize: 116
@@ -44,8 +43,7 @@ spec:
   #ipipMode: Always
   natOutgoing: true
   nodeSelector: all()
-  vxlanMode: Always
-  #vxlanMode: Never
+  vxlanMode: CrossSubnet
 ---
 apiVersion: crd.projectcalico.org/v1
 kind: IPPool
@@ -64,7 +62,7 @@ spec:
   ipipMode: Never
   natOutgoing: true
   nodeSelector: all()
-  #vxlanMode: Always
+  #vxlanMode: CrossSubnet
   vxlanMode: Never
 ---
 # This section configures the Calico API server.
