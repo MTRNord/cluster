@@ -42,6 +42,9 @@ spec:
       enabled: true
     workers:
       default:
+        extraEnv:
+          - name: JAEGER_AGENT_HOST
+            value: tempo.monitoring.svc.cluster.local
         extraConfig:
           opentracing:
             enabled: true
