@@ -7,7 +7,8 @@ spec:
   typhaMetricsPort: 9093
   # Configures Calico networking.
   calicoNetwork:
-    mtu: 8930
+    #Limited by the vms. The main host can do jumbo packages
+    mtu: 1380
     nodeAddressAutodetectionV4:
       kubernetes: NodeInternalIP
     nodeAddressAutodetectionV6:
