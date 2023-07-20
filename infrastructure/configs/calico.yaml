@@ -38,10 +38,12 @@ spec:
     - Tunnel
   blockSize: 24
   cidr: 10.244.0.0/16
-  ipipMode: Never
+  #ipipMode: Never
+  ipipMode: Always
   natOutgoing: true
   nodeSelector: all()
-  vxlanMode: Always
+  #vxlanMode: Always
+  vxlanMode: Never
 ---
 apiVersion: crd.projectcalico.org/v1
 kind: IPPool
@@ -60,7 +62,8 @@ spec:
   ipipMode: Never
   natOutgoing: true
   nodeSelector: all()
-  vxlanMode: Always
+  #vxlanMode: Always
+  vxlanMode: Never
 ---
 # This section configures the Calico API server.
 # For more information, see: https://projectcalico.docs.tigera.io/master/reference/installation/api#operator.tigera.io/v1.APIServer
