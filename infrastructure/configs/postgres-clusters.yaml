@@ -113,6 +113,11 @@ spec:
   volume:
     size: 70Gi
     storageClass: nfs-client
+  additionalVolumes:
+    - name: hugepage
+      emptyDir:
+        medium: HugePages
+
   patroni:
     ttl: 30
     loop_wait: 10
