@@ -38,42 +38,46 @@ spec:
   postgresql:
     version: "15"
     parameters:
-      wal_level: replica
-      max_wal_senders: "10"
-      synchronous_commit: local
-      checkpoint_timeout: "15 min"
-      checkpoint_completion_target: "0.9"
-      archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
-      archive_command: "/bin/true" # not doing anything yet with WAL-s
-      wal_compression: "on"
-      password_encryption: scram-sha-256
-      max_connections: "300"
-      superuser_reserved_connections: "6"
-      shared_buffers: "2048 MB"
+      shared_buffers: "4096 MB"
       work_mem: "32 MB"
       maintenance_work_mem: "320 MB"
       huge_pages: off
-      effective_cache_size: "6 GB"
+      effective_cache_size: "11 GB"
       effective_io_concurrency: "150"
       random_page_cost: "1.5"
       shared_preload_libraries: "pg_stat_statements"
       track_io_timing: on
       track_functions: pl
-      min_wal_size: "512 MB"
-      max_wal_size: "1024 MB"
+      wal_level: replica
+      max_wal_senders: "10"
+      synchronous_commit: on
+      checkpoint_timeout: "15 min"
+      checkpoint_completion_target: "0.9"
+
+      # archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
+      # archive_command: "/bin/true" # not doing anything yet with WAL-s
+
+      wal_compression: "on"
+      password_encryption: scram-sha-256
       wal_buffers: "-1"
       wal_writer_delay: 200ms
       wal_writer_flush_after: 1MB
       wal_keep_size: "3650 MB"
+
+      min_wal_size: "512 MB"
+      max_wal_size: "1024 MB"
+
       bgwriter_delay: 200ms
       bgwriter_lru_maxpages: "100"
       bgwriter_lru_multiplier: "2.0"
       bgwriter_flush_after: "0"
-      max_worker_processes: "8"
-      max_parallel_workers_per_gather: "4"
-      max_parallel_maintenance_workers: "4"
-      max_parallel_workers: "8"
+
+      max_worker_processes: "12"
+      max_parallel_workers_per_gather: "6"
+      max_parallel_maintenance_workers: "6"
+      max_parallel_workers: "12"
       parallel_leader_participation: "on"
+
       enable_partitionwise_join: "on"
       enable_partitionwise_aggregate: "on"
       jit: "on"
