@@ -115,8 +115,10 @@ spec:
     storageClass: nfs-client
   additionalVolumes:
     - name: hugepage
-      emptyDir:
-        medium: HugePages
+      mountPath: /hugepages
+      volumeSource:
+        emptyDir:
+          medium: HugePages
 
   patroni:
     ttl: 30
