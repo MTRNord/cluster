@@ -27,8 +27,8 @@ spec:
                       datasourceUid: loki
                       model:
                         datasource:
-                            type: loki
-                            uid: loki
+                          type: loki
+                          uid: loki
                         editorMode: builder
                         expr: rate({namespace="kube-system", app="coredns"} |= `i/o timeout` [15m])
                         hide: false
@@ -44,22 +44,22 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 1
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - C
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
+                          - evaluator:
+                              params:
+                                - 1
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
                         datasource:
-                            type: __expr__
-                            uid: __expr__
+                          type: __expr__
+                          uid: __expr__
                         expression: A
                         hide: false
                         intervalMs: 1000
@@ -73,31 +73,31 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 0
-                                    - 0
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params: []
-                              reducer:
-                                params: []
-                                type: avg
-                              type: query
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
                         datasource:
-                            name: Expression
-                            type: __expr__
-                            uid: __expr__
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
                         expression: Count
                         intervalMs: 1000
                         maxDataPoints: 43200
                         reducer: last
                         refId: A
                         settings:
-                            mode: replaceNN
-                            replaceWithValue: 0
+                          mode: replaceNN
+                          replaceWithValue: 0
                         type: reduce
                   noDataState: OK
                   execErrState: Error
@@ -106,7 +106,7 @@ spec:
                     summary: High amount of i/o timeouts in coredns
                   isPaused: false
             - orgId: 1
-              name: 'Matrix Synapse'
+              name: "Matrix Synapse"
               folder: Matrix
               interval: 1m
               rules:
@@ -122,8 +122,8 @@ spec:
                       datasourceUid: loki
                       model:
                         datasource:
-                            type: loki
-                            uid: loki
+                          type: loki
+                          uid: loki
                         editorMode: builder
                         expr: rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
                         hide: false
@@ -139,22 +139,22 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 1
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - C
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
+                          - evaluator:
+                              params:
+                                - 1
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
                         datasource:
-                            type: __expr__
-                            uid: __expr__
+                          type: __expr__
+                          uid: __expr__
                         expression: A
                         hide: false
                         intervalMs: 1000
@@ -168,33 +168,33 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 0
-                                    - 0
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params: []
-                              reducer:
-                                params: []
-                                type: avg
-                              type: query
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
                         datasource:
-                            name: Expression
-                            type: __expr__
-                            uid: __expr__
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
                         expression: Count
                         intervalMs: 1000
                         maxDataPoints: 43200
                         reducer: last
                         refId: A
                         settings:
-                            mode: replaceNN
-                            replaceWithValue: 0
+                          mode: replaceNN
+                          replaceWithValue: 0
                         type: reduce
-                  noDataState: NoData
+                  noDataState: OK
                   execErrState: Error
                   for: 5m
                   annotations:
@@ -212,8 +212,8 @@ spec:
                       datasourceUid: loki
                       model:
                         datasource:
-                            type: loki
-                            uid: loki
+                          type: loki
+                          uid: loki
                         editorMode: builder
                         expr: rate({namespace="matrix", app="matrix-synapse"} |= `psycopg2.errors.ReadOnlySqlTransaction` [15m])
                         hide: false
@@ -229,22 +229,22 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 0.1
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - C
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
+                          - evaluator:
+                              params:
+                                - 0.1
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
                         datasource:
-                            type: __expr__
-                            uid: __expr__
+                          type: __expr__
+                          uid: __expr__
                         expression: A
                         hide: false
                         intervalMs: 1000
@@ -258,31 +258,31 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 0
-                                    - 0
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params: []
-                              reducer:
-                                params: []
-                                type: avg
-                              type: query
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
                         datasource:
-                            name: Expression
-                            type: __expr__
-                            uid: __expr__
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
                         expression: Count
                         intervalMs: 1000
                         maxDataPoints: 43200
                         reducer: last
                         refId: A
                         settings:
-                            mode: replaceNN
-                            replaceWithValue: 0
+                          mode: replaceNN
+                          replaceWithValue: 0
                         type: reduce
                   noDataState: OK
                   execErrState: Error
@@ -291,7 +291,7 @@ spec:
                     summary: Matrix Database rolled over but synapse crashed
                   isPaused: false
                 - uid: d16dc343-31d9-466a-bdc1-c2466b0bc18f
-                  title: 'Unusual synapse logging'
+                  title: "Unusual synapse logging"
                   condition: Thresh
                   data:
                     - refId: Count
@@ -302,8 +302,8 @@ spec:
                       datasourceUid: loki
                       model:
                         datasource:
-                            type: loki
-                            uid: loki
+                          type: loki
+                          uid: loki
                         editorMode: builder
                         expr: sum by(level) (count_over_time({namespace="matrix", app="matrix-synapse"} | pattern `<_> - <component> - <_> - <level> - <trace>- <detail>` | level != `INFO` [$__interval]))
                         hide: false
@@ -319,22 +319,22 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 20
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params:
-                                    - C
-                              reducer:
-                                params: []
-                                type: last
-                              type: query
+                          - evaluator:
+                              params:
+                                - 20
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
                         datasource:
-                            type: __expr__
-                            uid: __expr__
+                          type: __expr__
+                          uid: __expr__
                         expression: A
                         hide: false
                         intervalMs: 1000
@@ -348,31 +348,31 @@ spec:
                       datasourceUid: __expr__
                       model:
                         conditions:
-                            - evaluator:
-                                params:
-                                    - 0
-                                    - 0
-                                type: gt
-                              operator:
-                                type: and
-                              query:
-                                params: []
-                              reducer:
-                                params: []
-                                type: avg
-                              type: query
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
                         datasource:
-                            name: Expression
-                            type: __expr__
-                            uid: __expr__
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
                         expression: Count
                         intervalMs: 1000
                         maxDataPoints: 43200
                         reducer: last
                         refId: A
                         settings:
-                            mode: replaceNN
-                            replaceWithValue: 0
+                          mode: replaceNN
+                          replaceWithValue: 0
                         type: reduce
                   noDataState: OK
                   execErrState: Error
@@ -384,21 +384,21 @@ spec:
           apiVersion: 1
           contactPoints:
             - orgId: 1
-              name: 'MidnightThoughts Ops'
+              name: "MidnightThoughts Ops"
               receivers:
-                - uid: '1'
-                  name: 'MidnightThoughts Ops'
-                  type: 'email'
+                - uid: "1"
+                  name: "MidnightThoughts Ops"
+                  type: "email"
                   sendReminder: true
-                  frequency: '1m'
+                  frequency: "1m"
                   settings:
-                    addresses: 'ops@nordgedanken.dev;mtrnord@nordgedanken.dev;mtrnord1@gmail.com'
+                    addresses: "ops@nordgedanken.dev;mtrnord@nordgedanken.dev;mtrnord1@gmail.com"
         policies.yaml:
           apiVersion: 1
           policies:
             - orgId: 1
-              receiver: 'MidnightThoughts Ops'
-              group_by: ['grafana_folder', 'alertname']
+              receiver: "MidnightThoughts Ops"
+              group_by: ["grafana_folder", "alertname"]
 
       ingress:
         enabled: true
