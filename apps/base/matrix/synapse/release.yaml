@@ -266,6 +266,8 @@ spec:
         enabled: true
       appservice:
         enabled: true
+        name: appservices
+        generic: true
       federation_sender_1:
         labels:
           synapse-component: federation-sender
@@ -296,6 +298,7 @@ spec:
       #  enabled: true
       user_dir:
         enabled: false
+        name: userdir
         listeners: [client]
         csPaths:
           - /_matrix/client/(r0|v3|unstable)/user_directory/search$
