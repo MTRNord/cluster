@@ -27,10 +27,10 @@ spec:
       pullSecrets:
         - name: docker
     extraConfig:
-      instance_map:
-        event_persister:
-          host: matrix-synapse-event-persister.matrix.svc.cluster.local
-          port: 8083
+      #instance_map:
+      #  event_persister:
+      #    host: matrix-synapse-event-persister.matrix.svc.cluster.local
+      #    port: 8083
 
       stream_writers:
         events: event_persister
