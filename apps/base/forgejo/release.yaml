@@ -7,10 +7,12 @@ spec:
     releaseName: forgejo
     chart:
         spec:
-            chart: forgejo
+            #chart: forgejo
+            chart: .
             sourceRef:
-                kind: HelmRepository
-                name: forgejo
+                #kind: HelmRepository
+                kind: GitRepository
+                name: forgejo-git
     interval: 50m
     timeout: 25m
     install:
@@ -48,11 +50,11 @@ spec:
                 - name: keycloak
                   provider: openidConnect
                   key: gitea
-                  secret: ENC[AES256_GCM,data:gltapWYirXRv6MKBtZBktUB1qEpmuQ40avcPs74lHMs=,iv:3HWdN4jT9cmB2Jwb1HIiAwHr9ZjtK7pmPWW3TlSIM04=,tag:VQX7XvB4+pjeXz0MT5tGqQ==,type:str]
+                  secret: ENC[AES256_GCM,data:697LZgGNTEIX1nJnq6eBw9Y2vZ0b7o/hHYWM+qulTJo=,iv:1h8tXFCDGgfeoFBqtoaqZoEXiE1zbCQrfsexDKPqCss=,tag:zi9TYNVJPcGts0Vx4Be5OQ==,type:str]
                   autoDiscoverUrl: https://keycloak.midnightthoughts.space/realms/Gitea/.well-known/openid-configuration
             admin:
                 username: gitea_admin
-                password: ENC[AES256_GCM,data:gpHbkcI5gYsu8+4b4Kdf7RnvoMpHrJffWfRAMAtYtgfW5HBptqlfVL0RduFzSrLviZGb/8reKZnx7TOMr6ErVQ==,iv:NBCserJqGMrCef7nOpse5RKp8SgkZX60IOn8kh6qrkE=,tag:kOSX4pty4V1HS1siv623PA==,type:str]
+                password: ENC[AES256_GCM,data:911K1L3rOszqcOVw6g3g3hsJgozLDQgJ0CCrlQLR5rBun7a7cPtWmhMrACg54b0ldWPpdkoiY2Vc4TPtsrkmWw==,iv:oopvqZvh5OwFpU7QcXrO0XgOPppwbmgVUV5fFrUJzHo=,tag:DyeHoHJx4PMJQgJqZLEM1A==,type:str]
                 email: ops@nordgedanken.dev
             metrics:
                 enabled: true
@@ -88,14 +90,14 @@ spec:
                     SMTP_PORT: 465
                     PROTOCOL: smtps
                     USER: ops@nordgedanken.dev
-                    PASSWD: ENC[AES256_GCM,data:HHgouSYsyz4K,iv:eYiB3WW5qB13J/1zFtXc8q6LGsGyxn/3ryWbNc+G8Rs=,tag:Fff6DIT9MVi73a2jPiWg2A==,type:str]
+                    PASSWD: ENC[AES256_GCM,data:yQcXabPyjOIu,iv:VpV32FwLjQ96UJv6yl1P3WkyexhNjsgsE2VgWq7lYzE=,tag:wVhwCS4urAVkjBKZIs5/Jw==,type:str]
         postgresql:
             enabled: true
             global:
                 postgresql:
                     postgresqlDatabase: gitea
                     postgresqlUsername: gitea
-                    postgresqlPassword: ENC[AES256_GCM,data:LDeLHBfO2YDE1HC5eOHK7LnHQ40CnkxlP/AWe5MeKgoRT9280Y9Zlb/SStsd52nEWH9zETGB0Or3NEdSQlz/GQ==,iv:7FnRgPhvoFYsJdjUSE/v2TIIVsNbFxSmEEJuN1jHtI8=,tag:p7kG9HaAOYt9Wv0Qhb1CWw==,type:str]
+                    postgresqlPassword: ENC[AES256_GCM,data:S0J9NyEzdtZyEF27TEsFttBnBQdloxiaOIJqnrCG0oEAqockrFA4kvXeAHCybSD+bMpSGcrZDvSlHma0OoZNXQ==,iv:S+XzkscJROxP0p3HRMmYR442FAixZy2o4vuEZWKpj3E=,tag:BszT8z7Q5ioQz3h8XIAktA==,type:str]
                     servicePort: 5432
             persistence:
                 enabled: true
@@ -110,14 +112,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvYTNSeEtxYzRzSlBiRi8r
-            eTJnSmQrQzZpbFIrODBwaEtFY0F1TWI3eWo0ClhRK3NtMGwxRDFlVy8zdDZWak1q
-            V0hRZWlNK0lrYVhYbWVqZmI1bm5FbVEKLS0tIHF0dERVN1JuYTNXV2NFeE0reHRj
-            YTl0Vlk5T3M5S1BJZFNrQm9NRFJHSE0KL9qvb/BVPysNSGU9YJfrrmRWQm7NZRgx
-            2EHIUglSr5ubdOi1aZTL+i1HDAaJKhLh89emc7DGfA+Df2CVgqzMhQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhckk0UVBlME5hbXErRHhB
+            WlN3Y0JxZS9lV0FwK2x4cDcrMmF4cVdORnlRClZGaTU1THF0a2JaYzQzUktDQW1H
+            VWt1Y2MvZDZzSWFxY3J1RzljOHhlL0UKLS0tIGFMY3VCMlhZQit2ZU1wZVZOWkhZ
+            SURTK1MwU0hiUFZiNE5FbEtBN2U2ZWcK8dzPLlGQWk7WysxUNiRxy8gzzzo/Ek2w
+            lLe03Alng++eOW7l6tSSA2A9gZewrC4/QIM508yBKQDvD/Y+pnf6lA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-08-10T18:02:05Z"
-    mac: ENC[AES256_GCM,data:TxL4+w5GZNC+e8mLxXZ9kCNh8sNlVWhpdoAimQIdO6dT7Ahb6GBvf6maBo1o2o+oSwmU6Wcn7rC0w4r5NBHmZFZMX++eOiSEYinFsaf2ovdWMn2uDCOfXNNssea3nY0oKk/9sGMUOEVYdrCG/UByQ9ZWWWYyqmO5VuX7H78E8ME=,iv:EhHE0j2ftkZrDAnYqaUdHORzM6+rEokUcoAuP73RnG8=,tag:TqQFHSdiDZ5NMJT3T1kwUQ==,type:str]
+    lastmodified: "2023-08-10T18:42:04Z"
+    mac: ENC[AES256_GCM,data:AftQsIQi3X23CYtDmQq1gh7yOZXR2eqnFOxe9uVKue4Bmtqzz0EvSLLwuFxXpBm14QV8JLCZ6Rk2YTDqrvyRaGh69zo4cwPZcRYWjO3fS+scZ3tUkhbgNA4PUy6m+sffuoMhaKW6Q3SnHdDn/nhmSUo2YHKvne4gQcl17UC7efg=,iv:yJse9etcUsu8SaHy26WSlsHFvBM4a/iIUOIPPZKz6MY=,tag:I0knyJHtDun/OmyWUZgdgA==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.7.3

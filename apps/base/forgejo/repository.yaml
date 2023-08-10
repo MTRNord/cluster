@@ -1,3 +1,4 @@
+---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
@@ -7,3 +8,14 @@ spec:
   interval: 5m
   url: oci://codeberg.org/forgejo-contrib
   type: "oci"
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: forgejo-git
+  namespace: forgejo
+spec:
+  interval: 5m
+  url: https://codeberg.org/forgejo-contrib/forgejo-helm.git
+  ref:
+    tag: v0.10.1
