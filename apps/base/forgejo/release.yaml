@@ -1,0 +1,120 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: forgejo
+    namespace: forgejo
+spec:
+    releaseName: forgejo
+    chart:
+        spec:
+            chart: forgejo
+            sourceRef:
+                kind: HelmRepository
+                name: forgejo
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        containerSecurityContext:
+            capabilities:
+                add:
+                    - SYS_CHROOT
+        signing:
+            enabled: true
+        memcached:
+            enabled: true
+        persistence:
+            enabled: true
+            existingClaim: data-gitea-0
+            size: 50Gi
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hosts:
+                - host: git.nordgedanken.dev
+                  paths:
+                    - path: /
+                      pathType: Prefix
+            tls:
+                - secretName: git.nordgedanken.dev-tls
+                  hosts:
+                    - git.nordgedanken.dev
+        gitea:
+            oauth:
+                - name: keycloak
+                  provider: openidConnect
+                  key: gitea
+                  secret: ENC[AES256_GCM,data:hjIo/Anv2IHf2AyI6TR6H4u39U7bNB/5YE1ZwSjT6t4=,iv:ShuxzXcB9rdglSB9hFZpCyQpDGIGcdIkq2+ataGgtgs=,tag:Alj0pBUIZ4GCTLwIXPBaZw==,type:str]
+                  autoDiscoverUrl: https://keycloak.midnightthoughts.space/realms/Gitea/.well-known/openid-configuration
+            admin:
+                username: gitea_admin
+                password: ENC[AES256_GCM,data:1Ddd6Rr8us2T8u4FlKkxMgy9yrkDB3+x9BFAPbAgQVF/3sRz6WfSAPoinChxQsADyO5OEFGzPNSWi8sX8dZnRA==,iv:ch3McRWEFo53NDuru+WZYQGEi/3wT+HJ/utwyFCh9OM=,tag:/v31faSzSjm889njYmqgZA==,type:str]
+                email: ops@nordgedanken.dev
+            metrics:
+                enabled: true
+                serviceMonitor:
+                    enabled: true
+            config:
+                indexer:
+                    ISSUE_INDEXER_TYPE: bleve
+                    REPO_INDEXER_ENABLED: true
+                repository:
+                    MAX_CREATION_LIMIT: 0
+                    DISABLE_HTTP_GIT: false
+                service:
+                    DISABLE_REGISTRATION: true
+                    ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+                    DEFAULT_KEEP_EMAIL_PRIVATE: true
+                oauth2_client:
+                    ENABLE_AUTO_REGISTRATION: true
+                server:
+                    ROOT_URL: https://git.nordgedanken.dev
+                    SSH_PORT: 22
+                    LFS_START_SERVER: true
+                    START_SSH_SERVER: false
+                federation:
+                    ENABLED: true
+                mailer:
+                    ENABLED: true
+                    FROM: ops@nordgedanken.dev
+                    SMTP_ADDR: mail.nordgedanken.dev
+                    SMTP_PORT: 465
+                    PROTOCOL: smtps
+                    USER: ops@nordgedanken.dev
+                    PASSWD: ENC[AES256_GCM,data:PQGyPJSzAYur,iv:aOgn95VJ8A8o6DWWLScGPUZzE60luoDaR94s22F23ng=,tag:RTwdjTn4wGd6kNdz7UzekA==,type:str]
+        postgresql:
+            enabled: true
+            global:
+                postgresql:
+                    postgresqlDatabase: gitea
+                    postgresqlUsername: gitea
+                    postgresqlPassword: ENC[AES256_GCM,data:zyGkPeV/V9i+WwiwIsn4xC+wg53u9KmTT7/TXTVHnWH48slWyFiHNdMcH9gReQveuSRX7J8j15zs0GuXO2o1+A==,iv:+Ak/sBVI8ktw+bnuClSQaUwFgjJStCPcx90nRdulVb8=,tag:cWvD3rawGvlldC9P1alU8A==,type:str]
+                    servicePort: 5432
+            persistence:
+                enabled: true
+                existingClaim: data-gitea-postgresql-0
+                size: 25Gi
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKcEN3VFQyRHN5NXZBQnl2
+            d1h3WmM3Vi9weFFnR1pGbU9rMXVRS0pOY0ZJCitUN0dkUUlVSmwzRzBJNTU5NnIz
+            K0lHM2dhQzFkZERHOTVScUFQVVRHRFkKLS0tIFVCN3c1cExHZDFIOWJGcjZ1SWhh
+            dVBYaU5aZm82aHROK1JySVorcDBUU3MKN1csG9zhLvH4E3Pf0cShHzy7JTz91lDr
+            N6tac04CRDoE3tO6DxFsgKqmlNQTl2ePPjSxAQs2A1FFNq/WheMbDg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-08-10T17:54:21Z"
+    mac: ENC[AES256_GCM,data:AgVY6MjllcmGFSTC5XNKeSSRsAjF+bMcvMF7xRJi82H+Tr8PWYIAg/CXp6rM+OsnT2mAtLv/n5sPgobxpi51afRKoFAbHZxWvaZJF83rCxLRTxMj+vgh9AsasMM1E8jjeH8ehJ3tyUpRqrxCbq1JGR5lLb+OChYKqyR+/RJVM8I=,iv:ixxPlJhw6dxtkgqcl2iE9ddGXmbWSDstSKZZIAtzXpE=,tag:nhwAS5JaydUURBFL/B1r5A==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.7.3
