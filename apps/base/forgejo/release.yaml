@@ -48,17 +48,20 @@ spec:
                 - name: keycloak
                   provider: openidConnect
                   key: gitea
-                  secret: ENC[AES256_GCM,data:hjIo/Anv2IHf2AyI6TR6H4u39U7bNB/5YE1ZwSjT6t4=,iv:ShuxzXcB9rdglSB9hFZpCyQpDGIGcdIkq2+ataGgtgs=,tag:Alj0pBUIZ4GCTLwIXPBaZw==,type:str]
+                  secret: ENC[AES256_GCM,data:gltapWYirXRv6MKBtZBktUB1qEpmuQ40avcPs74lHMs=,iv:3HWdN4jT9cmB2Jwb1HIiAwHr9ZjtK7pmPWW3TlSIM04=,tag:VQX7XvB4+pjeXz0MT5tGqQ==,type:str]
                   autoDiscoverUrl: https://keycloak.midnightthoughts.space/realms/Gitea/.well-known/openid-configuration
             admin:
                 username: gitea_admin
-                password: ENC[AES256_GCM,data:1Ddd6Rr8us2T8u4FlKkxMgy9yrkDB3+x9BFAPbAgQVF/3sRz6WfSAPoinChxQsADyO5OEFGzPNSWi8sX8dZnRA==,iv:ch3McRWEFo53NDuru+WZYQGEi/3wT+HJ/utwyFCh9OM=,tag:/v31faSzSjm889njYmqgZA==,type:str]
+                password: ENC[AES256_GCM,data:gpHbkcI5gYsu8+4b4Kdf7RnvoMpHrJffWfRAMAtYtgfW5HBptqlfVL0RduFzSrLviZGb/8reKZnx7TOMr6ErVQ==,iv:NBCserJqGMrCef7nOpse5RKp8SgkZX60IOn8kh6qrkE=,tag:kOSX4pty4V1HS1siv623PA==,type:str]
                 email: ops@nordgedanken.dev
             metrics:
                 enabled: true
                 serviceMonitor:
                     enabled: true
             config:
+                actions:
+                    ENABLED: true
+                    DEFAULT_ACTIONS_URL: https://git.nordgedanken.dev
                 indexer:
                     ISSUE_INDEXER_TYPE: bleve
                     REPO_INDEXER_ENABLED: true
@@ -85,14 +88,14 @@ spec:
                     SMTP_PORT: 465
                     PROTOCOL: smtps
                     USER: ops@nordgedanken.dev
-                    PASSWD: ENC[AES256_GCM,data:PQGyPJSzAYur,iv:aOgn95VJ8A8o6DWWLScGPUZzE60luoDaR94s22F23ng=,tag:RTwdjTn4wGd6kNdz7UzekA==,type:str]
+                    PASSWD: ENC[AES256_GCM,data:HHgouSYsyz4K,iv:eYiB3WW5qB13J/1zFtXc8q6LGsGyxn/3ryWbNc+G8Rs=,tag:Fff6DIT9MVi73a2jPiWg2A==,type:str]
         postgresql:
             enabled: true
             global:
                 postgresql:
                     postgresqlDatabase: gitea
                     postgresqlUsername: gitea
-                    postgresqlPassword: ENC[AES256_GCM,data:zyGkPeV/V9i+WwiwIsn4xC+wg53u9KmTT7/TXTVHnWH48slWyFiHNdMcH9gReQveuSRX7J8j15zs0GuXO2o1+A==,iv:+Ak/sBVI8ktw+bnuClSQaUwFgjJStCPcx90nRdulVb8=,tag:cWvD3rawGvlldC9P1alU8A==,type:str]
+                    postgresqlPassword: ENC[AES256_GCM,data:LDeLHBfO2YDE1HC5eOHK7LnHQ40CnkxlP/AWe5MeKgoRT9280Y9Zlb/SStsd52nEWH9zETGB0Or3NEdSQlz/GQ==,iv:7FnRgPhvoFYsJdjUSE/v2TIIVsNbFxSmEEJuN1jHtI8=,tag:p7kG9HaAOYt9Wv0Qhb1CWw==,type:str]
                     servicePort: 5432
             persistence:
                 enabled: true
@@ -107,14 +110,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKcEN3VFQyRHN5NXZBQnl2
-            d1h3WmM3Vi9weFFnR1pGbU9rMXVRS0pOY0ZJCitUN0dkUUlVSmwzRzBJNTU5NnIz
-            K0lHM2dhQzFkZERHOTVScUFQVVRHRFkKLS0tIFVCN3c1cExHZDFIOWJGcjZ1SWhh
-            dVBYaU5aZm82aHROK1JySVorcDBUU3MKN1csG9zhLvH4E3Pf0cShHzy7JTz91lDr
-            N6tac04CRDoE3tO6DxFsgKqmlNQTl2ePPjSxAQs2A1FFNq/WheMbDg==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvYTNSeEtxYzRzSlBiRi8r
+            eTJnSmQrQzZpbFIrODBwaEtFY0F1TWI3eWo0ClhRK3NtMGwxRDFlVy8zdDZWak1q
+            V0hRZWlNK0lrYVhYbWVqZmI1bm5FbVEKLS0tIHF0dERVN1JuYTNXV2NFeE0reHRj
+            YTl0Vlk5T3M5S1BJZFNrQm9NRFJHSE0KL9qvb/BVPysNSGU9YJfrrmRWQm7NZRgx
+            2EHIUglSr5ubdOi1aZTL+i1HDAaJKhLh89emc7DGfA+Df2CVgqzMhQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-08-10T17:54:21Z"
-    mac: ENC[AES256_GCM,data:AgVY6MjllcmGFSTC5XNKeSSRsAjF+bMcvMF7xRJi82H+Tr8PWYIAg/CXp6rM+OsnT2mAtLv/n5sPgobxpi51afRKoFAbHZxWvaZJF83rCxLRTxMj+vgh9AsasMM1E8jjeH8ehJ3tyUpRqrxCbq1JGR5lLb+OChYKqyR+/RJVM8I=,iv:ixxPlJhw6dxtkgqcl2iE9ddGXmbWSDstSKZZIAtzXpE=,tag:nhwAS5JaydUURBFL/B1r5A==,type:str]
+    lastmodified: "2023-08-10T18:02:05Z"
+    mac: ENC[AES256_GCM,data:TxL4+w5GZNC+e8mLxXZ9kCNh8sNlVWhpdoAimQIdO6dT7Ahb6GBvf6maBo1o2o+oSwmU6Wcn7rC0w4r5NBHmZFZMX++eOiSEYinFsaf2ovdWMn2uDCOfXNNssea3nY0oKk/9sGMUOEVYdrCG/UByQ9ZWWWYyqmO5VuX7H78E8ME=,iv:EhHE0j2ftkZrDAnYqaUdHORzM6+rEokUcoAuP73RnG8=,tag:TqQFHSdiDZ5NMJT3T1kwUQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.7.3
