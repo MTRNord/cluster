@@ -9,17 +9,3 @@ spec:
     spec:
       #version: "0.10.1"
       version: "0.0.0"
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRouteTCP
-metadata:
-  name: forgejo-ssh
-  namespace: forgejo
-spec:
-  entryPoints:
-    - ssh
-  routes:
-    - match: HostSNI(`*`)
-      services:
-        - name: forgejo-ssh
-          port: 22
