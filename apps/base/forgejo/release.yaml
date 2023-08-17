@@ -7,12 +7,10 @@ spec:
     releaseName: forgejo
     chart:
         spec:
-            #chart: forgejo
-            chart: ./
+            chart: forgejo
             sourceRef:
-                #kind: HelmRepository
-                kind: GitRepository
-                name: forgejo-git
+                kind: HelmRepository
+                name: forgejo
     interval: 50m
     timeout: 25m
     install:
@@ -20,19 +18,19 @@ spec:
         remediation:
             retries: 3
     values:
-        image:
-            # Codeberg.org was down.
-            registry: docker.io
-            repository: mtrnord/forgejo
-            # Overrides the image tag whose default is the chart appVersion.
-            tag: "1.20"
+        # image:
+        #     # Codeberg.org was down.
+        #     registry: docker.io
+        #     repository: mtrnord/forgejo
+        #     # Overrides the image tag whose default is the chart appVersion.
+        #     tag: "1.20"
         containerSecurityContext:
             capabilities:
                 add:
                     - SYS_CHROOT
         signing:
             enabled: true
-            privateKey: ENC[AES256_GCM,data:AmPd8LzXt54dLo3xToVl4YHwMH+KU9vafyNeHUigBB4Fe5l5AJJe3G96rgOpwrT98kvxAX0J2RnF1csiHul39TuWiG0lknsDuMc2zAZCJsYG8eNIIKaOZmVfXdoc+v/G5HJ7ZpqzGSvHHyZIJ4vx0hZAiZAnsay1WRCXeZwKg8HmcdDyDOBTXG1J8QXOzmsXjtI0xaMzeDjjo2Kis0qt1KEvVrylS6LtbNZca/9oPzhoBqFxM+6qQwb5DsOY89NIUmMhDI2uNpheqv629kXF1LDFJAtnPluyIwlUcNC+zdy2rtqBuDkOS9CVBqhCxODjCx+g3/e7ypRcsmSDMpKB56er1WPqWtYGv5r8d94Wy8IXcjBEm66iQxcobSwb2ayMGSDrGNFmraLocGWXF6xF/yzw6tQruiRpEc5W8exQj5c6beOyISpxXNTqQcA4WWy1g9kMblnaAPhxF8iSdhnID8v810Hi28kAqLtHXOMpU8ZulTwJtpsMTc7knIUznv2NzFqmrHqlAMAtNvD93krGMhCNNcSc3IY9otfew7Nh4PJxbQSH7iSv04PK4oCuD1+Q+PPItTPTi8Upfkhm9Zbz1V/GiZ176rRzAbEDYdqh27bdqmTph53047EPgojHqEhmdRSaqDkLbjS83zUyCbLVi3Jrt3j5ayF/OPzdAVpXIgDhC4SQNXV/rcI72cc2pTJzSxWCAQM+tVSJdZasju3NiiT8B867QlHIw6K8+HU26Ft1dea0LI9sp/xcjSXiAt53dKc0n9gVJrtEKoTLZM/cXCERl/pjFq6fAeToLCq7Jkn35kdCVSjCMiHU6QihALpZkaopMx9jSpbHHU1Ao3LWsE/g4EA0gXBRR70cvuDDwBbHZnmCTfDzlNyAEJY+lU5NUOoPcRhb9Jp3ZPSL/CYzD4l8wwV5Rml9i5MSdGLrSDgGuyDh93R1wfzBGqJ4R9TW4gfcvAP91MjltwHixTyPw1F0VWkLNWkADt5HeE3nLMHA8skRVxPjwQ==,iv:RhrT7iX8qPpnhqkFYUHr7dBx2K+VBBf84Gv4PWZgBAg=,tag:052NwVS4DqcjXDa2TrPzhA==,type:str]
+            privateKey: ENC[AES256_GCM,data:mlxTEeQktLfnhl6JlzL5LE/jKb7kQbFZx/v7xr3bDO1JrEWl5tIVWyUfQ4YE9zyhDEs8YX/+3leBy0rwzPlokvNiLCRKVxdNvgYW1f2HZAxOeTTOVPSIhkswXdj2ZIHH5uPH7Sl9hzecxYZVKBOJ5+0Nz1OsGKtBaeqrB1Rmp3bNY2ag8Q+HKZ5bFfCi5KEdNX+L64ZJR/OcO/Wc9mci0LZe79nRzwIf6P1W3RryPlv13O+Qa1sSuix/8ri3bHqsiOJl41RL/4d73g8UIVODnqocZBY+rCMsgoygwFwjjTPFp9yQDJVxVNlWNOF4JEkzwTK7jPMpNhhHrx4W+lhbqLdRyJooECxuu0WbwKkvmpDRHsItTgEj+BqXWwKqFfbDGGV7M2yo0dpCagW5sP2jcysKVE1b+Aue4ewIb26spTVtquZBT2Yw9MtFa0csGnB5kfANM0IEEEcJW2jGLUpSXiPqDsufiR2Nwkkvz+NgS5bdXGhEQlf52kuMu67hXTKP/iBxgNdpu/wGfqfyKspdikSJkQPzGoDV6SFAgaqqzHL7lNTInRUQWqfx+l1rQATApuqMYknNu0jH1WwEr05c2dAWhag4c+F43aLPkweNsT26NEoR2mKrGTleBhwSyZiO7g54vbA3ZBGPt6wiBdj/7iYN+uKPt/fAQatYPUK1mU/zu5+be4qsSxf8uVmmEVlPfBPNIGiNgL3VX1IBb5H92LFjQIbtggra5ITLEGAhzZUMx4oRsVUDrQ66o1d0ipCAY05CsZM3oXJND1nwUauaqyb/f3BGSgp/dh+qKb9EvS5QntQ8uM017Hcgs0jjjFF0NIIq5hQA+Q5k5LunOs9gmf5FHS3OMtwiSI0haFwKfpzobsp1AcD20yRuEwVabz9WIvAfhnD4QKku5mlS6WbP6WxilNBAoqBrBu+kL6DNjNQv+sCT1IneW/BNKnQaJlDDe3irIs4M6AgU3jjTXwYCshJUJrB4IvICXl9+x5fmmuyWZChPGoP1/g==,iv:b7K3JAlkd6nnraRMLslq2CgqN0l2N/W/J64A/z7hpFk=,tag:o8LmIQNtu6VZvIQTk8MFnw==,type:str]
         memcached:
             enabled: true
         persistence:
@@ -45,22 +43,22 @@ spec:
             hosts:
                 - host: git.nordgedanken.dev
                   paths:
-                    - path: /
-                      pathType: Prefix
+                      - path: /
+                        pathType: Prefix
             tls:
                 - secretName: git.nordgedanken.dev-tls
                   hosts:
-                    - git.nordgedanken.dev
+                      - git.nordgedanken.dev
         gitea:
             oauth:
                 - name: keycloak
                   provider: openidConnect
                   key: gitea
-                  secret: ENC[AES256_GCM,data:FhVqVtYg9VUY1Sgslq9PixqJJEtZS3oe+CMhLskuqNQ=,iv:vmUojaEO33n689COuYGrozbV4KHer84FzG8gbYus5KU=,tag:iEvc8Ilb0+cWlMX0Eokx2Q==,type:str]
+                  secret: ENC[AES256_GCM,data:ZHMQtFBdRsHcmmtjeTPOjC0s1Imh2FGslF4VbnSgTAE=,iv:InBrhwxrc8VhcLUk8KKLLyYJqFuyWu6Id2URuqiQwc4=,tag:0Eqqetie7reWzfwvoWbQQg==,type:str]
                   autoDiscoverUrl: https://keycloak.midnightthoughts.space/realms/Gitea/.well-known/openid-configuration
             admin:
                 username: gitea_admin
-                password: ENC[AES256_GCM,data:/ajVOvxyVGyVsUW9AF00PG7Q4puInj4hgDGwnTIYSKqTReggcKShLOvUT2D6epGeppad/nR0jJduT17G0Qs2Sg==,iv:qqfa+0dTJ2yzDBPBBNgE5QUHvT1eWjsCusTqaCv1M/o=,tag:W+KW9ZhRMyHh0bVr1G+MhQ==,type:str]
+                password: ENC[AES256_GCM,data:jqtfKY3/CsiiOYQbOrjfXfX2sEQSSbjRXRCjwf92J5azdWvAZBoKvi8BaUmI5kqpTKdqFkLLR+vEoJ9/h6JRJQ==,iv:Vq2BfWRepTMZQrtJi3r+ve0KJytqUhj9TmtznazzNn8=,tag:Qq6xCEbFHvhGHhwAEutMig==,type:str]
                 email: ops@nordgedanken.dev
             metrics:
                 enabled: true
@@ -96,7 +94,7 @@ spec:
                     SMTP_PORT: 465
                     PROTOCOL: smtps
                     USER: ops@nordgedanken.dev
-                    PASSWD: ENC[AES256_GCM,data:tBgM+Ykh/5ma,iv:thc/wggIbmgfC611gpfZkFGdv99klR7vUG0AzI67C/U=,tag:jf5bz/sxe3Boo0O20UHvIg==,type:str]
+                    PASSWD: ENC[AES256_GCM,data:+1ps0UDmh80R,iv:T7fR+KPT0iK74/0zEYObo/SjfsaACtHSzzC2IHfv7BM=,tag:yJUqDvblNLeaMYwRLEMuXA==,type:str]
         postgresql:
             image:
                 registry: docker.io
@@ -106,14 +104,14 @@ spec:
             global:
                 postgresql: null
                 auth:
-                    password: ENC[AES256_GCM,data:XLEmYEpvXVemkoKXtkZqvqf+Sq83FrmXCCo7zHFwv7OFR3rBxbCKDnEvM2LSz4WGScgASMlf7da2/EPKB4M8QQ==,iv:uV5Rv+9sBG+2WfNtmQwLZg//8viUJQWL/A4jmWJyJM4=,tag:bflOIJMeFx2I0ANWraKaFg==,type:str]
+                    password: ENC[AES256_GCM,data:SP7xUOCW9+Gi2ODSkKLbz6QR5VKh0Rwh8ZGjbjFzbOCEmdUSB4w1YxujqqegGJbF7XtV72qKm7jTujEWAzUzMw==,iv:iQlATCPLjm6JIHRFRhjRJ4ZPUO1TlM7Kz0sKHhlEF3c=,tag:g1jgn+wP4jqtq2G966ZpJw==,type:str]
                     database: gitea
                     username: gitea
             auth:
                 database: gitea
                 username: gitea
-                postgresPassword: ENC[AES256_GCM,data:A+j0FnFnURubNA==,iv:OCzA3mIpEEf5vT6lpVoQvnsjG0UDl98yQAzb+PPN09s=,tag:fd9vNIXK80uRJfjwoAR4pg==,type:str]
-                password: ENC[AES256_GCM,data:13sscF446Fo3E7QLLAby7oTHhh3ki+uNgP2CH9wBDsBk6QDFfzoFb4m03E2jLMaIzVzASDJKHCTYDGgttpAMbw==,iv:/n+ulNeQQSEht25EgjoY+qWZ7tSJd0sfU54EbJYQNDE=,tag:WPcb0F31lOKBWjbAYVFEvw==,type:str]
+                postgresPassword: ENC[AES256_GCM,data:ZMZduAaedtfjTA==,iv:2OZP8QqM1KI2xRTFpkP0ZJX81Ar5TolxNU//0IoXJ3E=,tag:xVpmiSM7DB89o90Ki8kJ+Q==,type:str]
+                password: ENC[AES256_GCM,data:hZPwV3BZJtO0NCRv2A46voGadU9DiWSiOwN+biHh0mwjYlPBnpsuKPvhP2rI5vVUzemlAykEJPDKr0Lk0b1AIQ==,iv:MXOAcKZg+o6zvj0zkq1wC23tWh4Scd3t+Ye11IZGzUU=,tag:UFV/tRPfeMJyfpZoBC/Pjw==,type:str]
             persistence:
                 enabled: true
                 size: 25Gi
@@ -125,15 +123,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3dWZtcHJCTmdSNW1qRCsy
-            WkZqRWhIS3lhWVdQaGFYQ2VuNmQxWUV2VW13CmovSEFjSnJST01ET0ZQU0YvUFk0
-            VnNNVkJjaUlURENRekFhbTJ2SEMvN3MKLS0tIFlvdGhkNHJSNHNnY1VldDU0WXRy
-            TEtaYkxJaEhJNjZaalpUZFovc1VvQUUKhF2wTfcnFbKSOnidndD7DM8h8KzJmXYZ
-            WttbHV3To/mn6lvbaRBmzvjdt/UAQgqvJSVVV0CDCRFoCUzDQt2Xdg==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-08-10T20:59:49Z"
-    mac: ENC[AES256_GCM,data:QYT6WPqp7L8JNZYtVMcYw5C5CFsAl2gkXRyRyedi3yV4PnBLs++Xr9nm8586JuttTTF3ytK7MZSB4Gve6F42+sgn1ms/YtNheteaBqZ8abehVOzobSSZbQEZq/XdBsCoZ8E8V3PazHp3lG9pzwH1J6dM4SD6GtirsWgGcTl91dM=,iv:7eQKX8KO9I/bhif1m7oQ9KqN4YLvuwJRo0zwa982IxA=,tag:mjaAFNIJo7pha8WjtBijiA==,type:str]
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBicWNhaWhsNjYrUGZFYi8w
+              M21uTG5RVTMrS3pTeFQ2T2wwbVRQRERqeFI0CldpV3FmRG1zWS9XZVU2OTRld204
+              TnExa0VTVklSRW80aXlUYkV4QjNwbXcKLS0tIEh6TDkxbWV0Rlg2d2RhTDQ3dUFP
+              dldZNzlYSGk4VWxiWjRJY3ozWHA5NzAKgklAkwi3uwNc89io1Ptucrn30iHGOkD8
+              mU8hT+aIExROMmBT+7hak0OiiZ2CK5mUmZE+O+Fr3X8fy8LVKp4v4w==
+              -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-08-17T21:11:22Z"
+    mac: ENC[AES256_GCM,data:bsCPYJUw2+HINX2wLaPb5e45bQwGwQeXIKSR8t5yaFcEFLwspJUTIgvlVcvHjbbCVnx9r4999SVKCZ9xLwy3Ztqj/qBOwD2r2GaSGpbyht8vL5qhnq8OSxImzMDuD2AO0Tka6tcosTKMr7KH8QSCC8YMa5SmeMSTGa/Hkq0SAZU=,iv:bhZHXttVzejW43RHN7LLxfXh+NVmAOs497RKiw7Ht7s=,tag:8apH+niO2mN+8pwqZUhTqw==,type:str]
     pgp: []
     encrypted_regex: ^(privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.7.3
