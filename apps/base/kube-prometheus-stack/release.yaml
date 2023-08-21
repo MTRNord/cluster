@@ -111,38 +111,14 @@ spec:
                   datasourceUid: prometheus
       dashboards:
         monitoring:
-          felix-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/felix-dashboard.json
+          asterisk:
+            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/asterisk.json
           traefik:
             url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
-          typha-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/typha-dashboard.json
-          #cilium-dashboard:
-          #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
-          #cilium-operator-dashboard:
-          #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-operator-dashboard.json
-          #hubble-dashboard:
-          #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/hubble-dashboard.json
           postgres-dashboard:
             url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
           kube-router-dashboard:
             url: https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/dashboard/kube-router.json
-          ceph_osd:
-            gnetId: 5336
-            revision: 9
-            datasource: Prometheus
-          ceph_pools:
-            gnetId: 5342
-            revision: 9
-            datasource: Prometheus
-          ceph_cluster:
-            gnetId: 2842
-            revision: 16
-            datasource: Prometheus
-          asterisk:
-            gnetId: 15498
-            revision: 1
-            datasource: Prometheus
         nats:
           nats-jetstream:
             url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/nats.json
