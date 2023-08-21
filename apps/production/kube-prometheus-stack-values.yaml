@@ -12,7 +12,7 @@ spec:
             scheme: https
             basic_auth:
               username: asterisk
-              password: ENC[AES256_GCM,data:n1zYm/UN6YIpAeg8yqzOYoewnxAEX82ZFLtM3Wcq0yMT8Kz2wcZAKCImsg482U4Hl7OhiGITfIv/LzsWqlsNzA==,iv:o2Q4lMUYrrH0UWo6bzD8Z1Nz1lnwiMbnM2LdZP1ebzI=,tag:e+odTYe2vO3teslw4TG1xg==,type:str]
+              password_file: /etc/prometheus/secrets/asterisk_secret
             static_configs:
               - targets:
                   - pbx.midnightthoughts.space
@@ -30,86 +30,86 @@ spec:
                   title: Coredns Failure
                   condition: Thresh
                   data:
-                    - refId: ENC[AES256_GCM,data:vsii8Kc=,iv:BB5EubAYt0BRmjwNqUxLqpuTIIIBZRRewjJjyqQHlQY=,tag:gdi7WVpX0QoxZQR+sQRCHw==,type:str]
-                      queryType: ENC[AES256_GCM,data:D4+x0gU=,iv:gMeu58reNZhwF1AFVPMfDVJ4x9cfQdjLFL6D+KtURsM=,tag:o19YBxSFRCDnQKH4Z/mgww==,type:str]
+                    - refId: Count
+                      queryType: range
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:U9ua,iv:lkQ2FQ92QJaYmrigDJZX8Vr6seeEyf1Zlb6o26zVDJA=,tag:r960G+EFUDumw8obmTohsQ==,type:int]
-                        to: ENC[AES256_GCM,data:lA==,iv:7kNWxs4COckIZwZs2xNxYXGh+cbEnwuItHZVw37ms2M=,tag:hNUOtNjPgK92/tRnr0TWrA==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:H2QYEQ==,iv:WKsqt9ZGdjdGOMuVMzDWp8ltOfwq6VodENSp9S8PIIA=,tag:l4R+mVhk0+KpATmVdFovVw==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: loki
                       model:
                         datasource:
-                          type: ENC[AES256_GCM,data:XSWeDg==,iv:Li9KKEB9/QIARlsbX5H964fmXSeIsXOp/ofEZeGnito=,tag:3ca6SCWspXDFfIP/QVb6BA==,type:str]
-                          uid: ENC[AES256_GCM,data:CsmTMw==,iv:C6Fjaa6ExeLudKIIdoIvGf4ssJvHPwDlmNwOXAEkTbg=,tag:BW2JHYyz1Au0wViv+/fi1A==,type:str]
-                        editorMode: ENC[AES256_GCM,data:JUZ9MrGlXA==,iv:AX6c+lxsGRqbmce+MloR0e7qzyA9Xohsqq0w6frgUVg=,tag:elrrvDvaerPDf+iXiLtpdw==,type:str]
-                        expr: ENC[AES256_GCM,data:VGmXLStpuAhlpS95RMPYJNgd2FTWd0qxRP5hNr3vwZpHJOkvdWAXoroob8gQU3usiDrm9sCClwkJfb6dFwgKdPAkvwvv,iv:mjJxwgcdCo0BMEcKPFrsBf8psdG4SUrZ/ePr2g/2WY8=,tag:Gpj/51pp7ddJtYoRCWIZPw==,type:str]
-                        hide: ENC[AES256_GCM,data:78MhgYg=,iv:h15+r9atp1d0mwjBb9iuindokUflsJ24LoIPNos087w=,tag:ehalfVK41A7z06NYR/bwoA==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:LOpGOA==,iv:FUHu/8zXnOWbUQAg0sh1mIlkYQhlR+75zlNa8wHjqeU=,tag:kbh5QNT3a/22l673OIRb9A==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:DeomiCI=,iv:OtXpQmTGxSbC1GOCdcIxQ+C4rbc02V5itW25ta0vkBk=,tag:ptWotZcquVHV5+UbizuSjQ==,type:int]
-                        queryType: ENC[AES256_GCM,data:Wiov9JE=,iv:i6hMwsUokIQTA+2FdfnG+mDvfYO6b/DLmbjg0LxJhug=,tag:HWXmWrlv5SJAhzaIbt4QHA==,type:str]
-                        range: ENC[AES256_GCM,data:s30ZKg==,iv:svZF9bKTG6wiAC1rzdc2EnEdSvGw40wgy+BwwIip4H0=,tag:has3ZPnq4NgAtlB6Ppx8fQ==,type:bool]
-                        refId: ENC[AES256_GCM,data:m9kY0V8=,iv:8E1ePbtVJa3VWubQWJCjJOq9i5ewaKLHJaQI9ZFBRhU=,tag:zMw0CVYI+2AGJvXuDSO89w==,type:str]
-                    - refId: ENC[AES256_GCM,data:WkKlPczx,iv:8tqNhRZOlxunM5y70n8YcAyKSVkgXqZAh63OU/MXIWs=,tag:877AGUQQ7hGlsTGXz90f2g==,type:str]
+                          type: loki
+                          uid: loki
+                        editorMode: builder
+                        expr: rate({namespace="kube-system", app="coredns"} |= `i/o timeout` [15m])
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        range: true
+                        refId: Count
+                    - refId: Thresh
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:+P+T,iv:2alLniO7m8O666r9t7yBqIOL+e0ETK4KNH1oaYrV5z0=,tag:POBdbtd4lnZk+2MkgDI0jQ==,type:int]
-                        to: ENC[AES256_GCM,data:5w==,iv:fc+TCw8WgVOXBTsUwrGMG/xS0XigVeejqEQLyTd6iBQ=,tag:XOzueWtKYw23KKG6bNB2ig==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:6vDHpWPetOQ=,iv:Y0kd5osr0tWl1AnTHTvxgeiGCbJdanGc0xKx8LwfOTw=,tag:tcmcxlSlK+ugelbvEzcGhQ==,type:str]
-                      model:
-                        conditions:
-                          - evaluator:
-                              params:
-                                - ENC[AES256_GCM,data:TQ==,iv:iFSuiSjwA+jWsWl+qDRmKvmT5fchuiRGbHQPQT2FwLE=,tag:VBFmwVaY2ZnE9DSMiAMq/Q==,type:int]
-                              type: ENC[AES256_GCM,data:UlU=,iv:7jMP07Alcto2gJQNj18LZe3U9+5/+qcWuUvJCEyRqt8=,tag:1/p+Tu2B3oQKAZcisOm5Rw==,type:str]
-                            operator:
-                              type: ENC[AES256_GCM,data:XSZe,iv:av6/0qMCa4LNiT8tz9JalNKQUp+6l65xMHuYFK/g+8o=,tag:AqMPMyVtDZ4KSNxDq4HKqg==,type:str]
-                            query:
-                              params:
-                                - ENC[AES256_GCM,data:kA==,iv:bsA7JAuph6a49EBEzkHYjVXe/HNUoC6ns0li9KWDw6Y=,tag:Uw7+kYSnCDXFqRx6zrUtwg==,type:str]
-                            reducer:
-                              params: []
-                              type: ENC[AES256_GCM,data:srn4Tw==,iv:LpuNk13mIopIiapEjUKI2qYue5LXN5GbS9tml0Ks21Y=,tag:rEmHw5T4QUiCrJvOpBH1gA==,type:str]
-                            type: ENC[AES256_GCM,data:kH+vqvQ=,iv:C7E9KzSs04OXGFze31Kp9q7gRrLwbprUwdeOdr+f7wE=,tag:uTcGg6x8+ZJqu/MbavYnMw==,type:str]
-                        datasource:
-                          type: ENC[AES256_GCM,data:sZ3IMf9OGBg=,iv:y84B/qOwhpDoAa3wq6kOfQWIvC1N4lVuMsTRf/KNg7g=,tag:UCkVeemuP96efiKNFDaEFA==,type:str]
-                          uid: ENC[AES256_GCM,data:8dydlYet8BU=,iv:XU6BTk7M5N9EC866N2xnyVBp5MyNYekdmuFeP/cMxAY=,tag:AjTqWHwJ/+x9A+pxpc1Ncw==,type:str]
-                        expression: ENC[AES256_GCM,data:6Q==,iv:c+ruV/jaBSG4n9jcZCE/SmP6tq/0Sw1TFugVLVT+gtk=,tag:yqjfuEl94SOTGYDI/vbMWA==,type:str]
-                        hide: ENC[AES256_GCM,data:mABHDUg=,iv:uB+Sg/7q72hzbcyg7JS1CbYkHIPfI+X6mc/LDUIgrwk=,tag:fTAmQMr8DrSgRB0fHueVug==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:iDzTDQ==,iv:TNT/REReD37BR5veIvsAioET21rpAWlXc53w5EkNWGQ=,tag:LqAcJh4C+BXVM4nW/VlDSA==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:vbg7zCk=,iv:v6KZw7soZbw7WNiUqnsyBHM4w5gZZ3EQH53bqoaPpJk=,tag:sl68Rn8I5WFc+fJvo/7yNQ==,type:int]
-                        refId: ENC[AES256_GCM,data:CeutOwZO,iv:GNj6OhlkZ50t+F9A5bC5lMZJT4tJUMyBdW8ceo0aHjg=,tag:TmB0ycxiAIF6syaW0jY+aw==,type:str]
-                        type: ENC[AES256_GCM,data:Ei1EB47VvJs6,iv:vktzfEPGHzhFx+3xGydr38E0OW3KyEc5zqTa1YNAFdg=,tag:eBMiYsYhKUzHpBsD8oG7HQ==,type:str]
-                    - refId: ENC[AES256_GCM,data:bw==,iv:CPAOBrBxLcmJWvtrPyLyF80NKGBW2KQxopZOcfoQ/S4=,tag:ms6pEKotRMYX9oK9JsmmnA==,type:str]
-                      relativeTimeRange:
-                        from: ENC[AES256_GCM,data:MGqG,iv:xDjSsoCIq2TL9TiYgyGrD+4L0doyqckrbl9Iecg088k=,tag:GHFIYy5yzxsO+VdCnMGbdA==,type:int]
-                        to: ENC[AES256_GCM,data:2g==,iv:RXhR/FYQkiwtTnpylPJJnDAxRDJYdOlIHFRwKX0X35U=,tag:HXCfh3A9+CoQHH9b3yHjcg==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:dMQLaXOW24w=,iv:AQZJRI0GEsSWFzqkGy/inF1WXJOX540s+i6Rt5/TmEE=,tag:QXzFvQoNOrqYltmR+gLqUQ==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
                       model:
                         conditions:
                           - evaluator:
                               params:
-                                - ENC[AES256_GCM,data:bg==,iv:3kRwhj906IiAw6BdOKAJm3crMRCgBZbNFlolHBr2txY=,tag:wG+gQxbh8TGx0Y10U65alw==,type:int]
-                                - ENC[AES256_GCM,data:4Q==,iv:vQfuS92hBZciRj5+LKU+iyw4CZh5gloSuVjkZ1PTmvU=,tag:54t4XOx8AngsC7acZ5yEOg==,type:int]
-                              type: ENC[AES256_GCM,data:2Jw=,iv:iACxXjSUeemjTNSdWzNIXEHwzNV+jyC2gDc+Uwr4JiM=,tag:uYdDEJlkLTYZ/9PJaGxr2Q==,type:str]
+                                - 1
+                              type: gt
                             operator:
-                              type: ENC[AES256_GCM,data:hkDU,iv:oukpopKcTiLjIbArN4iofsVTpqka9wnQ4aDXrmffsYc=,tag:l3Yv9xM2Voo28vjsvkxsNA==,type:str]
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        datasource:
+                          type: __expr__
+                          uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: Thresh
+                        type: threshold
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
                             query:
                               params: []
                             reducer:
                               params: []
-                              type: ENC[AES256_GCM,data:QMTn,iv:8PRLlkyss3b8vwr8EbXWuJQvDdGPLB5KSPMGHIapSSM=,tag:so1vBw2oZf5/jObrqTWGbg==,type:str]
-                            type: ENC[AES256_GCM,data:FNTZJdc=,iv:Am1bu1OTS34fP4uUV9OxIRFBLfygYbBwa67NMJIQ8XQ=,tag:ECEMSgQlgEbi5hepS/m52A==,type:str]
+                              type: avg
+                            type: query
                         datasource:
-                          name: ENC[AES256_GCM,data:bxPrs52GwuGagA==,iv:Fke9PHYD38G8d4jcTWmOYeM91pTaM5B1LD92FwNhE68=,tag:kXWb3CjOsd+Q64hZeoNeIA==,type:str]
-                          type: ENC[AES256_GCM,data:QvnQZ6PpYOU=,iv:S7qX+wAqF2ILwBPPYVreB5FwNNyYGGNOB+R79iyOoX8=,tag:RmEOMQiBe9B9+GVdmU0ISQ==,type:str]
-                          uid: ENC[AES256_GCM,data:6khkVqYMd1s=,iv:eV0lW60SDnKUibymudFmH01mqVvApQeVOhS4xIDf5ks=,tag:bsLvXURp2GK/lMAiuhPC8A==,type:str]
-                        expression: ENC[AES256_GCM,data:dFMYjrI=,iv:ltyRkT51xBCfwIDOEoShYkd9cX8yQmzEPc2F/v7ETcM=,tag:w1IFFK69jg8f/IGllFejQg==,type:str]
-                        intervalMs: ENC[AES256_GCM,data:ZDnqyQ==,iv:excLmuQSFEWplYOp6C0kPNMeeiRGnBsJvUqgVx+dbuM=,tag:526eb/I9jobS16OKT3RQ7Q==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:tqVt4uc=,iv:a81pu4fi54feXP32F+LwV+zBynKgTNhx6kuP2lyzaEs=,tag:UJkA2ovG0K29qqIrK+xE6Q==,type:int]
-                        reducer: ENC[AES256_GCM,data:H2nm3Q==,iv:ojOzOgwoNlfK/oB4Uj9b6zFbh9YvnnL7V1L4inTf0+s=,tag:tP8jFt7v8y7UcgY+0Ev7Ww==,type:str]
-                        refId: ENC[AES256_GCM,data:UA==,iv:d3QZNSunvDz6nFxcLWjaXNtJz29fYIhwYvtxB+wNPfo=,tag:QqrGvZMOTqTks7ypSBXMdg==,type:str]
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                        expression: Count
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: A
                         settings:
-                          mode: ENC[AES256_GCM,data:nVSZaWuIMvI3,iv:xuH4fuweoGdENvxrUCqVzbecOLurkSnPTN36/OcYIRo=,tag:/mqzCCoJCjoKx2i49pY8IQ==,type:str]
-                          replaceWithValue: ENC[AES256_GCM,data:lA==,iv:XU89Gt+KoSFNxfwftxWfgjnY/TgbV9DVRUIcKJeYyg8=,tag:i/CV0HcBpMZJ202u3yeWfQ==,type:int]
-                        type: ENC[AES256_GCM,data:XTGxhsSL,iv:xoAAegcVwBHNkFkTCcWPI6lJH6v/QQ+4z324STpQ8S8=,tag:sSfJFPU+pkD69N0L6boLRA==,type:str]
+                          mode: replaceNN
+                          replaceWithValue: 0
+                        type: reduce
                   noDataState: OK
                   execErrState: Error
                   for: 5m
@@ -125,86 +125,86 @@ spec:
                   title: DNSQueryRefusedError
                   condition: Thresh
                   data:
-                    - refId: ENC[AES256_GCM,data:nA26Kxo=,iv:bySt+DL/jAPVFf1naZdFEXZAx0XJNYuaYVFL+6kDFY8=,tag:T2zllTMSzbUcM/XjGEmPwQ==,type:str]
-                      queryType: ENC[AES256_GCM,data:4iL9ykM=,iv:vr+LvSa4RGPMYBMFhjo9VQhSnGk8zO4rW0dXZw4VFmk=,tag:UwAOgTYgHou5N34F+nPajg==,type:str]
+                    - refId: Count
+                      queryType: range
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:uRYD,iv:2k3ivlWxAFOCu+oN4ja3bC1/8qAIobzBu69K7w8iyCg=,tag:U3I0uNaoKuLpwYHiuNR1DA==,type:int]
-                        to: ENC[AES256_GCM,data:2Q==,iv:51Me3hvsBfYEWBSyB50Ql98P7NEC9EXUMmMxi/wxJKA=,tag:gBPWtNJw34PeJfMKd6l6og==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:/hajlQ==,iv:l+IWzBTvqXD5q1i46ZOEpwf5nBxVIS1iH+3IR3Ell+A=,tag:18f5UL8Xi5P/oXwFvFG0Iw==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: loki
                       model:
                         datasource:
-                          type: ENC[AES256_GCM,data:3tgaSA==,iv:UvuK9R4bIXhScTqwJpXV2JxQCHtQ1expVrFsZ6war28=,tag:fRQfkqQfHg1Pv3BrSkztDA==,type:str]
-                          uid: ENC[AES256_GCM,data:7FZtIQ==,iv:6ncq/L/5gjn28flmjH2+mh8csIzdtTht01Xm02nKk8w=,tag:vxLW/iS9hpGkMeqN/bqA5Q==,type:str]
-                        editorMode: ENC[AES256_GCM,data:2lD2kg+1eg==,iv:6KuSTYRSMBEhavTFM/229CF5xgfPl8paa8z4FrATrSA=,tag:4D+MI8qf8jJUaGi+wNM3wA==,type:str]
-                        expr: ENC[AES256_GCM,data:RSV/zfwN57jtOF72OBBjle58fhDrlXnLqc+9uzeclVERVplmGFXSTi6w/TTnJHjHrZEhrVQdXjgnBcMDfDl+UEZ63Eid+GeiiPZBL4GLJ2I=,iv:95r5epL63YR3t6SeG/1CCiBgFXvgYRdGVvlbV6J6gl8=,tag:OAvQxIan+s2vao0NJ6RyiQ==,type:str]
-                        hide: ENC[AES256_GCM,data:ouqLeA8=,iv:7l52VXRvs7hGsHzkNG76IAW75IbOvIUFEr1xpR9UT8I=,tag:+EyWY3RPznOdlMybQv+iNA==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:KkgaVQ==,iv:EH8cE2XjCUauYFHDOxKggIqqApvghpDyNY0rw60qvUc=,tag:PPoIFrgaBFAGB429nE/l0g==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:GyxUUUQ=,iv:c8NENy7aAbVZR7vj5x6snhnetI0ac1opy5xQqLu/k5Q=,tag:N19REIJQ85i3dpv/Mai7rg==,type:int]
-                        queryType: ENC[AES256_GCM,data:Dc9dLII=,iv:PFEND3zxg5n16o0kp35ZJw4KB9woKJXGy6Liv7GIw3Q=,tag:PBGSQUBRxK1AgADWxOGuew==,type:str]
-                        range: ENC[AES256_GCM,data:fE4hOA==,iv:iSAHauT/2qdtY/ZQa3m6I7NFTG44GxG4js7kOkAjL5M=,tag:AwJz8T4HX+gPGxEC6sSfEA==,type:bool]
-                        refId: ENC[AES256_GCM,data:pls9MIU=,iv:d8MHtroQM6O6h/UHxCVhTZ0+wttsL5whSj8DPKdzG8s=,tag:UZUshTGu8zppDf1a2L26Kg==,type:str]
-                    - refId: ENC[AES256_GCM,data:yPOo4qh7,iv:D8bPFeH+pbuURtPnMpc1ucpvjvnPmUqTn34cSBYnVDI=,tag:Oc7AjpuEA4AYeDXxVrUfsQ==,type:str]
+                          type: loki
+                          uid: loki
+                        editorMode: builder
+                        expr: rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        range: true
+                        refId: Count
+                    - refId: Thresh
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:BOhS,iv:giszgdacc+bjwkmUENnO/l+dusvHeBMsEGQMUZVJJjs=,tag:xoI/F5QO16A+EYHzAAbHEg==,type:int]
-                        to: ENC[AES256_GCM,data:Sw==,iv:WvI67kGOgEufqd4J0BrY75x5hIVChC4LjUgZXkhPZqk=,tag:F9pxhelrz+8ekMVQ7LkMtw==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:zlCCyky98I4=,iv:Zv2m3pjgsKIN6e1b6BEfJjvhMM4z4btV66TtAD4vhos=,tag:Z+R/apmbzZu2yJkd1pV9MA==,type:str]
-                      model:
-                        conditions:
-                          - evaluator:
-                              params:
-                                - ENC[AES256_GCM,data:9w==,iv:QMkImGtGp/hYq6cG06jxtWVSfqi6qywIg14/MRdMc9g=,tag:0+ipE6l+SFO9cfThHylbaA==,type:int]
-                              type: ENC[AES256_GCM,data:OpE=,iv:3en5aWLjgsQI1LsSAPqBNdt8NcyN8HVQUte2kYF5BRQ=,tag:rx+IrqX6GUMlwglzmByKGQ==,type:str]
-                            operator:
-                              type: ENC[AES256_GCM,data:rqxH,iv:KljFuMnSdeUQkUDb4kMJ3ZeeWA0e/IdnbQVuIMF9ssQ=,tag:aIhwcXVmxxFyZHv4DMYKhw==,type:str]
-                            query:
-                              params:
-                                - ENC[AES256_GCM,data:Rw==,iv:dt763HBAVyNE6QeaPf4fKFCt6to0jYw0QyhNCZaACNY=,tag:9ycYdEBwx/9a6Y6coJTceA==,type:str]
-                            reducer:
-                              params: []
-                              type: ENC[AES256_GCM,data:a6IYDQ==,iv:3/uQodHdeQamyzxA1I8qgVfpW/UTd1zOXwpscgOLPy8=,tag:C7/tR7gBH6+XoSjprRkSrA==,type:str]
-                            type: ENC[AES256_GCM,data:0TZYn28=,iv:Ok99uiFe3hLyT/RmeIz2QIhv4hczf06jqANhMOjzPKY=,tag:i+h/5M4e6hCvPjC8irooUQ==,type:str]
-                        datasource:
-                          type: ENC[AES256_GCM,data:ingyVTllh1c=,iv:fuJfAaHEZsAA1Rqb1LCYApkqBzwOUuSjER0KdgJcYHE=,tag:JU8hWBB2S31Bul1h0F+IoA==,type:str]
-                          uid: ENC[AES256_GCM,data:uY/5dcM7Wgk=,iv:d3ssiHXWpQOQWzM8lJbIW0haXPgDgS+/uqdQxH2gGZA=,tag:7jGuICUdxMpVYb0ZgwxXug==,type:str]
-                        expression: ENC[AES256_GCM,data:sQ==,iv:vS0SgBTPhIrfNCz7OETC0FNiWMnLCiKzY/EXhy7U4Xs=,tag:LLfl91lickQO2fBxMnQUuQ==,type:str]
-                        hide: ENC[AES256_GCM,data:vnLwEIk=,iv:TLIOsRgnVbpapAMpi1c+PMQkfALLrPUjPVUyLsmzv8U=,tag:rWksy0DZW+gt8eRKgtue5w==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:Oix3Eg==,iv:aLIHhpwS2I37+5OImCtnOy8NR+v5iPJ5GR1pvT7Gsvc=,tag:+ZTbEUZwNJWJ7ZOq07FK7A==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:bJY6kOM=,iv:kfVPYbi6vMJ6L3Fi2cxgan0bD9ksnUExlW9Ix0Hw1Rk=,tag:k6HSYaRkJpM4gXnSx+CUmA==,type:int]
-                        refId: ENC[AES256_GCM,data:CngO5pJU,iv:0l+Q3BX3HeItvAEuuNTOrOU/vrx7N91BxtgVEUPscIk=,tag:m0AotugF/Tg6HHjPBJMCvQ==,type:str]
-                        type: ENC[AES256_GCM,data:AT5yPyDhb8TY,iv:nAWR1D14+wzI46liloNageIwb+B1Fgu4b2wpSTPcUrM=,tag:YR/M5eCiqb6nsRci/lq3QA==,type:str]
-                    - refId: ENC[AES256_GCM,data:ag==,iv:aEOWpkzwtXSuJKMsVUvZzr74vqwqZoGol3GyeU8LJCU=,tag:mTypttY/m3xP7bpP884z9Q==,type:str]
-                      relativeTimeRange:
-                        from: ENC[AES256_GCM,data:qg0K,iv:6KpdX28zeYW3Fmto/O8iPhz3YuYvxefv0tQLFRU/MZQ=,tag:sYuCOrFUDNKaGe8qnq7MHQ==,type:int]
-                        to: ENC[AES256_GCM,data:/g==,iv:/M6qDoyWIw3KSDssIIJnmPlDrmjMi4EQSfDZPby8NvQ=,tag:uCnpY66EoO9m+jqE8Bd35g==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:1PTv/7D3Wek=,iv:zzuf06yYgFK5XRuB6JSzgN3ts+L6RD94ktPwa7DX35k=,tag:jZCdiUedlSlqQ/wZfSKGlA==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
                       model:
                         conditions:
                           - evaluator:
                               params:
-                                - ENC[AES256_GCM,data:xg==,iv:LU7y/MeveSeQSKHetZWC6nrsUugNrRNj+atK6/+BZeA=,tag:52levK4RWq9Qmp1rYqvptg==,type:int]
-                                - ENC[AES256_GCM,data:+g==,iv:cNIQ1sG0VFamwuujninOPjZ4txQQ8dmvOCBqW47U3Xs=,tag:7gJ9SpMeMpQ5b5zF4BcEcg==,type:int]
-                              type: ENC[AES256_GCM,data:1PA=,iv:vAp23FWzW+n41fnauYZRChLrYh/SEzfF+/J3J0unUTw=,tag:huLzC4p3vM/Vc7RrIN6xxw==,type:str]
+                                - 1
+                              type: gt
                             operator:
-                              type: ENC[AES256_GCM,data:vjv6,iv:jLHN6e9ziEAaU5f2+pOsLcAlYZt6hIR9udmRjpKqIxU=,tag:3pxPEnyMsjMxsYSDsqKPAA==,type:str]
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        datasource:
+                          type: __expr__
+                          uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: Thresh
+                        type: threshold
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
                             query:
                               params: []
                             reducer:
                               params: []
-                              type: ENC[AES256_GCM,data:sEvl,iv:BZ6BjplXSFabZ+Tjj/n5H/A/mNoMpUTO4e1UzzCoYGU=,tag:mRm1CNmvDGAkk/KbqGEhZg==,type:str]
-                            type: ENC[AES256_GCM,data:/qVhYsA=,iv:fT97VgCPofLYPanX/NuxHUmcFeavDJhdcwNvWsfzvI4=,tag:uoKfBs5Njc1feKdvvT5Rdw==,type:str]
+                              type: avg
+                            type: query
                         datasource:
-                          name: ENC[AES256_GCM,data:5/GzcgiJ/DqAOg==,iv:Ui4N7AiBiS7n54LFqNiDxxJKCaB54z4TbtHhFJi4DP8=,tag:+opuB3pyV59GO/NC17NezQ==,type:str]
-                          type: ENC[AES256_GCM,data:QKyz/6R5qUo=,iv:IZvFWJTwkQMzGWI69NKBAuTGCX3MFtPLD0tLdHqcCxk=,tag:evYnkCwvQ5aJy2AIHoMV0g==,type:str]
-                          uid: ENC[AES256_GCM,data:2JMUtWi/AB0=,iv:hg4gtFAWISIxvm7e+cuZ3K58bMl1XQ0bQUKCWxN59wU=,tag:+MXHqh/xbGKrwGBSX53kXw==,type:str]
-                        expression: ENC[AES256_GCM,data:k0aMz5s=,iv:y0HABd32LZCzGKCZaiLJHrNGQzi/umviI+SvqhDo3mg=,tag:/4fXrNdZvVGznR6nbUW4Tw==,type:str]
-                        intervalMs: ENC[AES256_GCM,data:a+9rBw==,iv:i+8lPUJm1c2Kh3MvyBUW/GqYgS/jSomdcLNUCMuiAfE=,tag:c9lmxBUGI46D7rI2HgdvWA==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:9YjHHsE=,iv:WAA2gSvuXOKQ9zekzATEx3Qtyuxks+uKorNVkv2aHp4=,tag:LITsor6Q1N4fezpggpZLyA==,type:int]
-                        reducer: ENC[AES256_GCM,data:hVBJrg==,iv:2CyauU/mOVGMr7q4R4VcBigUur8cQ3507wt7SSyg3vw=,tag:I4wTe6wmJbxZPRuW+c6gHQ==,type:str]
-                        refId: ENC[AES256_GCM,data:mQ==,iv:qANP4ll+M0Sr269Te68gIGCrkIlWtZQ96NCaMYo8s2Q=,tag:hw1Lem/eq76gLyMPBUPUDg==,type:str]
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                        expression: Count
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: A
                         settings:
-                          mode: ENC[AES256_GCM,data:OqHhq4DXLucV,iv:O9Ubfb6TE5xc9FQwWo0eXCsov0hvDhnxsr0tzbQ2shA=,tag:qo+ruTeu/eOOQmfdh/Uh4w==,type:str]
-                          replaceWithValue: ENC[AES256_GCM,data:RA==,iv:Na0MilFLbSwGNZ0yDj++jdPNN0YjmWUyiBlRrkzCrB8=,tag:vSiNLH1xp0YSsgK01vzWJQ==,type:int]
-                        type: ENC[AES256_GCM,data:QVa//dNq,iv:RSlWKTCDGH6BKOLOTYAV+s8ZWZ5jfFmMkq4TL0RHV4M=,tag:cW64OYvIGSZdaH5vV6xnnw==,type:str]
+                          mode: replaceNN
+                          replaceWithValue: 0
+                        type: reduce
                   noDataState: OK
                   execErrState: Error
                   for: 5m
@@ -215,86 +215,86 @@ spec:
                   title: psycopg2.errors.ReadOnlySqlTransaction
                   condition: Thresh
                   data:
-                    - refId: ENC[AES256_GCM,data:AmHaCtc=,iv:GqPGoSoXHOPmU/XmXMH4Q0sm8ZZLKkMCvubwyJtAT2E=,tag:TMAVXUxK0VbqOj0b7wA+kg==,type:str]
-                      queryType: ENC[AES256_GCM,data:n7pTmkk=,iv:pg0v8ho89LKTJUfyuODTkEe/6W4MLmBF+2GOoPga2Qo=,tag:5FnSVsrBwieSxwLgOslY5A==,type:str]
+                    - refId: Count
+                      queryType: range
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:wuoR,iv:6n9copOzEwh5EwAWbarkr3Dc5Fm6tS5/6yZVSUdLn0Y=,tag:Imee90TnvGBd+i/nfpAV0A==,type:int]
-                        to: ENC[AES256_GCM,data:Kg==,iv:IKPY3CEXuyJAEZyyFH1+WVAj5bS+5ZK7LZkuiJsyom8=,tag:UO5ZUQgIrQqMZYonoFwzZg==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:FLhCOg==,iv:Fg1D9j9pOYjGHsm2n9UXdjaE75g/1r2lo2DkgcwcuC0=,tag:GJS2pJx0EeG8XQNz1DMwEQ==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: loki
                       model:
                         datasource:
-                          type: ENC[AES256_GCM,data:z6S2tg==,iv:7VvU2U77i4BWWYYXoMmAfDEkLE8uH/rLU3Q7nfLPfVA=,tag:YZW6fuHr/8q+AXmYmWBaNQ==,type:str]
-                          uid: ENC[AES256_GCM,data:fY4nng==,iv:uG4W04lX2m+6r4EfLe2cZ193ZmjfJkXN4KyjjHnz7Xw=,tag:DP/UJUQQG4bbF4igzvPcxA==,type:str]
-                        editorMode: ENC[AES256_GCM,data:0urgoV8BBA==,iv:hE7GFfCkwrTDnyjqyzamoZNy+ddUs+R001kWr3qnWHw=,tag:R0sNjMz4MWDLSEIG+NAEQQ==,type:str]
-                        expr: ENC[AES256_GCM,data:VXszVvVlmQ66ORkLJFZqV6FwuiCtx8GfKry9rIWPiD0Dz1/LFt91iiOukYRZf0bSJA3dlHkYm8A2OFzMIl4o9+Gl7+PHX6gvqWY2kNKQs+0usZcSz677ES+zDgffgiiETfI=,iv:v13JV9w0MhpwmLTAXZMGS7+a8KLVs+xxVzILvX4rR2s=,tag:1RaMKLssurXI9I/VU5l42Q==,type:str]
-                        hide: ENC[AES256_GCM,data:60zuw54=,iv:aQLzo+6+HWgOkXC3SeJbO3gmHXCqiYmmgt+cduRlvLI=,tag:B9nK9uaOHUf3QwRk2Shh4g==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:oGqTOw==,iv:molgE6ZsI1j1maYrMDuCFeJI+XOaEajSdLQH3LeWIGA=,tag:O6uxhJkIM/Palmtgu8VJWA==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:UMLKavQ=,iv:D0KKkTV2je6QrDGQqDSWZg2nhF/Xp0dVdKADk9ZqeWg=,tag:bQ8pNY4X/+vMknia1C94ZQ==,type:int]
-                        queryType: ENC[AES256_GCM,data:Ek+b3bs=,iv:LJ3Ebl5f1RZTTS2g83eTWAQ4WTcMfGEKjr+cXQMbt4U=,tag:iZTEc/t1t1kT/esoJerhOw==,type:str]
-                        range: ENC[AES256_GCM,data:dZHYfw==,iv:EsFbj/mXNBsfhllauMxnZXeyso+Hmb/SA+7DPVGb5DU=,tag:zhAbyRZe41i3hLm3ZhyuIg==,type:bool]
-                        refId: ENC[AES256_GCM,data:c0+SzgE=,iv:GYhCfaLKfZUZv1ItJEE/eZy7QUUDs4vsLS/5kAsgcv4=,tag:Me7xDKuuajWMo58qrYcPhQ==,type:str]
-                    - refId: ENC[AES256_GCM,data:HKSV04Bo,iv:Z9mmCNM43DNZ5SNZ7Kc0KUh4daOBFr6yW8LPqjFBPF0=,tag:d9zSPIfhRHei/6iFZyeFVg==,type:str]
+                          type: loki
+                          uid: loki
+                        editorMode: builder
+                        expr: rate({namespace="matrix", app="matrix-synapse"} |= `psycopg2.errors.ReadOnlySqlTransaction` [15m])
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        range: true
+                        refId: Count
+                    - refId: Thresh
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:t8CO,iv:Dix66K5SQ6/+j0cbp420FjXaH1jGzk/1CNlUNTv4bbA=,tag:jWlap8MRtI4uMsPFVDri3g==,type:int]
-                        to: ENC[AES256_GCM,data:zA==,iv:Mw1hXgOs5ILx7rk1XxPvcZoQ6zsLVPipE75LqeL8k3s=,tag:ixzJca+aKV37GBz04IKQHA==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:5xBiO8nMmCk=,iv:a4SwWf7jQVQhCI1hFuSp5uleyqW0tUGhLLa4bFqrscI=,tag:9X0fb+T6uF81bPjwCEU2TQ==,type:str]
-                      model:
-                        conditions:
-                          - evaluator:
-                              params:
-                                - ENC[AES256_GCM,data:F+th,iv:X88UeZFAG6Cwp3n1/z0+Mh+PEqkjHfzwhLWxsNMMlvU=,tag:LCuRDmfee7YNLQuIPnuX8g==,type:float]
-                              type: ENC[AES256_GCM,data:rlw=,iv:jVOY90wBmS5l7xuWhO4kUpWo7hVq62fm6tVauN3i+vI=,tag:wzmLUOcHvmnNtplNx7+tAw==,type:str]
-                            operator:
-                              type: ENC[AES256_GCM,data:23EJ,iv:QDB9Z59gGkooTWUXYrOYtO6RdtSYYxhEzB5LkK8p8WI=,tag:BmUY0qBoGVSezntkBDQlKA==,type:str]
-                            query:
-                              params:
-                                - ENC[AES256_GCM,data:vw==,iv:w+IGzQ1IT6J8qlkUfnMBo3CvlBUV3+ah4PsI05caz0Y=,tag:aaQYLEziRLe/v/6LVIVrYw==,type:str]
-                            reducer:
-                              params: []
-                              type: ENC[AES256_GCM,data:Wg1Qiw==,iv:+WR4S+UCQNxJAv+vB3tSdXxb5Svwx70JQJ6RsqljrH8=,tag:+fbKyXrSYnPuG+Kjb9OTpA==,type:str]
-                            type: ENC[AES256_GCM,data:1qv8mJk=,iv:DaZQpOMGl9h2cz8dbBl+goXOa2o3WMMXrxPNlTp8XCA=,tag:sBspif5ET5O9VQ6c6AWxAQ==,type:str]
-                        datasource:
-                          type: ENC[AES256_GCM,data:AXSUTx5Bh00=,iv:MA4NgfKImJsj8BAQu/GAucKX9YhMDp1cn81Qk2QVUyY=,tag:pf4civuujs29ZbNBwvEoBQ==,type:str]
-                          uid: ENC[AES256_GCM,data:eOd7sBd+3Q0=,iv:fd10scKB4n0iwYI5kzrwPKDOXjaR0ugnwR+05UAuArI=,tag:WGa5iN3rZse9u5+Adv7nBA==,type:str]
-                        expression: ENC[AES256_GCM,data:jA==,iv:a4pyX8OX0WKk/V45gmyAG/NFqgi3USl8VmnZz7Wl0xI=,tag:NnNhtZzajRlQxHUd6WkHyg==,type:str]
-                        hide: ENC[AES256_GCM,data:AEnKrxY=,iv:8mdZxWxhEgY5451ZyaNmPwalVFFNT5PUCTR0PxCElKE=,tag:fhwl7mzD0mMV/gxsWNNDAA==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:liPIew==,iv:MLvioLCZPrPyXjtAia/i6Iose0cSqFgGg3gve1wIdt8=,tag:oNy5Ka0TDKvoz+o2QSjaNw==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:RtUpzTU=,iv:TCiIJza0DcUPxCj1Fh4Yz0n80QlE8/c8lWL0/RuDu20=,tag:kcjrrrw6VHE0ynmhVqpdpA==,type:int]
-                        refId: ENC[AES256_GCM,data:Ppbksr8d,iv:KAUAuXsJTOxvL2s27lq/lXCCglg35Se78pah8w6X9gw=,tag:AjwMC7W1X48aZwAH/8kErA==,type:str]
-                        type: ENC[AES256_GCM,data:2xbvAiplN9ET,iv:FphXQaONxKbxfhJnieWWvLl+mPYb3pU1x6xIXvQK8Rc=,tag:2IamMWYGIsRcBe1t9Xhoew==,type:str]
-                    - refId: ENC[AES256_GCM,data:yw==,iv:21jS596UxOW2NhzU/C/DmK4IsuetM620CvdQFjvkxkY=,tag:qjBY3Va1scP8qpKRHs9xGQ==,type:str]
-                      relativeTimeRange:
-                        from: ENC[AES256_GCM,data:KEza,iv:pbjjU88shN675BcMqJPT/MfS+Q9RQMp79PngTZZ1vYc=,tag:mWLLuDu/NiJ7h/XIaAUk1Q==,type:int]
-                        to: ENC[AES256_GCM,data:8A==,iv:o/JRi/Ig7bexuNPTWzmAyiekat+euoJAyS9Cu2J0T0g=,tag:pQ8F25C++z8/Jzz5oUOsfA==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:wuiKAShVJQg=,iv:JlUTrOmHQT4UQ7ZI95W8MPQG1SWQu2+a+nuvz8F4KQ0=,tag:Z30iLTbAzQaYi6x/CVybuA==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
                       model:
                         conditions:
                           - evaluator:
                               params:
-                                - ENC[AES256_GCM,data:dw==,iv:/HEpbIW/thO3j0Ee13Pk+iwkhWCF4Ihbw/x983Ko89Y=,tag:xLKsU8twq/jlS8PFGRrBNA==,type:int]
-                                - ENC[AES256_GCM,data:Aw==,iv:T54YTSIDygj15dGASWAI34zSorCLM3VVPBc+FjXw9IA=,tag:vNxae8gY4C/nmntKIhoAHQ==,type:int]
-                              type: ENC[AES256_GCM,data:swY=,iv:whXRDZjGS3084bzChLdn8zCrTbwxkaGLZh8j+g+/w0s=,tag:Qq5mC2e/Gdh9nE5HatI8Fw==,type:str]
+                                - 0.1
+                              type: gt
                             operator:
-                              type: ENC[AES256_GCM,data:rECW,iv:ag6Ff/srKqI3ZyNuNrHd99N3FLp7G8e2O32DByUumAw=,tag:O0besj5OiQeQEH98fJWQyw==,type:str]
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        datasource:
+                          type: __expr__
+                          uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: Thresh
+                        type: threshold
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
                             query:
                               params: []
                             reducer:
                               params: []
-                              type: ENC[AES256_GCM,data:ujYP,iv:3opBtP+GvJi8Xij1HyQC3X26jSajoNWxFKk8eJXyAT4=,tag:ToU+i1cu2muR3hjy/IM3Gg==,type:str]
-                            type: ENC[AES256_GCM,data:SJRBfsI=,iv:/up1V75G8W8jvcMj8OjOG3mptzYSR/DC0e4hMCAiZE4=,tag:lg8hWdituibpazRnVg8O1w==,type:str]
+                              type: avg
+                            type: query
                         datasource:
-                          name: ENC[AES256_GCM,data:R62ViJegJ51k4w==,iv:LGSo+sli5rtGMSheOpTlafXexM4Z3TOglIBC+xSmIRM=,tag:Sx3M+37PK8XOR6OM+FQWLA==,type:str]
-                          type: ENC[AES256_GCM,data:B84WPqLDHc4=,iv:xm+2NRT15zohhcMwNcOu5CVbzmSFjfKK5AvLOFkWOyc=,tag:GzKmv5PCJPtn7X8yTooWVw==,type:str]
-                          uid: ENC[AES256_GCM,data:/uVqGG7Um0s=,iv:DCZGnwdn0+lhiNeejxjOpQzshf0Utp5k3SeKliwSfLc=,tag:JinnLa47e0RdPjtuMgSzrA==,type:str]
-                        expression: ENC[AES256_GCM,data:qZAHxUw=,iv:eVMc6msD+/kb8757fvqtwkJ/lGiEephMZqODrtEwL2c=,tag:CBOqZrwwIDHmNLWUKPKlGg==,type:str]
-                        intervalMs: ENC[AES256_GCM,data:Q4uj/A==,iv:pUyXDTtvY9nxNN97MvRJR1YJhcHPR+avUGGUC1GQxXU=,tag:T00kND3qRUqYUw7EY61s5Q==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:ahjV5Jg=,iv:JbXq2bKXRqnPEuOUF1JFQAr7yKZpU7JhxRIrA6Wu8F0=,tag:insG4gic1e/dIIjGQBiGzg==,type:int]
-                        reducer: ENC[AES256_GCM,data:QXANLw==,iv:/wXXM/dm4Fryikt1xTzLMgLAuIFP4b3w0TUQncVP1rY=,tag:AjvgFzMODPj1n/XPkRQArg==,type:str]
-                        refId: ENC[AES256_GCM,data:rw==,iv:qjAhLooqB5HJ1DL3D16QTpzoBqFhrPIDN3zWa+/KOsc=,tag:Gg/4fuC0XYaSvp9l42nLTA==,type:str]
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                        expression: Count
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: A
                         settings:
-                          mode: ENC[AES256_GCM,data:VvdnMCeGWUjX,iv:BRNq36dIx6Nn+Cp8uqsql//VWH0o3CWK2Zz1+3bep08=,tag:lk6nICaZwOrwGwMLDhfbzg==,type:str]
-                          replaceWithValue: ENC[AES256_GCM,data:yQ==,iv:z8lHrQDSKbca9cPuAesP2wLUtPk/rUhN1lmPZNpQE8o=,tag:rc6KnRm6dHIdmxyOznT2ow==,type:int]
-                        type: ENC[AES256_GCM,data:0Kq5805m,iv:2mjWNRE+iWC45Fhd3Fo40tl4JNshKS4todkOOUgXXYI=,tag:vuSbe9uNcqLespAdLbL/sg==,type:str]
+                          mode: replaceNN
+                          replaceWithValue: 0
+                        type: reduce
                   noDataState: OK
                   execErrState: Error
                   for: 5m
@@ -305,86 +305,86 @@ spec:
                   title: Unusual synapse logging
                   condition: Thresh
                   data:
-                    - refId: ENC[AES256_GCM,data:OAGwqZs=,iv:UUcICg0tFScBnJPyif/UTI/wuDEhG18c3WRkdhdY9Pc=,tag:zQST+agGzQDlhw0FdoTMWw==,type:str]
-                      queryType: ENC[AES256_GCM,data:RWPK0Cc=,iv:PK7LEWr5LPEfNswj43qK7NDHPELtF7Ke936G1zgK22E=,tag:90CVo3hHWbhK+5jN9Yhxgg==,type:str]
+                    - refId: Count
+                      queryType: range
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:ZrEx,iv:PhpyLKM4S0uhISOiHK7mTK6toInZJuWtknvaBhNlXPU=,tag:FSClE7kvrPzqo6omXWLbYg==,type:int]
-                        to: ENC[AES256_GCM,data:ng==,iv:K/0ZapMROYXVrmIutiv/rlg+RIxHBvJYezThGYQUs+0=,tag:WW1YPnsOD0yACKYJYWSjdg==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:7QR0Ug==,iv:Cfv/Qt3XQRD8oWM3nvTMtqikUIUX+Y0dfhPDixakMHY=,tag:iXODXX0vh74jcV+PiG/MDw==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: loki
                       model:
                         datasource:
-                          type: ENC[AES256_GCM,data:2KlWjw==,iv:8nF+VyOs18qLKAkM9QloY9o8HipTqwvvIedhww//Hbs=,tag:z0Y6/Ui2X7zABRvrZkIm6A==,type:str]
-                          uid: ENC[AES256_GCM,data:iiuqCA==,iv:xnkS8ici0uABUKPpTdUZiTepZNuUrSfaYvO59kb74Aw=,tag:sBKjYfE1FFpLSfvfMgXGcw==,type:str]
-                        editorMode: ENC[AES256_GCM,data:l0FBVqI1JA==,iv:W+iqfEzvSKU/MKbsZWyrSTQukEALgK38OufCvhCDcf8=,tag:zKKMfae2nhjaiAOJB06stA==,type:str]
-                        expr: ENC[AES256_GCM,data:8AyOn9c5a5xDRfJwCfdyC5AD/MgpVLWl80K6h/NnAEOCWjetWUFElQFsyjv0IpX8daOlqFjxsq7yIzP73Vk5L8DEQzDuDA7QYm1UMtY7F2nDQ3nIju1sxEqCD2lMUamPtoOoFGdGjNa0UnjZx+t6RrHtqEFjou6e6y40Q0ndAeU+yJgQaxrl6lKhJDHr50QU6NHoO1UxXKwumxxdJrFaLW5n8nj6CTWnL2tsXrU=,iv:JQA5AGJgFBo5AfKejcoib+f7s4eZXT+p9InPPZvrBzc=,tag:tHDry6EnlB/IUD9oo26z9Q==,type:str]
-                        hide: ENC[AES256_GCM,data:Vd00+5E=,iv:HzAbb/qsieta+UNttQlJdEkKtl5odMmu3A9aDUNIG3w=,tag:lxV3sgryyLgxEgADOxI3YQ==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:99rx2A==,iv:aIdWekm3sXMI+Io3hBwlA30AnONji+5ipXVeI38LHKw=,tag:1TBnweShjul6EPfr7ASmnQ==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:7O5RjzI=,iv:Hse+DuHy7a1Llb+GL8sx/ztt7dvAoErVxaWfF7c6szI=,tag:XkQPxKh7yHNGvKBHNjmmoQ==,type:int]
-                        queryType: ENC[AES256_GCM,data:Z70k7zQ=,iv:Tlp57gRT8u71PCJdyjGCUj4VkIPuTiBsg0TNX4rNPtA=,tag:6AhR6CCk5ZFddqDH7FcURg==,type:str]
-                        range: ENC[AES256_GCM,data:OjOP0Q==,iv:aiY1Vyk8gpl/411g8QoKBcj+m5VuZObSLnOx/eLecmY=,tag:5QJwnhABdYwBNbB9wdm09g==,type:bool]
-                        refId: ENC[AES256_GCM,data:SGRIxz0=,iv:c1LlPiLImaz0kjN3W1Ywrsjf99QMqWK0lrctRS3PCrA=,tag:qZDiaN/sSJVmOb220tBv8A==,type:str]
-                    - refId: ENC[AES256_GCM,data:oqlnWEpH,iv:1Ldo+gk9uskiN29AHX0jqN680z8MAs3VJObAhjoqpRI=,tag:M6GEIHhXKuuJgG5MieQhZA==,type:str]
+                          type: loki
+                          uid: loki
+                        editorMode: builder
+                        expr: sum by(level) (count_over_time({namespace="matrix", app="matrix-synapse"} | pattern `<_> - <component> - <_> - <level> - <trace>- <detail>` | level != `INFO` [$__interval]))
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        queryType: range
+                        range: true
+                        refId: Count
+                    - refId: Thresh
                       relativeTimeRange:
-                        from: ENC[AES256_GCM,data:eIPW,iv:iAyvfFMGl1VL7DHdPSqPq4yV6iYAKkmDz1Cm5xDDT5w=,tag:lt6B5w789jeCFQ6gDIuofQ==,type:int]
-                        to: ENC[AES256_GCM,data:eQ==,iv:L2diDpLLo00McTnrIRebygczPysolFdqdU4OH776aGM=,tag:PKg+3mZl5umexgyKef6cxw==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:ObZ/GSXSwnc=,iv:HT+PzsKbGRfkM5mpEnm0f2Cz3rIteYMlBC/WgwUu0ks=,tag:ikFCd/+ljMaji/1yziOQaQ==,type:str]
-                      model:
-                        conditions:
-                          - evaluator:
-                              params:
-                                - ENC[AES256_GCM,data:Dxw=,iv:Zn5PWTGrI8H/ZegQHXa0fmQ5NyhkwtVTplggQH5D3zM=,tag:AKxg6DUG8s7SFM6IaMhbvw==,type:int]
-                              type: ENC[AES256_GCM,data:6Fk=,iv:7hkg0LU5kukm8nuPAJ+YpHdpqGWZOgWK3Ij5irkcGxc=,tag:uGWtxne8glwW/kw6BEZTGA==,type:str]
-                            operator:
-                              type: ENC[AES256_GCM,data:Sfac,iv:4jgsIaXBPoRLST71e7IyAY5Z+CplNeGOZLf3/EvRZdw=,tag:0EgqKMQXGU+EQA61bQtGeg==,type:str]
-                            query:
-                              params:
-                                - ENC[AES256_GCM,data:8Q==,iv:2wlYXZgMI0rSLavQJLgd8rRJutGApqXLCVBDAdi5FXY=,tag:ayldIpD60izHcRoCjCL15g==,type:str]
-                            reducer:
-                              params: []
-                              type: ENC[AES256_GCM,data:LABgyg==,iv:H9Kx8DbKbcXS7j4Q7yPf8ZjP6mqi/6MHIWOFloWqOvE=,tag:ObDLuxLc68DRYfFmrLuTrA==,type:str]
-                            type: ENC[AES256_GCM,data:D08Otjg=,iv:uW6puCStcIpLVdkA/wGJffbBpDgM3QmP2pTCtgxU0Ik=,tag:JlBQFp1NZcK6mRl/kGPgKg==,type:str]
-                        datasource:
-                          type: ENC[AES256_GCM,data:/DgVcBVSfG8=,iv:t/nHkDHJnWKMYQCPAkLO4BbKE34HeYHTnZEWpl3XwTM=,tag:KTHLFCDHdmJ4wN12/NO7mQ==,type:str]
-                          uid: ENC[AES256_GCM,data:4KB+eKQ9xgU=,iv:il63JCrjTLcg5OJ10QRy1pB7y/PMTbVByMgsorE57Yg=,tag:Fea+N4iMAmLfrFxysyR/5w==,type:str]
-                        expression: ENC[AES256_GCM,data:OA==,iv:c0hpUrBdlY3XwrpIV59XTaZ1R7wDmYhj+CrTnCy/xlo=,tag:p3gRpppbZeGESJA88PCl2Q==,type:str]
-                        hide: ENC[AES256_GCM,data:g5OtZzc=,iv:G28FNOd/4wS0xaF++bS8kwMre60fjRpn6SfhE7EZkx4=,tag:I2ntcEX3hJLnyUwt6wMH7g==,type:bool]
-                        intervalMs: ENC[AES256_GCM,data:3/4/BQ==,iv:sBdgDcyzsuJOUakzQYC67L2ko5b8U1bugS7LzE72FMQ=,tag:A0BEy3NwoMs8KlGDjd0GWA==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:prEz4gY=,iv:t9sKKpIOPowSCY6XTtB1vQry2XLITl0K28PR2P6RIJY=,tag:4DVoLasLBA2qzdDgztQOdQ==,type:int]
-                        refId: ENC[AES256_GCM,data:aJsRsQ6J,iv:FtPqA1nBIJhsviC9Vyq1wmd82yM7BKgpmvK/Il5jShI=,tag:QKg3CVCPUSw1Ow24C//+NQ==,type:str]
-                        type: ENC[AES256_GCM,data:o+hOfPpFKasp,iv:xZrqhkFd/O3itZUeKl6yqaxAf3F7/s12185eQ1wHPlg=,tag:ML1yBYE1xXqo4bzjLAsy4w==,type:str]
-                    - refId: ENC[AES256_GCM,data:yg==,iv:Wa1ObKWpxO7f2WfRnszANiuP66MbINCJrI8+zeU+0PU=,tag:48UPceZ3eHfO2DVxcGb6TQ==,type:str]
-                      relativeTimeRange:
-                        from: ENC[AES256_GCM,data:18qj,iv:F0j3ODKSefCDBxHqd6nliW7mYrXLNZ0Ns1/8kExZTHs=,tag:iEyzSkKUoafhF63SuniGPw==,type:int]
-                        to: ENC[AES256_GCM,data:2Q==,iv:qEwdfAt4tTH6sHIzIplax2J+0B1hfVs0hvLfSz+LBfg=,tag:FY5NnREyaX0vWAogCfYmLg==,type:int]
-                      datasourceUid: ENC[AES256_GCM,data:xRz2RO8ZJ94=,iv:qnoSDw4j2lQFUkP8R8F9974KrcPbTtpsHm58W/M2Vr4=,tag:3ahmQf9UPA8ZQ69bs+UsxQ==,type:str]
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
                       model:
                         conditions:
                           - evaluator:
                               params:
-                                - ENC[AES256_GCM,data:Xw==,iv:nQqEjCwJTsR5zYRNsjGYPWE074PCMu7xaccYw/Ud3K4=,tag:HEs+qArvSJiLFOPxmyCrnA==,type:int]
-                                - ENC[AES256_GCM,data:0w==,iv:s6u6Gtc/Y9gHYcURxk8NMEqn70YG6Jyomlfo9bc0n+I=,tag:eYYYBbMjJKZhGwK+VIRZsA==,type:int]
-                              type: ENC[AES256_GCM,data:ckY=,iv:udnSrmhk9yMEn4gdumU2EpiDdjgRLJnAraPABp6EBew=,tag:l3SRomnf01Wsy3gz/1imkg==,type:str]
+                                - 20
+                              type: gt
                             operator:
-                              type: ENC[AES256_GCM,data:mrGC,iv:bUeFPtFjFtdvC8snnRklzyUQMVdd5MBctmM6mXa80hw=,tag:3Qd2q/XtY1XJA67Oieu+zA==,type:str]
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        datasource:
+                          type: __expr__
+                          uid: __expr__
+                        expression: A
+                        hide: false
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: Thresh
+                        type: threshold
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
                             query:
                               params: []
                             reducer:
                               params: []
-                              type: ENC[AES256_GCM,data:QlaP,iv:EM1LP0XzRkAw6SLQ+AOapRPJOdk4GxMkD1tGuOH3K2g=,tag:2LIltx9trfnUqhQ+7PRLeQ==,type:str]
-                            type: ENC[AES256_GCM,data:h5qxdVU=,iv:NiPnu9EUWhxX/im9PDj4ZZDfV54YY2Em5tFDBCsDzAY=,tag:uU50pRY3ODVNsk+FcZWymA==,type:str]
+                              type: avg
+                            type: query
                         datasource:
-                          name: ENC[AES256_GCM,data:zo6ZDBKuTI9cTA==,iv:HFGHOpiAAlpQ4FuJ/siZ4xSTsAZuujFxAb40xaMMiaI=,tag:SiFh69tkLjzY/ZnMA4qgbA==,type:str]
-                          type: ENC[AES256_GCM,data:Vt29moC8/1Q=,iv:xiuz3/8JeIwYsBHlM4LyhExxdHRFfrmXW31aDFK2GYc=,tag:u1cTXzVDLq+m928tJXm9sg==,type:str]
-                          uid: ENC[AES256_GCM,data:7YjNoUAFPvA=,iv:g1WPxg7H7uZWjSTjC7F6VpwyFWis1CBe6n7YE3+O5x0=,tag:B0osHRTQHjAZEvMkMMTFPQ==,type:str]
-                        expression: ENC[AES256_GCM,data:AwxVXdA=,iv:eSr3B9bDePOtXeGz6LCltYjx3NyjyFesmB67bdsxp18=,tag:4rb1QoBVgposuT5lY97OPQ==,type:str]
-                        intervalMs: ENC[AES256_GCM,data:YuJLHg==,iv:wFhjV4UJfUHCdAF4gPlQlnuX9LNlA4R7Q9KDC4U3NO0=,tag:xmZIw9aJBDIexEt3HZGrFw==,type:int]
-                        maxDataPoints: ENC[AES256_GCM,data:4+I7RKc=,iv:n6naHBBiZBXknPMh6CL8NB80pF2S/jPrOXBWI/EhOxw=,tag:Wp+bWU7aY5vOA4FgEaaI+A==,type:int]
-                        reducer: ENC[AES256_GCM,data:0z/P7A==,iv:Y0sYo6vuw9VwkOjLjdOcHThz3aEudNZQgnHp+MlBn5E=,tag:CPDo1vSvWMw2nUCUNhNLZQ==,type:str]
-                        refId: ENC[AES256_GCM,data:bw==,iv:DycfM+JumPKTSThuCqHoubd5yeq46r6sfeK4Er4MkOY=,tag:d4sG0bh9ka/o5ELfdUXlbA==,type:str]
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                        expression: Count
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: A
                         settings:
-                          mode: ENC[AES256_GCM,data:idpMVu8k/r7c,iv:18FDMtehFEhBLSZ5ZCd6hmGaL2JpFyTl71WTWeSlvnU=,tag:5e+1Hn3vuYlFTP2yE4u6Sw==,type:str]
-                          replaceWithValue: ENC[AES256_GCM,data:Qg==,iv:N6Exa/QpPQJZ5hcT6+0KwSMLKMKEvP0Cw0z1gG56xvE=,tag:CA9vTOBw336fqVjP/n5SrA==,type:int]
-                        type: ENC[AES256_GCM,data:cAia14qX,iv:Zq90WSZfgUBYG5CFL21qPZQ4zOYASiHyVshzor1bNhM=,tag:SN5VqR/m4Xjy+d4spm0kxw==,type:str]
+                          mode: replaceNN
+                          replaceWithValue: 0
+                        type: reduce
                   noDataState: OK
                   execErrState: Error
                   for: 5m
@@ -423,23 +423,3 @@ spec:
       grafana.ini:
         server:
           root_url: https://grafana.midnightthoughts.space
-sops:
-  kms: []
-  gcp_kms: []
-  azure_kv: []
-  hc_vault: []
-  age:
-    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBRekVXNUd5eFRPRW1vQ1lF
-        R2JVcW1TeUR3NHFYUUVRTG5xYmd5RmVia0F3CjdacXg5czdVZVJNTDNEUkpRMHdT
-        VzdYQWlPOVlyWDFNVUswZmwwZzBDSEkKLS0tIDM0RDQ1SEg4eDRQV3BTSzdGeTFQ
-        VmFFM2NFR053QlQvQVdrMFVkdmxIMUUKRxKLS7rkjwJJTnWN3LmImwl1gqHZzoQg
-        oWNMEMpgRECLVgScTwabds/XDuNiaJANn99zd1zbvnO8lj+R8XMQyw==
-        -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2023-08-21T10:15:29Z"
-  mac: ENC[AES256_GCM,data:UV90kA2Eu2on1Lc0PZvHSGhDXMW0Gk5hurPmutzZwMA81T+cR9QjKgcJInDCej6E+DICIB+oswpb2Ye8/wTeeD98+5iYGqe1/t+0S2WOeCb06+r2qKCelAuvqC8PLGrz7GeHOhEshj5NGz0zbTuD+0ndN6wZfs8zoPJRhFG0IjQ=,iv:lkURqDtJSmg44vVSjEy9pDyk0onMBLHtoBk3VIQZ+ew=,tag:McXO1o4vGO1CSUE8OMoWHQ==,type:str]
-  pgp: []
-  encrypted_regex: ^(privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-  version: 3.7.3
