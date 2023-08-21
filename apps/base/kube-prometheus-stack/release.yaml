@@ -1,206 +1,226 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: kube-prometheus
-  namespace: monitoring
+    name: kube-prometheus
+    namespace: monitoring
 spec:
-  interval: 5m
-  chart:
-    spec:
-      version: 46.6.x
-      chart: kube-prometheus-stack
-      sourceRef:
-        kind: HelmRepository
-        name: prometheus-community
-      interval: 60m
-  install:
-    crds: Create
-  upgrade:
-    crds: CreateReplace
-    # Force recreation due to Helm not properly patching Deployment with e.g. added port,
-    # causing spurious drift detection
-    force: true
-  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-  values:
-    prometheus:
-      prometheusSpec:
-        resources:
-          requests:
-            cpu: 0m
-            memory: 0Mi
-        #tolerations:
-        #  - key: "arch"
-        #    operator: "Equal"
-        #    value: "arm64"
-        #    effect: "NoSchedule"
-        enableRemoteWriteReceiver: true
-        podMonitorSelectorNilUsesHelmValues: false
-        serviceMonitorSelectorNilUsesHelmValues: false
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: TRACING_ENABLED
-              accessModes:
-                - ReadWriteMany
-              resources:
-                requests:
-                  storage: 25Gi
-            selector: {}
-    alertmanager:
-      alertmanagerSpec:
-        useExistingSecret: true
-    namespaceOverride: monitoring
-    grafana:
-      plugins:
-        - grafana-piechart-panel
-      smtp:
-        existingSecret: smtp-auth-secret
-      extraSecretMounts:
-        - name: auth-generic-oauth-secret-mount
-          secretName: auth-generic-oauth-secret
-          defaultMode: 288
-          mountPath: /etc/secrets/auth_generic_oauth
-          readOnly: true
-      defaultDashboardsTimezone: Europe/Berlin
-      dashboardProviders:
-        dashboardproviders.yaml:
-          apiVersion: 1
-          providers:
-            - name: monitoring
-              orgId: 1
-              folder: Monitoring
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/monitoring
-            - name: matrix
-              orgId: 1
-              folder: Matrix
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/matrix
-            - name: nats
-              orgId: 1
-              folder: Nats
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/nats
-      datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Tempo
-              type: tempo
-              access: proxy
-              url: http://tempo.monitoring.svc.cluster.local:3100
-              isDefault: false
-              jsonData:
-                httpMethod: GET
-                serviceMap:
-                  datasourceUid: prometheus
-      dashboards:
-        monitoring:
-          felix-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/felix-dashboard.json
-          traefik:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
-          typha-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/typha-dashboard.json
-          #cilium-dashboard:
-          #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
-          #cilium-operator-dashboard:
-          #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-operator-dashboard.json
-          #hubble-dashboard:
-          #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/hubble-dashboard.json
-          postgres-dashboard:
-            url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
-          kube-router-dashboard:
-            url: https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/dashboard/kube-router.json
-          ceph_osd:
-            gnetId: 5336
-            revision: 9
-            datasource: Prometheus
-          ceph_pools:
-            gnetId: 5342
-            revision: 9
-            datasource: Prometheus
-          ceph_cluster:
-            gnetId: 2842
-            revision: 16
-            datasource: Prometheus
-          asterisk:
-            gnetId: 15498
-            revision: 1
-            datasource: Prometheus
-        nats:
-          nats-jetstream:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/nats.json
-        matrix:
-          synapse-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
-          draupnir4all:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
-          dendrite-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/dendrite.json
-          matrix-media-repo-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/matrix-media-repo.json
-      grafana.ini:
-        smtp:
-          enabled: true
-          host: mail.nordgedanken.dev:465
-          from_address: ops@nordgedanken.dev
-        paths:
-          data: /var/lib/grafana/
-          logs: /var/log/grafana
-          plugins: /var/lib/grafana/plugins
-          provisioning: /etc/grafana/provisioning
-        analytics:
-          check_for_updates: true
-        log:
-          mode: console
-        grafana_net:
-          url: https://grafana.net
-        auth.generic_oauth:
-          enabled: true
-          scopes: openid email profile roles
-          name: OAuth
-          allow_sign_up: true
-          client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
-          client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
-          auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
-          token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
-          api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
-          role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
-      imageRenderer:
-        enabled: true
-    kubeProxy:
-      enabled: false
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              # Ignore these objects from Flux diff as they are mutated from chart hooks
-              kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
-              name: kube-prometheus-stack-admission
-            patch: |
-              - op: add
-                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
-                value: disabled
-          - target:
-              # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
-              kind: PrometheusRule
-            patch: |
-              - op: add
-                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
-                value: disabled
+    interval: 5m
+    chart:
+        spec:
+            version: 46.6.x
+            chart: kube-prometheus-stack
+            sourceRef:
+                kind: HelmRepository
+                name: prometheus-community
+            interval: 60m
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+    values:
+        prometheus:
+            prometheusSpec:
+                resources:
+                    requests:
+                        cpu: 0m
+                        memory: 0Mi
+                #tolerations:
+                #  - key: "arch"
+                #    operator: "Equal"
+                #    value: "arm64"
+                #    effect: "NoSchedule"
+                enableRemoteWriteReceiver: true
+                podMonitorSelectorNilUsesHelmValues: false
+                serviceMonitorSelectorNilUsesHelmValues: false
+                storageSpec:
+                    volumeClaimTemplate:
+                        spec:
+                            storageClassName: TRACING_ENABLED
+                            accessModes:
+                                - ReadWriteMany
+                            resources:
+                                requests:
+                                    storage: 25Gi
+                        selector: {}
+        alertmanager:
+            alertmanagerSpec:
+                useExistingSecret: true
+        namespaceOverride: monitoring
+        grafana:
+            plugins:
+                - grafana-piechart-panel
+            smtp:
+                existingSecret: smtp-auth-secret
+            extraSecretMounts:
+                - name: auth-generic-oauth-secret-mount
+                  secretName: auth-generic-oauth-secret
+                  defaultMode: 288
+                  mountPath: /etc/secrets/auth_generic_oauth
+                  readOnly: true
+            defaultDashboardsTimezone: Europe/Berlin
+            dashboardProviders:
+                dashboardproviders.yaml:
+                    apiVersion: 1
+                    providers:
+                        - name: monitoring
+                          orgId: 1
+                          folder: Monitoring
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/monitoring
+                        - name: matrix
+                          orgId: 1
+                          folder: Matrix
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/matrix
+                        - name: nats
+                          orgId: 1
+                          folder: Nats
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/nats
+            datasources:
+                datasources.yaml:
+                    apiVersion: 1
+                    datasources:
+                        - name: Tempo
+                          type: tempo
+                          access: proxy
+                          url: http://tempo.monitoring.svc.cluster.local:3100
+                          isDefault: false
+                          jsonData:
+                            httpMethod: GET
+                            serviceMap:
+                                datasourceUid: prometheus
+            dashboards:
+                monitoring:
+                    felix-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/felix-dashboard.json
+                    traefik:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
+                    typha-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/typha-dashboard.json
+                    #cilium-dashboard:
+                    #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-dashboard.json
+                    #cilium-operator-dashboard:
+                    #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/cilium-operator-dashboard.json
+                    #hubble-dashboard:
+                    #  url: https://raw.githubusercontent.com/cilium/cilium/v1.13.3/examples/kubernetes/addons/prometheus/files/grafana-dashboards/hubble-dashboard.json
+                    postgres-dashboard:
+                        url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
+                    kube-router-dashboard:
+                        url: https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/dashboard/kube-router.json
+                    ceph_osd:
+                        gnetId: 5336
+                        revision: 9
+                        datasource: Prometheus
+                    ceph_pools:
+                        gnetId: 5342
+                        revision: 9
+                        datasource: Prometheus
+                    ceph_cluster:
+                        gnetId: 2842
+                        revision: 16
+                        datasource: Prometheus
+                    asterisk:
+                        gnetId: 15498
+                        revision: 1
+                        datasource: Prometheus
+                nats:
+                    nats-jetstream:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/nats.json
+                matrix:
+                    synapse-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
+                    draupnir4all:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
+                    dendrite-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/dendrite.json
+                    matrix-media-repo-dashboard:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/matrix-media-repo.json
+            grafana.ini:
+                smtp:
+                    enabled: true
+                    host: mail.nordgedanken.dev:465
+                    from_address: ops@nordgedanken.dev
+                paths:
+                    data: ENC[AES256_GCM,data:WCOnVfZ7FwJs532uY0kG3io=,iv:eajOjqjEKj4Zbd33bRqRs/Mhd44cC4E6CnVfsDPMf6o=,tag:3/euRNxrAxeRGdgNSK3v9g==,type:str]
+                    logs: /var/log/grafana
+                    plugins: /var/lib/grafana/plugins
+                    provisioning: /etc/grafana/provisioning
+                analytics:
+                    check_for_updates: true
+                log:
+                    mode: console
+                grafana_net:
+                    url: https://grafana.net
+                auth.generic_oauth:
+                    enabled: true
+                    scopes: openid email profile roles
+                    name: OAuth
+                    allow_sign_up: true
+                    client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+                    client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+                    auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
+                    token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
+                    api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
+                    role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
+            imageRenderer:
+                enabled: true
+        kubeProxy:
+            enabled: false
+    postRenderers:
+        - kustomize:
+            patches:
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated from chart hooks
+                    kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
+                    name: kube-prometheus-stack-admission
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
+                    kind: PrometheusRule
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXUnFZT3AxeTJjMnkxbXQz
+            UWx1cHE0bTI4NFFiOEVReDZDVGZ3RkM5TmlZCkxpeklJNUg0alkwdWIvTlFDckV3
+            YlV0b2grSlNSVWNEMEgrbFdiMnBJU2cKLS0tIE8zc2FGTUp1OTA1alpCdjFuaERa
+            QVRPdW5BZmdlQXp6ZVNzWm1aVFJXWFEKM/wttIHcJ25d+K3vfB0yB5OYrpG8026K
+            sALWocfcpAXSStlvZOwiOvMQuGoDMsYkOkEMNONceIyua42esAFI9w==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-08-21T10:25:24Z"
+    mac: ENC[AES256_GCM,data:tgSY2kL6lCNTGT7ZEHPa7r2zB5r8gWC+kn0D1C13ubEsT1MhG4k7vnttqas3J5xYgGehnL4yOnP+tY7ceK9lftmPkGaAeCO5aADIpY+9iGo4Cx465VHVQoFK+guFKfIVMVMRu+n9YZQJFh0Y92Odn8Xp9L5IX+wlGVKu8Ym0qKA=,iv:wulgeoH8ijjx1v9KbAgwbJYxWJrEWY1lVIT2camIM7o=,tag:zVujQcZv3njxF2nV97ZQag==,type:str]
+    pgp: []
+    encrypted_regex: ^(privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.7.3
