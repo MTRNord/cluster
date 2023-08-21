@@ -7,7 +7,7 @@ spec:
   interval: 5m
   chart:
     spec:
-      version: "46.6.x"
+      version: 46.6.x
       chart: kube-prometheus-stack
       sourceRef:
         kind: HelmRepository
@@ -24,10 +24,19 @@ spec:
   values:
     prometheus:
       prometheusSpec:
+        additionalScrapeConfigs:
+          - job_name: asterisk
+            scheme: https
+            basic_auth:
+              username: asterisk
+              password: ENC[AES256_GCM,data:htM+d1sSNjZ/MC6lt1LDYKD/5ExFDOkRI4NyrxteezVRC46Sry8wKO0e6CJzujC+YoaryPeTyZvyhxhHZ/NQDg==,iv:s0q1/auel4X+H/h9UYmBe8IipUDLJ797Jy52Ex6SmKY=,tag:9Ro0YDjfCI+hfdrX334azg==,type:str]
+            static_configs:
+              - targets:
+                  - pbx.midnightthoughts.space
         resources:
           requests:
-            cpu: "0m"
-            memory: "0Mi"
+            cpu: 0m
+            memory: 0Mi
         #tolerations:
         #  - key: "arch"
         #    operator: "Equal"
@@ -40,7 +49,8 @@ spec:
           volumeClaimTemplate:
             spec:
               storageClassName: TRACING_ENABLED
-              accessModes: ["ReadWriteMany"]
+              accessModes:
+                - ReadWriteMany
               resources:
                 requests:
                   storage: 25Gi
@@ -53,11 +63,11 @@ spec:
       plugins:
         - grafana-piechart-panel
       smtp:
-        existingSecret: "smtp-auth-secret"
+        existingSecret: smtp-auth-secret
       extraSecretMounts:
         - name: auth-generic-oauth-secret-mount
           secretName: auth-generic-oauth-secret
-          defaultMode: 0440
+          defaultMode: 288
           mountPath: /etc/secrets/auth_generic_oauth
           readOnly: true
       defaultDashboardsTimezone: Europe/Berlin
@@ -65,9 +75,9 @@ spec:
         dashboardproviders.yaml:
           apiVersion: 1
           providers:
-            - name: "monitoring"
+            - name: monitoring
               orgId: 1
-              folder: "Monitoring"
+              folder: Monitoring
               type: file
               disableDeletion: true
               editable: false
@@ -75,9 +85,9 @@ spec:
               allowUiUpdates: false
               options:
                 path: /var/lib/grafana/dashboards/monitoring
-            - name: "matrix"
+            - name: matrix
               orgId: 1
-              folder: "Matrix"
+              folder: Matrix
               type: file
               disableDeletion: true
               editable: false
@@ -85,9 +95,9 @@ spec:
               allowUiUpdates: false
               options:
                 path: /var/lib/grafana/dashboards/matrix
-            - name: "nats"
+            - name: nats
               orgId: 1
-              folder: "Nats"
+              folder: Nats
               type: file
               disableDeletion: true
               editable: false
@@ -107,7 +117,7 @@ spec:
               jsonData:
                 httpMethod: GET
                 serviceMap:
-                  datasourceUid: "prometheus"
+                  datasourceUid: prometheus
       dashboards:
         monitoring:
           felix-dashboard:
@@ -156,7 +166,7 @@ spec:
           host: mail.nordgedanken.dev:465
           from_address: ops@nordgedanken.dev
         paths:
-          data: /var/lib/grafana/
+          data: ENC[AES256_GCM,data:dheQUm8Mu+CEt7sMkhdE97g=,iv:niA01RqmWxrDMUx7Bwp/iEtDRli8CYuyLJ9gXJ2kQUo=,tag:FA6116b3lCH+U0Lt0ofMpw==,type:str]
           logs: /var/log/grafana
           plugins: /var/lib/grafana/plugins
           provisioning: /etc/grafana/provisioning
@@ -173,15 +183,14 @@ spec:
           allow_sign_up: true
           client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
           client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
-          auth_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth"
-          token_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token"
-          api_url: "https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo"
+          auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
+          token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
+          api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
           role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
       imageRenderer:
         enabled: true
     kubeProxy:
       enabled: false
-
   postRenderers:
     - kustomize:
         patches:
@@ -200,3 +209,23 @@ spec:
               - op: add
                 path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
                 value: disabled
+sops:
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBLWGJMS3I0WitrakNvTG1R
+        MmxVZ1g4Mnc1Z1MxTmtUVTN6SWQ4QWtNNXdjCmI1cEVqZzhXcUszWmRJaFpJUUha
+        bmJQSnAvdTlPTURTYmZPazcvd3NYeU0KLS0tIGJtamJob0tEdHZmcVBYbGJYY2F6
+        cnloTW1FZVVRNnFzZjNXSW0yVEdseTAKBUlP7z8tw9pSM6Y6NLJkCSS2mnnB2w/5
+        6GRd2h6CkgbBhFcT3GwyC9XSzeYbKztvnFCUnhcdKc1VQ7XTsiSrsA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2023-08-21T09:44:28Z"
+  mac: ENC[AES256_GCM,data:Bz03jKHfE9Akj828KJOk6d6m+CQBauzZKyA63Xjg/JxEQsHiZHmEBfuxHHyidOvMOjNDAmoCP+SqL2oZaO7jtQjjPSpQGMXg8+Dg3qE/275UypHbz9p9tCoSX6yU0iypbAU5QqXRq9r5pkTbsUGLhRj5X44qQVQraVHMwC3L4D8=,iv:Lh6qbCBPJZ6EZ9lNa47ibNrMghD5KNelGes3D+kvl2Q=,tag:5iGU0XxnKpYy8xjDpZv+lA==,type:str]
+  pgp: []
+  encrypted_regex: ^(privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+  version: 3.7.3
