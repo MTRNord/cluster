@@ -24,15 +24,6 @@ spec:
   values:
     prometheus:
       prometheusSpec:
-        additionalScrapeConfigs:
-          - job_name: asterisk
-            scheme: https
-            basic_auth:
-              username: asterisk
-              password: ENC[AES256_GCM,data:htM+d1sSNjZ/MC6lt1LDYKD/5ExFDOkRI4NyrxteezVRC46Sry8wKO0e6CJzujC+YoaryPeTyZvyhxhHZ/NQDg==,iv:s0q1/auel4X+H/h9UYmBe8IipUDLJ797Jy52Ex6SmKY=,tag:9Ro0YDjfCI+hfdrX334azg==,type:str]
-            static_configs:
-              - targets:
-                  - pbx.midnightthoughts.space
         resources:
           requests:
             cpu: 0m
@@ -170,7 +161,7 @@ spec:
           host: mail.nordgedanken.dev:465
           from_address: ops@nordgedanken.dev
         paths:
-          data: ENC[AES256_GCM,data:dheQUm8Mu+CEt7sMkhdE97g=,iv:niA01RqmWxrDMUx7Bwp/iEtDRli8CYuyLJ9gXJ2kQUo=,tag:FA6116b3lCH+U0Lt0ofMpw==,type:str]
+          data: /var/lib/grafana/
           logs: /var/log/grafana
           plugins: /var/lib/grafana/plugins
           provisioning: /etc/grafana/provisioning
@@ -213,23 +204,3 @@ spec:
               - op: add
                 path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
                 value: disabled
-sops:
-  kms: []
-  gcp_kms: []
-  azure_kv: []
-  hc_vault: []
-  age:
-    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBLWGJMS3I0WitrakNvTG1R
-        MmxVZ1g4Mnc1Z1MxTmtUVTN6SWQ4QWtNNXdjCmI1cEVqZzhXcUszWmRJaFpJUUha
-        bmJQSnAvdTlPTURTYmZPazcvd3NYeU0KLS0tIGJtamJob0tEdHZmcVBYbGJYY2F6
-        cnloTW1FZVVRNnFzZjNXSW0yVEdseTAKBUlP7z8tw9pSM6Y6NLJkCSS2mnnB2w/5
-        6GRd2h6CkgbBhFcT3GwyC9XSzeYbKztvnFCUnhcdKc1VQ7XTsiSrsA==
-        -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2023-08-21T09:44:28Z"
-  mac: ENC[AES256_GCM,data:Bz03jKHfE9Akj828KJOk6d6m+CQBauzZKyA63Xjg/JxEQsHiZHmEBfuxHHyidOvMOjNDAmoCP+SqL2oZaO7jtQjjPSpQGMXg8+Dg3qE/275UypHbz9p9tCoSX6yU0iypbAU5QqXRq9r5pkTbsUGLhRj5X44qQVQraVHMwC3L4D8=,iv:Lh6qbCBPJZ6EZ9lNa47ibNrMghD5KNelGes3D+kvl2Q=,tag:5iGU0XxnKpYy8xjDpZv+lA==,type:str]
-  pgp: []
-  encrypted_regex: ^(privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-  version: 3.7.3
