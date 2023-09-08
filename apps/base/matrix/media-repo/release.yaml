@@ -37,12 +37,13 @@ spec:
   values:
     replicaCount: 1
     image:
-      repository: git.nordgedanken.dev/kubernetes/gitops/turt2live/matrix-media-repo
-      tag: latest
+      repository: turt2live/matrix-media-repo
+      tag: v1.3.0
       pullPolicy: Always
     config:
       datastores:
         - type: file
+          id: 15f18489315d4638cbe188248bab971822ec7f7e
           enabled: true
           forKinds: ["all"]
           opts:
