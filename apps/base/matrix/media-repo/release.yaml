@@ -37,10 +37,10 @@ spec:
   values:
     replicaCount: 1
     image:
-      repository: git.nordgedanken.dev/kubernetes/gitops/mmr
-      tag: latest
-      #repository: turt2live/matrix-media-repo
-      #tag: patch20230909-01
+      #repository: git.nordgedanken.dev/kubernetes/gitops/mmr
+      #tag: latest
+      repository: turt2live/matrix-media-repo
+      tag: v1.3.1
       pullPolicy: Always
     config:
       datastores:
@@ -107,7 +107,7 @@ spec:
           - "audio/flac"
           - "video/mp4"
         allowAnimated: true
-        defaultAnimated: true
+        defaultAnimated: false
         maxAnimateSizeBytes: 10485760
         stillFrame: 0.5
         expireAfterDays: 0
