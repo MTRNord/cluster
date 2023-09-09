@@ -40,7 +40,8 @@ spec:
       #repository: git.nordgedanken.dev/kubernetes/gitops/mmr
       #tag: latest
       repository: turt2live/matrix-media-repo
-      tag: v1.3.1
+      #tag: v1.3.1
+      tag: patch20230909-02
       pullPolicy: Always
     config:
       datastores:
@@ -107,7 +108,7 @@ spec:
           - "audio/flac"
           - "video/mp4"
         allowAnimated: true
-        defaultAnimated: false
+        defaultAnimated: true
         maxAnimateSizeBytes: 10485760
         stillFrame: 0.5
         expireAfterDays: 0
