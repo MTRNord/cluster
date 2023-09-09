@@ -17,10 +17,13 @@ spec:
       retries: 3
   values:
     extraConfig:
+      stream_writers:
+        events: event_persister
+      run_background_tasks_on: background_worker
       opentracing:
         enabled: true
         homeserver_whitelist:
-          - "draupnir4all.matrix.svc.cluster.local"
+          - "matrix.midnightthoughts.space"
       federation_sender_instances:
         - federation-sender-1
         - federation-sender-2
@@ -48,12 +51,12 @@ spec:
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
           - name: SYNAPSE_CACHE_FACTOR
-            value: "10.0"
+            value: "20.0"
         extraConfig:
           opentracing:
             enabled: true
             homeserver_whitelist:
-              - "draupnir4all.matrix.svc.cluster.local"
+              - "matrix.midnightthoughts.space"
       federation_reader:
         replicaCount: 2
         enabled: true
@@ -77,6 +80,17 @@ spec:
         app: federation_sender
         name: federation-sender-2
         enabled: true
+      background_worker:
+        name: background_worker
+        replicaCount: 1
+        enabled: true
+        generic: true
+      event_persister:
+        name: event_persister
+        replicaCount: 1
+        enabled: true
+        generic: true
+        listeners: [replication]
       # default:
       #   tolerations:
       #     - key: "arch"
@@ -114,7 +128,7 @@ spec:
         - name: LD_PRELOAD
           value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
         - name: SYNAPSE_CACHE_FACTOR
-          value: "10.0"
+          value: "20.0"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/_synapse/metrics"

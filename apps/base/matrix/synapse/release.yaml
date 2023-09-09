@@ -56,7 +56,7 @@ spec:
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
           - name: SYNAPSE_CACHE_FACTOR
-            value: "10.0"
+            value: "20.0"
       federation_reader:
         replicaCount: 2
         enabled: true
@@ -318,7 +318,7 @@ spec:
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
           - name: SYNAPSE_CACHE_FACTOR
-            value: "10.0"
+            value: "20.0"
 
     synapse:
       ## Liveness probe configuration to use
@@ -344,7 +344,7 @@ spec:
         - name: LD_PRELOAD
           value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
         - name: SYNAPSE_CACHE_FACTOR
-          value: "10"
+          value: "20"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/_synapse/metrics"
