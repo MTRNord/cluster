@@ -40,7 +40,7 @@ spec:
             - matrix.draupnir.midnightthoughts.space
           secretName: draupnir-midnightthoughts-synapse-tls-secret
       annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-dns
+        cert-manager.io/cluster-issuer: letsencrypt-http
         traefik.ingress.kubernetes.io/router.tls: "true"
         traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
     workers:

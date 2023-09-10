@@ -36,7 +36,7 @@ spec:
                 #    traefik.ingress.kubernetes.io/router.tls: "true"
                 #    traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-redirect-https@kubernetescrd
                 traefik.ingress.kubernetes.io/router.middlewares: redirect-media@kubernetescrd
-                cert-manager.io/cluster-issuer: letsencrypt-dns
+                cert-manager.io/cluster-issuer: letsencrypt-http
             hosts:
                 - host: matrix.midnightthoughts.space
                   paths:
