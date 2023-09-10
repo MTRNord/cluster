@@ -27,6 +27,15 @@ spec:
       federation_sender_instances:
         - federation-sender-1
         - federation-sender-2
+      event_cache_size: 10K
+      caches:
+        global_factor: 10
+        expire_caches: true
+        cache_entry_ttl: 240m
+        cache_autotuning:
+          max_cache_memory_usage: 2048M
+          target_cache_memory_usage: 1024M
+          min_cache_ttl: 5m
     wellknown:
       enabled: true
       extraData:
@@ -50,13 +59,20 @@ spec:
             value: tempo.monitoring.svc.cluster.local
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
-          - name: SYNAPSE_CACHE_FACTOR
-            value: "20.0"
         extraConfig:
           opentracing:
             enabled: true
             homeserver_whitelist:
               - "matrix.midnightthoughts.space"
+          event_cache_size: 10K
+          caches:
+            global_factor: 10
+            expire_caches: true
+            cache_entry_ttl: 240m
+            cache_autotuning:
+              max_cache_memory_usage: 2048M
+              target_cache_memory_usage: 1024M
+              min_cache_ttl: 5m
       generic_frontend:
         replicaCount: 2
         enabled: true
@@ -161,8 +177,6 @@ spec:
           value: tempo.monitoring.svc.cluster.local
         - name: LD_PRELOAD
           value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
-        - name: SYNAPSE_CACHE_FACTOR
-          value: "20.0"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/_synapse/metrics"
