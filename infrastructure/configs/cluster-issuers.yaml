@@ -11,14 +11,19 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-dns-account-key
     solvers:
-      - dns01:
-          rfc2136:
-            nameserver: "[2a01:4f9:4a:451c:2::5]:53"
-            tsigAlgorithm: HMACSHA256
-            tsigKeyName: lego_letsencrypt
-            tsigSecretSecretRef:
-              key: tsig-secret
-              name: tsig-secret
+      # - dns01:
+      #     rfc2136:
+      #       nameserver: "[2a01:4f9:4a:451c:2::5]:53"
+      #       tsigAlgorithm: HMACSHA256
+      #       tsigKeyName: lego_letsencrypt
+      #       tsigSecretSecretRef:
+      #         key: tsig-secret
+      #         name: tsig-secret
+      - http01:
+          ingress:
+            class: traefik
+            serviceType: ClusterIP
+
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
