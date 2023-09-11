@@ -19,7 +19,7 @@ spec:
   chart:
     spec:
       chart: weave-gitops
-      version: "~4.0.16"
+      version: "~4.0.29"
       sourceRef:
         kind: HelmRepository
         name: weave-gitops
@@ -41,6 +41,8 @@ spec:
       create: false
     #additionalArgs:
     #  - --auth-methods=oidc
+    networkPolicy:
+      create: false
     ingress:
       enabled: true
       annotations:
