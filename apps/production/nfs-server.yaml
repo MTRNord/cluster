@@ -54,9 +54,15 @@ spec:
             - name: tcp-2049
               containerPort: 2049
               protocol: TCP
+            - name: udp-2049
+              containerPort: 2049
+              protocol: UDP
             - name: udp-111
               containerPort: 111
               protocol: UDP
+            - name: tcp-111
+              containerPort: 111
+              protocol: TCP
       volumes:
         - name: nfs-vol
           hostPath:
