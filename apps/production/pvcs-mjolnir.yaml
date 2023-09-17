@@ -41,12 +41,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mjolnir-private
+  name: mjolnir-private-v2
   namespace: matrix
 spec:
-  storageClassName: "nfs-client"
+  storageClassName: nfs-csi
   accessModes:
-    - ReadWriteMany
+  - ReadWriteMany
   resources:
     requests:
       storage: 1Gi
