@@ -88,8 +88,8 @@ spec:
       labels:
         app: csi-nfs-controller
     spec:
-      hostNetwork: true # controller also needs to mount nfs to create dir
-      dnsPolicy: ClusterFirstWithHostNet # available values: Default, ClusterFirstWithHostNet, ClusterFirst
+      #hostNetwork: true # controller also needs to mount nfs to create dir
+      #dnsPolicy: ClusterFirstWithHostNet # available values: Default, ClusterFirstWithHostNet, ClusterFirst
       serviceAccountName: csi-nfs-controller-sa
       nodeSelector:
         kubernetes.io/os: linux # add "kubernetes.io/role: master" to run controller on master node
@@ -233,8 +233,8 @@ spec:
       labels:
         app: csi-nfs-node
     spec:
-      hostNetwork: true # original nfs connection would be broken without hostNetwork setting
-      dnsPolicy: ClusterFirstWithHostNet # available values: Default, ClusterFirstWithHostNet, ClusterFirst
+      #hostNetwork: true # original nfs connection would be broken without hostNetwork setting
+      #dnsPolicy: ClusterFirstWithHostNet # available values: Default, ClusterFirstWithHostNet, ClusterFirst
       serviceAccountName: csi-nfs-node-sa
       priorityClassName: system-node-critical
       securityContext:
@@ -357,7 +357,7 @@ metadata:
 provisioner: nfs.csi.k8s.io
 parameters:
   server: nfs-server.nfs-server.svc.cluster.local
-  share: /
+  share: /exports
   subDir: ${pvc.metadata.namespace}-${pvc.metadata.name}
   # csi.storage.k8s.io/provisioner-secret is only needed for providing mountOptions in DeleteVolume
   # csi.storage.k8s.io/provisioner-secret-name: "mount-options"
