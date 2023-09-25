@@ -53,6 +53,7 @@ spec:
     grafana:
       plugins:
         - grafana-piechart-panel
+        - grafana-worldmap-panel
       smtp:
         existingSecret: smtp-auth-secret
       extraSecretMounts:
@@ -76,6 +77,16 @@ spec:
               allowUiUpdates: false
               options:
                 path: /var/lib/grafana/dashboards/monitoring
+            - name: zammad
+              orgId: 1
+              folder: Zammad
+              type: file
+              disableDeletion: true
+              editable: false
+              updateIntervalSeconds: 10
+              allowUiUpdates: false
+              options:
+                path: /var/lib/grafana/dashboards/zammad
             - name: matrix
               orgId: 1
               folder: Matrix
@@ -109,6 +120,60 @@ spec:
                 httpMethod: GET
                 serviceMap:
                   datasourceUid: prometheus
+            - name: Zammad-chat_sessions
+              type: elasticsearch
+              access: proxy
+              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+              isDefault: false
+              uid: zammad-es-chat_sessions
+              jsonData:
+                index: 'zammad_production_chat_session'
+                timeField: 'created_at'
+            - name: Zammad-cti_log
+              type: elasticsearch
+              access: proxy
+              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+              isDefault: false
+              uid: zammad-es-cti_log
+              jsonData:
+                index: 'zammad_production_cti_log'
+                timeField: 'start_at'
+            - name: Zammad-ticket_articles
+              type: elasticsearch
+              access: proxy
+              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+              isDefault: false
+              uid: zammad-es-ticket_articles
+              jsonData:
+                index: 'zammad_production_ticket'
+                timeField: 'article.created_at'
+            - name: Zammad-closed_ticket
+              type: elasticsearch
+              access: proxy
+              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+              isDefault: false
+              uid: zammad-es-closed_ticket
+              jsonData:
+                index: 'zammad_production_ticket'
+                timeField: 'close_at'
+            - name: Zammad-created_ticket
+              type: elasticsearch
+              access: proxy
+              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+              isDefault: false
+              uid: zammad-es-created_ticket
+              jsonData:
+                index: 'zammad_production_ticket'
+                timeField: 'created_at'
+            - name: Zammad-first_response_at
+              type: elasticsearch
+              access: proxy
+              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+              isDefault: false
+              uid: zammad-es-first_response_at
+              jsonData:
+                index: 'zammad_production_ticket'
+                timeField: 'first_response_at'
       dashboards:
         monitoring:
           asterisk:
@@ -123,6 +188,17 @@ spec:
             gnetId: 11001
             revision: 1
             datasource: Prometheus
+        zammad:
+          ticket_statistics:
+            gnetId: 14222
+            revision: 2
+          chat_sessions_statistics:
+            gnetId: 14224
+            revision: 1
+          cti_log_statistics:
+            gnetId: 14223
+            revision: 1
+
         nats:
           nats-jetstream:
             url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/nats.json
