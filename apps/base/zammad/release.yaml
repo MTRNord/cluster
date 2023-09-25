@@ -15,7 +15,9 @@ spec:
             interval: 60m
     install:
         crds: Create
+        timeout: 25m
     upgrade:
+        timeout: 25m
         crds: CreateReplace
         # Force recreation due to Helm not properly patching Deployment with e.g. added port,
         # causing spurious drift detection
@@ -101,36 +103,6 @@ spec:
         #      operator: Equal
         #      value: arm64
         #      effect: NoSchedule
-        #    data:
-        #tolerations:
-        #    - key: arch
-        #      operator: Equal
-        #      value: arm64
-        #      effect: NoSchedule
-        #    coordinating:
-        #tolerations:
-        #    - key: arch
-        #      operator: Equal
-        #      value: arm64
-        #      effect: NoSchedule
-        #    ingest:
-        #tolerations:
-        #    - key: arch
-        #      operator: Equal
-        #      value: arm64
-        #      effect: NoSchedule
-        #metrics:
-        #tolerations:
-        #    - key: arch
-        #      operator: Equal
-        #      value: arm64
-        #      effect: NoSchedule
-        # memcached:
-        #     tolerations:
-        #         - key: arch
-        #           operator: Equal
-        #           value: arm64
-        #           effect: NoSchedule
         redis:
             auth:
                 password: ENC[AES256_GCM,data:j7bUIwZKTrvrLherAO7g9U0F4ur9pbZQY5Jm/XlBfM1mVH+GuQGd3kKxVvdOV8P878yf6F+AB4Q+ZFo4L/MOFw==,iv:Eom00lKbSqPVDJA80SnkmoaAgTcpCKHUvqOwQnfSYg8=,tag:0CizVY5q40GOWpH5pNENFQ==,type:str]
