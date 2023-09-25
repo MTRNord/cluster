@@ -120,7 +120,7 @@ spec:
                 httpMethod: GET
                 serviceMap:
                   datasourceUid: prometheus
-            - name: Zammad-chat_sessions
+            - name: ES - Chat Sessions
               type: elasticsearch
               access: proxy
               url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
@@ -129,7 +129,7 @@ spec:
               jsonData:
                 index: 'zammad_production_chat_session'
                 timeField: 'created_at'
-            - name: Zammad-cti_log
+            - name: ES - CTI Log
               type: elasticsearch
               access: proxy
               url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
@@ -138,7 +138,7 @@ spec:
               jsonData:
                 index: 'zammad_production_cti_log'
                 timeField: 'start_at'
-            - name: Zammad-ticket_articles
+            - name: ES - Ticket Articles
               type: elasticsearch
               access: proxy
               url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
@@ -147,7 +147,7 @@ spec:
               jsonData:
                 index: 'zammad_production_ticket'
                 timeField: 'article.created_at'
-            - name: Zammad-closed_ticket
+            - name: ES - Tickets by closed_at
               type: elasticsearch
               access: proxy
               url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
@@ -156,7 +156,7 @@ spec:
               jsonData:
                 index: 'zammad_production_ticket'
                 timeField: 'close_at'
-            - name: Zammad-created_ticket
+            - name: ES - Tickets by created_at
               type: elasticsearch
               access: proxy
               url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
@@ -165,7 +165,7 @@ spec:
               jsonData:
                 index: 'zammad_production_ticket'
                 timeField: 'created_at'
-            - name: Zammad-first_response_at
+            - name: ES - Tickets by first_response_at
               type: elasticsearch
               access: proxy
               url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
