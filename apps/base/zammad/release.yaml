@@ -99,16 +99,11 @@ spec:
                     timeoutSeconds: 5
                     successThreshold: 1
                     failureThreshold: 50
-                tolerations:
-                    - key: arch
-                      operator: Equal
-                      value: arm64
-                      effect: NoSchedule
-        #tolerations:
-        #    - key: arch
-        #      operator: Equal
-        #      value: arm64
-        #      effect: NoSchedule
+                # tolerations:
+                #     - key: arch
+                #       operator: Equal
+                #       value: arm64
+                #       effect: NoSchedule
         redis:
             auth:
                 password: ENC[AES256_GCM,data:j7bUIwZKTrvrLherAO7g9U0F4ur9pbZQY5Jm/XlBfM1mVH+GuQGd3kKxVvdOV8P878yf6F+AB4Q+ZFo4L/MOFw==,iv:Eom00lKbSqPVDJA80SnkmoaAgTcpCKHUvqOwQnfSYg8=,tag:0CizVY5q40GOWpH5pNENFQ==,type:str]
