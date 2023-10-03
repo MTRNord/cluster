@@ -37,6 +37,24 @@ spec:
         operator: "Equal"
         value: "arm64"
         effect: "NoSchedule"
+    webhook:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
+    cainjector:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
+    startupapicheck:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
     prometheus:
       servicemonitor:
         enabled: true
