@@ -32,6 +32,11 @@ spec:
   values:
     installCRDs: true
     enableCertificateOwnerRef: false
+    tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"
     prometheus:
       servicemonitor:
         enabled: true
