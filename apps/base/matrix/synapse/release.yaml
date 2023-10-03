@@ -64,8 +64,8 @@ spec:
         extraEnv:
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
-          - name: SYNAPSE_ASYNC_IO_REACTOR
-            value: "true"
+          #- name: SYNAPSE_ASYNC_IO_REACTOR
+          #  value: "true"
         extraConfig:
           event_cache_size: 10K
           caches:
@@ -338,8 +338,8 @@ spec:
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
           - name: SYNAPSE_CACHE_FACTOR
             value: "20.0"
-          - name: SYNAPSE_ASYNC_IO_REACTOR
-            value: "true"
+          #- name: SYNAPSE_ASYNC_IO_REACTOR
+          #  value: "true"
 
     synapse:
       ## Liveness probe configuration to use
@@ -366,8 +366,8 @@ spec:
           value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
         - name: SYNAPSE_CACHE_FACTOR
           value: "20"
-        - name: SYNAPSE_ASYNC_IO_REACTOR
-          value: "true"
+        #- name: SYNAPSE_ASYNC_IO_REACTOR
+        #  value: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/_synapse/metrics"
