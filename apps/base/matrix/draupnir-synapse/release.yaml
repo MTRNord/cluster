@@ -54,6 +54,11 @@ spec:
       enabled: true
     workers:
       default:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
         extraEnv:
           - name: JAEGER_AGENT_HOST
             value: tempo.monitoring.svc.cluster.local
@@ -141,18 +146,12 @@ spec:
         enabled: true
         generic: true
         listeners: [replication]
-      # default:
-      #   tolerations:
-      #     - key: "arch"
-      #       operator: "Equal"
-      #       value: "arm64"
-      #       effect: "NoSchedule"
     synapse:
-      # tolerations:
-      #   - key: "arch"
-      #     operator: "Equal"
-      #     value: "arm64"
-      #     effect: "NoSchedule"
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
       ## Liveness probe configuration to use
       ##
       livenessProbe:
