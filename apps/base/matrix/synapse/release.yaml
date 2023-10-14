@@ -62,6 +62,11 @@ spec:
 
     workers:
       default:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
         extraEnv:
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
@@ -343,6 +348,11 @@ spec:
           #  value: "true"
 
     synapse:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
       ## Liveness probe configuration to use
       ##
       livenessProbe:
