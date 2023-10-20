@@ -1,0 +1,14 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "cidr-rule"
+spec:
+  endpointSelector:
+    matchLabels:
+      helm.toolkit.fluxcd.io/namespace: matrix
+  ingress:
+  - fromCIDR:
+    # etke.cc
+    - 169.150.247.37/32
+    - 2400:52e0:1e00::1080:1/128
