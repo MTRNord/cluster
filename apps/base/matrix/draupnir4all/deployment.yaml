@@ -24,6 +24,15 @@ spec:
         app.kubernetes.io/instance: main-process
         app.kubernetes.io/name: draupnir4all
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values:
+                - worker-2
       tolerations:
         - key: "arch"
           operator: "Equal"
