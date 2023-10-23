@@ -24,6 +24,9 @@ spec:
         enabled: true
         homeserver_whitelist:
           - "matrix.midnightthoughts.space"
+        jaeger_config:
+          local_agent:
+            reporting_host: tempo.monitoring.svc.cluster.local
       federation_sender_instances:
         - federation-sender-1
         - federation-sender-2
@@ -60,8 +63,8 @@ spec:
             value: "arm64"
             effect: "NoSchedule"
         extraEnv:
-          - name: JAEGER_AGENT_HOST
-            value: tempo.monitoring.svc.cluster.local
+          #- name: JAEGER_AGENT_HOST
+          #  value: tempo.monitoring.svc.cluster.local
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
         extraConfig:
@@ -69,6 +72,9 @@ spec:
             enabled: true
             homeserver_whitelist:
               - "matrix.midnightthoughts.space"
+            jaeger_config:
+              local_agent:
+                reporting_host: tempo.monitoring.svc.cluster.local
           event_cache_size: 10K
           caches:
             global_factor: 10
@@ -172,8 +178,8 @@ spec:
 
       extraCommands: []
       extraEnv:
-        - name: JAEGER_AGENT_HOST
-          value: tempo.monitoring.svc.cluster.local
+        #- name: JAEGER_AGENT_HOST
+        #  value: tempo.monitoring.svc.cluster.local
         - name: LD_PRELOAD
           value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
       annotations:
