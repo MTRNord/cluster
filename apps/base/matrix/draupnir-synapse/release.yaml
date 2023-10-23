@@ -72,8 +72,8 @@ spec:
             value: "arm64"
             effect: "NoSchedule"
         extraEnv:
-          #- name: JAEGER_AGENT_HOST
-          #  value: tempo.monitoring.svc.cluster.local
+          - name: JAEGER_AGENT_HOST
+            value: tempo.monitoring.svc.cluster.local
           - name: LD_PRELOAD
             value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
         extraConfig:
@@ -196,8 +196,8 @@ spec:
 
       extraCommands: []
       extraEnv:
-        #- name: JAEGER_AGENT_HOST
-        #  value: tempo.monitoring.svc.cluster.local
+        - name: JAEGER_AGENT_HOST
+          value: tempo.monitoring.svc.cluster.local
         - name: LD_PRELOAD
           value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
       annotations:
