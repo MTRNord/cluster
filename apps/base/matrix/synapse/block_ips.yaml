@@ -5,6 +5,9 @@ metadata:
   name: cidr-rule
   namespace: matrix
 spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: matrix-synapse
   ingress:
     - fromCIDRSet:
         - cidr: 0.0.0.0/0
