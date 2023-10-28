@@ -42,3 +42,10 @@ spec:
         - secretName: postgres-ui.midnightthoughts.space-tls
           hosts:
             - postgres-ui.midnightthoughts.space
+    configKubernetes:
+      enable_pod_antiaffinity: true
+    tolerations:
+      - key: "arch"
+        operator: "Equal"
+        value: "arm64"
+        effect: "NoSchedule"

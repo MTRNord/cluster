@@ -12,11 +12,11 @@ metadata:
   name: matrix-postgres-cluster
   namespace: matrix-postgres-cluster
 spec:
-  #tolerations:
-  #  - key: "arch"
-  #    operator: "Equal"
-  #    value: "arm64"
-  #    effect: "NoSchedule"
+  tolerations:
+    - key: "arch"
+      operator: "Equal"
+      value: "arm64"
+      effect: "NoSchedule"
   enableShmVolume: true
   databases:
     synapse: synapse
