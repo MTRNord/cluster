@@ -1,0 +1,24 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: minio-cluster
+spec:
+  selector:
+    matchLabels:
+      v1.min.io/tenant: loki
+  endpoints:
+    - targetPort: 9000
+      path: /minio/v2/metrics/cluster
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: minio-buckets
+spec:
+  selector:
+    matchLabels:
+      v1.min.io/tenant: loki
+  endpoints:
+    - targetPort: 9000
+      path: /minio/v2/metrics/bucket
