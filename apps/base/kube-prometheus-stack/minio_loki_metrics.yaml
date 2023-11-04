@@ -13,8 +13,8 @@ spec:
       scheme: https
       interval: 30s
       tlsConfig:
-        server_name: minio.monitoring.svc.cluster.local
-        insecure_skip_verify: true
+        serverName: minio.monitoring.svc.cluster.local
+        insecureSkipVerify: true
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -30,5 +30,5 @@ spec:
       scheme: https
       interval: 30s
       tlsConfig:
-        server_name: minio.monitoring.svc.cluster.local
-        insecure_skip_verify: true
+        serverName: minio.monitoring.svc.cluster.local
+        insecureSkipVerify: true
