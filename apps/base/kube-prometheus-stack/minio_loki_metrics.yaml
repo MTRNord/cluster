@@ -11,7 +11,7 @@ spec:
     - targetPort: 443
       path: /minio/v2/metrics/cluster
       scheme: https
-      scrapeInterval: 30s
+      interval: 30s
       tlsConfig:
         server_name: minio.monitoring.svc.cluster.local
         insecure_skip_verify: true
@@ -28,7 +28,7 @@ spec:
     - targetPort: 443
       path: /minio/v2/metrics/bucket
       scheme: https
-      scrapeInterval: 30s
+      interval: 30s
       tlsConfig:
         server_name: minio.monitoring.svc.cluster.local
         insecure_skip_verify: true
