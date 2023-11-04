@@ -10,7 +10,11 @@ spec:
   endpoints:
     - targetPort: 9000
       path: /minio/v2/metrics/cluster
+      scheme: https
       scrape_interval: 30s
+      tls_config:
+        server_name: minio.monitoring.svc.cluster.local
+        insecure_skip_verify: true
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -23,4 +27,8 @@ spec:
   endpoints:
     - targetPort: 9000
       path: /minio/v2/metrics/bucket
+      scheme: https
       scrape_interval: 30s
+      tls_config:
+        server_name: minio.monitoring.svc.cluster.local
+        insecure_skip_verify: true
