@@ -8,7 +8,7 @@ spec:
     matchLabels:
       v1.min.io/tenant: loki
   endpoints:
-    - port: 443
+    - targetPort: 443
       path: /minio/v2/metrics/cluster
       scheme: https
       scrapeInterval: 30s
@@ -25,7 +25,7 @@ spec:
     matchLabels:
       v1.min.io/tenant: loki
   endpoints:
-    - port: 443
+    - targetPort: 443
       path: /minio/v2/metrics/bucket
       scheme: https
       scrapeInterval: 30s
