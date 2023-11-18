@@ -26,3 +26,18 @@ spec:
               effect: "NoSchedule"
         parseable:
             local: true
+            localModeSecret:
+                - type: env
+                  name: parseable-env-secret
+                  prefix: P_
+                  keys:
+                    - addr
+                    - username
+                    - password
+                    - send.anonymous.usage.data
+                    - staging.dir
+                    - fs.dir
+                    - oidc.client.id
+                    - oidc.client.secret
+                    - oidc.issuer
+                    - origin_uri

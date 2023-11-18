@@ -54,6 +54,7 @@ spec:
       plugins:
         - grafana-piechart-panel
         - grafana-worldmap-panel
+        - https://grafana.com/api/plugins/parseable-parseable-datasource/versions/1.0.2/download;parseable-parseable-datasource
       smtp:
         existingSecret: smtp-auth-secret
       extraSecretMounts:
@@ -61,6 +62,11 @@ spec:
           secretName: auth-generic-oauth-secret
           defaultMode: 288
           mountPath: /etc/secrets/auth_generic_oauth
+          readOnly: true
+        - name: parseable-secret-mount
+          secretName: parseable-secret
+          defaultMode: 288
+          mountPath: /etc/secrets/parseable
           readOnly: true
       defaultDashboardsTimezone: Europe/Berlin
       dashboardProviders:
@@ -111,6 +117,15 @@ spec:
         datasources.yaml:
           apiVersion: 1
           datasources:
+            - name: Parseable
+              type: parseable-parseable-datasource
+              url: http://parseable.parseable.svc.cluster.local
+              access: proxy
+              isDefault: false
+              basicAuth: true
+              basicAuthUser: MTRNord
+              secureJsonData:
+                  basicAuthPassword: $__file{/etc/secrets/parseable/password}
             - name: Tempo
               type: tempo
               access: proxy
