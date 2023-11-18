@@ -25,6 +25,17 @@ spec:
               value: "arm64"
               effect: "NoSchedule"
         parseable:
+            persistence:
+                staging:
+                    enabled: true
+                    storageClass: "nfs-csi"
+                    accessMode: ReadWriteOnce
+                    size: 1Gi
+                data:
+                    enabled: true
+                    storageClass: "nfs-csi"
+                    accessMode: ReadWriteOnce
+                    size: 5Gi
             local: true
             localModeSecret:
                 - type: env
