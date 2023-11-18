@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: parseable
+    namespace: parseable
+spec:
+    releaseName: parseable
+    chart:
+        spec:
+            version: '0.7.1'
+            chart: parseable
+            sourceRef:
+                kind: HelmRepository
+                name: parseable
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        tolerations:
+            - key: "arch"
+              operator: "Equal"
+              value: "arm64"
+              effect: "NoSchedule"
+        parseable:
+            local: true
