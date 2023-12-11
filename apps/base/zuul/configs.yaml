@@ -22,3 +22,22 @@ spec:
       driver: github
       app_id: 693479
       secretName: zuul-github-config
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zuul-ingress
+  namespace: zuul
+spec:
+  rules:
+  - host: zuul.nordgedanken.dev
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: zuul-web
+          servicePort: 9000
+  tls:
+  - hosts:
+    - zuul.nordgedanken.dev
+    secretName: zuul.nordgedanken.dev-tls-secret
