@@ -28,6 +28,8 @@ kind: Ingress
 metadata:
   name: zuul-ingress
   namespace: zuul
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http
 spec:
   rules:
   - host: zuul.nordgedanken.dev

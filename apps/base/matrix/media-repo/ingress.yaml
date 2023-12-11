@@ -3,6 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect-media-midnightthoughts@kubernetescrd,default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd,default-body-limit@kubernetescrd
   namespace: matrix
   name: matrix-media-repo-midnightthoughts
@@ -39,6 +40,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect-media-art-midnightthoughts@kubernetescrd,default-compress@kubernetescrd,default-hsts@kubernetescrd,default-redirect-https@kubernetescrd,default-body-limit@kubernetescrd
   namespace: matrix
   name: matrix-media-repo-art-midnightthoughts
