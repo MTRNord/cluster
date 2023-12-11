@@ -35,8 +35,9 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: zuul-web
-          servicePort: 9000
+          service:
+            name: zuul-web
+            port: 9000
   tls:
   - hosts:
     - zuul.nordgedanken.dev
