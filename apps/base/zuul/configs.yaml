@@ -3,12 +3,12 @@ apiVersion: operator.zuul-ci.org/v1alpha2
 kind: Zuul
 metadata:
   name: zuul
-  namespace: zuul
+  namespace: zuul-system
 spec:
   executor:
     count: 1
-    sshkey:
-      secretName: gerrit-secrets
+    #sshkey:
+    #  secretName: gerrit-secrets
   scheduler:
     config:
       secretName: zuul-tenant-config
@@ -27,7 +27,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: zuul-ingress
-  namespace: zuul
+  namespace: zuul-system
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-http
 spec:
