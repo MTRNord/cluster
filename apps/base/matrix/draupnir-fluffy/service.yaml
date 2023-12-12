@@ -5,6 +5,7 @@ metadata:
   labels:
     app: mjolnir-fluffy
   name: mjolnir-fluffy-srv
+  namespace: matrix
 spec:
   ports:
   - port: 8081
@@ -15,6 +16,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: mjolnir-fluffy-fix-cors
+  namespace: matrix
 spec:
   headers:
     accessControlAllowHeaders:
@@ -32,6 +34,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: mjolnir-fluffy-replacepathregex
+  namespace: matrix
 spec:
   replacePathRegex:
     regex: ^/_matrix/client/r0/rooms/([^/]*)/report/(.*)$
@@ -44,6 +47,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-dns
     traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd,matrix-mjolnir-fluffy-replacepathregex@kubernetescrd,matrix-mjolnir-fluffy-fix-cors@kubernetescrd
   name: fluffy-mjolnir
+  namespace: matrix
 spec:
   ingressClassName: traefik
   rules:
