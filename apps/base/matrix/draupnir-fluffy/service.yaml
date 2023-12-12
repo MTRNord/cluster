@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mjolnir-fluffy
+  name: mjolnir-fluffy-srv
+spec:
+  ports:
+  - port: 8081
+  selector:
+    app: mjolnir-fluffy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: mjolnir-fluffy-fix-cors
+spec:
+  headers:
+    accessControlAllowHeaders:
+    - content-type
+    - authorization
+    accessControlAllowMethods:
+    - OPTIONS
+    - POST
+    accessControlAllowOriginList:
+    - '*'
+    accessControlMaxAge: 100
+    addVaryHeader: true
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: mjolnir-fluffy-replacepathregex
+spec:
+  replacePathRegex:
+    regex: ^/_matrix/client/r0/rooms/([^/]*)/report/(.*)$
+    replacement: /api/1/report/${1}/${2}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd,matrix-mjolnir-fluffy-replacepathregex@kubernetescrd,matrix-mjolnir-fluffy-fix-cors@kubernetescrd
+  name: fluffy-mjolnir
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: matrix.midnightthoughts.space
+    http:
+      paths:
+      - backend:
+          service:
+            name: mjolnir-fluffy-srv
+            port:
+              number: 8081
+        path: /{path:_matrix/client/r0/rooms/([^/]*)/report/(.*)$}
+        pathType: Prefix
+  tls:
+    - hosts:
+      - matrix.midnightthoughts.space
+      secretName: midnightthoughts-fluffy-mjolnir-tls-secret
