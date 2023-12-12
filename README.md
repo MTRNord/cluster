@@ -138,7 +138,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
 ## TODOs
 
 - [ ] Migrate old deployments here
-  - [ ] Gitea
+  - [ ] ~~Gitea~~
   - [x] Woodpecker
   - [ ] ~~Docker repo~~ (Part of gitea now)
   - [ ] Traefik
@@ -153,10 +153,10 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
     - [x] Sliding Proxy
       - [x] Prepare DB in DB Cluster
       - [x] Move DB to DB Cluster
-    - [ ] Mjolnir
-    - [ ] Bridges
-      - [x] Prepare DBs in DB Cluster
-      - [ ] Move DBs to DB Cluster
+    - [x] Mjolnir (important ones)
+    - [ ] ~~Bridges~~
+      - [x] ~~Prepare DBs in DB Cluster~~
+      - [ ] ~~Move DBs to DB Cluster~~
   - [ ] Keycloak
   - [x] Prometheus/grafana
   - [x] Cosign
