@@ -19,6 +19,10 @@ spec:
         remediation:
             retries: 3
     values:
+        image:
+          repository: ghcr.io/linuxserver/piwigo
+          pullPolicy: IfNotPresent
+          tag: 14.1.0@sha256:c2183b9d2e21d025bb98ef2c32e6ee9ae71820e8b10b940899aa33572555deb2
         podOptions:
             nodeSelector: {}
             tolerations:
