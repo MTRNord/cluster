@@ -1,0 +1,89 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: piwigo
+    namespace: piwigo
+spec:
+    releaseName: piwigo
+    chart:
+        spec:
+            chart: piwigo
+            sourceRef:
+                kind: HelmRepository
+                name: piwigo
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        podOptions:
+            nodeSelector: {}
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        piwigo:
+            language: en_US
+            admin_user: admin
+            admin_pass: ENC[AES256_GCM,data:ZOt8mI9s1WN4,iv:9xkemtuQvkXNHeadtSIbXRdgyWJIlyPFfb5ECPDCYGM=,tag:SDl7xcXTfK00PdCmshqLOg==,type:str]
+            admin_email: ENC[AES256_GCM,data:djUolAdf9/jIlytG4jkuL3oiu9sW3+kP,iv:xwPHTitY72P45+Hm8n1bvl23M+wwqkCu2bpsf7ro208=,tag:mP1LvzwiNdjECg8ncleO+Q==,type:str]
+        persistence:
+            config:
+                enabled: true
+                type: pvc
+                mountPath: /config
+                size: 2Gi
+                storageClass: nfs-csi
+            gallery:
+                enabled: true
+                type: pvc
+                mountPath: /gallery
+                size: 25Gi
+                storageClass: nfs-csi
+        mariadb:
+            enabled: true
+            mariadbUsername: piwigo
+            mariadbDatabase: piwigo
+            mariadbRootPassword: ENC[AES256_GCM,data:ki6mIKhPXQJO5ubG7O12odHxquNs6LJjkvqPJO6qLmlZ/492uNNsWfRS0D1Plke0c2xGZQrnQaqEeUDWs72taA==,iv:bIDj/TK/56k/8fPg/lJwCPW4hLJwHTV4NtxwKRMTGaA=,tag:a9O7ShofWF5bIgOqy8a30Q==,type:str]
+            mariadbPassword: ENC[AES256_GCM,data:dq3Ml1domuEyVHGDLkZuhfP3aUs5Ksfl1UIiwqv66oBzZ3SNEjABrOPCoJO9zuFQomK4ixvG80rC7PNh+Cgygg==,iv:jYGJAMtA7mlguzxgVVtlrRc4BXm9RA86rHIoixoIymk=,tag:E/hOnHImEBVxOGHW2m8RDw==,type:str]
+        ingress:
+            main:
+                enabled: true
+                hosts:
+                    - host: piwigo.nordgedanken.dev
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                tls:
+                    - secretName: piwigo.nordgedanken.dev-tls
+                      hosts:
+                        - piwigo.nordgedanken.dev
+                integrations:
+                    certManager:
+                        enabled: true
+                        certificateIssuer: letsencrypt-http
+                    traefik:
+                        enabled: false
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBLVFlZazMzelhCUi9WV3ls
+            d25iM0lMMXI3aWVES1Zjbkk3eXRIWUFpdlJjCkdvckE2K2FMZldYcEVjSHh5N1or
+            T3hzUmNOTkloWTRTRkFNZndWKzY5ZE0KLS0tIE9YOS9UNWVpSGkwV1FZd2NTTVh3
+            THJJYjVWVmhicGRPbmNxNGRyRnZVQU0KpBW+Z/4L5UbG9q0jHfySSPjtBsq/qRpc
+            WUOX8ubvUDs909ZhI2oKauCKFm1OIwwCpPDhlR0KvvwbEsl3p977mA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-12-31T00:18:29Z"
+    mac: ENC[AES256_GCM,data:QG6X/xdyF7pVRs/pDR5kIkBo9ChfZnpxrXW36Xu2Gh9bYWbDUkAFW2rM8U702kTgAb7DnMGIzSB9YYbRv1haoun5OkdGMps+oVQWeu8DITfEyOhpvTfG5n0O3OBBABDoxvf1HtzHmXRCL2FTsJU10ATvg1qnQ8JoO5c+JZ5Rfg4=,iv:FzV2HMO9ZdWY7VjvH/r56eY6Vq6CFknj4UhgkXQpizc=,tag:sIN5zroq5O+N0qTQ1bB78A==,type:str]
+    pgp: []
+    encrypted_regex: ^(admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
