@@ -29,8 +29,8 @@ spec:
         piwigo:
             language: en_US
             admin_user: admin
-            admin_pass: ENC[AES256_GCM,data:eNyTjKm3AVZk,iv:TlJa7pudriW40aa3vfoxcodzWOV3NcuG4KNvqO9tnmQ=,tag:z81daHkPh78F3kxrmXRo6A==,type:str]
-            admin_email: ENC[AES256_GCM,data:BqycVNs/b0I4hlui5eIg2fGaagw4jhI7,iv:tDrYA0ninhU4b95KIUd6t1mMDUnLxyzvZMCixve0Oc4=,tag:eWTMjwaMHfeblxzn4BqpMw==,type:str]
+            admin_pass: ENC[AES256_GCM,data:7sfXI1B+p548,iv:Sb7xLV8ysnifUsScOomT7wKWjCXrP10/GZC/ZLEjEWA=,tag:2sm0OITWluSlGdhsYsAwlw==,type:str]
+            admin_email: ENC[AES256_GCM,data:HmptPEZ30l+qzXT3/BOtXaU+y1GY+TED,iv:V6CL65Yhl6X5iPhLOUgFX0xAJ565MO1WShGCCHb6Zk8=,tag:EYqdWp39ZIsF1aWZoMkrsQ==,type:str]
         persistence:
             config:
                 enabled: true
@@ -48,8 +48,8 @@ spec:
             enabled: true
             mariadbUsername: piwigo
             mariadbDatabase: piwigo
-            mariadbRootPassword: ENC[AES256_GCM,data:97mQjrzr5Gto+ZTZlAx/i34dY1yJ4pejznpJK+XdYdp4exMhxBYZhDqiX8dLicRyBvKfrFLpfE9QyKIPSOUC9A==,iv:DcIu7CaqGTg9b+8CVBB5m3RMv6yHcuNP3MHec+Umiv4=,tag:Ig3lRokPtDQ+k4kgm1AO+w==,type:str]
-            mariadbPassword: ENC[AES256_GCM,data:Kp0nWLw8hTSOjTtb7GcO+quZMD+APoBeGsdE4RjrBE9c+ux/8hmgx50QK3crnxyz9U114XRz/4FXkTmztygOEg==,iv:sLfDK15ahyGO73TIQ65wDiyiM5hMRT0RKp7aHCGE48s=,tag:tYKZi54m9blEeApoRLYLGw==,type:str]
+            mariadbRootPassword: ENC[AES256_GCM,data:qTlZXGCfg4VLI4UUVXjzHcvGlZoPkU5H+d1uDdKuBCRfKMyT/6VRLzJqblFi664u3r0nyzALl+8CyBGbBp/yDA==,iv:HCzPA8uNXraevSXDbUSqUPK3MlNiSXybMe9GDatNjc8=,tag:1I5UXQ72e4n62Mug168F5w==,type:str]
+            mariadbPassword: ENC[AES256_GCM,data:1dQ0bYF7yztBUKIJL4rdIazbtaG6VAavdOyr0Ep7VHvYHVVQfLRtlyFs4xEEHCt2Cqmft8nJ1qCTTF+LrlXLZw==,iv:Q1Uexss8Z4pbF7JTOFswCTtllJErY6x7/WNo6GUz2Tg=,tag:r59upcezbOSZ1Qb3N9GhKA==,type:str]
         ingress:
             main:
                 enabled: true
@@ -68,6 +68,9 @@ spec:
                         certificateIssuer: letsencrypt-http
                     traefik:
                         enabled: false
+        operator:
+            verify:
+                enabled: false
 sops:
     kms: []
     gcp_kms: []
@@ -77,14 +80,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBUekxOZTloeG9yUDFGSG5M
-            THN6aGNpc2txei8reVhzNGdxUjEzY2RVUDF3CnBqdEw2VnNYRHR1Rjd1R1lqQ3hx
-            WndGWDh6OUluVmIxWDJFb1ZYZ2lZeE0KLS0tIEVGZnpwRmtBdE51VHoxTG80UGIz
-            blEraWQyQTVuTzI1V3g2b2hxRHB6WkkK++m3mqNa+WbJiy4Zw4m5omDkz2e6k00d
-            Y6QnatlP/WB6ypcjTH/n4Ch0i9RMVAJv/qIIIogNyFqUtdxSc7FX9Q==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxeERzNUJ2eklEZ2R3Q1lJ
+            ajMxNkVIK1dxdENKMExUMWRHcWorZFBzbTJjCnQyR1AwT3JXU1RmS24xUUlaTXAz
+            TkpIcC9UZmQ3aVJJUDlwckpDVjdEdVUKLS0tIEl1VHQxZUFuTVMzRWJ0MDRCT2hq
+            Y0txUXRNdjZsQkhzZDNVeHRtVWJZYzgKvHIrHoZAN/XIR66F8WUvTxwF7f5RizxI
+            1M5Zy5N5zfR4GlGPpD+uXymzUJv6SkVfOEAtobCrWc5mhcCeCo+NLA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-12-31T00:25:25Z"
-    mac: ENC[AES256_GCM,data:xlAoCcxDxwaGlnYY3oeovIaLOZOCexr2aYCz7J8go5RpOUr409CRc4QF146/e3cYTxH5Cs4oQRPW8KZxNlXLvMIaUUc/DhPkeIs6ZLnDfHE+dV+pR0P2rAsV0vBUSKQoy+Xb6/Or265z4ADLLL6p1n2h1GryzY0EiDi4fjESHjk=,iv:n4DecRc5XEfSC1ubcjooDiud9I7QjgnzeqzZuSHo7VI=,tag:hGW2Vu4aPf1LfI/97M5qGw==,type:str]
+    lastmodified: "2023-12-31T00:30:24Z"
+    mac: ENC[AES256_GCM,data:sQFjmFdjxs9eVeM50zVf+wTRnOcgs71ip3kysx2mxcgk80YeoJqtLk/XVkaQmQRgfRmiDRObKdKvwF00Z5I80Qj3Lx6yvn0fEQ+K6V4pPzzW2rFE5Se7bAUNbE6SFt/1mlY3XHP1a+ZZDJ3uxwbtxd+DjAI26/GTlUdkp9IdpGw=,iv:NB6wv9WlpkUPhcHSabmeiVjl9GUBbCqx7ynlc48mgpI=,tag:6k3KtnpHifbCDQE+DUhXhw==,type:str]
     pgp: []
     encrypted_regex: ^(admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
