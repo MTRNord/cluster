@@ -33,5 +33,8 @@ spec:
             secretKeyRef:
               name: umami-config
               key: hash-salt
-      nodeSelector:
-        kubernetes.io/hostname: fsn-qws-app2
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
