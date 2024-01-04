@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: umami
+  namespace: umami
+spec:
+  selector:
+    matchLabels:
+      app: umami
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: umami
+    spec:
+      containers:
+      - name: umami
+        image: ghcr.io/umami-software/umami:postgresql-latest
+        ports:
+        - containerPort: 3000
+          name: umami
+        env:
+        - name: DATABASE_TYPE
+          value: postgresql
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: zammad.matrix-postgres-cluster.credentials.postgresql.acid.zalan.do
+              key: database-url
+        - name: HASH_SALT
+          valueFrom:
+            secretKeyRef:
+              name: umami-config
+              key: hash-salt
+      nodeSelector:
+        kubernetes.io/hostname: fsn-qws-app2
