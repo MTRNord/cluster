@@ -18,6 +18,7 @@ metadata:
   namespace: umami
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-http
+    traefik.ingress.kubernetes.io/router.middlewares: umami-umami-cors@kubernetescrd
 spec:
   tls:
   - hosts:
@@ -34,3 +35,25 @@ spec:
             name: umami
             port:
               number: 3000
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: umami-cors
+  namespace: umami
+spec:
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "OPTIONS"
+      - "PUT"
+      - "POST"
+    accessControlAllowHeaders:
+      - "*"
+    accessControlAllowOriginList:
+      - "https://nordgedanken.dev"
+      - "https://umami.nordgedanken.dev"
+      - "https://mtrnord.blog"
+    accessControlMaxAge: 100
+    addVaryHeader: false
