@@ -45,11 +45,12 @@ spec:
       experimental_features:
         msc2409_to_device_messages_enabled: true
         msc2716_enabled: true
-      #event_cache_size: 10K
+      event_cache_size: 30K
       caches:
         global_factor: 10
         expire_caches: true
-        cache_entry_ttl: 240m
+        cache_entry_ttl: 1080m
+        sync_response_cache_duration: 2m
         cache_autotuning:
           max_cache_memory_usage: 4069M
           target_cache_memory_usage: 2048M
@@ -73,11 +74,12 @@ spec:
           #- name: SYNAPSE_ASYNC_IO_REACTOR
           #  value: "true"
         extraConfig:
-          #event_cache_size: 10K
+          event_cache_size: 30K
           caches:
             global_factor: 10
             expire_caches: true
-            cache_entry_ttl: 240m
+            cache_entry_ttl: 1080m
+            sync_response_cache_duration: 2m
             cache_autotuning:
               max_cache_memory_usage: 4069M
               target_cache_memory_usage: 2048M
