@@ -42,17 +42,15 @@ spec:
                 secretName: zammad-postgres
         zammadConfig:
             redis:
-                pass: ENC[AES256_GCM,data:Xv5SEbF3P04h2brNzWF8Pq22RncfR1mcWlrN2hBkjYYPwI09ToErbAYtNBak345c4l/mnj8X905ShYAJSFwzaA==,iv:HdNGal/VFx9QDghRrIcdAhWfmyHqPERFj7kyvjPnzF4=,tag:LslCEKRBApf+urbIs+2v7A==,type:str]
+                pass: ENC[AES256_GCM,data:B/NdV0G0jNjWSlBtaMalnreznuf8iN23uhpfraEgc8lzqOmQOidKYh/8L9t32dF4F6LFNBe9FIEiRoxycODnmA==,iv:Jw5QfFOZ6GWqYhpXWBxbWgljui0OjaC8YRuzXRV2gTg=,tag:jFXf9GS5GKUAX5WiZaB9Yg==,type:str]
             postgresql:
                 enabled: false
                 db: zammad
                 host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
         persistence:
             enabled: true
-            storageClass: nfs-client
-            accessModes:
-                - ReadWriteMany
-            existingClaim: zammad-var-zammad-0-nfs-temp
+            storageClass: nfs-csi
+            existingClaim: zammad-data-csi
         elasticsearch:
             master:
                 ## Configure extra options for Elasticsearch master-elegible containers' liveness, readiness and startup probes
@@ -99,14 +97,17 @@ spec:
                     timeoutSeconds: 5
                     successThreshold: 1
                     failureThreshold: 50
-                # tolerations:
-                #     - key: arch
-                #       operator: Equal
-                #       value: arm64
-                #       effect: NoSchedule
+                    # tolerations:
+                    #     - key: arch
+                    #       operator: Equal
+                    #       value: arm64
+                    #       effect: NoSchedule
         redis:
             auth:
-                password: ENC[AES256_GCM,data:j7bUIwZKTrvrLherAO7g9U0F4ur9pbZQY5Jm/XlBfM1mVH+GuQGd3kKxVvdOV8P878yf6F+AB4Q+ZFo4L/MOFw==,iv:Eom00lKbSqPVDJA80SnkmoaAgTcpCKHUvqOwQnfSYg8=,tag:0CizVY5q40GOWpH5pNENFQ==,type:str]
+                password: ENC[AES256_GCM,data:4nNZeqdqX00o+vvxBphpyWLBrJZ1bwU1kIjvySViVppbKouUZdYWLmKoDeGieXJ83Vnz8JV7FCFExiQAglLg0A==,iv:3HYo5GJ7Q5jd2Vv1X2LqW1dreETTIqZPR5sI4Kq+AV4=,tag:4zqh4lfEBwhLwRU+IhJzrA==,type:str]
+            persistence:
+                storageClass: nfs-csi
+                existingClaim: redis-zammad-csi
 sops:
     kms: []
     gcp_kms: []
@@ -116,14 +117,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDSXJ6bmhrYVFaOEs0Nm1E
-            T3cwS2t1QUovY0lkek9YZ1hZNGwxY003T2owCkx4UDhtYTkrZUdLWENZSnJ6emI3
-            NjlhMGZ0UnJieml4VExuY0M2QkltM3MKLS0tIEpXTStwSTBTdDlTaG5SdmxRdExH
-            emJ6U2U3TGd0SGZ5UUZ6MCtFNWxIeFEKbhPIMkwpejFGoI2YHIqTamm35jrNG+FA
-            aRx/XJm6MxnmsKnccKikqLRNEeiBlZqDy5eOvh+kJ3xJF9d1zasGxA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpQ0dPNHl4dU9PWE0vWnhw
+            cFdyRWw0MWhLWEpqdU1JVzAyZ3pNaWpDdVMwCmNCbFROTmtoZXl0R2tLcm5rT0J2
+            ZnpHbTk1eEJaVXdjeDgzLzI2am41c2MKLS0tIHdTZHkyM0xueXVIS09LcFBZOFBh
+            QVdUTjh3OXBzMU5QYVljNDZnV2dlZ1UK2Iuwe2vZGtDDcWyDy0ADHWtXL3lGLRol
+            d/j89WYVdXCdyUk6T3Xr+O9qB0EJgBAQnRU3qhWjbcwVbEOlgjNh7A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-07-18T13:31:51Z"
-    mac: ENC[AES256_GCM,data:DoFIGIc+7r++4gIG9rM3Joribxx0OMdozR0sZELPhcU+GEHakPKQXdwhZYO3fWKPDA+sEXSpWJTJDJyA3eHN6sKKdj03O26g81g/rU2O19WGzP0xELvdZkMzgK1/SWKSu4G7gJDYqwywoFrnIyZJJPOyXkuZFMw1F5cp+jb9nus=,iv:lilVzKyt5VCrU9UEbKRtAjwkm+lHXjoKGuCsqf/a5DU=,tag:reVHd+sLriqjIhSM1zP6HQ==,type:str]
+    lastmodified: "2024-01-24T15:31:07Z"
+    mac: ENC[AES256_GCM,data:qH8EvzMXBXQ2J/hQvbTPbTG7534ewqUc2pzw5C/ck00lxqKSlVsojaqLRdtmUJsCTlFrsn64EQzv7wbnvpAk4qCWHaV1eOYyOtwoGS2QBjdaQtm+QS1eRIB7K+mJvzUpzt5AFi+xg7wfsZglB9Fez4NYOozEEHy5LGAdKB4vD7k=,iv:tlLl3B8yAZio7DpXGxcCphmq9l6Xuxogduz6Mgmqv34=,tag:zv3ZGs7yhEmcSmHvl84a1w==,type:str]
     pgp: []
-    encrypted_regex: ^(data|stringData|password|pass|postgresPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.7.3
+    encrypted_regex: ^(admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
