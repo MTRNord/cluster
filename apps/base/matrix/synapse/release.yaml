@@ -71,9 +71,9 @@ spec:
             operator: "Equal"
             value: "arm64"
             effect: "NoSchedule"
-        extraEnv:
-          - name: LD_PRELOAD
-            value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+       # extraEnv:
+          #- name: LD_PRELOAD
+          #  value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
           #- name: SYNAPSE_ASYNC_IO_REACTOR
           #  value: "true"
         extraConfig:
@@ -228,10 +228,10 @@ spec:
 
       extraCommands: []
       extraEnv:
-        - name: LD_PRELOAD
-          value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
-        - name: SYNAPSE_CACHE_FACTOR
-          value: "20"
+        #- name: LD_PRELOAD
+        #  value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+        #- name: SYNAPSE_CACHE_FACTOR
+        #  value: "20"
         #- name: SYNAPSE_ASYNC_IO_REACTOR
         #  value: "true"
       annotations:
