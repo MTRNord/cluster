@@ -46,13 +46,31 @@ spec:
       superuser_reserved_connections: "3"
 
       # Memory settings
-      shared_buffers: "4096 MB"
+      shared_buffers: "4GB"
       work_mem: "32 MB"
-      maintenance_work_mem: "320 MB"
+      maintenance_work_mem: "1GB"
       huge_pages: off
       effective_cache_size: "11 GB"
       effective_io_concurrency: "150"
       random_page_cost: "1.5"
+
+      # Cost of a sequentially-fetched disk page
+      seq_page_cost: "0.7"
+      # Cost of processing each row in a query
+      cpu_tuple_cost: "0.01"
+
+      # Cost of processing each index entry during an index scan
+      cpu_index_tuple_cost: "0.005"
+
+      # Cost of processing each operator or function executed during a query
+      cpu_operator_cost: "0.0025"
+
+      # Cost of setting up parallel workers for a parallel operation
+      parallel_setup_cost: "1000.0"
+
+      # Minimum amount of table data for a parallel scan to be considered
+      min_parallel_table_scan_size: "8MB"
+
 
       # Monitoring
       shared_preload_libraries: "pg_buffercache,pg_stat_statements"
@@ -67,8 +85,8 @@ spec:
       # Checkpointing
       checkpoint_timeout: "15 min"
       checkpoint_completion_target: "0.9"
-      min_wal_size: "512 MB"
-      max_wal_size: "1024 MB"
+      min_wal_size: "1GB"
+      max_wal_size: "8GB"
 
       # archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
       # archive_command: "/bin/true" # not doing anything yet with WAL-s
@@ -103,6 +121,12 @@ spec:
       track_wal_io_timing: "on"
       maintenance_io_concurrency: "150"
       wal_recycle: "on"
+
+      autovacuum_analyze_scale_factor: "0.05"
+      autovacuum_vacuum_scale_factor: "0.02"
+      autovacuum_vacuum_cost_limit: "400"
+      vacuum_cost_limit: "300"
+
   teamId: matrix
   users:
     synapse: []
