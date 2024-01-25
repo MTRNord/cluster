@@ -1,0 +1,89 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: authentik
+    namespace: authentik
+spec:
+    releaseName: authentik
+    chart:
+        spec:
+            chart: authentik
+            sourceRef:
+                kind: HelmRepository
+                name: authentik
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        authentik:
+            secret_key: ENC[AES256_GCM,data:ifgZqFMQYOnnLskmXAInZU3djgOv36+mLbL5mfdPvzYx8ssxAnmXHCFwzf1yPu+9vtnh9CMVk0b6+FZhDxi4bA==,iv:W3ylGXHKThftHF4fpA1pzi4W1yCxgLC3R3GLDH+/uF8=,tag:e5r66PjTuc1K5k9fuU4w/g==,type:str]
+            # This sends anonymous usage-data, stack traces on errors and
+            # performance data to sentry.io, and is fully opt-in
+            error_reporting:
+                enabled: true
+            postgresql:
+                host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+                name: authentik
+                user: authentik
+                password: ENC[AES256_GCM,data:U/NVJGQ6q6uEnR6m6UicmHgav2P/hWZLte7euD/Q5iMuAMNl3JPuZMohof+n71bMxP9slqmVLwV5FyoHCSyW0g==,iv:y45NLquLMbkMioinyWicKAlcn3h7y/wWGBdY7q9ZkvM=,tag:p8rrBRs5MQDEMft9adKJRA==,type:str]
+            email:
+                # -- SMTP Server emails are sent from, fully optional
+                host: mail.nordgedanken.dev
+                port: 465
+                # -- SMTP credentials, when left empty, no authentication will be done
+                username: support@nordgedanken.dev
+                # -- SMTP credentials, when left empty, no authentication will be done
+                password: ENC[AES256_GCM,data:GGXeri5jPE0G,iv:X4pvuFXe1/45BoTzdpBY4OLbfpPKdxhHbyE+DN0dcjg=,tag:TSw8x3r+xrMtjhvzohQd5g==,type:str]
+                # -- Enable either use_tls or use_ssl, they can't be enabled at the same time.
+                use_tls: true
+                # -- Enable either use_tls or use_ssl, they can't be enabled at the same time.
+                use_ssl: false
+                # -- Connection timeout
+                timeout: 30
+                # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
+                from: ops@nordgedanken.dev
+        ingress:
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-http
+            enabled: true
+            hosts:
+                - host: auth.midnightthoughts.space
+                  paths:
+                    - path: /
+                      pathType: Prefix
+            tls:
+                - hosts:
+                    - auth.midnightthoughts.space
+                  secretName: auth-midnightthoughts-tls-secret
+        postgresql:
+            enabled: false
+        redis:
+            enabled: true
+        tolerations:
+            - key: arch
+              operator: Equal
+              value: arm64
+              effect: NoSchedule
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBHOHZWQmc2SnUybGhxK1JP
+            aEFHSm9zdEFMRGF4S0FCSGxYZVM3MnZ5NTBvCk0veHJOZjVjRVVOYS81Kys1TjRT
+            dUNlU0ljQ1gwTXQ4UjVLVTFDSFpBU2MKLS0tIHhrUDVuekl4UVNDaDU1T0tkdjBp
+            N00xSFkyK0t4eDFLYVNGeE5NYi96czgKUDXwyOO8mkBs0D2rj5VtSKfykFSkSqQs
+            QjATUYdJOv90PnP2O24tZZTMBnVYf2pWlZ+YdJC0/oVVWowD/OOQqQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-01-25T11:06:31Z"
+    mac: ENC[AES256_GCM,data:e+7mzCleVwf/OWP6l6hgvTSIsgB5ZlHflJ7fW+WCOYQ95TQL8yhwm/oKNMYFlQGwBL6cHTbJHNHlCHBKZRB3QiOpmw9QuEyp+iPDiFvnT0FL42ZLNcsBdkd/BUhDUwAFW0IDq0KIkkkeS+NjOPxAz79U3h6IZsKli6uQ1V8VE+c=,iv:0FO8QuKtWnXR7snTFncALZie4qsp1miszbmhAORzwqc=,tag:tedyHbppGzB9t7QhYdKrUQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
