@@ -1,0 +1,89 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: keycloak
+    namespace: keycloak
+spec:
+    releaseName: keycloak
+    chart:
+        spec:
+            chart: keycloak
+            sourceRef:
+                kind: HelmRepository
+                name: keycloak
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        auth:
+            adminUser: MTRNord
+            adminPassword: ENC[AES256_GCM,data:gfpevRlVAOcq,iv:4Hkn2IjthQ2JAF9tYb3/ocTkqpCgn1j8vk2Ds6VW8HQ=,tag:v6RwHKC52VuFQOLuKJalpQ==,type:str]
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-http
+            hostname: keycloak.midnightthoughts.space
+            tls: false
+            extraTls:
+                - hosts:
+                    - keycloak.midnightthoughts.space
+                  secretName: keycloak.midnightthoughts.space-tls
+        extraEnvVars:
+            - name: KEYCLOAK_PROXY_ADDRESS_FORWARDING
+              value: "true"
+            - name: KEYCLOAK_FRONTEND_URL
+              value: https://keycloak.midnightthoughts.space/
+            - name: KC_HOSTNAME_URL
+              value: https://keycloak.midnightthoughts.space
+            - name: KC_HOSTNAME_ADMIN_URL
+              value: https://keycloak.midnightthoughts.space
+        metrics:
+            enabled: true
+            serviceMonitor:
+                enabled: true
+        postgresql:
+            enabled: true
+            auth:
+                username: bn_keycloak
+                password: ENC[AES256_GCM,data:6d7TKB1J3va5dQ==,iv:LSMR5zxU6oxJ3mCGMOtQBKATNaKFUZE2uf5BaKxJc44=,tag:AmGi5mBqxvarQU+MPWxiIg==,type:str]
+                database: bitnami_keycloak
+            architecture: standalone
+            image:
+                tag: 14-debian-11
+            primary:
+                persistence:
+                    storageClass: nfs-csi
+                    existingClaim: data-keycloak-postgresql-csi
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
+        tolerations:
+            - key: arch
+              operator: Equal
+              value: arm64
+              effect: NoSchedule
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxbFVtOW52Sm03NkEyQ2tp
+            WTdBbEJ6cU8ycndPN0VNVnI4Z2hnaCtpVnpBCmp6TmtwN0p4ZG9aOVJRYW9pRktC
+            RGR0QjhFVEtyb1A1bHNlRjF4S0NGVlUKLS0tIGdsZUppZ1EyL3ppNXgwSkc2ZklH
+            TzJqMkFsZ0l2aldNdFlrM3VMbk1jWUEKMRRltSz2onYx+PXmun444runEechmpB5
+            KSEctI7OQIPmG/nV/UcypT9XXpvrB2C0grdQDDWgC9FOyDHbJpESFg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-01-25T09:25:43Z"
+    mac: ENC[AES256_GCM,data:bJH2QE2/r4sPgn/EpRDxhDERfjbcM7MXyHHYtWc+iiQ2Jrwd93wgGhZiXcqUnuDP9dZrMwygqymWRzqtfYwsZ3k2innXyENYaBnDpkFSosY3+Ok5bUdEyl2i+x0SA1qkX5PohPuW0Og4cDV6DuBHddGit/vg3pNzXC2/35fgwdI=,iv:WMPFznUOC6XxXsvbfKOeowrJscLBn0Lg2u1LvBQOBbc=,tag:7tTw7+4IcSVkMq5jZTZ5sw==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
