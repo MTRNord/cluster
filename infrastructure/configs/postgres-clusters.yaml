@@ -142,21 +142,8 @@ spec:
     authentik: []
   volume:
     size: 50Gi
-    #    storageClass: nfs-client
     storageClass: local-hostpath
-  # additionalVolumes:
-  #   - name: hugepage
-  #     mountPath: /hugepages
-  #     volumeSource:
-  #       emptyDir:
-  #         medium: HugePages
 
   patroni:
-    ttl: 30
-    loop_wait: 10
-    retry_timeout: 10
     failsafe_mode: true
     synchronous_mode: true
-    synchronous_mode_strict: false
-    synchronous_node_count: 1
-    maximum_lag_on_failover: 150
