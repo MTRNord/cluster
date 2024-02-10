@@ -130,6 +130,7 @@ spec:
                   basicAuthPassword: $__file{/etc/secrets/parseable/password}
             - name: Tempo
               type: tempo
+              uid: tempo
               access: proxy
               url: http://tempo.monitoring.svc.cluster.local:3100
               isDefault: false
@@ -137,11 +138,18 @@ spec:
                 httpMethod: GET
                 serviceMap:
                   datasourceUid: prometheus
+                lokiSearch:
+                  datasourceUid: 'loki'
             - name: Hubble
               type: isovalent-hubble-datasource
+              uid: hubble
               access: proxy
               url: http://hubble-relay.kube-system.svc.cluster.local:80
               isDefault: false
+              jsonData:
+                serviceMap:
+                  datasourceUid: prometheus
+                tempoDatasourceUid: tempo
             - name: ES - Chat Sessions
               type: elasticsearch
               access: proxy
