@@ -282,12 +282,16 @@ spec:
           synapse-dashboard:
             #url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
             url: https://raw.githubusercontent.com/element-hq/synapse/develop/contrib/grafana/synapse.json
+            datasource:
+              - name: "DS_PROMETHEUS"
+                value: "Prometheus"
           draupnir4all:
             url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
-          dendrite-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/dendrite.json
           matrix-media-repo-dashboard:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/matrix-media-repo.json
+            url: https://raw.githubusercontent.com/t2bot/matrix-media-repo/main/docs/grafana.json
+            datasource:
+              - name: "DS_PROMETHEUS"
+                value: "Prometheus"
       grafana.ini:
         smtp:
           enabled: true
