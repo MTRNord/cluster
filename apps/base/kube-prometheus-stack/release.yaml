@@ -137,15 +137,11 @@ spec:
                 httpMethod: GET
                 serviceMap:
                   datasourceUid: prometheus
-            # - name: Hubble
-            #   type: hubble
-            #   access: proxy
-            #   url: http://tempo.monitoring.svc.cluster.local:3100
-            #   isDefault: false
-            #   jsonData:
-            #     httpMethod: GET
-            #     serviceMap:
-            #       datasourceUid: prometheus
+            - name: Hubble
+              type: hubble
+              access: proxy
+              url: http://hubble-relay.kube-system.svc.cluster.local:80
+              isDefault: false
             - name: ES - Chat Sessions
               type: elasticsearch
               access: proxy
