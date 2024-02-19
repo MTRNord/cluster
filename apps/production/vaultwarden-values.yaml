@@ -26,6 +26,8 @@ spec:
     ingress:
       main:
         enabled: true
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-http
         hosts:
           - host: vault.nordgedanken.dev
             paths:

@@ -1,0 +1,83 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: radicale
+    namespace: calendar
+spec:
+    interval: 5m
+    chart:
+        spec:
+            chart: radicale
+            sourceRef:
+                kind: HelmRepository
+                name: radicale
+            interval: 60m
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    values:
+        env:
+            # -- Set the container timezone
+            TZ: Europe/Berlin
+            # -- Set the location of the configuration file
+            RADICALE_CONFIG: /config/config
+        ingress:
+            main:
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-http
+                enabled: true
+                hosts:
+                    - host: midnightthoughts.space
+                      paths:
+                        - path: /dav
+                          pathType: Prefix
+                          service:
+                            port: 5232
+                      tls:
+                        - secretName: midnightthoughts.space-tls
+                          hosts:
+                            - midnightthoughts.space
+        configmap:
+            config:
+                # -- Define inline radicale configuration as a ConfigMap.
+                enabled: true
+                # -- Radicale configuration. See [image documentation](https://github.com/tomsquest/docker-radicale#custom-configuration) for more information.
+                # @default -- See values.yaml
+                data:
+                    config.cfg: ENC[AES256_GCM,data:wIWvB/TpMrYK3OqUMYa84LFAIu97u1vunWjOd506HDcDa6WZ8TYE4ZhfGM2+xk2r4RwIrfNzYFwqqv+c/3Iy92lJ4q3I21HqOnwHXtOG0bkYxdZTLqzCwszZ9WtyXVTXL8UOgSn682fj7QV2FPL4NI5yhQH+Q02FiYv9Z1yXcXUsLOuDNT9yiJlV47P5KI150RMUYIQBIucs6wc60R9AOZe8lLk1Ak3hz8ArewuL4XUDn9T15lzNb3LeEj+dfDyU0zF/tyGxrCgkibBftlKT6UkVBGZc83ywsOfEUXHJWz7LeMC+VrXSnd3+/OKId4trfWd4uzyisrob6vWzqmHTMPPbW7MehcDugVBjFggT,iv:wIN48eEY1G4zk3jKsIfiw902zwf1MiCGGFYhl/gSH7w=,tag:cr2C+o8ey/E+8MRG8TjzEA==,type:str]
+                    htpasswd: ENC[AES256_GCM,data:+V6uCLgYAZmD+7+I3GHl107OXkKi4tD46UnRt1UYRiP11Wzi31kHhO5WSMDRrbd30uwTA2gHuvom1PvMk9mQZ/GBJ9np,iv:+BvTmsleQLp2pIhBEJp+saHVz9sS+CVJX5PFEi+dGh4=,tag:1ZA6peOGcclr6+AXVJ2t5g==,type:str]
+        persistence:
+            data:
+                enabled: ENC[AES256_GCM,data:3Zy+0A==,iv:OIDDSQkCPtqHgUPK0JQk26cw45nVDYKzKatROiH5Fkc=,tag:jKp6kXX+dzZPLyzQ8A6m0w==,type:bool]
+                storageClass: ENC[AES256_GCM,data:domKbZaL/b2vug==,iv:PfD3Q/UOVMSg6NboQwJePGVyDu9WiFEa33oSrcTp8jQ=,tag:4kBpZJaM46Q9og0QEXx9iw==,type:str]
+            htpasswd:
+                enabled: true
+                type: configMap
+                name: '{{ printf "%v-config" (include "common.names.fullname" .) }}'
+                subPath: htpasswd
+                mountPath: /config/htpasswd
+                readOnly: true
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByb09OempHUmdaN2Q5cTRw
+            NkRCeVczRDNnaGFtcEtxU1dCaEZLQ2x5NXhRCmdZbUxGS1FFYXhXbnBIaE02V3Bx
+            UklwSVViOVdSYStzVXJrVHNJT2FERk0KLS0tIGdEdGFpcEVBNnQ4WTZWbWNEbmg4
+            U0xoWDBIT0RPbUtZN3hpNjh0Q2Z1NTgKBGJe6QHKjgP+hl7cwTqE+02xtdGvcTra
+            1p19j9hasmq6bCrtvh/Gier5IDvMs89HQ/gIN4q05JaZ07R1FGyxkA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-02-19T13:30:34Z"
+    mac: ENC[AES256_GCM,data:9trwyw7j+nVjZKyJXGLt6v882eFrtJFm92NH9P8tmFUiiJhcYaXXI29u7EMDrY/edhG4yMUrYJUwBoi++VXiCCWCGape26kQ7I9BOscyp85UQZ7D7bidqvYvh2Ljpzd5B26E1bxOY1jUEKET0aEcW0LHqE637IDozaplIeuizOo=,iv:AYdWIddKpirhQdIQMXXZ+AXFq5zL04cKG+K7/rq2D4c=,tag:iZOXXeJLGoh3ggosCzL0Fg==,type:str]
+    pgp: []
+    encrypted_regex: ^(secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
