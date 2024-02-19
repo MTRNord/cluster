@@ -29,6 +29,7 @@ spec:
             main:
                 annotations:
                     cert-manager.io/cluster-issuer: letsencrypt-http
+                    traefik.ingress.kubernetes.io/router.middlewares: calendar-subpath@kubernetescrd
                 enabled: true
                 hosts:
                     - host: midnightthoughts.space
@@ -48,14 +49,14 @@ spec:
                 # -- Radicale configuration. See [image documentation](https://github.com/tomsquest/docker-radicale#custom-configuration) for more information.
                 # @default -- See values.yaml
                 data:
-                    config.cfg: ENC[AES256_GCM,data:okL5X+Jnw872rBHKbIwwwb+Bi33XAAU77vxxbQmnONEnfaWCdVL789RebIX3MW5/PpLjwQ7eFmVmnStArWKCBr3fqCbMwpyJZs0DDPBfY8gRgvkla4JYHtXHMmcyxZv9reua4FHIYvAn0ds6p3L26+xHhzdcdG4/sXwIVylmoN1mhztrbqK2Hsfai1bBhYIbNN6Hm0OA1NCBY7ItbUEQeWuogxUBj3WooK+ut+gFacy+1RXobUgGnnoIveG6SSELTCPLV+PDd24lbCvwbhZAAJ/q3SNDcR1sakijom9EhP3I9dAY26KhhHs4zEOrTuVhkpPbinMmNf8dXb6VSCa73dS0Lr4FsysOfgZn2UFH1UadLYibFD4rcVztyyPYAXERwtDH42LT,iv:X2Y86YHXztH+JwS9mIYPPmjmR0HpKWWK9S6g6jCNS60=,tag:NBqXQDicGAav+Bj2OF1K1A==,type:str]
-                    htpasswd: ENC[AES256_GCM,data:W+abCms8fDuCyiZDMBnShgtbReS+9nkdcovKl6PEaW8wFbiMSewfL2UAynAx2AWpadWVbSZxeYyFqvga9SE4vDrcsjLT,iv:Jz9zIZGZFzRNl/5Zyw3o72inOywmONtqR1ZllLXuvEk=,tag:0RuuZgHF2uAoS2t2HYp5Vg==,type:str]
+                    config.cfg: ENC[AES256_GCM,data:tTGf/j/0+VYXFA8vhcsKFgbXMLVlNVxYLa4LeZ8Mv+pfSFV2IUCbVLwi74kq5nre7PZV07zMx6EEerdpgqkj3OAewB3Cbhoj1c/hXjjCGnxOy3wHzWIzqHgdWaQhVDjRCK/9InByIa8QimlJ+kFrqDDLR1sUsBvXGhSCXen5vHM1F7QP9AC0ojq7LfWT6H6E4gv16W5PRsS7VToAvaKCL8f+j7ZpS515NWKijgNK0FY7vkwX4SRZMiGDa7j6MQTX9fWIfG1P1AjBYLvfwRWAK6erPAUt8G4IjWaeqmwl0l4AS1v8yArQuOkULIOGusbewBmV78sGAJ0XySedkWp9AaqO8SmCoNCv2H4bTluuxJANA/zyv11ILjm9cayVJrePMAbysov8,iv:Qjk0vRwS0qK5hMhbQQSobY9zvVQmbuqcwRb5tC7QWls=,tag:5vHdl11iGVIx6jdz6SlQ9A==,type:str]
+                    htpasswd: ENC[AES256_GCM,data:RdGCcRm8x2qDFe4vj2lf470Py88ox5hj5Dy4DzUISW+/rpCs9xrwNJUdvWcjR83XvSxDiC8pyBrMT5DUmFQXE0aTRU44,iv:3xCsi5JQU8G7FAGrHHPi5NtN0jjWNe9gL+SJuBUp8+o=,tag:OHcxmEd3bnISqSbBrw6H9Q==,type:str]
         persistence:
             data:
-                enabled: ENC[AES256_GCM,data:NMZqDw==,iv:+AvSNr0RZWsaioLCH7XyuIBSacKCmrw9VCNOU0OCCso=,tag:qeB1bNO3Rufu7MM5OD2/7g==,type:bool]
-                storageClass: ENC[AES256_GCM,data:dr/sNfL52Qq6Hg==,iv:/aplFIxBzocdn57uxmPasC0NtNaI6RrldboGUpSUnKg=,tag:Bgq4Q4dFv5MqBzDTlTkiUA==,type:str]
-                accessMode: ENC[AES256_GCM,data:G2kWjKwSinL18s/C6A==,iv:SzeUeugFxs4JLrMxlu28VpD2oAaCjxBxn2g/DCyV0Vo=,tag:UokJN9xdnwe9ZyGQl1A+mw==,type:str]
-                size: ENC[AES256_GCM,data:l6mZ,iv:xONTQCZzrZBvQ4zeL4OWK4lyhvqjwamlvObzoXnyGzs=,tag:wbeAnYnbOfFJ9aSUhj5UyA==,type:str]
+                enabled: ENC[AES256_GCM,data:p5wIrw==,iv:88hBOY8xcrZF7Qu0dtNnN3B0cAoREihPP984a4HyCSI=,tag:LJyKY6rpNb1vxpcdVZB4mA==,type:bool]
+                storageClass: ENC[AES256_GCM,data:fins7X3UKOxM7g==,iv:EDAq2fxjgFPtdIXo7BULW985GBbXsQm07WG8rB1wRgA=,tag:+X6g4iD9inzTReoIDgTGUA==,type:str]
+                accessMode: ENC[AES256_GCM,data:X28p+LcOXOgq6v1NpQ==,iv:l8GcQx7RbduLJeANi+d8jo8jedK8gmgwxFWQDXyO9Fs=,tag:HzxSUnyL8Kyl2GLxxTqa3A==,type:str]
+                size: ENC[AES256_GCM,data:FgGs,iv:r5vB/PShPUJP5wKJOG2KInrhLsG7yVeoCHKA8UC5V7Q=,tag:oWRgzh1QDPCch/Shdb2x7A==,type:str]
             htpasswd:
                 enabled: true
                 type: configMap
@@ -72,14 +73,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzamZ5emhnK1h6VGpZS0xm
-            VkFIVVNiTUtBR3RYR0xQdU5nTDlnUTgxd0JnCkN1WXpmRWI5bFRQWjZ5UE45Mjdn
-            cVlDOGkrNXkvTmhYQnhwWFpXSCsxYXMKLS0tIHMzMnd1YXIxVkZraC9MVXhNMUpz
-            UW1QU3JVSThsZitGd3J4RkRzNVlraHMK9NlvtsTyrmSjhdnfADiGpfKQfxTXTdQJ
-            6B1C+iFjDOI6Fuq6FFxR2Us1SCQMiAYWOK7GQZKGDA0AstyQwoQc3w==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXaUJ0aC9UL2paZkJkM2tw
+            Y3ZxT2xDVW9wK0dheFJtZEs5VWE4Z2FTTlFnCk9xVk5hUFdFOFpQRFhsaEh0K0tL
+            TUNKZTV2b2g5aHNhcDFncG1wOXFXZWMKLS0tIElZYzEvdXE1cHdwRjl5dU5Sa0No
+            VDFwMTNBWUhXVVNvTW9DcUR5OHp6QWsK0FlaGzCt9nnoEEgK9/Cn2KQSjwHqrnHZ
+            UrZmxBIATDH3ZG7o+m88o2V5ZA96mZigXqNANpoNd72dLyGDeFddeg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-02-19T13:59:57Z"
-    mac: ENC[AES256_GCM,data:qFy3jMYVl+4pV33OIn9mhWleaPdUqC5s2HVZZ0cbYPOAcG6TzMRmCUJAMeLbG1PJvMKIH7sodbA4kUKhwbfER2VuIVGekToD6eUZNcaUaFRLT+ca+lrO9HL77Fw7s+zVKKl/eeUTW7jbvmiKqOfbpmJhtvrUrHZm8VSPI0SDdCM=,iv:09Y3eH2n5pRAsZrP8Z8dplZSwd3g0GDC7ENLFdqIa08=,tag:eUpkBnYZhDTlti8BnWTa7g==,type:str]
+    lastmodified: "2024-02-19T14:05:38Z"
+    mac: ENC[AES256_GCM,data:ksQ14VqJWWYDv95JCd8oMPS1O4l4liOBdWewQZ/bN0X718y6zuHGv3xJ/Ny6GjoFLxG16CN1t745sew5O+gRMSH2G5+KROxOpY4xIgCDdfvTxfLa3SVnV8p1kbTQq0DrqRSb+QJccsuCtXYGSiIHY+tcFw7XigTqtoiURWepwWw=,iv:8Q+tYtsjcgpjt2mVSxAK90MNbr4V0C3asdNNtNey2cs=,tag:eBWDVCa4QTrl6DHsasHYVw==,type:str]
     pgp: []
     encrypted_regex: ^(secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1

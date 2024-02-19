@@ -1,0 +1,10 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: subpath
+  namespace: calendar
+spec:
+  headers:
+    customRequestHeaders:
+      X-Script-Name: "/dav"
