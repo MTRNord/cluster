@@ -112,16 +112,16 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: xandikos-xandikos-auth@kubernetescrd
 spec:
   rules:
-  - host: midnightthoughts.space
-    http:
-      paths:
-      - backend:
-          service:
-            name: xandikos
-            port:
-              name: web
-        path: /dav
-        pathType: Prefix
+    - host: midnightthoughts.space
+      http:
+        paths:
+        - backend:
+            service:
+              name: xandikos
+              port:
+                name: web
+          path: /dav
+          pathType: Prefix
   tls:
     - hosts:
         - midnightthoughts.space
