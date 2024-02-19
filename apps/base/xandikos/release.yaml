@@ -43,12 +43,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 8081
             initialDelaySeconds: 30
             periodSeconds: 3
             timeoutSeconds: 90
           ports:
             - containerPort: 8080
+            - containerPort: 8081
           volumeMounts:
             - name: xandikos-volume
               mountPath: /data
@@ -81,6 +82,9 @@ spec:
   ports:
     - port: 8080
       name: web
+  ports:
+    - port: 8081
+      name: metrics
   selector:
     app: xandikos
   type: ClusterIP
@@ -97,7 +101,7 @@ spec:
     matchLabels:
       app: xandikos
   endpoints:
-  - port: web
+  - port: metrics
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -105,9 +109,6 @@ metadata:
   name: xandikos
   namespace: xandikos
   annotations:
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: my-htpasswd
-    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - mysite'
     cert-manager.io/cluster-issuer: letsencrypt-http
 spec:
   rules:
