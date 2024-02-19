@@ -27,7 +27,7 @@ spec:
             - "python3"
             - "-m"
             - "xandikos.web"
-            - "--port=80"
+            - "--port=8080"
             - "-d/data"
             - "--defaults"
             - "--listen-address=0.0.0.0"
@@ -43,12 +43,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 80
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 3
             timeoutSeconds: 90
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           volumeMounts:
             - name: xandikos-volume
               mountPath: /data
@@ -79,7 +79,7 @@ metadata:
   namespace: xandikos
 spec:
   ports:
-    - port: 80
+    - port: 8080
       name: web
   selector:
     app: xandikos
