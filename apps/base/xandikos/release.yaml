@@ -27,10 +27,10 @@ spec:
             - "python3"
             - "-m"
             - "xandikos.web"
-            - "--port=8081"
+            - "--port=80"
             - "-d/data"
             - "--defaults"
-            - "--listen-address=127.0.0.1"
+            - "--listen-address=0.0.0.0"
             - "--current-user-principal=/mtrnord"
             - "--route-prefix=/dav"
           resources:
@@ -43,12 +43,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8081
+              port: 80
             initialDelaySeconds: 30
             periodSeconds: 3
             timeoutSeconds: 90
           ports:
-            - containerPort: 8081
+            - containerPort: 80
           volumeMounts:
             - name: xandikos-volume
               mountPath: /data
@@ -79,7 +79,7 @@ metadata:
   namespace: xandikos
 spec:
   ports:
-    - port: 8081
+    - port: 80
       name: web
   selector:
     app: xandikos
