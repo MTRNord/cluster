@@ -1,0 +1,154 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xandikos
+  namespace: xandikos
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xandikos
+  template:
+    metadata:
+      labels:
+        app: xandikos
+    spec:
+      containers:
+        - name: xandikos
+          image: ghcr.io/jelmer/xandikos
+          imagePullPolicy: Always
+          command:
+            - "python3"
+            - "-m"
+            - "xandikos.web"
+            - "--port=8081"
+            - "-d/data"
+            - "--defaults"
+            - "--listen-address=0.0.0.0"
+            - "--current-user-principal=/jelmer"
+            - "--route-prefix=/dav"
+          resources:
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+            requests:
+              cpu: "0.1"
+              memory: "10M"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 3
+            timeoutSeconds: 90
+          ports:
+            - containerPort: 8081
+          volumeMounts:
+            - name: xandikos-volume
+              mountPath: /data
+      volumes:
+        - name: xandikos-volume
+          persistentVolumeClaim:
+            claimName: xandikos
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xandikos
+  labels:
+    app: xandikos
+  namespace: xandikos
+spec:
+  ports:
+    - port: 8081
+      name: web
+  selector:
+    app: xandikos
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: xandikos
+  namespace: xandikos
+  labels:
+    app: xandikos
+spec:
+  selector:
+    matchLabels:
+      app: xandikos
+  endpoints:
+  - port: web
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xandikos
+  namespace: xandikos
+  annotations:
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: my-htpasswd
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - mysite'
+    cert-manager.io/cluster-issuer: letsencrypt-http
+spec:
+  rules:
+  - host: midnightthoughts.space
+    http:
+      paths:
+      - backend:
+          service:
+            name: xandikos
+            port:
+              name: web
+        path: /dav(/|$)(.*)
+        pathType: Prefix
+  tls:
+    - hosts:
+        - midnightthoughts.space
+      secretName: midnightthoughts.space-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xandikos-wellknown
+  namespace: xandikos
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http
+spec:
+  rules:
+    - host: midnightthoughts.space
+      http:
+        paths:
+        - backend:
+            service:
+              name: xandikos
+              port:
+                name: web
+          path: /.well-known/carddav
+          pathType: Exact
+        - backend:
+            service:
+              name: xandikos
+              port:
+                name: web
+          path: /.well-known/caldav
+          pathType: Exact
+  tls:
+    - hosts:
+        - midnightthoughts.space
+      secretName: midnightthoughts.space-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: xandikos-auth
+  namespace: xandikos
+spec:
+  basicAuth:
+    secret: authsecret-xandikos
