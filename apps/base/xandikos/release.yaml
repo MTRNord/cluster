@@ -109,6 +109,7 @@ metadata:
   namespace: xandikos
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-http
+    traefik.ingress.kubernetes.io/router.middlewares: xandikos-xandikos-auth@kubernetescrd
 spec:
   rules:
   - host: midnightthoughts.space
