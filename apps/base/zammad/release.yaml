@@ -23,6 +23,11 @@ spec:
         # causing spurious drift detection
         force: true
     values:
+        tolerations:
+          - key: arch
+            operator: Equal
+            value: arm64
+            effect: NoSchedule
         ingress:
             enabled: true
             annotations:
@@ -57,6 +62,11 @@ spec:
             existingClaim: zammad-data-csi
         elasticsearch:
             master:
+                tolerations:
+                    - key: arch
+                      operator: Equal
+                      value: arm64
+                      effect: NoSchedule
                 ## Configure extra options for Elasticsearch master-elegible containers' liveness, readiness and startup probes
                 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
                 ## @param master.startupProbe.enabled Enable/disable the startup probe (master nodes pod)
