@@ -7,7 +7,7 @@ spec:
     interval: 5m
     chart:
         spec:
-            version: 9.0.x
+            version: 10.x.x
             chart: zammad
             sourceRef:
                 kind: HelmRepository
@@ -47,6 +47,10 @@ spec:
                 enabled: false
                 db: zammad
                 host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+            tmpDirVolume:
+                emptyDir:
+                    sizeLimit: 100Mi
+                    medium: Memory
         persistence:
             enabled: true
             storageClass: nfs-csi
