@@ -56,6 +56,9 @@ spec:
                 emptyDir:
                     sizeLimit: 100Mi
                     medium: Memory
+            railserver:
+                securityContext:
+                    readOnlyRootFilesystem: false
         persistence:
             enabled: true
             storageClass: nfs-csi
