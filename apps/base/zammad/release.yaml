@@ -47,7 +47,7 @@ spec:
                 secretName: zammad-postgres
         zammadConfig:
             redis:
-                pass: ENC[AES256_GCM,data:wOagO+0SH5Ox9Pe+MqDP8WDzSsx54mjm9C7QwgxSzJCJPxaFp6ETik/VPzr7fqQhgGbrsFrpXYDUt4bqey5XoA==,iv:v8rnwk26DXwm0IwvRrujBNLofXSYb6mn5nLAdsoVfEU=,tag:dLRM1iQd6N9QB9M8n7voHQ==,type:str]
+                pass: ENC[AES256_GCM,data:0qesqp/lKOY4l6WtTl5uK1szFWb6rFKeP4q8uGClfOueAZ+7gwfX+bvqfyZW2I45DJn/TYH0ITtT4ew8aZXBzQ==,iv:v3Kd64RSAIytjE1I9AiSQ6LH9ESFa8kWeDcfxyn1FY8=,tag:Q8coyvwmtfySiZffx6QmSg==,type:str]
             postgresql:
                 enabled: false
                 db: zammad
@@ -61,21 +61,9 @@ spec:
             storageClass: nfs-csi
             existingClaim: zammad-data-csi
         elasticsearch:
-            image:
-                debug: true
-            clusterName: zammad
-            coordinating:
-                replicaCount: 0
-            data:
-                replicaCount: ENC[AES256_GCM,data:XA==,iv:Hbw/CejCpRX2itml8Mm8puMts+1iH6ZAgx8LTX6MN3g=,tag:7J8xuU6ltU4W6r0fQBwtfg==,type:int]
-            ingest:
-                replicaCount: 0
             master:
-                heapSize: 512m
-                masterOnly: false
+                masterOnly: true
                 replicaCount: 1
-                extraEnvVars:
-                    ELASTICSEARCH_ADVERTISED_HOSTNAME: zammad-elasticsearch.zammad.svc.cluster.local
                 tolerations:
                     - key: arch
                       operator: Equal
@@ -85,7 +73,7 @@ spec:
                 enabled: true
         redis:
             auth:
-                password: ENC[AES256_GCM,data:pPi0soyYy7JyHNvlQ+vTrjvOikpI/BlMSVAd/dbexg7MN36iHC1mF0J6tEzCxbO1FevNLupObJjzc3ttkGrRcA==,iv:OuIicR0fp1iUOhUuAuCWHA6MFf5NvCK/yY4kLuALt88=,tag:dbxgioEWrgg0G5pMo5xY8w==,type:str]
+                password: ENC[AES256_GCM,data:nO7fr+RW3MdDDmYog7bAkpRX5Hk+XSkp82YFJJ+Mbu5i0TIZ33J2DYD2N17usWCPppQCvYlDXhnCNK8FcP3Nrg==,iv:NyjzaEacHQBhxs9iWkCRyoGSi+rdL2toVya032zInNc=,tag:cxc2lJmK8IIdpPuElARJlQ==,type:str]
             persistence:
                 storageClass: nfs-csi
                 existingClaim: redis-zammad-csi
@@ -98,14 +86,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBScWZqbFFwRG5XMXpibjlr
-            MlVKaFIrNzJiUEhUMEVhejB5azh1RTRkakV3CnZXNDhVVG5uUXZBKzRtbmpwcFB3
-            Rm95bER2UVdhSDRwRUJtY0llb1Y4Rm8KLS0tIHhheis4N0hNVUVXbDh6NVFUVUZx
-            OUNmL3NUZGp1RmJTUUpScndpUlBsZmsKn4ycyU4Kv6qcDJ52pTS6YTlxdi57Fcd1
-            r2LQwMUQjudM3AZhDXGsln02qEF22LdDd/QTpLgBkRru6YiqEw1boA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzRVlvV1R5SEVkbFZJaTBk
+            Umk0UnNlYTNzdW9LZWloVkIybWd1UzB1aTNRCmJmQW9LVTUwVlIya2l0R0Uxc0xr
+            OUE5QTBFektZL25oZ3d5eCtYK05NVlEKLS0tIGFuN1lVQ0JoL2NNY3hHblBCZklD
+            VTZHRXY0K1BYUytNYVJXTVpqU3k3ZDQKMDnrnTzxKwZp5OKhm/cHDZDO41a1qCBN
+            G9bpzlW++4dgwJ+TQVA8pPPkOp38sKCSdmH3Q6SYjSF907QKmGRraQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-02-26T12:37:11Z"
-    mac: ENC[AES256_GCM,data:wwLHTc33wG2pV3CVf67BeKTipW3FmZgZdte8Oa5APTh4boFjIFfV4BUeq7RLlSLYj2FeWmOyZXDGQlyyLGM6rz9tELNqqoRsPmGMFRVKDVGRryiTd358LDCKBmu7MRwzfkqBgvkOwXpte0IGd8SKskAKVgc9oSW5MIFvTxfZpGA=,iv:A3Levtk0DYiZLtaxJbeXjUXwsPBpZaDodZ4Xh4r/ltM=,tag:4SxfavqI09JdRCTdL26BCQ==,type:str]
+    lastmodified: "2024-02-26T12:46:26Z"
+    mac: ENC[AES256_GCM,data:9pUf3quBwBwYT4eOqdV9VBcEw3nzWufHkoYn5Y0HAMcDZezt3TyzJlTer+6aU7VbOda4HcHDTczMuGayY0N6aH2BBKwaXylC5meceqp0mpRSkZLDlONzqTlJ8kMiBElMKGuA8HKOlftWCnzSqR4TcdniVBiodafZLSFyQm3owFU=,iv:Nu0u1lfPxQCzGArR9EbGNwKnOlOvVb7GP9gxVPOLFE8=,tag:q0YP+cAJz87WEG2yUm9I4Q==,type:str]
     pgp: []
     encrypted_regex: ^(secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
