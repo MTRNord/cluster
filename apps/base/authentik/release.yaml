@@ -45,19 +45,20 @@ spec:
                 timeout: 30
                 # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
                 from: ops@nordgedanken.dev
-        ingress:
-            annotations:
-                cert-manager.io/cluster-issuer: letsencrypt-http
-            enabled: true
-            hosts:
-                - host: auth.midnightthoughts.space
-                  paths:
-                    - path: /
-                      pathType: Prefix
-            tls:
-                - hosts:
-                    - auth.midnightthoughts.space
-                  secretName: auth-midnightthoughts-tls-secret
+        server:
+          ingress:
+              annotations:
+                  cert-manager.io/cluster-issuer: letsencrypt-http
+              enabled: true
+              hosts:
+                  - host: auth.midnightthoughts.space
+                    paths:
+                      - path: /
+                        pathType: Prefix
+              tls:
+                  - hosts:
+                      - auth.midnightthoughts.space
+                    secretName: auth-midnightthoughts-tls-secret
         postgresql:
             enabled: false
         redis:
