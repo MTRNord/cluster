@@ -47,7 +47,7 @@ spec:
                 secretName: zammad-postgres
         zammadConfig:
             redis:
-                pass: ENC[AES256_GCM,data:HhjfO1moQcYJIAtp93zSQrlld+kJCbWf8XmYGyh+iRs/FjFsxPnj1IirxurND5CUoNmICjCZh+FJW8lWPHML1Q==,iv:+26au4kZjEVEoFa4DiKDv5o17Vb0bl8f+X54BsYiSgc=,tag:DKMaKmeGBFwEOA07wwOAPA==,type:str]
+                pass: ENC[AES256_GCM,data:/ze/4BWIrWmH+kslcKGMu55bnOVP+Wc3q4THN3hko5FBujLGy2otEgImYfviDb8dQJMjbL3mv0Z1wF4eSX3opA==,iv:yyNqCg5R/Sna8F91dZ4CXU4GY8sGnVV9bEjc/zTxido=,tag:0rzhg/GnEiU0n2yX1BYhVw==,type:str]
             postgresql:
                 enabled: false
                 db: zammad
@@ -61,8 +61,6 @@ spec:
             storageClass: nfs-csi
             existingClaim: zammad-data-csi
         elasticsearch:
-            data:
-                replicaCount: ENC[AES256_GCM,data:Ew==,iv:GelEG0OjXrqry/LkfjYNMhjQLWilJopeFC3fozOHcoU=,tag:mzvFIzEu/ezKULHYtTuCgQ==,type:int]
             master:
                 masterOnly: false
                 replicaCount: 1
@@ -71,11 +69,14 @@ spec:
                       operator: Equal
                       value: arm64
                       effect: NoSchedule
+                extraEnvVars:
+                    - name: ELASTICSEARCH_ADVERTISED_HOSTNAME
+                      value: zammad-elasticsearch.zammad.svc.cluster.local
             metrics:
                 enabled: true
         redis:
             auth:
-                password: ENC[AES256_GCM,data:k2laznHY06Q7dG8ODaQ76DaZ9giGoPSIPZfAnS+/WTe0vn2JA8PNarEJ6tLvS1r0atPN5Xr8J0MfYA7I0mGhqw==,iv:ct2plywYrNV3s2mE/UdmNEw+IPi3PcC+HnczUkQ2Ado=,tag:BHfSFXDrkFdW5mFdbLwXjA==,type:str]
+                password: ENC[AES256_GCM,data:iCO609KFxZekPW1u49cSs9ELHBn8fqFC6GuERG6EKPiTwZROD5rqXb0Qcn+q6d3yTMrLpzb8o5O7xdQ+7NJCAA==,iv:4D6dG84zjbVP7VLwlQ0XIW5nalVO7+yBEI69/i8Fu6Y=,tag:qRVYhob0wdEvbb7EjK4B7g==,type:str]
             persistence:
                 storageClass: nfs-csi
                 existingClaim: redis-zammad-csi
@@ -88,14 +89,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTb0laU0RnbUxyN0NjQWdv
-            QWtGcFlQYnBSOWljWHRIdjh6bmQ2QnQ5cFdFCklhWGUrZUMvUnlKUU14aWY4TmND
-            cWpzUUJtMkc3RS9TUUZicEJ3Wm9UNFUKLS0tIFRRdDRoaGpHRm8zZ0E4SkVheDR5
-            V29wMzQvNmR3Q0owSXpSbWwzNjN5K0EKVC3wg1TNAXhAD38PmE6VgMxd9Ru9T74t
-            a4sDOn1tKviG0MdegRMU38IcFBr5Hjus+koBmwWvOWOPkFnDUV0DdA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxb25LMlZ2dE1MVm55SUpu
+            R2hUOTV1NjBkdmdlMzV2bzJSQytSTXdpVFNRClh4YWFCTFcrbHBwcUR0cEFxeGR3
+            WnZ1VThheGJrdkdabUZBZ2xRU1ZxL2MKLS0tIGtGTzBvYzR3cXRHdjhPMFE4Vkox
+            eUNHdnh3cDVFUDdxOVdnM1BXdmd0c1EK55/fX9OaejjilZ7aBMuRXLRqcglgg3s9
+            EsmgIH6tHwBZ8v7CWS9EgD7xn4WXI6FZ+PlEi0cFxgHgSIzXxatacA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-02-26T12:57:12Z"
-    mac: ENC[AES256_GCM,data:lmwE0ovtGxkktxnunWJ5jJsEnv7FwJHQrizAdARu49WgobXKPElLIVIoz4peFKScpUxIj2Wqbvk0SPaPM5gf0vCVGclPRTqzfvJa91rN9VxvLOMu/Mck5Zk60rViT8I66dH7Cn8vr9y1fm5rJEjyfwPylKxBcXSwjzpkTGl4fgs=,iv:OCbkG2etvsxR15Knwi4PKAuiyhsk9T7x5WjE+mG2cxE=,tag:2g5DRIqLMbUelrCB1WgEhQ==,type:str]
+    lastmodified: "2024-02-26T13:25:23Z"
+    mac: ENC[AES256_GCM,data:kdsoUDp1hyJz62TDhvKhFiT1gG9mBSpdgAW+yVo2lkckUOC/dk7AP1PV656rqKu1Jyh1jla7C1ZCrQF/NTZ6+dVkH9SKOK92hSHN8OvqKl64eafABIIoXkrNdY9WrzxjOm6oW9V8B2Ih3q7XaZ9c/1j6VVChkm7iwGSD16pjkmM=,iv:U+H761hCGuUVbVq1V1V0WuugRB5ikd6jXU+zNUBGq20=,tag:rB692XNFkmexLm/JVz1VmQ==,type:str]
     pgp: []
     encrypted_regex: ^(secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
