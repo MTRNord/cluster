@@ -62,11 +62,12 @@ spec:
             enabled: false
         redis:
             enabled: true
-        tolerations:
-            - key: arch
-              operator: Equal
-              value: arm64
-              effect: NoSchedule
+        global:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
 sops:
     kms: []
     gcp_kms: []
