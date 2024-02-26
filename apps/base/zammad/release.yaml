@@ -61,61 +61,26 @@ spec:
             storageClass: nfs-csi
             existingClaim: zammad-data-csi
         elasticsearch:
+            image:
+                debug: true
+            clusterName: zammad
+            coordinating:
+                replicaCount: 0
+            data:
+                replicaCount: 0
+            ingest:
+                replicaCount: 0
             master:
+                heapSize: 512m
+                masterOnly: false
+                replicaCount: 1
                 tolerations:
                     - key: arch
                       operator: Equal
                       value: arm64
                       effect: NoSchedule
-                ## Configure extra options for Elasticsearch master-elegible containers' liveness, readiness and startup probes
-                ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-                ## @param master.startupProbe.enabled Enable/disable the startup probe (master nodes pod)
-                ## @param master.startupProbe.initialDelaySeconds Delay before startup probe is initiated (master nodes pod)
-                ## @param master.startupProbe.periodSeconds How often to perform the probe (master nodes pod)
-                ## @param master.startupProbe.timeoutSeconds When the probe times out (master nodes pod)
-                ## @param master.startupProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (master nodes pod)
-                ## @param master.startupProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
-                ##
-                startupProbe:
-                    enabled: false
-                    initialDelaySeconds: 90
-                    periodSeconds: 10
-                    timeoutSeconds: 5
-                    successThreshold: 1
-                    failureThreshold: 5
-                ## @param master.livenessProbe.enabled Enable/disable the liveness probe (master-eligible nodes pod)
-                ## @param master.livenessProbe.initialDelaySeconds Delay before liveness probe is initiated (master-eligible nodes pod)
-                ## @param master.livenessProbe.periodSeconds How often to perform the probe (master-eligible nodes pod)
-                ## @param master.livenessProbe.timeoutSeconds When the probe times out (master-eligible nodes pod)
-                ## @param master.livenessProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (master-eligible nodes pod)
-                ## @param master.livenessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
-                ##
-                livenessProbe:
-                    enabled: true
-                    initialDelaySeconds: 270
-                    periodSeconds: 10
-                    timeoutSeconds: 5
-                    successThreshold: 1
-                    failureThreshold: 5
-                ## @param master.readinessProbe.enabled Enable/disable the readiness probe (master-eligible nodes pod)
-                ## @param master.readinessProbe.initialDelaySeconds Delay before readiness probe is initiated (master-eligible nodes pod)
-                ## @param master.readinessProbe.periodSeconds How often to perform the probe (master-eligible nodes pod)
-                ## @param master.readinessProbe.timeoutSeconds When the probe times out (master-eligible nodes pod)
-                ## @param master.readinessProbe.successThreshold Minimum consecutive successes for the probe to be considered successful after having failed (master-eligible nodes pod)
-                ## @param master.readinessProbe.failureThreshold Minimum consecutive failures for the probe to be considered failed after having succeeded
-                ##
-                readinessProbe:
-                    enabled: true
-                    initialDelaySeconds: 180
-                    periodSeconds: 25
-                    timeoutSeconds: 5
-                    successThreshold: 1
-                    failureThreshold: 50
-                    # tolerations:
-                    #     - key: arch
-                    #       operator: Equal
-                    #       value: arm64
-                    #       effect: NoSchedule
+            metrics:
+                enabled: true
         redis:
             auth:
                 password: ENC[AES256_GCM,data:4nNZeqdqX00o+vvxBphpyWLBrJZ1bwU1kIjvySViVppbKouUZdYWLmKoDeGieXJ83Vnz8JV7FCFExiQAglLg0A==,iv:3HYo5GJ7Q5jd2Vv1X2LqW1dreETTIqZPR5sI4Kq+AV4=,tag:4zqh4lfEBwhLwRU+IhJzrA==,type:str]
