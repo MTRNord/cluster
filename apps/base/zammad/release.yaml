@@ -74,6 +74,8 @@ spec:
                 heapSize: 512m
                 masterOnly: false
                 replicaCount: 1
+                extraEnvVars:
+                    ELASTICSEARCH_ADVERTISED_HOSTNAME: zammad-elasticsearch.zammad.svc.cluster.local
                 tolerations:
                     - key: arch
                       operator: Equal
