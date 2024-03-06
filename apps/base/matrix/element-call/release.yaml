@@ -7,7 +7,7 @@ spec:
     interval: 5m
     chart:
         spec:
-            version: 0.1.7
+            version: 0.1.8
             chart: element-call
             sourceRef:
                 kind: HelmRepository
@@ -23,8 +23,22 @@ spec:
         # causing spurious drift detection
         force: true
     values:
-        livekit_key: ENC[AES256_GCM,data:LeqHT8NR2A23gFiM7MccFwpm8TGskdLpmP8jgHGfWBDmDpl31lH5s/jsWzANJIwa+OlREIaiZIWBW4wzzLDJ+g==,iv:1GXzmROVivgZRE3Sj34PimcGE40+dBfbW3u8C3j5J8g=,tag:3hmRi1AnORZLtO3A+yxH5Q==,type:str]
-        livekit_secret: ENC[AES256_GCM,data:Dqkh93XEogeBEOhoULVjqV93CKlAwpM6Y1vlXc2Wgz8NkPtsefFKVODezO1PAvPjsd+xUPWAUzmfeLj4V+1fiw==,iv:kS/iLoUBtz/iZSoPtAaqmokVjSmOYi8pT8H9TaYGWSg=,tag:bqXV88FtamRx1vsG75A4Ww==,type:str]
+        livekit_key: ENC[AES256_GCM,data:O/GmoPKbSQ87KNMfXy0CZPm+Zkkk9PGsa04IK2gfzJ6lFq9upngWTpjLAjBG91KMEdu16j/SUp0tcyIBa7e9Mw==,iv:AkoXtkQpxcExof7/9kj8fX57J0ltVede+7pDPunpVKc=,tag:rS9KW6rx1NmqaMifaJJUPQ==,type:str]
+        livekit_secret: ENC[AES256_GCM,data:QKi4oPNSoUHrLCaSVAm+fl513Rl7gJbKeBu6V/803Hk1FoBZizDYFsUcDgmB3smSN7XNZc76EUvtVItwiiLs+A==,iv:NT6wG+iczsUTScxhEWTyGKVQ8X+OFwjD9pQ6DdoqHmU=,tag:5plc1X4p3FCbtEhMaJnW0A==,type:str]
+        livekit_mgmgt:
+            ingress:
+                enabled: true
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-http
+                hosts:
+                    - host: call-jwt.midnightthoughts.space
+                      paths:
+                        - path: /
+                          pathType: ImplementationSpecific
+                tls:
+                    - secretName: call-jwt.midnightthoughts.space-tls
+                      hosts:
+                        - call-jwt.midnightthoughts.space
         element_call:
             replicaCount: 1
             config:
@@ -32,6 +46,8 @@ spec:
                 homeserver:
                     base_url: https://matrix-call.midnightthoughts.space
                     server_name: matrix-call.midnightthoughts.space
+                livekit:
+                    livekit_service_url: https://call-jwt.midnightthoughts.space:8080
             ingress:
                 enabled: true
                 annotations:
@@ -48,23 +64,23 @@ spec:
         livekit-server:
             livekit:
                 keys:
-                    bQXMwwlTCTbxDd6xRHYaaK5gzOzyb1gzS5E89vrJ96ONp3kEH4Ljh9su5L3BQc33: ENC[AES256_GCM,data:TuO1zkigvgqhQlOfVckPNeUWHViN6NATlcMtes9EOqAIkWO/0gSwqPH5oHteV0avWDdGvc1LGCCJaieM50ajmg==,iv:Z7wB+XZuHh35N7imS3GazZ9/SAfpbaRtITgPpgOC0FM=,tag:CvDP+JMwW7+gcC0bUWFetw==,type:str]
-                    iHMQVcTZSmUek9m55nFcvpGWaAR1nGpQggvEmvKyWqWbu099EjSZ2sQkU1ZMpR1h: ENC[AES256_GCM,data:gxxDmZIMiT+JdJxHZiodeU+bCW6yUcQVn+YRsjSu8FuJetoe/D+9SRqfde5WL9olL6uqvtp4ii6PWO1S7a7rVQ==,iv:S8R+qVyk1VeCroSDtdMn/YKtwB7hHZfjk29MKEk5ib8=,tag:POdBNCyIMN712LghiAXGfQ==,type:str]
+                    bQXMwwlTCTbxDd6xRHYaaK5gzOzyb1gzS5E89vrJ96ONp3kEH4Ljh9su5L3BQc33: ENC[AES256_GCM,data:sEfT/1+o7KwvWU8riI8gTgcO0zoCK+aCk4bS66ltvsINQEwAcc9iHkndKuEDmTgbe6GOu9zo4OEfMXp32S3uIg==,iv:UG6cu8Vg2b6KMPxo/PAoHAolgVI+63W/3TOpr1BrxfQ=,tag:h1PB/snhiWL+IqMNHw1dfA==,type:str]
+                    iHMQVcTZSmUek9m55nFcvpGWaAR1nGpQggvEmvKyWqWbu099EjSZ2sQkU1ZMpR1h: ENC[AES256_GCM,data:kRRtn2uM61zcmjwkYnZT+fjx4M3qe0oimizhAiJu01I91/Yixqi90O3Z2zwpw/oYljZ5xJAIZc/uTQ+i+BzRxw==,iv:NZPmH2kVZm6eQJa2HUC+flYjNsfzxqZNHmbmRw2iVeM=,tag:qVLLwgxe561Ypps3luOz6w==,type:str]
                 redis:
                     address: element-call-redis-master:6379
                     db: 0
-                    password: ENC[AES256_GCM,data:dXPMGEfEsYzLDCqsoYJ9FyTjBdcdJxuc457zIKFYqwZF0qtax+RLAExXLUJph+D23jY+iKP/ZMBaLkoUsXCfBg==,iv:81glRUIYD/bLntPnndzuYb99cHij8kVjRXwHPzE5BfI=,tag:0hFx6FNyLF3ATxPKDsUTtA==,type:str]
+                    password: ENC[AES256_GCM,data:mpux6/uOi0xq3v1osGkCqHtf8m+GexzV3gEahDFPKo+lTbUET1NVs21yXQplSusvhVZ1LNq258Kh+Ii+pCT4VQ==,iv:zjye8R7a7cnYspl68v6I2ztO6V2KeDlXdA4J1CyYJOA=,tag:run3FsL2lz3Ve+teggYNWA==,type:str]
         redis:
             auth:
-                password: ENC[AES256_GCM,data:zODP6OIsF69EttPmf4hpO/trHgIhqanzdIPGWCfrbQ4gHoT3NIpEl0AlGX0rl47GJc2TxgQlh/LwGjUUVKR46g==,iv:C6m5jno00u52kEBaZtgLyVVIy0HSurprbbR4q+OOyrg=,tag:KPULtbBnf04Y5zAfCvsuuQ==,type:str]
+                password: ENC[AES256_GCM,data:39RWrqqX/I+Qo9EERMD8fIEfAUGe97gE1KO9s93CflTgDeBAIoMvPYIeGyNB1iX+umve+bb03vjPtddOHYQliA==,iv:hsTtg4GJs8tnEZ2VNARxjiDjJxov2/xnKydHZUaL7do=,tag:zcKpKT9AyuXAv1bcB0pXdA==,type:str]
         egress:
             egress:
-                api_key: ENC[AES256_GCM,data:BWdg99dD6tejIU7DsrTPAswhE3feoygBo08+wsTnQ6P/WJwgPum2yYYtzYX23W1/0Y1kRAOydv2ChbZRjQUR8Q==,iv:1ajfvGHskFIj5Yq7maA86WRMica8hNf/ojdnF18hxNg=,tag:wNmDZ5L11ozb1TN8YWDBlg==,type:str]
-                api_secret: ENC[AES256_GCM,data:kJDe9HitFkS5yrj1zjdZluVZE18mizunCmqpV6ob5eRkTwLVL0zcG4bTHmHrVhgShe1kDXsz9Y7eoDF88ht8Vg==,iv:cPqMQx6EXrN1DHhcV3xxltg/hzyzalcvTYBOkFSpq5c=,tag:DBNA9QqnVGzbf1B2BatuDQ==,type:str]
+                api_key: ENC[AES256_GCM,data:jVT5ZdKvcskqFeW1LQ6bSlB29Ydty3TNFnyLzbGM1EeRRZmZPCJ/LWJx5IA9t7E5QX3CwDTEQGk6rY6kgtoeLw==,iv:yaZErGOjoPtRMaPcPSTuCUYDscrbIK3CGu5oAC0J2y0=,tag:qqsKvTuMaMydfnDIGlJlTA==,type:str]
+                api_secret: ENC[AES256_GCM,data:VtCb8x3eQOOxb9ZvOU9JUbonuZ9yFhar0147IKUwCxx78Q97Rv7d7S5hQP83Bx2MjeCxbHKBu3k4ry6as7Gq2g==,iv:BpjtZQKQ3uUs6srWDlFcnC9q1U2yOvqzT+62sw/sDGM=,tag:HSPYaWXNUUxawDcyj2W3Fg==,type:str]
                 ws_url: ws://element-call-livekit-server:7880
                 redis:
                     address: element-call-redis-master:6379
-                    password: ENC[AES256_GCM,data:CsVTNbHieWeOUUi7tJYvmGibEG5Ngw9LYBkK64sAfQc9HVRsgMuGqMH6DCGd6eDxxIXlKNZY64jGmEFWMhfXXg==,iv:OU1acYkGScJMMdMYkbjJAtzbN0qa/JXOi5IcuaSPVp8=,tag:oN+GWg3PXRIpNeCM4Lnw9Q==,type:str]
+                    password: ENC[AES256_GCM,data:8FJCURcQDZtBC7lEqnFt2aEGCW1vHDJZzCqC0RXZPGvYRzuxG0avyPXdu6gAXTJnkp75K9apU/XG0H4Hb98gxw==,iv:cdcqiYZ8VphOX5TXUDYDcMxRaxUXRZBy891yHvEx7Tw=,tag:tkqzZBwSgwW5pZ2e9I5mOQ==,type:str]
                     db: 0
 sops:
     kms: []
@@ -75,14 +91,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqeTNya21VTE1QZm5ybUdh
-            dGxqRjBIRWRKdnlBd2VlYWdaQ25qVDA4QzJ3CjJISU1XWG1hVkFBa2hkZ1pramkx
-            dnpGNUptM2RUdlcyYkhTV2ZrSVhqVzgKLS0tIGp5UmFIQ2ltRnE0eGRiUUFRVzgy
-            cVU4RjQ1d2pzYUVobDVtTzVPdHNlWGMKu5UHP/TFPSHoBL7LQv34dF8Zt4nUExsu
-            xupQIpEKbzGq2shOPMd+TOQU3R/+xS6b7l9eBi0ReGf/6UKxhCcx0w==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkQ044REhSRk5vUlhjUFpz
+            ZGtrQ2p2MjB0Z21zREZuaDBIbzU1MlhHSHp3CmFKYXVFUVZoY1gvc3VSS3B0VmdN
+            RmtIaG80QTRJK0YvRmVRY2Q0TytObjQKLS0tIDB2YUllQkxDeksyYkJHNHFSNG5l
+            bTFERk80TFd6TnJoSTlEekZERG5xWmMKso2Y0/JBhkuoRa8/oI1q+KO6avuSYRS2
+            vL3NHnU1+T1neGvxcI5OQ05T0Gkii20AwEvpIXAb6gJ7XcUsQjrXPQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-06T10:04:00Z"
-    mac: ENC[AES256_GCM,data:fuxjCHSPb4xKknu1El8CpbXBwm6S5WdUs4/l/UsCTo+2Psix5aTK58QHBfSGxUfjC+KkL6MMss/6XjgV+yeUy6cdt0lHvYopR3Pefa1pjUBqZMOGdfTDVS9R2EWExSEbKFfgrqlKuFL7YuKtBgJptCYIZvB5ew1JwVmYyqvFOD0=,iv:Ep9V8ibbvg56Gm6Z8Lr0vkbv1pST6OtiLhZ5jQDWa1E=,tag:34wBzPWxElkPUQ1brZIJbw==,type:str]
+    lastmodified: "2024-03-06T11:01:51Z"
+    mac: ENC[AES256_GCM,data:krigNmLcL9hYMOGNDV4I6o9o/mK02s7Y+1nsUG9zkVhPjDcziTzlRrXy7kS/CAs5BlWIoY/PoPeEst5it/lPIDrqHVMFIwhsGCefC+2Xba/v5nG9lGQ+36pT0XSkfrX1JXt3dN/aJGqE7x20ZsDWF0/7BC2vsjTBoZPufvTttfg=,iv:F3vNX6i5ecJV3FZg2fhJZIawGP0D+qIjWnUhEN2qZW0=,tag:ixewCAPgJssGSuTsFqE2SQ==,type:str]
     pgp: []
     encrypted_regex: ^(api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
