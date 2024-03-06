@@ -1,36 +1,34 @@
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-dns
-  name: element-call-tenant-ingress
+  name: element-call-tenant-console
   namespace: element-call
 spec:
-  ingressClassName: traefik
-  rules:
-    - host: s3.stream.nordgedanken.dev
-      http:
-        paths:
-        - backend:
-            service:
-              name: minio
-              port:
-                number: 443
-          path: /
-          pathType: Prefix
-    - host: console.call-s3.midnightthoughts.space
-      http:
-        paths:
-        - backend:
-            service:
-              name: element-call-hl
-              port:
-                number: 9000
-          path: /
-          pathType: Prefix
-  tls:
-  - hosts:
-    - call-s3.midnightthoughts.space
-    - console.call-s3.midnightthoughts.space
-    secretName: call-s3.midnightthoughts.space-tls
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: HostSNI(`console.call-s3.midnightthoughts.space`)
+      services:
+        - kind: Service
+          name: element-call-hl
+          namespace: element-call
+          port: 9000
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: element-call-tenant-s3
+  namespace: element-call
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: HostSNI(`call-s3.midnightthoughts.space`)
+      services:
+        - kind: Service
+          name: minio
+          namespace: element-call
+          port: 443
