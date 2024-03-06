@@ -8,12 +8,9 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - kind: Rule
-      match: HostSNI(`console.call-s3.midnightthoughts.space`)
+    - match: HostSNI(`console.call-s3.midnightthoughts.space`)
       services:
-        - kind: Service
-          name: element-call-hl
-          namespace: element-call
+        - name: element-call-hl
           port: 9000
   tls:
     passthrough: true
@@ -27,12 +24,9 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - kind: Rule
-      match: HostSNI(`call-s3.midnightthoughts.space`)
+    - match: HostSNI(`call-s3.midnightthoughts.space`)
       services:
-        - kind: Service
-          name: minio
-          namespace: element-call
+        - name: minio
           port: 443
   tls:
     passthrough: true
