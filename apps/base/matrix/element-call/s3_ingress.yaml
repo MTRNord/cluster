@@ -1,6 +1,6 @@
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: IngressRouteTCP
 metadata:
   name: element-call-tenant-console
   namespace: element-call
@@ -15,9 +15,11 @@ spec:
           name: element-call-hl
           namespace: element-call
           port: 9000
+  tls:
+    passthrough: true
 ---
 apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+kind: IngressRouteTCP
 metadata:
   name: element-call-tenant-s3
   namespace: element-call
@@ -32,3 +34,5 @@ spec:
           name: minio
           namespace: element-call
           port: 443
+  tls:
+    passthrough: true
