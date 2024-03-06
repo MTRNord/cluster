@@ -4,31 +4,31 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
-  name: element-call-tenant-ingress                                                                                                                                                                                       
+  name: element-call-tenant-ingress
   namespace: element-call
 spec:
   ingressClassName: traefik
   rules:
-  - host: s3.stream.nordgedanken.dev                                                                                                                                                                                 
-    http:
-      paths:
-      - backend:
-          service:
-            name: element-call-hl
-            port:
-              number: 80
-        path: /
-        pathType: Prefix
-  - host: console.call-s3.midnightthoughts.space
-    http:
-      paths:
-      - backend:
-          service:
-            name: element-call-console
-            port:
-              number: 9000
-        path: /
-        pathType: Prefix
+    - host: s3.stream.nordgedanken.dev
+      http:
+        paths:
+        - backend:
+            service:
+              name: element-call-hl
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
+    - host: console.call-s3.midnightthoughts.space
+      http:
+        paths:
+        - backend:
+            service:
+              name: element-call-console
+              port:
+                number: 9000
+          path: /
+          pathType: Prefix
   tls:
   - hosts:
     - call-s3.midnightthoughts.space
