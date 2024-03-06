@@ -22,8 +22,8 @@ spec:
         # causing spurious drift detection
         force: true
     values:
-        livekit_key: ENC[AES256_GCM,data:PR3Rgu80xHY3a2m3Z49NC8BeWGoxlH2SB8mBW/Ec+DKzrGXG0jrViMsU4WUZLFAmTrq+SYWgS0LsRr7bj4Jlkg==,iv:fo4A3Qo8SDnSP2UU2A9x+ECP4ipWXSNiRS3fuFQXzsU=,tag:FncbR8Mj8I8PDBanGgu/UQ==,type:str]
-        livekit_secret: ENC[AES256_GCM,data:h1Drkyb6mcl03x5pI3N179nvcom0rCVmhbwcbLcwt6+5igMlJ9QuGgGTwJ0jFsnmJFiE8iB1I0HFqDsfnZr/Tg==,iv:xV0acFiKVA9Qv/+2UMPeqaaEUUtLiApqkZky5b0LY7c=,tag:2LKU9h3nRVYUw+FeRg1JOQ==,type:str]
+        livekit_key: ENC[AES256_GCM,data:cg6aNFDZouHtkDXcJ1gtIlpPxaqndd9Usp2OyZsL5aPwn+WYmQ3I0rzPAMgPtXEmOY1wXr7b+K0b79vUsiL8vA==,iv:yFbpMwRpIR25Rp0KNUxnWrfGc3Epsck7TpKzX200Azs=,tag:grB+d8zYJD8phVfo/K5Ckw==,type:str]
+        livekit_secret: ENC[AES256_GCM,data:EazZgjiZijhJqYySzTGtsiImAEzCN93bhZ0N+D8PoTC0dS0rmAh7LNg8HW43Z9vcTqjTH7xhDZhhKxX1/FU8rQ==,iv:w8vgneuaBoPELYJPmmNq4mGIUfj1Tnyqr7d9XNJ5z1U=,tag:HTX18sXBzvF9Wk6Wpo8HmQ==,type:str]
         element_call:
             replicaCount: 1
             config:
@@ -47,19 +47,23 @@ spec:
         livekit-server:
             livekit:
                 keys:
-                    bQXMwwlTCTbxDd6xRHYaaK5gzOzyb1gzS5E89vrJ96ONp3kEH4Ljh9su5L3BQc33: ENC[AES256_GCM,data:SLYXGdqRty/qOB/wfOVaNzTMjumJqlvrFKQ0UW6dPon5zN8hu/WQTkS9x0ociqXRKWRKNpBbvbLawws0cS7pTg==,iv:FuOAkaXHLnrBott6wgYi5QlkFPxTMcu9idQz/xCSbFw=,tag:kk/lSnrBI58z54xOWxYOVQ==,type:str]
-                    iHMQVcTZSmUek9m55nFcvpGWaAR1nGpQggvEmvKyWqWbu099EjSZ2sQkU1ZMpR1h: ENC[AES256_GCM,data:YgBTzx3UTjdDR7Oj09QM5rcKbvwXQFj5zK2gFNJHfEhrj1ItnCcs42gK4CHXEWwA/SDuGveNn9tV2d4WfJijVw==,iv:dUu8hG/n2QNSNfx5OIia8y1GlCXsTgy9a3QY5mYyNEE=,tag:kJGH3C+Xcwd4yZPHoIGRng==,type:str]
+                    bQXMwwlTCTbxDd6xRHYaaK5gzOzyb1gzS5E89vrJ96ONp3kEH4Ljh9su5L3BQc33: ENC[AES256_GCM,data:RidTDxO7t8R51u1C57xlQ6icALJomwT+zlPAKNHeuP5kS+YaZGAi6YGLRzxsbPeUhj8iCipKYOHIRmkXyqTimw==,iv:ifeolt6Y5wkyyR7/H466N1oA8W9kDDdfAGvDuHcHiAg=,tag:kn/Q+rYGzkp12pJwv9lksw==,type:str]
+                    iHMQVcTZSmUek9m55nFcvpGWaAR1nGpQggvEmvKyWqWbu099EjSZ2sQkU1ZMpR1h: ENC[AES256_GCM,data:r36pJpus3xwoi4LFaaFg0VbOdVT30CcEDObx2QIQhIgdbuRBQ82C5HTSvFm5+qNFLD3wAuaTGfxVhYy0zbbK2w==,iv:7zTqpvgwHR4399trd93Sw7icuttRwKNGjPF9AnzKHG8=,tag:8h5k5Uq5TjJR1MUEnkfPrA==,type:str]
                 redis:
                     address: element-call-redis-master:6379
                     db: 0
-                    password: ENC[AES256_GCM,data:REpTMwk1whnOtP7gg5fhtez1P9djxhbA7dHYpfruuO4dhR9i0nokh6pzlYpP0ajxAC1fIYXwOUnnhQHEWVjhXA==,iv:t1Ra5vlLeA07vUtUaaF/KH+zBFErPwxIzAMEs3L3UJY=,tag:Krv2AsgjC8VX7C+sBvlB1Q==,type:str]
+                    password: ENC[AES256_GCM,data:82T7f0Kdjai8S62lCZwR+JJm9LeWoj2P02a064V3CsFt6Rf8UhNWE1nBFStbmgZmm/13Xqgvg/jsgoErMDeNrQ==,iv://bjspLVs6NVEdBs9SmV7bTyij5RE+w1WZNEyiPfb+g=,tag:mjKDt0k56ejCi9KvZrwM9Q==,type:str]
         redis:
             auth:
-                password: ENC[AES256_GCM,data:NKe98UcOJttyNXzZNISin3WnSHX5iF4LvkKK2du5aiNchcdDpqj+JSVINYIG0Pge9nOoyRWpwvt4hBC1Ds8uug==,iv:bNtFDQlg0ABkTh0+QEsRYTQN0/wiixd1hpGeYMoLyck=,tag:WrtuPnbzl/hQU4WJUSzDUA==,type:str]
+                password: ENC[AES256_GCM,data:+EW64PNG9T706z0ySdeid2aI13OLLVbYvPTqfd0MZKJif3m2mfix6CFkxC+OVj33/CWIGGmKaxwDtTTqB5aT+g==,iv:FVVFyQvAivhFyzFct6ol86EB97igF+VrjNWD5ujTpjI=,tag:YoCO97u8y8mjWfsl4yrOww==,type:str]
         egress:
-            api_key: ENC[AES256_GCM,data:hwEd4uoH6mri7++jWsjFD+mVIrqqfUNNZnt6PIxy+bV1V052PwaLZVgeCRekYTQXsJc0wPFbEQGu1DCedlTdGA==,iv:Lj/bLwkvQsJDg9SMmMfcr7j8KVSa5vJ/pf29YnDqsSo=,tag:d79HA0Dn1MbKVnn+mnssSA==,type:str]
-            api_secret: ENC[AES256_GCM,data:tbqvnx05I14k4mpzSrAzDjgS9e4sr52j5+TKgFcXYCz5VfCfsiToKxEnoL9sZjS1QygZCSS8I2GE7WaJr9tO0Q==,iv:1S7G5f4wtMGYtv6htl/oMG3QMcXDgHSV1fZDDaIWERY=,tag:sc5MGvWE9F2fJSoqlKtwXg==,type:str]
+            api_key: ENC[AES256_GCM,data:8ZS3WyFfOi2tVvelvYKBOuixGjNFD8DaUWXhVrBMmKjc/1Uuw3vKAS4x57S7chMeLAj5H0BVaW6h1JiQmn5vlA==,iv:ORdUf1MHKZc16j30MDIYbUeZVv0yIhu9UeL1eJvxE7c=,tag:vuHRuduqTFCNbvPWIeQPhg==,type:str]
+            api_secret: ENC[AES256_GCM,data:2hidnip+P2qsGwciHndtmZLrDX+2B6mdbFtGpGDsmj6Dpe9e31SXv9DqHSxw+qMBPVj93RXE6bdUFb4NBwJ9pw==,iv:EYKBWnr918wOnuIFu3hK1dNV6t1atOQ8crTOANDhdkw=,tag:gY2xOAESXf+rWTj2kPFfaw==,type:str]
             ws_url: ws://element-call-livekit-server:7880
+            redis:
+                address: element-call-redis-master:6379
+                password: ENC[AES256_GCM,data:n5JZbwYb7JbcRXVo74hQZb4r102Xw7bguaN7tOwCdAwM0SLAS8fFGbCL8p/R0SdCeFA0/pVQErMITP+WRzCIPw==,iv:9MQTEasa9pGjiAEQokhvG4v/jznKUx/ssyaNe95+/xA=,tag:yPSLA6KtbGYISq5hMDgp3A==,type:str]
+                db: 0
 sops:
     kms: []
     gcp_kms: []
@@ -69,14 +73,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnWW5ya29WemQxRzk1bytq
-            UzV3ak40MlZlT0lvZ1h5QmxZMUdnUm9GVXdBCjNNTGdsQ1dOTVg0RlRhSE1QU0gr
-            dWU3L3A4TG9mVFdoU1ZCekhKem1lS2MKLS0tIGNOVUJ0VkYvd2VldjJMbnhueVg0
-            RlFqMytTVUxwKytLWkg5UkFlQWJ3R0EK3d6SXxLtiYI7P8ffM+ieAuKCPARoEWcv
-            gBJWmVoPP0JRO7RPYTkw/MJlCwU2JG4Li+qxNhz7Wv6e9zjY5eW43g==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBVeDNibjd2NjZmdTVuOWtD
+            aE4yalhpeTZhZEozZDZ6YVJWUktUdTlIMXhNCjY1MXA2WkxBSThad0FORzk0OGRu
+            MHBpRlpielFnZmxGMld0ZWhZSmNRUkkKLS0tIGoyZTNFTlZQVmE4MTQzR0pXd3JK
+            WlJVd0pYQUY2ZTVJd0VXUnNsRWlsSVEKlszJaG9Ow/vt2CWCLnrlXTigUy5TDy56
+            sz6InUa4tsj+l1GiBgRLHaBeKXyeyl/eo6JJRJaARcVT7U446YM39A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-06T09:47:10Z"
-    mac: ENC[AES256_GCM,data:Geuwyz5oX3Bp8EWKiuXH0tdLWOBL5FFrtoiS6JaNpL3d76r7U4gjvYCO+WkM1btEp8F+beqJIG/zJWJBCnFKT0OHjVKmJ4kFchYRDvPsx8vuIWPd8sVilgKbEPd7M1RX8kOhfvP7ExjncPXSP4uvnQhVwHFFLJTBuq+8NyFolcM=,iv:DBz+vYjjepfevXWlVfJzmAk1YhHSl4Q+YwlHZhEeJz8=,tag:zK+ElwOABqUU1jo8duiHBA==,type:str]
+    lastmodified: "2024-03-06T09:58:20Z"
+    mac: ENC[AES256_GCM,data:kKuEF3lYlQ6QHNjZ1FGHXm+insWKoKID9TeCIGepWyXTvD9xjAjMDzR9t+tzv+Eyt1WF7ke/bvPspX6f0O9ITcUiOszHFiUR6YhVx/U01yrb6as9TcXoYJ8onK90ykkeKTtHQONQKn9Yg6BGeEpKSG51AkQEGRWSmZ/YYhgmvNM=,iv:eJoMKQCG1FKkGmnr1HHZpCONBhhwL9hDoezDMNN4PDA=,tag:VJ/DU4Fe1muwZUhQkfE+Jg==,type:str]
     pgp: []
     encrypted_regex: ^(api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
