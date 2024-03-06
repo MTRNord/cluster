@@ -22,9 +22,9 @@ spec:
       run_background_tasks_on: background_worker
       presence:
         enabled: false
-      federation_sender_instances:
-        - federation-sender-1
-        - federation-sender-2
+      #federation_sender_instances:
+      #  - federation-sender-1
+      #  - federation-sender-2
       event_cache_size: 10K
       caches:
         global_factor: 10
@@ -103,13 +103,13 @@ spec:
           - "/_matrix/client/(api/v1|r0|v3|unstable)/profile/"
       federation_reader:
         replicaCount: 2
-        enabled: true
+        enabled: false
         generic: true
         listeners: [federation]
         paths:
           - "/_matrix/federation/v1/send/"
       appservice:
-        enabled: true
+        enabled: false
         name: appservices
         generic: true
       federation_sender_1:
@@ -117,13 +117,13 @@ spec:
           synapse-component: federation-sender
         app: federation_sender
         name: federation-sender-1
-        enabled: true
+        enabled: false
       federation_sender_2:
         labels:
           synapse-component: federation-sender
         app: federation_sender
         name: federation-sender-2
-        enabled: true
+        enabled: false
       background_worker:
         name: background_worker
         replicaCount: 1
