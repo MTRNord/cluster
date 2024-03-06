@@ -1,0 +1,41 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: element-call-synapse
+  namespace: element-call
+spec:
+  chart:
+    spec:
+      version: 3.7.x
+  values:
+    signingkey:
+      job:
+        enabled: true
+    serverName: matrix-call.midnightthoughts.space
+    publicServerName: matrix-call.midnightthoughts.space
+    wellknown:
+      client:
+        m.homeserver:
+          base_url: https://matrix-call.midnightthoughts.space
+    config:
+      reportStats: true
+      enableRegistration: false
+    extraConfig:
+      use_presence: false
+    ingress:
+      traefikPaths: true
+      hosts:
+        - matrix-call.midnightthoughts.space
+      tls:
+        - hosts:
+            - matrix-call.midnightthoughts.space
+          secretName: matrix-call-midnightthoughts-synapse-tls-secret
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-http
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
+    externalPostgresql:
+      username: element_call_synapse
+      ## The name of an existing secret with postgresql credentials
+      existingSecret: element-call-postgresql
+      database: element_call_synapse

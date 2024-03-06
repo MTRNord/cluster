@@ -1,0 +1,185 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: element-call-synapse
+  namespace: element-call
+spec:
+  chart:
+    spec:
+      chart: matrix-synapse
+      sourceRef:
+        kind: HelmRepository
+        name: ananace-charts
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    extraConfig:
+      stream_writers:
+        events: event_persister
+      run_background_tasks_on: background_worker
+      presence:
+        enabled: false
+      federation_sender_instances:
+        - federation-sender-1
+        - federation-sender-2
+      event_cache_size: 10K
+      caches:
+        global_factor: 10
+        expire_caches: true
+        cache_entry_ttl: 240m
+        cache_autotuning:
+          max_cache_memory_usage: 2048M
+          target_cache_memory_usage: 1024M
+          min_cache_ttl: 5m
+    wellknown:
+      enabled: true
+      extraData:
+        support:
+          admins:
+            - email_address: "support@nordgedanken.dev"
+              role: "admin"
+    image:
+      pullSecrets:
+        - name: docker
+    persistence:
+      size: 10Gi
+      accessMode: ReadWriteMany
+    volumePermissions:
+      enabled: true
+    workers:
+      default:
+        tolerations:
+          - key: "arch"
+            operator: "Equal"
+            value: "arm64"
+            effect: "NoSchedule"
+        extraConfig:
+          event_cache_size: 30K
+          caches:
+            global_factor: 10
+            expire_caches: true
+            cache_entry_ttl: 1080m
+            sync_response_cache_duration: 2m
+            cache_autotuning:
+              max_cache_memory_usage: 4069M
+              target_cache_memory_usage: 2048M
+              min_cache_ttl: 5m
+      generic_frontend:
+        replicaCount: 2
+        enabled: true
+        generic: true
+        listeners: [client]
+        csPaths:
+          # Client API requests
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/createRoom$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$"
+          - "/_matrix/client/(r0|v3|unstable)/account/whoami$"
+          - "/_matrix/client/(r0|v3|unstable)/devices$"
+          - "/_matrix/client/versions$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$"
+
+          # Encryption requests
+          - "/_matrix/client/(r0|v3|unstable)/keys/query$"
+          - "/_matrix/client/(r0|v3|unstable)/keys/changes$"
+          - "/_matrix/client/(r0|v3|unstable)/keys/claim$"
+          - "/_matrix/client/(r0|v3|unstable)/room_keys/"
+          - "/_matrix/client/(r0|v3|unstable)/keys/upload/"
+
+          # Registration/login requests
+          - "/_matrix/client/(r0|v3|unstable)/register$"
+          - "/_matrix/client/(r0|v3|unstable)/register/available$"
+
+          # Event sending requests
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/join/"
+          - "/_matrix/client/(api/v1|r0|v3|unstable)/profile/"
+      federation_reader:
+        replicaCount: 2
+        enabled: true
+        generic: true
+        listeners: [federation]
+        paths:
+          - "/_matrix/federation/v1/send/"
+      appservice:
+        enabled: true
+        name: appservices
+        generic: true
+      federation_sender_1:
+        labels:
+          synapse-component: federation-sender
+        app: federation_sender
+        name: federation-sender-1
+        enabled: true
+      federation_sender_2:
+        labels:
+          synapse-component: federation-sender
+        app: federation_sender
+        name: federation-sender-2
+        enabled: true
+      background_worker:
+        name: background_worker
+        replicaCount: 1
+        enabled: true
+        generic: true
+      event_persister:
+        name: event_persister
+        replicaCount: 1
+        enabled: true
+        generic: true
+        listeners: [replication]
+    synapse:
+      tolerations:
+        - key: "arch"
+          operator: "Equal"
+          value: "arm64"
+          effect: "NoSchedule"
+      ## Liveness probe configuration to use
+      ##
+      livenessProbe:
+        timeoutSeconds: 60
+        failureThreshold: 5
+        httpGet:
+          path: /health
+          port: http
+
+      ## Readiness probe configuration to use
+      ##
+      readinessProbe:
+        timeoutSeconds: 60
+        failureThreshold: 5
+        httpGet:
+          path: /health
+          port: http
+
+      extraCommands: []
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/_synapse/metrics"
+        prometheus.io/port: "9090"
+
+    redis:
+      architecture: standalone
+      # master:
+      #   tolerations:
+      #     - key: "arch"
+      #       operator: "Equal"
+      #       value: "arm64"
+      #       effect: "NoSchedule"
+    postgresql:
+      enabled: false
+    externalPostgresql:
+      #host: postgres.internal.midnightthoughts.space
+      host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+      port: 5432
+
+      ## Password key to be retrieved from existing secret
+      element-call-postgresql: password
+      sslmode: require
