@@ -14,9 +14,9 @@ spec:
         paths:
         - backend:
             service:
-              name: element-call-hl
+              name: minio
               port:
-                number: 80
+                number: 443
           path: /
           pathType: Prefix
     - host: console.call-s3.midnightthoughts.space
@@ -24,7 +24,7 @@ spec:
         paths:
         - backend:
             service:
-              name: element-call-console
+              name: element-call-hl
               port:
                 number: 9000
           path: /
