@@ -44,7 +44,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-dns
+    cert-manager.io/cluster-issuer: letsencrypt-http
     traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd,matrix-mjolnir-fluffy-replacepathregex@kubernetescrd,matrix-mjolnir-fluffy-fix-cors@kubernetescrd
   name: fluffy-mjolnir
   namespace: matrix
