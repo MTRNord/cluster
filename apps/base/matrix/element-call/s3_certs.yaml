@@ -11,6 +11,7 @@ spec:
     - console.call-s3.midnightthoughts.space
   issuerRef:
     name: letsencrypt-http
+    kind: ClusterIssuer
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -24,3 +25,4 @@ spec:
     - call-s3.midnightthoughts.space
   issuerRef:
     name: letsencrypt-http
+    kind: ClusterIssuer
