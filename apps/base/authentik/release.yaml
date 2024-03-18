@@ -48,7 +48,7 @@ spec:
         server:
             env:
                 - name: AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS
-                  value: "127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fe80::/10,::1/128,10.244.0.0/24,fc00::/112,10.244.1.0/24,fc00::1:0/112,10.244.3.0/24,fc00::3:0/112"
+                  value: "127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fe80::/10,::1/128,10.244.0.0/16,fc00:0::/96"
             ingress:
                 annotations:
                     cert-manager.io/cluster-issuer: letsencrypt-http
