@@ -1,0 +1,16 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: openldap
+  namespace: openldap
+spec:
+  entryPoints:
+    - ldap
+  routes:
+    - match: HostSNI(`users.midnightthoughts.space`)
+      services:
+        - name: openldap
+          port: 636
+  tls:
+    passthrough: true
