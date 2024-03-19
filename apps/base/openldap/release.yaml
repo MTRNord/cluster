@@ -25,10 +25,10 @@ spec:
         #    tag: 2.6.7
         global:
             ldapDomain: users.midnightthoughts.space
-            adminUser: ENC[AES256_GCM,data:25tp3e6eLQ==,iv:pyDid6JGyByvoj6WJyVGqlVFMbQkBv7dEAxClxPJZsQ=,tag:coJSZj41BfXcUiHJnKf4jw==,type:str]
-            adminPassword: ENC[AES256_GCM,data:4ONRXd9gnj6oviEGNjz5bzxIPSqPoiy0dvY+E+RekqjYc1fnEzg4Z8vWhRn3QeL/CcuI+lzbd+1Y4Df95BUqhg==,iv:IPQG6E6MovpuGnS1YnDPvyQL62K8VqDu/Ob3e+0wReI=,tag:GoFY3Lhj28/2CkDdw8fzGA==,type:str]
-            configUser: ENC[AES256_GCM,data:BG54cWaa9Q==,iv:ZsrFCLn7tV9JWGuQoLg6w0uXuOGCShp/7ycoliKrq/c=,tag:/R80StjQf+zhRZKAq4ejcQ==,type:str]
-            configPassword: ENC[AES256_GCM,data:dbRBRedVwSuLutdsmbiHHIxiTMLpcggrJLzqbjrU/4SlQa91yiHnsW3BLIrRUrKIilHRja68Bu49zxojuj1sQA==,iv:UOn7Rg2RUvJQAhszbvXIcTlqySKWh16rTM8eyCtqY18=,tag:nFVHoIjjww1DSMPKYXNh6g==,type:str]
+            adminUser: ENC[AES256_GCM,data:JWpqx3I2tg==,iv:McM7pnMp7nCJ774d0Hc/915P2vTEm+uj5BWqf1oKWkk=,tag:PoTU3cdkxA7iN+85E9AKuQ==,type:str]
+            adminPassword: ENC[AES256_GCM,data:D6gZ8J0iTaMmEYVPrihY/ATxY3DKE4PrOoQPFLHcCUmJhr3akzhP/+2BIBf1WFmKGVHTrz6Kt+CIH+eESSbREg==,iv:8SqgO8xB+HElimNB5Xm0MZYyU3GmyCUAbenHzA3e5zs=,tag:8bzIQbzlGQBPsYMf7FJvMg==,type:str]
+            configUser: ENC[AES256_GCM,data:XZj5fxDICw==,iv:8TOcULQAN3fNU294iivQ8Ho6CljCMjgQ5/Apxme1D88=,tag:7xaEtyZkQf5WH3UMRiWraA==,type:str]
+            configPassword: ENC[AES256_GCM,data:7g8JyfJyq/+msadtQMx/v/SGYjB3gkqsN3RmRJtvIpBLCb6itHjGQWgUv7bEhz/TPiIxb45P2KBruiQ0Y0SHEA==,iv:vsC6WpC8NU+mDD+WkwO+b8mLCPdKbtx5LRMKGVsoc6Q=,tag:4TvNrjajDg/+iv27btlBNQ==,type:str]
         pdb:
             enabled: true
         persistence:
@@ -40,13 +40,20 @@ spec:
         #      effect: NoSchedule
         initTLSSecret:
             tls_enabled: true
-            secret: ENC[AES256_GCM,data:OnCQT0huyoggSzd7KL/Hldl4oInJmzUretcrlM3LaFc=,iv:m61zFa3wjLNPPV4y3LkN5xYWA/f5gT6vl+kxJTBffPE=,tag:Squ5RedC/a1X6s1AX0U6Yw==,type:str]
+            secret: ENC[AES256_GCM,data:u3izjkFjumJobsDqiDEBxcSN+htoxfgBU3sYX1nEPN0=,iv:Ho8zWj56fq4ciqls6QZalxANTv+V9bkIlaqFyhLGcAk=,tag:QQ+e6d5RLdYBi4+DH+8N/A==,type:str]
         ltb-passwd:
             enabled: false
         env:
             LDAP_ALLOW_ANON_BINDING: "false"
             LDAP_LOGLEVEL: "64"
         phpldapadmin:
+            image:
+                repository: leenooks/phpldapadmin
+                tag: 2.0.0-dev
+            env:
+                APP_KEY: ENC[AES256_GCM,data:BBaMql325Pq+rtdaKE6gbb2ZlV2KsSmjFYKHw9rBKfrlJX0fLIcdmrSbb6rpupzpPzpi,iv:6uoazkfhf/7wpJyIWqw9aL/LSC3zav9ZPEbYiFwitWM=,tag:BTT8IL15uP826zhBI50gqg==,type:str]
+                APP_URL: https://admin.users.midnightthoughts.space
+                LDAP_HOST: users.midnightthoughts.space
             enabled: true
             ingress:
                 enabled: true
@@ -72,14 +79,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA1cWJ1Z0t3akVuQ2sveSsw
-            YVQyWHRmdkpxQ3pGa2gwakFMcTdoS01RblFJCjNGNDdBcGJPQUlVWEpsK084d1pK
-            SERRaHBnOHFGOHRZclJOT1dsVTY2aXMKLS0tIGpUaWJkUGwrWmJqZHVZNWtuRkcz
-            VFU0a0hjMVJ0bU44S0QyY0VDV1pFS2MKL2V0VSuUqCHIQj730lpY/icE32w+sP7X
-            I5acmwmgQ72linD3X8tgexV1TIZRutR35o2vaRhhX0ibcAKMkoSmFg==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrUlRuVVI1SlE5aENlb0NP
+            MlRScGZpeS82Tnppem42VHdRNTJFU0dZRlVJCkVkV2xIcC81ZUlYYk9qREQ0RjBm
+            Y3A1a2ZqaFVEVTRmNVpYM3pENnhEOU0KLS0tIEdxZVJCSW8wMlZNeVB3K2Z6Wk5I
+            b0ZFV2kyc2NPTnh4SHBVaG1SdmFpMEEKo0ve4eahGoKVBQFr/bX/ifOM1ppl4CTB
+            yp3UbtvFnphHH/ic7zoVcyyu/GJmpU80UaJqKgQGKpMEZazPcsAlHQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-19T20:52:23Z"
-    mac: ENC[AES256_GCM,data:7X6D03/+CU62silHN7gsRKNm/CcfMgo7Xii/jRuVho3LwgNJ22WSTIZ+DZdOjEoVbejkhh2zKXcU6wzQXXF/I5eRSi/WcuFB+y9HFPdF1n7PchsTMuDtSp895BlbxRgETV3jnNCModh8YPm6xgUtSJnbz2Od57W4Ju1Hln0KV4c=,iv:t0N9Gkbwlmem5WhOUBBcsPRpph6S46nt41XKN5doS5k=,tag:hfVCMWpB4lMMwmUOcqnwzQ==,type:str]
+    lastmodified: "2024-03-19T22:05:24Z"
+    mac: ENC[AES256_GCM,data:xL68eripEKPNjjILb/9VQVAs9lMNgqEBytQo/YjGO0M8x3j1C6O4BET4ugkDeX3XC+GaUMbjIUhECQXBO/Fk10ik+XZD0JBqesXAYrQhnrpIrOcCXtZukmJHPwhg6JnjtDM1bvNhcrnfqtFInt87Cs1+nnohsNjA3Wn4dXRV/ZQ=,iv:4G3QXZfZwMHXYJrZZammhAaKpENoA1DrYdSUIuQQwAE=,tag:VvopUe9DnsBfa2nSam/kAQ==,type:str]
     pgp: []
-    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
