@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - ldap
   routes:
-    - match: HostSNI(`users.midnightthoughts.space`)
+    - match: HostSNI(`*`)
       services:
         - name: openldap
           port: 636
