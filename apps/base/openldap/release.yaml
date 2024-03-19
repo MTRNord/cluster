@@ -18,11 +18,10 @@ spec:
         remediation:
             retries: 3
     values:
-        # See https://github.com/jp-gouin/helm-openldap/blob/a42826ff5969e52f32fe65d39d9d5547f4e64a75/README.md#scaling-your-cluster for upping it
-        replicaCount: 1
-        #image:
-        #    repository: bitnami/openldap
-        #    tag: 2.6.7
+        replicaCount: 3
+        image:
+            repository: bitnami/openldap
+            tag: 2.6.7
         global:
             ldapDomain: users.midnightthoughts.space
             adminUser: ENC[AES256_GCM,data:nQJrPqzFXQ==,iv:Lu1ggHiSJTxWASH+jFLPyDO3Mis652vzNER1q9B58o4=,tag:0/lj/eOubV9+hq1i/mu0/g==,type:str]
@@ -33,18 +32,18 @@ spec:
             enabled: false
         persistence:
             storageClass: nfs-csi
-        #tolerations:
-        #    - key: arch
-        #      operator: Equal
-        #      value: arm64
-        #      effect: NoSchedule
+        tolerations:
+            - key: arch
+              operator: Equal
+              value: arm64
+              effect: NoSchedule
         initTLSSecret:
             tls_enabled: true
             secret: ENC[AES256_GCM,data:TwGu60ovQkWvzihgshfZEzFW0qBmJCRKxfiVRQD1Afc=,iv:70sUSt+6bIjvbV6RdsdAWj0TzGrvGysNRjbnLh0y15I=,tag:Oc4NXinAM680EpDECewzpA==,type:str]
         ltb-passwd:
             enabled: false
         env:
-            #LDAP_ALLOW_ANON_BINDING: "false"
+            LDAP_ALLOW_ANON_BINDING: "false"
             #LDAP_LOGLEVEL: "64"
         phpldapadmin:
             image:
