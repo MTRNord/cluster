@@ -18,9 +18,11 @@ spec:
         remediation:
             retries: 3
     values:
-        image:
-            repository: bitnami/openldap
-            tag: 2.6.7
+        # See https://github.com/jp-gouin/helm-openldap/blob/a42826ff5969e52f32fe65d39d9d5547f4e64a75/README.md#scaling-your-cluster for upping it
+        replicaCount: 1
+        #image:
+        #    repository: bitnami/openldap
+        #    tag: 2.6.7
         global:
             ldapDomain: users.midnightthoughts.space
             adminUser: ENC[AES256_GCM,data:25tp3e6eLQ==,iv:pyDid6JGyByvoj6WJyVGqlVFMbQkBv7dEAxClxPJZsQ=,tag:coJSZj41BfXcUiHJnKf4jw==,type:str]
@@ -31,11 +33,11 @@ spec:
             enabled: true
         persistence:
             storageClass: nfs-csi
-        tolerations:
-            - key: arch
-              operator: Equal
-              value: arm64
-              effect: NoSchedule
+        #tolerations:
+        #    - key: arch
+        #      operator: Equal
+        #      value: arm64
+        #      effect: NoSchedule
         initTLSSecret:
             tls_enabled: true
             secret: ENC[AES256_GCM,data:OnCQT0huyoggSzd7KL/Hldl4oInJmzUretcrlM3LaFc=,iv:m61zFa3wjLNPPV4y3LkN5xYWA/f5gT6vl+kxJTBffPE=,tag:Squ5RedC/a1X6s1AX0U6Yw==,type:str]
