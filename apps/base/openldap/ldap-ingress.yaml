@@ -11,6 +11,6 @@ spec:
     - match: HostSNI(`*`)
       services:
         - name: openldap
-          port: ssl-ldap-port
+          port: ldap-port
   tls:
-    passthrough: true
+    secretName: users.midnightthoughts.space-tls
