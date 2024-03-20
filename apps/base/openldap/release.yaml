@@ -24,10 +24,10 @@ spec:
             tag: 2.6.7
         global:
             ldapDomain: users.midnightthoughts.space
-            adminUser: ENC[AES256_GCM,data:xHpXdRIXRw==,iv:TieDU2op3Hje9Uv6FO5QSucKUyjuTEkTxl2pkO/1aOI=,tag:blFQ+kzudaXcMd3kdP0NiA==,type:str]
-            adminPassword: ENC[AES256_GCM,data:y2swlu4IO+tg,iv:676O6OO7rQqb3KKxE8FdeXGDHvTzojmzfK6J+lTXS9g=,tag:ZdY4v51Ofv+V1VIe/EgxyQ==,type:str]
-            configUser: ENC[AES256_GCM,data:T4pFJSxcCA==,iv:AR8VrGRfscIEC89lyp+jhjVDt6UXJilnksc8HZ99mgM=,tag:TJ40YhTCtYPguyjsJpwLNg==,type:str]
-            configPassword: ENC[AES256_GCM,data:J6ISHSRtSQXz,iv:9LJdB7e0FQZ8Ikn1EDdD9UywMxhw2qeLpBGWJRCW+2Y=,tag:IkaJ0mi5kKy29Dy9Z6gKgg==,type:str]
+            adminUser: ENC[AES256_GCM,data:fQsfeR9KEw==,iv:gq4ZnMsiZPUkrsSHpTTQ4JJoZP1pWhrVnwtHBe3LEGM=,tag:+12N0+FJ/Wt4ak3V/mgc4w==,type:str]
+            adminPassword: ENC[AES256_GCM,data:lojVjiPwQoTY,iv:LKTDZP9deVs3EgFRBSx1YlyWVyAP5uU412g2t9TtxWc=,tag:GDLwJl+xSo5gB/IBLtmPEg==,type:str]
+            configUser: ENC[AES256_GCM,data:hoEjKoZQqA==,iv:flxWOFXp2t3vp9UUkf/mC729FGQ1KaPlZvblnU1iDiU=,tag:5b5qpYLuPzOF6rwOvQ98Hw==,type:str]
+            configPassword: ENC[AES256_GCM,data:s6j2Lec2IyJ0,iv:I7d+fm3lOguOT3hPacgfes/HqX6rj6wnCrPk768S9hg=,tag:oSS8njLfTtCP/cNk8lZZpA==,type:str]
         pdb:
             enabled: false
         persistence:
@@ -38,12 +38,10 @@ spec:
               value: arm64
               effect: NoSchedule
         initTLSSecret:
-            tls_enabled: false
-            secret: ENC[AES256_GCM,data:pz5kiUil2i1O64a1mJfOscyg+GQkcrn3XvuO+X8txN4=,iv:XTd5rinTs8M1W3mS13mzevTclJs1P3EVPaxLGr1wJM0=,tag:XX1RC3Z06I7UfqVk0CNg2A==,type:str]
+            tls_enabled: true
+            secret: ENC[AES256_GCM,data:ExkYTiy28zZQFd49GGI=,iv:al3R2ZA7WahtDP/3198LRpUZZ/myMPOkSnTjXXpFXn8=,tag:FkvA/GDgI3i8jg5ECi+EBw==,type:str]
         ltb-passwd:
             enabled: false
-        replication:
-            starttls: "yes"
         env:
             LDAP_ALLOW_ANON_BINDING: "false"
             LDAP_ENABLE_TLS: "no"
@@ -74,14 +72,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPVE5aVGlrL0FaNDAyMUUr
-            TkNhSDlJQlkrS1E2WVQ5WkN6SVZqa2VrTGt3CmpIbEdDVDhneXlNWHBjKzBsTmVP
-            UkZ6QXBFTmVBOW96YUVtT2NpMFhEeDAKLS0tIDkyMzdUU1lPQWlpcUI2OEhDYWx3
-            Y3FGUWx6Q1czc0s3emFhd3FzRWtTOU0Km0punvT3IlpfAVWXz+ypjIebrl/xYOfe
-            E+XTKc4SJG6wh5QH94ad+hOAMP3lhZ7pQyE15B08qmYH/bWgrUyvZA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5VUkvV2lrQUE5TS9GZlNh
+            YTRlTThicGdBa2QzVkI2Q2pHSFhuMEhkOGo4CmFsN1FkbXlmbFdoUmlVYjBZN1V4
+            N2MwVWJxVnhmeWp1cHdEMVp5d0VCdEEKLS0tIDZVYk4zQm1QaU9WdFhDNU82Qkdw
+            ZFgvbXl0a0J2WWx0aFhjY3FhRHR1dTAKgFuQSUizxlJfz/WICesYzfO+0fi4jFmD
+            37DgN6ns63mQTJq81NtpQ/a3V1/W5a7wnfyaVY5MPfFwTbMb4iOhSA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-20T00:16:52Z"
-    mac: ENC[AES256_GCM,data:TmLau2FtcVoEg+0NU50+9MfxrrOQq+vRGRbW93viSiBlj9ipcGNdnMSQ9PYfQDIchLutO5F53+ZJTk3kOdGrhkie6o/Gv5277/BKZCNAjYcO11JFxm+rxAKkq5/QZ7vBAfnx3yb6vbvUQU+cPGon2MJRO4ICvP54Z3r7a+SB1gM=,iv:xAnZe6RGUb0NtwcZ1oAKfbytiGgeZd+0rSWYSAaaE08=,tag:F8NrXT2Z3roG89ATiXqKfA==,type:str]
+    lastmodified: "2024-03-20T09:48:14Z"
+    mac: ENC[AES256_GCM,data:U+4OeVan5LbkxqrojgNSwcklZpn487AutyJ2QqXYy4pcbkrDczmr8rCiqdn3m/l+rc5vhk6FEoGzjIHwHl+wic75XgxS/YbxI6nNZniUb0MGtsYSu6SpJUe7oNBkNvZczGvrB38tqYOc4B6DsHqI8A152JAJWROAhuWvYDLD+z8=,iv:fMzK2wB9XXfVgQ2EGKbShTtaNFGO3Ne7ETn1Okb2+Rs=,tag:FWTuO7Us/howshwTeKrpJA==,type:str]
     pgp: []
     encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
