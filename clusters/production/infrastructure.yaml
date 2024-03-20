@@ -86,24 +86,24 @@ spec:
   ref:
     branch: main
   url: https://github.com/fluxcd/flux2
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
-kind: Kustomization
-metadata:
-  name: flux-monitoring-config
-  namespace: flux-system
-spec:
-  dependsOn:
-    - name: apps
-  interval: 1h0m0s
-  path: ./manifests/monitoring/monitoring-config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-monitoring
-  timeout: 1m0s
-  wait: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
+# ---
+# apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+# kind: Kustomization
+# metadata:
+#   name: flux-monitoring-config
+#   namespace: flux-system
+# spec:
+#   dependsOn:
+#     - name: apps
+#   interval: 1h0m0s
+#   path: ./manifests/monitoring/monitoring-config
+#   prune: true
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-monitoring
+#   timeout: 1m0s
+#   wait: true
+#   decryption:
+#     provider: sops
+#     secretRef:
+#       name: sops-age
