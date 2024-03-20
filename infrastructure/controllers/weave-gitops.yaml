@@ -92,3 +92,20 @@ spec:
           port: 8089
   policyTypes:
     - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-weave
+  namespace: flux-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: weave-gitops
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 9001
+  policyTypes:
+    - Ingress
+
