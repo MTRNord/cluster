@@ -42,10 +42,11 @@ spec:
             secret: ENC[AES256_GCM,data:pz5kiUil2i1O64a1mJfOscyg+GQkcrn3XvuO+X8txN4=,iv:XTd5rinTs8M1W3mS13mzevTclJs1P3EVPaxLGr1wJM0=,tag:XX1RC3Z06I7UfqVk0CNg2A==,type:str]
         ltb-passwd:
             enabled: false
+        replication:
+            starttls: "yes"
         env:
             LDAP_ALLOW_ANON_BINDING: "false"
             LDAP_ENABLE_TLS: "no"
-            TLS_REQCERT: "never"
             #LDAP_LOGLEVEL: "64"
         phpldapadmin:
             enabled: true
