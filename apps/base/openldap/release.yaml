@@ -24,10 +24,10 @@ spec:
             tag: 2.6.7
         global:
             ldapDomain: users.midnightthoughts.space
-            adminUser: ENC[AES256_GCM,data:nQJrPqzFXQ==,iv:Lu1ggHiSJTxWASH+jFLPyDO3Mis652vzNER1q9B58o4=,tag:0/lj/eOubV9+hq1i/mu0/g==,type:str]
-            adminPassword: ENC[AES256_GCM,data:y3qS9h4gUM1t,iv:cv/ddEWWiMZy2iBHfj5m8GngtpCHJJDr2lREAEakcVM=,tag:VFZ6LJx1JnQLoTaWTHMPLg==,type:str]
-            configUser: ENC[AES256_GCM,data:n1fm2FG2DA==,iv:zMiOE+zi5Y14Gr2RSUEoHZOuGldLlSWjNH+DK49MlRk=,tag:erW34c4WRUiCieBhVgwNBw==,type:str]
-            configPassword: ENC[AES256_GCM,data:K0TMttveEAhW,iv:fCaSe3FCcrpucBwNOp6A74W7mMvS+YnoyhuU/t4oVu0=,tag:NQdc47+AJLw10AP1rbHsyQ==,type:str]
+            adminUser: ENC[AES256_GCM,data:xHpXdRIXRw==,iv:TieDU2op3Hje9Uv6FO5QSucKUyjuTEkTxl2pkO/1aOI=,tag:blFQ+kzudaXcMd3kdP0NiA==,type:str]
+            adminPassword: ENC[AES256_GCM,data:y2swlu4IO+tg,iv:676O6OO7rQqb3KKxE8FdeXGDHvTzojmzfK6J+lTXS9g=,tag:ZdY4v51Ofv+V1VIe/EgxyQ==,type:str]
+            configUser: ENC[AES256_GCM,data:T4pFJSxcCA==,iv:AR8VrGRfscIEC89lyp+jhjVDt6UXJilnksc8HZ99mgM=,tag:TJ40YhTCtYPguyjsJpwLNg==,type:str]
+            configPassword: ENC[AES256_GCM,data:J6ISHSRtSQXz,iv:9LJdB7e0FQZ8Ikn1EDdD9UywMxhw2qeLpBGWJRCW+2Y=,tag:IkaJ0mi5kKy29Dy9Z6gKgg==,type:str]
         pdb:
             enabled: false
         persistence:
@@ -39,7 +39,7 @@ spec:
               effect: NoSchedule
         initTLSSecret:
             tls_enabled: false
-            secret: ENC[AES256_GCM,data:TwGu60ovQkWvzihgshfZEzFW0qBmJCRKxfiVRQD1Afc=,iv:70sUSt+6bIjvbV6RdsdAWj0TzGrvGysNRjbnLh0y15I=,tag:Oc4NXinAM680EpDECewzpA==,type:str]
+            secret: ENC[AES256_GCM,data:pz5kiUil2i1O64a1mJfOscyg+GQkcrn3XvuO+X8txN4=,iv:XTd5rinTs8M1W3mS13mzevTclJs1P3EVPaxLGr1wJM0=,tag:XX1RC3Z06I7UfqVk0CNg2A==,type:str]
         ltb-passwd:
             enabled: false
         env:
@@ -47,14 +47,7 @@ spec:
             LDAP_ENABLE_TLS: "false"
             #LDAP_LOGLEVEL: "64"
         phpldapadmin:
-            image:
-                repository: leenooks/phpldapadmin
-                tag: 2.0.0-dev
-            env:
-                APP_KEY: ENC[AES256_GCM,data:9AO2Y13fSFEWK985jRHVejHAiua5kehi9HZOS+W1QCq4cvcjiOTQx1w8e/sJ2EqOdda+,iv:q3iIBI4j+uKUUMb/J4UqdcJigcgF/2dAP1havYrreIU=,tag:LHLOd6Flx/LPQ/uOYy50Sw==,type:str]
-                APP_URL: https://admin.users.midnightthoughts.space
-                LDAP_HOST: users.midnightthoughts.space
-            enabled: false
+            enabled: true
             ingress:
                 enabled: true
                 annotations:
@@ -79,14 +72,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBJc1V0Q2pzOThBbEJkTjRo
-            b1picmtkbEhOWE9YVlFWck1WRWVKNlNNUmxNCnhVdDYwYkFIa0pWRHFtbXhrL2Rr
-            WTJQYUZhU2FYbUVlelc2VEFVZGRJTjAKLS0tIEZLcG4vMXkrMTJkTmZETFJIcTcy
-            Ri9CSTZCd1FPSmNoTlB1Y216K3RvRkEK82wFR/6Hfe6egpm/rzj96jMrYCifD8Vb
-            Dq+DOt9cuk0xep2QQXH3/tezN/BYIvHaXNM8SxegqEHC9ebxuEN2jQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPVE5aVGlrL0FaNDAyMUUr
+            TkNhSDlJQlkrS1E2WVQ5WkN6SVZqa2VrTGt3CmpIbEdDVDhneXlNWHBjKzBsTmVP
+            UkZ6QXBFTmVBOW96YUVtT2NpMFhEeDAKLS0tIDkyMzdUU1lPQWlpcUI2OEhDYWx3
+            Y3FGUWx6Q1czc0s3emFhd3FzRWtTOU0Km0punvT3IlpfAVWXz+ypjIebrl/xYOfe
+            E+XTKc4SJG6wh5QH94ad+hOAMP3lhZ7pQyE15B08qmYH/bWgrUyvZA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-19T23:23:18Z"
-    mac: ENC[AES256_GCM,data:GD2urpc5F3N+ZmultNt28Q9lFcbTn9K+67tKaoOiRJDP6VrCGkMwRWuI+OWarEFNqnf9tQYRHBZAnb43basvrFVm1/9s3RrQiztz7C3JW/ffArwoEZ9b+1HxJJAJn99+Fw1OZ39L2m31l4gBxVYweIDLgmAz5ssKS1VJLY53wWY=,iv:KhZwImKC/ym+/rbCFXqdBL/IOLCAnnchMFMgHZn+bF0=,tag:c9x2uU0Wf3UljsvZTGGwwg==,type:str]
+    lastmodified: "2024-03-20T00:16:52Z"
+    mac: ENC[AES256_GCM,data:TmLau2FtcVoEg+0NU50+9MfxrrOQq+vRGRbW93viSiBlj9ipcGNdnMSQ9PYfQDIchLutO5F53+ZJTk3kOdGrhkie6o/Gv5277/BKZCNAjYcO11JFxm+rxAKkq5/QZ7vBAfnx3yb6vbvUQU+cPGon2MJRO4ICvP54Z3r7a+SB1gM=,iv:xAnZe6RGUb0NtwcZ1oAKfbytiGgeZd+0rSWYSAaaE08=,tag:F8NrXT2Z3roG89ATiXqKfA==,type:str]
     pgp: []
     encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
