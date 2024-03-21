@@ -2,12 +2,12 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: dragonfly-synapse
+  name: dragonfly
   namespace: matrix
 spec:
   chart:
     spec:
-      chart: dragonfly
+      chart: helm/dragonfly
       sourceRef:
         kind: HelmRepository
         name: dragonfly
