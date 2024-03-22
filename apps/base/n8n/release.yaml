@@ -21,6 +21,9 @@ spec:
         # causing spurious drift detection
         force: true
     values:
+        extraEnv:
+            # https://github.com/8gears/n8n-helm-chart/issues/71
+            N8N_CONFIG_FILES: /n8n-config/config.json,/n8n-secret/secret.json,/home/node/.n8n/ 
         config:
             database:
                 type: postgresdb
