@@ -1,0 +1,70 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: n8n
+    namespace: n8n
+spec:
+    interval: 5m
+    chart:
+        spec:
+            chart: n8n
+            sourceRef:
+                kind: HelmRepository
+                name: n8n
+            interval: 60m
+            version: 0.20.0
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    values:
+        config:
+            database:
+                type: postgresdb
+                postgresdb:
+                    database: n8n
+                    host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
+                    user: n8n
+        secret:
+            database:
+                postgresdb:
+                    password: ENC[AES256_GCM,data:Y1qZu/rEvL+K2RoGClBwlW56us3TKI09o2q/PPxMW21TpoED+PcRd6QLjH3yjKQErNj01PZzIiLvdNfehpdlsg==,iv:z2PHX6j9JR20kwNHeYB0Gt72+B5bO8SGw8QQPnYorfk=,tag:gka0Fe5eqMTO4k6SJFGGng==,type:str]
+        persistence:
+            enabled: true
+            type: dynamic
+            storageClass: nfs-csi
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-http
+            hosts:
+                - host: n8n.midnightthoughts.space
+                  paths:
+                    - /
+            tls:
+                - secretName: n8n.midnightthoughts.space-tls
+                  hosts:
+                    - n8n.midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBSWGpPeWx0VXBCV1FTTlVQ
+            SFYxTStieFloN3lqU2ViWDgwSkswaml5Tmh3ClRPYld3WnhUKytqWUNycWR5NnYy
+            ZmZtcGJlOEg5SVpGUXUzNU56OUFQM0kKLS0tIE1nc2JzdXZBMDh6UkRzWTJpekFD
+            TGpGdENDN0VXRCtlWWhTanI3eEkraVEKbbXKJqPdbmE+dQCZ8AtPUk2ltKLVUo7Q
+            TGawM5W20CZqlNdi9EpkS/ESOqWsPKEUY0BmSKgkbilGA/QnzFUJqQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-03-22T21:51:11Z"
+    mac: ENC[AES256_GCM,data:VV2WDx1MDOGswe+2kUK0bl0bEemwd36kfGkSuQ+g/4ibC96fUUiI4JBgSm9I9EW4FbngVgFgjlE3/UFNamh56nEoizInIDgZOQzondyud9I5J7wKKzjOw93QMrwAeJ0X1ucbaWMsd6Fqeypp4U0JAO7UfTYqGr2la9HMxLQLP+A=,iv:xINWhaEYA33XCTm9d8zZf7wN9kOMZNqk7yuCyeZSkY8=,tag:Zohy+PQWrmo0yb9CrNl9QQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
