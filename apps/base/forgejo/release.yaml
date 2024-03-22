@@ -31,8 +31,6 @@ spec:
         signing:
             enabled: true
             privateKey: ENC[AES256_GCM,data:LqhqEYF/pKPTrZF8oS5nBzutCxMuOFYrODvHJHvTqYgAiAPRVf0OtLgzy02bxvfN3iX5h6d8Y5HEfJCVG0GzPqgphJfPcrxXpw+9RFXMswpGutsqzvgZPT5ly9RYMKI/u6zBwrGszigyELXO6uvFIi/VAErg9ubK8/bGRn9DXngyC9BR1XyLQz7jiR1zFafhb33hiLAmK05UpaZnW6WTToZpcyVbezPtq1WetwLiaf1rG/Bt5qXVVJjXcmLmI2VY4MjDfyNLK1hm3LET8jvA8ld+LvR4phVvutmsXAkEWGj0u22poxzXaFj0FmH0r+qzV/KxWez/p1E4w/Wrs0MIjxTT/acriVcuM9Y9FB6XYQErQUBt9MM7B6u6nJAvzqJ01BFjC26KGSSxtjWdXnWpfAhBYeC66Gd3HVEtCG/PLDL0xKD0YiFfYT78WNIYp89k0Sjq0nREEBuLQd2+3Q3GDOLzT4kdDp7oTBU5n662f5rahaPGbAFG0oTfFzSYIb8YWeqp38CUoZLIRili+FdWxNcrzGLOD77G8Xm0I71UgpcDRLHnZwxNsvJtffaaU0Q+BW2nzoVlk7T9tMXWCXXvLUtaj2s01lK4DUNglSEyOmN4vrO/OWi4D8vONtidG7Fi8RGewefW73rmEflN9lUGb9Rs+N0bXBr5zyKoOXRp7y9ubQKL//XNNSaNa8xc5pOt3tL8WV0afBZ4c0XN6FZLHKei8z90ehQL+rR0E1jQKuO0SJJZbtOunw5UNWxhjOOxKtcqFt3GVfS08b5alY4/Qx93kJS0lwYpvulY5gyqo7+2u25WOKuTQCC2zuEKjCE2MOM0yRJGV+ReH5vnUwc760xtQx3Vva0iJQBVYmcj9o7Cn62oQ4A7RDQ/FF4z5MZyiAgNVLBb5HqwjuFC7t7ZL6niPTuPeDEKCHc8As8ryr6ZD8oaG65PmVnu3kiKaphlzLiCxA5783GZrQoOUgV2XMdZ/01hFLtaNn09n4izSsBaek/SI5Pz7g==,iv:EMmDKJFcHA0V+wzCckGBviFYU6yZV6j2d+iRKaz0Yww=,tag:Gmr6ZlDIZ/tZjEfM66ckZA==,type:str]
-        memcached:
-            enabled: true
         persistence:
             enabled: true
             size: 50Gi
@@ -95,6 +93,8 @@ spec:
                     PROTOCOL: smtps
                     USER: ops@nordgedanken.dev
                     PASSWD: ENC[AES256_GCM,data:r91hn6p65iYL,iv:mL9SFDruo4b5QzTHj1X3tJcKJLOdKVW9M86Nf408JaA=,tag:y9lH8RG43QGRMVPcMO9cXw==,type:str]
+        postgresql-ha:
+            enabled: false
         postgresql:
             image:
                 registry: docker.io
