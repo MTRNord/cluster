@@ -107,6 +107,9 @@ spec:
                 queue:
                     TYPE: redis
                     CONN_STR: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
+        redis-cluster:
+            networkPolicy:
+                enabled: false
         postgresql-ha:
             enabled: false
         postgresql:
@@ -132,6 +135,9 @@ spec:
             persistence:
                 enabled: true
                 size: 25Gi
+            primary:
+                networkPolicy:
+                    enabled: false
 sops:
     kms: []
     gcp_kms: []
