@@ -28,10 +28,17 @@ spec:
                     database: n8n
                     host: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local
                     user: n8n
+            generic:
+                timezone: Europe/Berlin
         secret:
+            security:
+                basicAuth:
+                    active: ENC[AES256_GCM,data:GCeKyw==,iv:6Iob03+KcASrJGFICryPVByjUpxpvud0pmpwoaCGCUc=,tag:hk5+2iTL2AtUlCSpx9waIQ==,type:bool]
+                    user: ENC[AES256_GCM,data:CxMZA1h6CQ==,iv:ERA9dzYrzV5rKjbob+LkI4CWNf4rSIKXQ+IlxCH55Nc=,tag:T2n0JwXOolS9bYu50oTf4g==,type:str]
+                    password: ENC[AES256_GCM,data:hsfWro3+/LAK,iv:25+ql3hKjyUkMpyN5Ox1AXV8NZY0jHfV3xc8xN/BMT0=,tag:HB7cAN9OdIaeeXOQck4BOA==,type:str]
             database:
                 postgresdb:
-                    password: ENC[AES256_GCM,data:Y1qZu/rEvL+K2RoGClBwlW56us3TKI09o2q/PPxMW21TpoED+PcRd6QLjH3yjKQErNj01PZzIiLvdNfehpdlsg==,iv:z2PHX6j9JR20kwNHeYB0Gt72+B5bO8SGw8QQPnYorfk=,tag:gka0Fe5eqMTO4k6SJFGGng==,type:str]
+                    password: ENC[AES256_GCM,data:FMlDWhAH5XAeMWnQciGZBhCt6f3Na+JBk+W+ByDPad0IElJ4yMqWVZofXmR9JGPTvRdKzp/V3RXs2oePvMMR2Q==,iv:JXCth7w2ghAae5NDPEaJHWOmxmN/+pm7Grw/1ZGjsW4=,tag:Nkhd1XSRGAXNtkaXO5Ekkw==,type:str]
         persistence:
             enabled: true
             type: dynamic
@@ -57,14 +64,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBSWGpPeWx0VXBCV1FTTlVQ
-            SFYxTStieFloN3lqU2ViWDgwSkswaml5Tmh3ClRPYld3WnhUKytqWUNycWR5NnYy
-            ZmZtcGJlOEg5SVpGUXUzNU56OUFQM0kKLS0tIE1nc2JzdXZBMDh6UkRzWTJpekFD
-            TGpGdENDN0VXRCtlWWhTanI3eEkraVEKbbXKJqPdbmE+dQCZ8AtPUk2ltKLVUo7Q
-            TGawM5W20CZqlNdi9EpkS/ESOqWsPKEUY0BmSKgkbilGA/QnzFUJqQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWTExGdGRsbTcyUDhNS0dq
+            bWxERitIUCtIZmM4M3FRUE00SW0rbDc0TkI4CkhJemk1dHN4bzBLV3dJWHhxOGtM
+            bDVQV2xqT2RZZDRQZ05IMHRlWm9aMXMKLS0tIGdBNnBNWDZ0eUREZlg2NmZrbmFY
+            TWd2amZPQTRZRXZQZm54UzQwTFcrNGMKCaihLyoRfykyIUpPAWWWbPVJS5pPHQF8
+            6oEdiMOaEnX54nJNp62nQRtqN0hu5YEfsEw94xVBpEK3+RSOlSr3XA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-22T21:51:11Z"
-    mac: ENC[AES256_GCM,data:VV2WDx1MDOGswe+2kUK0bl0bEemwd36kfGkSuQ+g/4ibC96fUUiI4JBgSm9I9EW4FbngVgFgjlE3/UFNamh56nEoizInIDgZOQzondyud9I5J7wKKzjOw93QMrwAeJ0X1ucbaWMsd6Fqeypp4U0JAO7UfTYqGr2la9HMxLQLP+A=,iv:xINWhaEYA33XCTm9d8zZf7wN9kOMZNqk7yuCyeZSkY8=,tag:Zohy+PQWrmo0yb9CrNl9QQ==,type:str]
+    lastmodified: "2024-03-22T21:55:43Z"
+    mac: ENC[AES256_GCM,data:71BtOkJwDQdMk8rm8BtTxXGegJD5c+/gWaKP6+iLvd/zZh5ntMmY5AXeFdtb9bQwkUy7VTLxBWmVB/xHiTRJJhrg9IRz7cVmnSqYv4bBEl/pxLDNaI9qO6hyyD4GdhK623/fPF1P1BaTGlu/0VDoC296+VjZifmESglcYD2JEDs=,iv:sVbbMZWpxwTdtiglFiREUvpDaTUSbSBIYpp84mT2roA=,tag:OOnJQS6QptpF+HUxpHAcNw==,type:str]
     pgp: []
     encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
