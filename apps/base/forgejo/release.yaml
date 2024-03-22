@@ -18,7 +18,8 @@ spec:
         remediation:
             retries: 3
     values:
-        # image:
+        image:
+            rootless: false
         #     # Codeberg.org was down.
         #     registry: docker.io
         #     repository: mtrnord/forgejo
@@ -93,6 +94,18 @@ spec:
                     PROTOCOL: smtps
                     USER: ops@nordgedanken.dev
                     PASSWD: ENC[AES256_GCM,data:r91hn6p65iYL,iv:mL9SFDruo4b5QzTHj1X3tJcKJLOdKVW9M86Nf408JaA=,tag:y9lH8RG43QGRMVPcMO9cXw==,type:str]
+                session:
+                    PROVIDER: redis-cluster
+                    PROVIDER_CONFIG: redis+cluster://:gitea@gitea-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
+
+                cache:
+                    ENABLED: true
+                    ADAPTER: redis-cluster
+                    HOST: redis+cluster://:gitea@gitea-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
+
+                queue:
+                    TYPE: redis
+                    CONN_STR: redis+cluster://:gitea@gitea-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
         postgresql-ha:
             enabled: false
         postgresql:
