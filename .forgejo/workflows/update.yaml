@@ -20,6 +20,9 @@ jobs:
         uses: https://github.com/actions/checkout@v4
       - name: Setup Flux CLI
         uses: https://github.com/fluxcd/flux2/action@main
+        with:
+          token: ${{ secrets.HELPER_TOKEN_GITHUB }}
+
       - name: Check for updates
         id: update
         run: |
