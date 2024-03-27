@@ -30,6 +30,8 @@ spec:
                   operator: Equal
                   value: arm64
                   effect: NoSchedule
+            env:
+                ALLOWED_CORS_ORIGIN: https://workadventure.midnightthoughts.space
             secretEnv:
                 ROOM_API_SECRET_KEY: ENC[AES256_GCM,data:CSafytKq0HQErE5yUsJubdTzUMRwyfxRbz0YyhFDdsw5hXtOvxpT0MWdOmterCjoaI8SEcLhiYrB62mM4cq88g==,iv:v4ZgN06iwC+dt2FH4plUTefBrKdxEBvvWC/ezPkW8PY=,tag:bLlYnU/Cb8GKBQmDTG/aOA==,type:str]
         chat:
@@ -39,18 +41,6 @@ spec:
                   value: arm64
                   effect: NoSchedule
         back:
-            tolerations:
-                - key: arch
-                  operator: Equal
-                  value: arm64
-                  effect: NoSchedule
-        uploader:
-            tolerations:
-                - key: arch
-                  operator: Equal
-                  value: arm64
-                  effect: NoSchedule
-        icon:
             tolerations:
                 - key: arch
                   operator: Equal
