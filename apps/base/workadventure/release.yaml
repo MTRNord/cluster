@@ -1,0 +1,105 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: workadventure
+    namespace: workadventure
+spec:
+    interval: 5m
+    chart:
+        spec:
+            chart: workadventure
+            sourceRef:
+                kind: HelmRepository
+                name: workadventure
+            interval: 60m
+            version: 0.0.9-dev1
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    values:
+        domainName: workadventure.midnightthoughts.space
+        ejabberdDomain: ejabberd.workadventure.midnightthoughts.space
+        singleDomain: true
+        play:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+            secretEnv:
+                ROOM_API_SECRET_KEY: ENC[AES256_GCM,data:CSafytKq0HQErE5yUsJubdTzUMRwyfxRbz0YyhFDdsw5hXtOvxpT0MWdOmterCjoaI8SEcLhiYrB62mM4cq88g==,iv:v4ZgN06iwC+dt2FH4plUTefBrKdxEBvvWC/ezPkW8PY=,tag:bLlYnU/Cb8GKBQmDTG/aOA==,type:str]
+        chat:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        back:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        uploader:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        icon:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        ejabberd:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+        mapstorage:
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+            persistence:
+                enabled: true
+                storageClass: nfs-csi
+                accessMode: ReadWriteOnce
+                storageSize: 1Gi
+            secretEnv:
+                AUTHENTICATION_PASSWORD: ENC[AES256_GCM,data:NgKi2dF9vPV26DhS/Vg5JnC72bktKvxK+msMVxMhBzMUQXCFP8UMkWa2ZKfovb7SsAOq2HK0TMZbnwO1JFlsLg==,iv:4sPOIeyogKzx6PYpiVVRBvzi9C8a4P6JA0/NIZTANjg=,tag:7DVx9pY0zB6fSsaOuRLZNA==,type:str]
+        ingress:
+            enabled: true
+            tls: true
+            secretName: workadventure.midnightthoughts.space-tls
+            annotationsPath:
+                cert-manager.io/cluster-issuer: letsencrypt-http
+            annotationsMapstoragePath:
+                cert-manager.io/cluster-issuer: letsencrypt-http
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBIVjAvby96RGxsN0p0OThQ
+            ZmNlRUhPNkpreDI3TlE2ekdUUjNkSjRRREhNCllHZXg1dTlhUjRPaE15N0x3bWM5
+            bDFyUnBHOTVmaDN2c25xMkIrdTFSdTAKLS0tIEJ5Zk5LZjBOUUhUV1k0SldSZnNr
+            ajdUVXhGd1pYM2pXYTgrRFRzTHgwT1EKAGQDPLTqSNUOGt9WdY6y8/3Edr6/MNlF
+            C/AAh+2C4Cr7bUQ++/CdlRBlBVeKuk2iSMXi42Im0kFNGG3CNvNJJg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-03-27T11:03:19Z"
+    mac: ENC[AES256_GCM,data:BqmNaZhfC/sxcUoZevK/+5tGcc87HXAaR0Jn761bkln0RGkezwiJ4XB+VvpthkQMRLyqFZuQJbnnHWN/pBFRy+1vVeQRUpwBSWQRQbusk4NvX72m2wCz9PONlzPMhWRNW0x6UrkN0XdwWf8q1ptgn0zWU1fR+TDFBOAV59zSUQE=,iv:Xt47bGfp76DgmpPdLugOZIiGEvMLBtYZKjmpRtnyLZU=,tag:e4+Yel25ozzIl6gf/ZVfaw==,type:str]
+    pgp: []
+    encrypted_regex: ^(AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
