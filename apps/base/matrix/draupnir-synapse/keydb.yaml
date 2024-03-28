@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: matrix-synapse-keydb
+  name: draupnir-synapse-keydb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: matrix-synapse-keydb
+      app: draupnir-synapse-keydb
   template:
     metadata:
       labels:
-        app: matrix-synapse-keydb
+        app: draupnir-synapse-keydb
     spec:
       containers:
-        - name: matrix-synapse-keydb
+        - name: draupnir-synapse-keydb
           image: eqalpha/keydb:latest
           imagePullPolicy: Always
           ports:
@@ -36,10 +36,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: matrix-synapse-keydb
+  name: draupnir-synapse-keydb
 spec:
   selector:
-    app.kubernetes.io/name: matrix-synapse-keydb
+    app.kubernetes.io/name: draupnir-synapse-keydb
   ports:
   - name: redis
     protocol: TCP
