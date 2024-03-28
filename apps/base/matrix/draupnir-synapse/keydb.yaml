@@ -18,7 +18,7 @@ spec:
           image: eqalpha/keydb:latest
           imagePullPolicy: Always
           command: ["keydb-server"]
-          args: ["--protected-mode", "no", "/etc/keydb/keydb.conf"]
+          args: [ "/etc/keydb/keydb.conf", "--protected-mode", "no"]
           ports:
             - containerPort: 6379
       tolerations:
