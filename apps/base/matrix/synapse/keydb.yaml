@@ -16,6 +16,8 @@ spec:
       containers:
         - name: matrix-synapse-keydb
           image: eqalpha/keydb:latest
+          command: ["keydb-server"]
+          args: ["--protected-mode", "no", "/etc/keydb/keydb.conf"]
           imagePullPolicy: Always
           ports:
             - containerPort: 6379
