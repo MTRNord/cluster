@@ -208,18 +208,16 @@ spec:
         prometheus.io/path: "/_synapse/metrics"
         prometheus.io/port: "9090"
 
-    redis:
-      enabled: false
-      architecture: standalone
-      # master:
-      #   tolerations:
-      #     - key: "arch"
-      #       operator: "Equal"
-      #       value: "arm64"
-      #       effect: "NoSchedule"
     externalRedis:
       host: draupnir-synapse-keydb.matrix.svc.cluster.local
       port: 6379
+      password: null
+    redis:
+      usePassword: false
+      password: null
+      auth:
+        enabled: false
+        password: null
     postgresql:
       enabled: false
     externalPostgresql:
