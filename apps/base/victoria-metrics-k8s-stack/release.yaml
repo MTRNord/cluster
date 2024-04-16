@@ -1,0 +1,785 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: victoriametrics
+    namespace: monitoring
+spec:
+    interval: 5m
+    chart:
+        spec:
+            version: 0.20.1
+            chart: victoria-metrics-k8s-stack
+            sourceRef:
+                kind: HelmRepository
+                name: victoriametrics
+            interval: 60m
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+    values:
+        # prometheus:
+        #     prometheusSpec:
+        #         retention: 365d
+        #         secrets:
+        #             - prometheus-asterisk-secret
+        #         additionalScrapeConfigs:
+        #             - job_name: asterisk
+        #               scheme: https
+        #               basic_auth:
+        #                 username: asterisk
+        #                 password_file: /etc/prometheus/secrets/prometheus-asterisk-secret/asterisk-secret
+        #               static_configs:
+        #                 - targets:
+        #                     - pbx.midnightthoughts.space
+        #         resources:
+        #             requests:
+        #                 cpu: 0m
+        #                 memory: 0Mi
+        #         #tolerations:
+        #         #  - key: "arch"
+        #         #    operator: "Equal"
+        #         #    value: "arm64"
+        #         #    effect: "NoSchedule"
+        #         enableRemoteWriteReceiver: true
+        #         podMonitorSelectorNilUsesHelmValues: false
+        #         serviceMonitorSelectorNilUsesHelmValues: false
+        #         storageSpec:
+        #             volumeClaimTemplate:
+        #                 spec:
+        #                     storageClassName: nfs-csi
+        #                     accessModes:
+        #                         - ReadWriteMany
+        #                     resources:
+        #                         requests:
+        #                             storage: 25Gi
+        #                 selector: {}
+        # alertmanager:
+        #     alertmanagerSpec:
+        #         useExistingSecret: true
+        grafana:
+            adminPassword: ENC[AES256_GCM,data:XadhI3oLKWFlmr0HjTvmOBoZ/6iizwi5No18mIbKMuXW/eslvXkeLBdsiT1xXMgJ3p1Rmv10DkYlZVlHfm5eWw==,iv:44wXjDsjMG1dx+WlwMMqUBWq/GC891txHKX/dUktC2U=,tag:FB3e5wheDY9N7rsLgf+t1w==,type:str]
+            alerting:
+                rules.yaml:
+                    apiVersion: 1
+                    groups:
+                        - orgId: 1
+                          name: Kube-system
+                          folder: Cluster
+                          interval: 1m
+                          rules:
+                            - uid: d2b94d3a-2483-4be4-bf2a-2fd9f9fac406
+                              title: Coredns Failure
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:652Khbk=,iv:b4esbyGlc/kPB6B/ByeBdRf3CwAG2Do07ESJ79e0MCo=,tag:84R7DqJELv/JSS8/YAWxqQ==,type:str]
+                                  queryType: ENC[AES256_GCM,data:cCeRbzk=,iv:fJslgRc16NdNIM4vfrSaPeoxaHG/ZSzAdy0CFNT3lVA=,tag:YP7ywKs2FOqKFMJmPhCkRw==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:gAlh,iv:ePkzBHUlazfxiegmfT8580VbN9Re81tdBNNsVYTzeSo=,tag:7hCoGCD4KRcDuWzg2ajYLw==,type:int]
+                                    to: ENC[AES256_GCM,data:hg==,iv:TlhUl808IV3sNU61o5m8UQzKVjS7V0aL6pf2qNIXHbM=,tag:3HJ1jZheqyHd8ikn9Gzqbg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:yBzqMw==,iv:fPx0lMfmEdyZQ8VNeIWp6kIWRXmB7HyaOU5gZQWqh+w=,tag:RbCeOULexR7aVaRX5FEP/w==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:HKr1KQ==,iv:U51208QW8Ry6am3Suy7ivbflM2NIHDqBMZwxsHKzfBU=,tag:NJU0LkS8fxT89LCm9Ye0Aw==,type:str]
+                                        uid: ENC[AES256_GCM,data:17/Rbg==,iv:Tqfslx6MRnU5ZQagTyDVAe/ygOVH1Kv7a8ono6fIsOc=,tag:NvV7kp7hZwxazhTNNzwEZQ==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:obUUWGH6aQ==,iv:E+yzRdcA3ltKEis7Rp1/jrXEO89W02ugqX5cW4CbVAc=,tag:8hern5o41RhOKAP4LtC+Hg==,type:str]
+                                    expr: ENC[AES256_GCM,data:Cjlf+rTg44g+K2g0sEt2f+wu3lV6z+sFVeZpSWFdf5SdiTWPL6e5XOSmBld9ENxfZ94iRy0Ry88yab96AZPBd9hDQDA1,iv:erZpAvT7j1UxgJjKGi5FCVOMrS3lTTZxhZ0t8fkijs4=,tag:cgIY4GpG2boQLn56nSxPfQ==,type:str]
+                                    hide: ENC[AES256_GCM,data:PXSQtkU=,iv:3OucKUOxHs4qEW5sAjU6yDkCH3wsdaDDetBy/ZAdukQ=,tag:q4lF/jC0bLUBznWvjKYWSQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:RP0OYw==,iv:Y36aqiuPdxyT0H5t9qHEmemzwAhdL0ByReHN0n3vh+4=,tag:x8RHz7ArxiW6dMQddfiWtw==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:b4/T8Gg=,iv:fVUNtzMt7I5F1Apr1YJsY/6bPmCA3WyiELSl5OjUz2s=,tag:h0mCj71bYRaiaV4j8Dl90Q==,type:int]
+                                    queryType: ENC[AES256_GCM,data:EIYx8aw=,iv:r3QjB7N3m+LjWYWeeN8l8iPn2Q82kGOyFkb5pOkoc2Q=,tag:KRmwjwlmiNd1ihrpdNU63g==,type:str]
+                                    range: ENC[AES256_GCM,data:uzvVsg==,iv:+tb2vvxGYayv8zOuONtPoW20zlhtA0OufMjO0IhMZyE=,tag:QOX9nQSx0l6JswliD4HlZA==,type:bool]
+                                    refId: ENC[AES256_GCM,data:8idR1ZM=,iv:34HA7iRTa3G/YsN5DG9CkVeJIKrOo3Zbfkbhq/BeP70=,tag:qPQHI2wd+d08TYia64QoeQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:Hf0Rod++,iv:Z7ORYtSusMBvNhyZ5VPPmmxYLXZQGa9jTKmRPCtQTX4=,tag:vZAUxHVeb+3HRlAn9KW7wA==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:R6W4,iv:dGDAb5fkjQ+u2QFXHcKmSRm4+7I25PCz3btEIEIkN38=,tag:uBWBdlYR4Z2qlz2QBNegEQ==,type:int]
+                                    to: ENC[AES256_GCM,data:1Q==,iv:9EAR9wPD0OpCMa03+AJiITM8CkrNKz2eIaPoZwWGzqs=,tag:7NcxZpV8TojIaf9ROIV4Ew==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:Kib8o/uwysY=,iv:k6+SYy3gquzn3QWl9JPvqzx86flXd2VTcbVX5tVm96k=,tag:pF/Tvthkj+fD41jlqKepeA==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:XQ==,iv:trQcZ7cw6fR+IhHT2acWKJiJwgbScIFrClQ7ztL+iu4=,tag:QEZY60ztsRW1a7trcnUtQQ==,type:int]
+                                            type: ENC[AES256_GCM,data:5Z8=,iv:LnYPIVb9NGzV5EBU1MB33Ld1zhotuorAexaj/LbAFmY=,tag:lpJ92qK9Njjh12ZiaOm1TQ==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:Xp0I,iv:k+fBBRb53UAsR6GqXwpNw5Mrbu0kvDF8Dr0A/oJIYAs=,tag:AVrF3VXmXHAC05lp1VGHXg==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:Sw==,iv:1Qj2rsjfoYLO30EoTj6r6T1Me3gfV7z/qoTzZu3/H8o=,tag:X9YXVPyPC/CUo+kzZASa9Q==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:5SX47Q==,iv:gDm5A3A6Z6XWhn6bu0+wGFaKqoI0LuT5/lotGA2cK8E=,tag:MU772s3M36I7z6IElfWJ9w==,type:str]
+                                          type: ENC[AES256_GCM,data:qmE2jvU=,iv:wSvdEuY3+IrLJcTUK/2T3UlizHKPpW3ldRwvQHAfbq8=,tag:IpjgNOGUm8EVIbOePj1G3A==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:pQtUWTxnoX4=,iv:Swyg6Xi27N7NRT1Fsg51qTMryeSRYB2G0PMTLXrk0do=,tag:DCvs0RHK5M79Z5oKFJd/og==,type:str]
+                                        uid: ENC[AES256_GCM,data:q2qKOrdgXFI=,iv:nx3c1UTCwxl/kN+kHwcoB8Wj228j/C/wyhfuippM2io=,tag:ok4nmyKUlV45F/65kgfayA==,type:str]
+                                    expression: ENC[AES256_GCM,data:7w==,iv:jtpB6iJM6PuW8ZPQeCPIJ1A+hfUFzwz0aFbl+El+Lg4=,tag:Gssxxq4SuNXCl591ufRrjw==,type:str]
+                                    hide: ENC[AES256_GCM,data:B+Aahug=,iv:QIwQYzM6KWKntMKNTMXTdCC0nbJX0ouOD58ONhFen9s=,tag:kD+GlzeF8QcnfTTo4+7jbQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:cgHb0A==,iv:Yfpp/g2bwVbeUXHBgcMel5wLwwjPLQMLTIPNe8/HJGg=,tag:1Os3SFHcqtkWSXTULEKgiw==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:CgUA3Jo=,iv:rYh24G1ow4Tt1j6UkDdNc3XCJYdYCXm/Rnt++Z0r5e0=,tag:8Vso1cbdm5ISEEy+NFhB7A==,type:int]
+                                    refId: ENC[AES256_GCM,data:YgAOavA8,iv:7UmcbPiEsUbaamcmaeM6Z3UnsL3b86jtc/GgeVsP0ZM=,tag:1FPo2IZewQtXrgYGvT8UzA==,type:str]
+                                    type: ENC[AES256_GCM,data:RMjSNp6Zp7lb,iv:I5K+pBIPfd+XSm8pkkLZmDACRXhM4y0hnrTKKvMm8Y4=,tag:X2M0l39P3N+eJd2hL8WVRQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:MA==,iv:pfsHS7nOrz7llcUAcAvKyhh76dzTPv8pwvFfjZYcbv0=,tag:GclJ79DMaAfmMNSekxzj6Q==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:pxDW,iv:l9dHQ7A+lkzEnHWtcXkYnblOoziPcz6H8RyvwhavI8Y=,tag:lKDU2JDYYMR9Zw2W+5E3QA==,type:int]
+                                    to: ENC[AES256_GCM,data:6w==,iv:+7vPnBOslmDRyvFDRB4kVj/qhmTJzkKIP+xdQYvDepk=,tag:puEPBlhbxskZAImuNdw9LA==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:H26rMIksw9Q=,iv:czQGaudJpINM3vKuKBIxqan+Le6ezTb7fyBfZdrgmLE=,tag:I6r9UN6xEipt2EajdP3OYw==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:vw==,iv:GQXEY8ygAAjQuA8Awto0Opot6vPbyufA4ENyxs35vCc=,tag:KwUa6aLg4CiIhSw2QXYDKA==,type:int]
+                                                - ENC[AES256_GCM,data:tg==,iv:JgxXw8KvvXyno3BiL+K7sgq7wRSlrYWsxi9gW/FWJYI=,tag:xpCSVz+78IV2bU8q+oNvAQ==,type:int]
+                                            type: ENC[AES256_GCM,data:vrY=,iv:uSaSp/Na6sjD4WWMCEWwbEJ8Kwr8GRqhX8mVSYP+C9w=,tag:5mcWSLRAfRzZ6ccp32GuOQ==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:x0rH,iv:usnF/R7YcnNqdBsbdlhoa5PjQg6nX+SwkuzNflInF2c=,tag:6y6AveDqNGveuH6Od8EkCg==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:jn4T,iv:rthbxtWVl93fEM4QSAbHefAKgnq4s8aJfn7mqXct+n8=,tag:j0WnjxY7le0m3oKv2/cCBQ==,type:str]
+                                          type: ENC[AES256_GCM,data:y1136VI=,iv:rhG9ZFQ2NAAjZFiO6tqv79KD/k37O/itdcQxd5fVWqQ=,tag:om3SxPkBwvZvXplUo4Ww6g==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:N5RsI/HuFEdgyw==,iv:hBbh8MKjsMN98CZa56G9vArUwMY8BLUeZaaDpXbCQRg=,tag:XdF8BzKqZVudPR2n3yjsVQ==,type:str]
+                                        type: ENC[AES256_GCM,data:qOtPDrwkIhw=,iv:5szpKl+tDBtuSb/BOLcZ12s5XnRkSVB1aZt9NXOwa20=,tag:VMluXQ/0U12yDTD1prBIkg==,type:str]
+                                        uid: ENC[AES256_GCM,data:Fy5gwexa2z0=,iv:sLeeZhpvXICj6GM+i2JCRKi8vL6WPjQF4tNAaHkHeFs=,tag:mpzKQUONXGPsipYRRwunFQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:ms5eulQ=,iv:YwF04Z4UHhR4oJEQ58QZaDP3zddDc1KV/xjkOF5umMU=,tag:LTbv5Y84u/3kX4ZHYyjJYQ==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:xBfyug==,iv:+UVuRJcYrO7bPnFEUAN+2Re383Wt4Kst6m4SWdj5/gc=,tag:q9f7MBHxHGZSlyAIlGvv7g==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:7XpTvsI=,iv:j84zxkFtPmyz6t8cIY3/CwYk3/VWXHkLkQA58omvC9Q=,tag:XY+MCPBjtjoSIOghvzpKDg==,type:int]
+                                    reducer: ENC[AES256_GCM,data:TKrmwA==,iv:3lkxyzLFiy6dtFGvBaPXi+NTgS8ah9OlxAmFcYjzXeM=,tag:S3J9TdKPo8ySfi2ZISwVvQ==,type:str]
+                                    refId: ENC[AES256_GCM,data:hw==,iv:dQXFW/ps0NybZIunudFOWZsUPGAFPEjYwGj8xBC9JyI=,tag:p7tQK1gFqjGIH3PW7drnhg==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:eY9rKI9dz7Q2,iv:UxlmhIGUg8RRqEZ1F3J2/HQq3YIVobgHWmI1gsWwVSM=,tag:wxStNP+CJ9x2XMUWOLFeCQ==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:5Q==,iv:6IO3wQWr+NpTtdvXb4uDFRtYqwUXOpVKtxzaYZKK/k8=,tag:dwDFQiKDuC9TTZOa33cCnQ==,type:int]
+                                    type: ENC[AES256_GCM,data:5JRRnTW5,iv:OGi2qEUD3j20d1NkwwFAZkB6Epg7qpxuYhECr1r5bD8=,tag:vdQuRWxENvVGNJ/Xbw5QAQ==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: High amount of i/o timeouts in coredns
+                              isPaused: false
+                        - orgId: 1
+                          name: Matrix Synapse
+                          folder: Matrix
+                          interval: 1m
+                          rules:
+                            - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
+                              title: DNSQueryRefusedError
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:s93lAus=,iv:pgKJ96lBkGOQS5IJuMOw2mcArCdUaeZs9E9E6cpAisM=,tag:0GQJDh90u6t4PM9I1Fbxbg==,type:str]
+                                  queryType: ENC[AES256_GCM,data:+kHfyMo=,iv:3Zjrt+MFNYPs2U+rB6+w3nelibQTLRPUTvfC4BzKl2c=,tag:SOzYo2RlJX6Bk+LM0O0w+g==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:8lQ1,iv:AN/aBuFdf1xIkW0c1vLEG3kFXFUzEZCHIuY8VRneetI=,tag:Hfem5ErDSQoIUFVxpUOGbA==,type:int]
+                                    to: ENC[AES256_GCM,data:ig==,iv:qK3OAOwg5DrS9vtnZEOXmjDmYyLBERzfHpRZGUoNSIs=,tag:QLU9Rq3Q7QeC/Gl0bjkmPw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:jtZ9Yg==,iv:4vUUIGq4HuZQkwca4Rj8wmcmYLJ8UImQ8a2a+XM6l4s=,tag:iDvkG3NB6BkTV9kFTb0yag==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:DflxeA==,iv:pwKk2ZGj9ZZll0SQ5FgxkRiAsaDA7z4BlZyJ3enoFic=,tag:6M6UPfPtSucn9gf/w2ifdg==,type:str]
+                                        uid: ENC[AES256_GCM,data:/CyT5A==,iv:SzBFlAZ+cpN0OW7rSZVLgChmkSJ2MIRQq3ZwHh9JBAk=,tag:b+nHDv4D734w6dG1QJ83ng==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:zxWqzSt9kA==,iv:WuH6FRi+Tj9T2pdPxZmulHrZANS5ctrxMhmbm5zxlKw=,tag:SCuNVN4IsZlzGM6FKBWPKg==,type:str]
+                                    expr: ENC[AES256_GCM,data:PDa9J6ovkwYVG3vy0RjfNXjbPugtROlUh0DnNIdYHLisZgoH6WbnNr4gKOr1zzoKxaZRzwas2b6IxRLpbn2yrRqCid14T1Oouiiwh334eR8=,iv:CamiA61dXiIxoKoEevOTOumdbH7fSHRSMsdknldxhpc=,tag:HILvRa57csKqvpciW7k/fQ==,type:str]
+                                    hide: ENC[AES256_GCM,data:dW0sVmY=,iv:jhXWuC71UY5PUtEfa4l40LDVDm2br6gLBmH3XXgyJSY=,tag:GDzAVNaW7Be4761vQj4drw==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:rLLxzA==,iv:HjqP1vN5x7Eime88LAJR/07O4plfFuuuWooifmHPN6k=,tag:uDyco74mtsfxKQOFjAd/3g==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:KJMm48c=,iv:Bf7+hR6rwJZdN41MSYUvMMtv/Do9Mr3hAK2XcuWM/S8=,tag:dy6XKvFSdl/Yx6v+nZylcg==,type:int]
+                                    queryType: ENC[AES256_GCM,data:3H5nbgQ=,iv:zHgWSRP02hb3hv4guMQZf/hOPQYVi0Sfrb7ZWjSaBdo=,tag:GAJgBy78AICNwDGSgEu6xA==,type:str]
+                                    range: ENC[AES256_GCM,data:h7hr6A==,iv:1qlVvitKlNctjIV/oaJC3j92eSy6fL/EYKzizOWY30o=,tag:Oh63Ea0+S6ER70p/TOltPw==,type:bool]
+                                    refId: ENC[AES256_GCM,data:XcDQHLw=,iv:4ncgLXtF3dRsIf+ayG0fFu/au4et183ZTeUG7zCTPSk=,tag:J845UJG+mQ+zSSWi8nNCdg==,type:str]
+                                - refId: ENC[AES256_GCM,data:gdRIYRhK,iv:a/6ObZLfYZl9w9Lm1P1guCwd8qFPmBkZaoKHjMakGJA=,tag:1nYsR3Mtkn4Ygd1E4315XQ==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:LdU2,iv:QCgW4kp9j9GUW0bDG/coh8mbjr6rCMOXbrcMGaycLqk=,tag:HqiHyL1AzYCQvXXy65/SGw==,type:int]
+                                    to: ENC[AES256_GCM,data:yA==,iv:atpyx8xHVRO8omDkjjnvRP5PRVfCLicsOEpDCZBo3gY=,tag:YmP9M2fjpYgv/OoPSApFgg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:S9y82Vx3DGE=,iv:70AoKEcMlvb+iV3OTghw5quhnwU2zxibk2/vcYaBC+c=,tag:J9laErF2DGC5dXJuferREQ==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:+w==,iv:2hrbWEk+8h72Jl5p4YAmbY+vqSfkTjfEivcji1QKpZY=,tag:AJ3zSw4bB9+XhBWjP4PfRw==,type:int]
+                                            type: ENC[AES256_GCM,data:/Dg=,iv:E9KtjJL4wk2slNP+BA7Ix3VPMBgKT58uPmoDyDFPZOk=,tag:tf7lOY24c3Sn8MPf/wsCeA==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:Vl5n,iv:9l8CTItWlHabUBrvUvI7EU9Q7o8+LbFBb06SlI1IG/Y=,tag:2bqd3rfArpASF910u2/4Ng==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:KQ==,iv:kMmNiYjvklM2bUwCIS6+ewGgYgaXKjtgXCC9aXYwi3s=,tag:Lbu7+49lS7cU6214cdF2yg==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:oc4kCQ==,iv:boro0vPQIRgt+XLdnBRtVwS+OTi3qv3JlSxP/FIKDnk=,tag:XRzktypm57K0tI0gSMIq4Q==,type:str]
+                                          type: ENC[AES256_GCM,data:ZoMXQdI=,iv:GrbC0tP4C+zLl0R7AogFpmGMkEG8PTjZJLQvb35wQBA=,tag:2HbjXzssbFG5L/2JusmU5A==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:cE/ZXR5gzhU=,iv:ujLRRlj7ZjwUOLs01WyfVjwwK7RPM8lzv912nvo2uJk=,tag:XCk33hwbJRTKG3ygCnns9Q==,type:str]
+                                        uid: ENC[AES256_GCM,data:pSACsFRCbM8=,iv:Olq1DFYmT+ZRa9jM/KRQWkCBfvjdh/6sulKkb0WsNRA=,tag:9M5TU7TBZS4SjLAk32MuIw==,type:str]
+                                    expression: ENC[AES256_GCM,data:Eg==,iv:sjDlCO19MFl7nr7EJpyBHwhrLPKnBFPasjDG6o5dUiQ=,tag:I7y/nRJ/t0kaLEYnpezRVw==,type:str]
+                                    hide: ENC[AES256_GCM,data:ztBsvCE=,iv:B5p7lYlGDRZ3OETLVGvZ4mSdPZUoBb2gkT7XRlZQaqw=,tag:GZqWgpLv6uWknXFiI2nxNA==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:ndLS9A==,iv:4fEdvesGr2uPvUK7d3eXzFZr0R5V1PpaJYY7pyyeRsU=,tag:Xjf5851K8oPZ6wWww6zQTA==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:e7ODmHs=,iv:Kud4E587r21TRVr5u01c+oM1rnK5+/gezXVN7OByQIU=,tag:/XERzGLzM92wwFJZghIG4Q==,type:int]
+                                    refId: ENC[AES256_GCM,data:/Z1p2AKu,iv:xE4imfnG9qN0VLBuzuwU3+MjjhtNWyQuvAJJRnYUS78=,tag:p+NvU2T5nGfXxNwk7FL8+A==,type:str]
+                                    type: ENC[AES256_GCM,data:ucKziqSwTO99,iv:TxVg7ujFfgpY724KHz53IAKZ9gHZ73Is3A9cvYqnZU8=,tag:wJrR81B/EJB+h4TPKFm0wQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:rA==,iv:ZZIE0uHcH8+69VTMRFm58196L+Gk8rZckW0EfOqy2U8=,tag:hM9NeLnoZla9/HSsnrOdxw==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:zdD/,iv:lJhW2D3wWxZwWYcberdQxPU9Pn0xa95TJEBDXw4Dhvw=,tag:JQSoO8YfATnUMhtiBJcqww==,type:int]
+                                    to: ENC[AES256_GCM,data:Lg==,iv:lx4wvAyPcH1FAm5OiFQi2B+SoS9aKW/pfBMkqt9eWbM=,tag:hu9t6pBabwnOz3MJGmzfFg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:XAv5j0IANz4=,iv:XANkZVrN3cJdbmeeoOM0moZLSr8lf4nk864R1kVe67o=,tag:K6jJGoX9DLwwTisWvTRMFA==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:qQ==,iv:u7tG9qu8iPhVc3gYoBw6/fTAnSOB8W/rXH8aTOQRr/E=,tag:kwRxAEKV2l8KAGXZJ6kpSg==,type:int]
+                                                - ENC[AES256_GCM,data:iw==,iv:vaqrs3mni9LABbXYszuYX5nnQRtPOC4hGIXqig6KF18=,tag:2ARb5vewSX1gcb2mNv6O4Q==,type:int]
+                                            type: ENC[AES256_GCM,data:n1w=,iv:TwbhHeyW3hiFQ/WnKRqVELJ8ZHOWkflEONeKcWctwLc=,tag:cD3i8W4lwhGDui8e5/XoNA==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:xzeQ,iv:DVxxJzIlbNIljoM8VzbBcz+FiW/ZY1iPrWv60/bExy8=,tag:o9c8TFU66D0jS9lvP/fFeQ==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:BjIN,iv:6wZZ5TkWvO5YFUV6tGp7rzZ+tooxGYk/dFDPO20HeLE=,tag:xvIjiQDMLrVim06IsJq6WQ==,type:str]
+                                          type: ENC[AES256_GCM,data:gyQcvlM=,iv:40PlQPc+rFMc0lPBMYoHO6qIs+3Qsw/HXeTWRVsGuTg=,tag:z9385iQgucU1+x/tiGo5pA==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:JX4kmBsDDjM73Q==,iv:mIUBY5eZHIqO/rE33AxhW6x+bN1gHDGIuMTGj5PksA8=,tag:cs7EMoEwEaOynang35oHbw==,type:str]
+                                        type: ENC[AES256_GCM,data:7sqaSeFzoGg=,iv:grUfcSiRGpwJq8Ri3zqVFzP1mUzTzOeVbwMAebpaplA=,tag:s32kT89MWI69nQyYYMp5oQ==,type:str]
+                                        uid: ENC[AES256_GCM,data:GsDwHWJY2Gk=,iv:w1e0FyNDXT2E1/vOMKbydVDmOodM+HUnKgKxllhQcLM=,tag:23jQoBGJiniofhTT508jwg==,type:str]
+                                    expression: ENC[AES256_GCM,data:Ky1fTeU=,iv:mVr7Ui8fmw6OI42jVWodWq+0D8IL797TbArTgtSOvKg=,tag:beC9oMASX3CoAUelGcQAfQ==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:2basUA==,iv:JzxV8qv78q/8XmBpWx5HA04Dja2FJ3iulQc/NZgaunI=,tag:9LyvUB3WaHpqEBeeNEnY6A==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:2NEihIc=,iv:JxqtSFKVXqJFHppGueVc+ZWAm4Gtd5KiIfVjDL5IjFk=,tag:L66kypTDxeXP+mEhCq5sGg==,type:int]
+                                    reducer: ENC[AES256_GCM,data:IMyBGA==,iv:m4G31rKaBoTgfCaa4cdkIp2c+4jKj15j7z9aVFO/N1c=,tag:AXtQldXpK81NOI45HutI/Q==,type:str]
+                                    refId: ENC[AES256_GCM,data:Hw==,iv:WdplTxOCIRiZcKdX03m3y2GA616XyFnWBdL5jCAh8w4=,tag:aF8WNPX30lne54Y6ORzwvQ==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:r96WUZRkyT6j,iv:7354dqVuKTTJwWNLEOy2J/+twv9g6R0Bem5I7F4rm3g=,tag:ef2tzpf/KB/yTw1Knq3YEw==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:DA==,iv:rhJbKQAiDjRT9qsYdsqpodq2FZy0seGtKyibVz6UfK8=,tag:2xRJLB+nLOK3A2+ipcwM5Q==,type:int]
+                                    type: ENC[AES256_GCM,data:G5iCduLa,iv:eI+JTuwrIIwyBBZw8Io5upQxnrUCaxvlYlFtYO/VcwQ=,tag:lqjVcs0uxF2wcajCkXxEgw==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Matrix Synapse DNS Errors are higher than usual
+                              isPaused: false
+                            - uid: de30a1da-84da-45f4-a4a5-d641dbd92e6c
+                              title: psycopg2.errors.ReadOnlySqlTransaction
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:J01iUXE=,iv:0k2gwa/BFG27+V5Hz2y6Xg66R9OYAyIT548wULKiQuo=,tag:rfa1Qco5VPT0MATGvtuFGQ==,type:str]
+                                  queryType: ENC[AES256_GCM,data:gK9yhX0=,iv:W51AtSY/i1Sm6pd8YmHLoSTjaa0BUZOrLx1Jai15omU=,tag:mRmcIFcDNvNAbmcmh1skUQ==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:OHIh,iv:RfFN99E/qjzJf1f3ercXUwjtiKFWlqkJ1jl94acy9EU=,tag:eaJg2hDYf9HBS+5AVO7Eew==,type:int]
+                                    to: ENC[AES256_GCM,data:cg==,iv:dG/YDtlup/KtqX3XEJCWgNKVL9VYyu26sl6HcuAcKNU=,tag:umaWMkD5Pd7k3AFU4sYpkQ==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:Uc8a1A==,iv:1ZIynMUu+P4cXhWHZZbgwdVV3y8Vflj4StylRMF4bLQ=,tag:esRJDFscEK7MO0hYIZvYnw==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:+WYfNw==,iv:vXnv65zPYnLboRu7AV7Ph2HEZVRn4Yr8+EgPLHcC+uY=,tag:jBn8s9OJY3Tk1exkU2O8IA==,type:str]
+                                        uid: ENC[AES256_GCM,data:Fz18zg==,iv:Y0YZW8R35gUpfQMu3XXpXLQoA8S5uUSFyb+SeLGk3UU=,tag:NTkbJTmBztW4ayezZe7Cbg==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:EvwBo+XnDA==,iv:6PUWbt1lixnm/8MDCUa2jYD1orTeBYFi04XDcjccbaU=,tag:YNdRmpAy11DmHFiTncRI/g==,type:str]
+                                    expr: ENC[AES256_GCM,data:ErcXy1ssXOs3Kp4v8HMykCsLJ7ExEFAAqZ8uaBo/9HHSn/iNK8WIK/VpmRuaBahyAcVzBg9y4R1QRKf/XLGeDGT2i+GO1kZMe46anQWEKDxbCW1b+TUzDQCgzpAW1kAqckc=,iv:FsIiFeCPpaPhaI8Ka7ZF17DiZqAMfUT5mW9DuiqEkr0=,tag:aj0vxii2s+ZjyzQ0P+aM6Q==,type:str]
+                                    hide: ENC[AES256_GCM,data:l8wenUA=,iv:feDXKUMGO8VynRF1Ek0i99QvzB0YvQO/8c3+ZIiS0r0=,tag:tfVR1ftI/dyznudEYztymg==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:YI5zig==,iv:YTHyaFanDjINM3LegnIYx4b8xwLLFYOistGRJVnVV5M=,tag:UuAFarSxecDRGRtY5xTnPw==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:Ejr3yiQ=,iv:IMs8zENu3v1yfftsmS78dfn8+GlvnuhfiYWSmP0U7oU=,tag:SAmHpXqnB5+l+hHXnfJtDQ==,type:int]
+                                    queryType: ENC[AES256_GCM,data:HaRLkqM=,iv:QVn6lFHkGkIEHX4c+hC2k9Ih0DHFyRBntrgfy+NAVhM=,tag:U8FI1x5cqz+Sp2t9SpaiWQ==,type:str]
+                                    range: ENC[AES256_GCM,data:jC4V/A==,iv:pWfAS6/gk5+xLehYyi5A46yG33UdPkpeBRLWnrrJZ6Y=,tag:9LAh8FaVrcmdKuMc8oGK6A==,type:bool]
+                                    refId: ENC[AES256_GCM,data:9NxLXzo=,iv:+b7Bkw24tPnBRgtVTU7ZeXP4JkG8Ab2x3HlBOnJ0TYo=,tag:1lZ04RnvUhkg8BQV+UoXmg==,type:str]
+                                - refId: ENC[AES256_GCM,data:uxIRtCsa,iv:ODoMIniPLoeudXO8O6+annIQPLqGzXZ52KKAvoqqbmk=,tag:pOtJkxKi7lVNe8O2I21k+A==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:uNeD,iv:pgogdxOPIdUWAdeNa3nCxtUNkMYwjpp7YO7XRBTrOWE=,tag:A0TDKhHWXDCt/BgGkx9o3A==,type:int]
+                                    to: ENC[AES256_GCM,data:Rw==,iv:TuNoqVA8DZsC6xcWWinlojoNi0YEuu/S0fE/kX8IDME=,tag:Fwb5CQPTPUNP9pdo06jD1g==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:CZ4GD2fhl94=,iv:wtSnYsaWddw8usuSfngF6C8Mk1Vn5+ZICLIuG7ZHST4=,tag:YbwvsAxi+/y9ZMc5cN0Hog==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:CTgt,iv:hyte8Y5LQTG7Ax/qebuydfCbDLBqTiqpN/UFUGue3rg=,tag:FBCFYZWznlyNPe+XL58IeQ==,type:float]
+                                            type: ENC[AES256_GCM,data:EBs=,iv:+TMAdwgHZaiDYBgnXSKf/nW/WU297uLCbGM+HMmvGmY=,tag:dMyu9phE6V5+DPZlCro6ag==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:IJTG,iv:v60a08Hp9HLdPcW3JwMxalRITI5Cd2xvfU6cdeKtJu4=,tag:+vZUtW9nyhX/I+YiUNLx3w==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:CQ==,iv:AvBgDhLrl79c33NtVyETuTW178CTaDWDslzW6q+thPg=,tag:WzqJBfDokGVC3QvZEo0XeQ==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:d1A7TA==,iv:mb4tl+6bbVXgCiD4v10cRJqyJOXyIZKKskVTCFPXZ9A=,tag:TBZc+PoTd2QeyWSbaU7opQ==,type:str]
+                                          type: ENC[AES256_GCM,data:ESH7iGw=,iv:FEOrnN6YVBPHPN5UXRJoppcAntMdze5yYTigzOslvtk=,tag:ZenUhLaBTcZ0WXYfGtNGVQ==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:xS54xv+AfSc=,iv:edcai4f2EfTf13OUiydY1qA0GJSkRfM4tCocikO3t88=,tag:wNGbENb0Bxv5QqxG2kcLyw==,type:str]
+                                        uid: ENC[AES256_GCM,data:AX9Y7XVUfxg=,iv:LBlc+9xqWFQndvPlk8gD4Ccs+nleaFLLWH4WiBu1yrs=,tag:R551zCZfjg8KNKOnwz4k0Q==,type:str]
+                                    expression: ENC[AES256_GCM,data:IA==,iv:8WeMvwL379mm8ziDBKOEaVcPmO0jksGI2BFkxkvZO2Y=,tag:hJ0U8VSUx+Gpl+EEYwjQkw==,type:str]
+                                    hide: ENC[AES256_GCM,data:/sLS8WA=,iv:ir85wgDngPtxmq8hVCObbtPVD1P6zqj6KnRSDstrWww=,tag:sYjK3fP3VsIp5pS93bBXXA==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:U/6AhA==,iv:oJUV2fNvXNI0ZSj3iRokXzUQd2RCAeA/6iULkaoQm+M=,tag:5am6Dlw+xhyQT1nqSl6wwA==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:q5+xTA8=,iv:CrWXsWxvqxnTU3jnD2pXObJg55EmeC6Hczfr2Mw9wto=,tag:ERijIfBS/XB19ZrmGqoW4g==,type:int]
+                                    refId: ENC[AES256_GCM,data:oWthF6xK,iv:BVU7BcCqjWM7kN9sEUCbU3IUwC5pRlHs1rO/fJNLHyM=,tag:1oe7ORLLqJZl+hjmD2zLQA==,type:str]
+                                    type: ENC[AES256_GCM,data:DWYIxy+bR1dN,iv:OMDlh6xfcqo9IrHDaS81KJEbstq51S3z2WnxDf6IfOs=,tag:d++DXiCN8DMzx6rZPyVljQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:Ow==,iv:BzLPn77tcS0YL05BwDTQA5DMvq4AdIqcwkQrzE/mv1Q=,tag:dgjau0noxOwjCybsjjJVEQ==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:73vS,iv:5egJFUkzehRfhZJpoqkvwPVK82UYoYj27V036t/gceU=,tag:yIM5S7Bq6Kr8+ue6nGgyyQ==,type:int]
+                                    to: ENC[AES256_GCM,data:Zg==,iv:6xDJo5KSqeTccJzmQFDhMYGeo0mszqK3yFnF1h64cdY=,tag:/JWMHNtUaukOEboYiWK8Mw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:Wof2VY+ncGQ=,iv:vQFh1G6BkQmSqaFRmykQya9epNsqHkQynNBM3IF81Nw=,tag:R1dvCqgd74sIC3Y5MNttoQ==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:aw==,iv:8GQwb4TrEaB5dQmvHXDpa7E8RGmDFSxJ3ZKHrBn6DAU=,tag:UgVc61kAosSSRVk+g49hUA==,type:int]
+                                                - ENC[AES256_GCM,data:7g==,iv:hcRmYrinX4W6tp/KSmEdR9wiLxlqncFYS7fP+OltCuI=,tag:3dkaA007vDT62UHRYrehfw==,type:int]
+                                            type: ENC[AES256_GCM,data:WpA=,iv:0/uM3x+FHBrtH9vjCzSHi/Eqe9WL+tSGuebVx2wOTqM=,tag:jZJHFSOaSQkG8L4jBTvJBA==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:7+i8,iv:ki9YT46z4OtsdJSsYnBOnR9SyS98Wo9sK76dGcY1xso=,tag:6ceUa2nh65tJGCToQgcG6g==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:RZBm,iv:UxaGIHdxXI5ti+Y86uahg/xnMPrxcOBNvKE5RhubSV4=,tag:n26TukNR52Q5y4y7YbR1ow==,type:str]
+                                          type: ENC[AES256_GCM,data:xTADjV4=,iv:clsfitSmh+YuhM566xzTU9kgTREKorybzTVv9v268Ds=,tag:EkDIsYfTPB8mcHJv6homJQ==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:MCr/WP2auRC4hw==,iv:02sN58fjwM4GlypENt/60jKpZ12q3cUmNCxihUubl28=,tag:FvNEt+yLnCUzFlgR7tJ0EA==,type:str]
+                                        type: ENC[AES256_GCM,data:GHUMXJFMbko=,iv:JPS9vPUHRVtCpXs5mIkfMOwHDLGJ4G+YIyyuC7xGGCU=,tag:0+JFUwGGWRDBEBhezGiAqw==,type:str]
+                                        uid: ENC[AES256_GCM,data:l2zxpgHLp5c=,iv:2JTtP1zwUBeb9hUUzzs4tfWxYK38Vnom/FkuItHk7DI=,tag:E5D/um4qtYQw5bL84F4SlQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:0+YRFJU=,iv:HumUWlMBypezxOsv59XPlUz0o1OgBg0cVlNrR2PTgZo=,tag:wTOico7xy522jaEG0nFaYw==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:TCYFaQ==,iv:Gad3YTiJBWG4B8m4tbFa3Hb87eU5W8nlFLDmEaFMCz8=,tag:UfmPLYUUvez1FQlIUn99iQ==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:7Grt5UQ=,iv:4PC/q3f+cAkjkfQ6cs0UpcyuRj+gBgJUfEXs9RnulIY=,tag:8jPWomlchIfGW4bc3Fk/QA==,type:int]
+                                    reducer: ENC[AES256_GCM,data:Wv9X/w==,iv:o5KTGt+8FjsiFMDBTgrwIYPvo9hBRi/mfo/3GlhLkIc=,tag:2hqBTGgnW9ZA+25knDeUqQ==,type:str]
+                                    refId: ENC[AES256_GCM,data:jQ==,iv:aONdqdFhD7fNt+I6hRHhf4GvzkfmQ66bZfXDLBpNi48=,tag:ANis7VTWxqdOOPVffXNn2g==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:AtkAbgQKGRq9,iv:8mMb3fKAEhc5jK0l8gjJqK+t3MGOpiwc2IoGN0TueCw=,tag:ZdkxFXywJ6oJg8AkSui6Fg==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:Mw==,iv:LD7pNKDqWPL74/Rv+6b1KqC2z2FIJ5AestrKFoyDLcI=,tag:jtVAoSJ5/qWMqbK+kqBeAw==,type:int]
+                                    type: ENC[AES256_GCM,data:4em1DmDV,iv:Q1DLoGXifIX0l4pEBQPJLqRxrWu9ws8o1QkMabE90aU=,tag:1ggAG2RnvrXm3X6FSZgH/A==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Matrix Database rolled over but synapse crashed
+                              isPaused: false
+                            - uid: d16dc343-31d9-466a-bdc1-c2466b0bc18f
+                              title: Unusual synapse logging
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:mQVauwU=,iv:otozW8gm5XM6/F3zizMVwCfTHsdQlznyRBzVecrVyjE=,tag:Fljm2zYQT7TTjmX51eqpPg==,type:str]
+                                  queryType: ENC[AES256_GCM,data:aHTACOA=,iv:lLvvSrU/yZjFm7SmFch13jtIzS4/8jNiczkTJRZd5r4=,tag:calAThtusqzcDdnCQkJNBw==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:2nVT,iv:2PSLMVV27qox/F+KsCBX6B1hTwD0Vkcw/MLoDQoFnt8=,tag:akgbmn4+PRBYleDN5g7wjw==,type:int]
+                                    to: ENC[AES256_GCM,data:WA==,iv:M/c1zu5WHY/CtYh3WAtUTkPmN8vhcsEqljWGLn2ZQ7c=,tag:/+L/CfxPHIlQjrN18WMEmw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:tFbWMA==,iv:yIihrLVdT7DYn8aeq9WBankwtRbt2FvDUx9oLmyfSWo=,tag:X+0HZnzFv0+VTP1ilVOZNw==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:mNVCjg==,iv:UeYLwDAfnMuEeJ4M3/dF9kaZd2gWs0A257+cCc2X22w=,tag:LrmG3orYeRNED/dA2ZbEiQ==,type:str]
+                                        uid: ENC[AES256_GCM,data:+njhaw==,iv:E7iGUdYrXF1Q+1Zli36nI366j52PWQwQq0IXCEn7rhM=,tag:fptm1Kvuk/CxsnvkvoukvQ==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:kQFmOMZSTg==,iv:l8EyVJraw2YPMephNEEUQ0MgxH+/Fc+IO3vaJYqbBwk=,tag:WMZmT4HqmAsNVxgrpRFoKw==,type:str]
+                                    expr: ENC[AES256_GCM,data:R5ELL8N3whpcwIKrkQwqbpRx+r+gQKUWUXYbjK+ACHGdQV5tMAHgMqGXb8eSzweu9PrYHpxbwIH+8TOK35xAYYlx+ZpRxX6iYa1hCR9LGP6/B9o9ym+cuOoV/kh2N6jMZatIoLOjM2ioV2TnHxnerQtKKC+VFzC7pKUsNimjKbFPBr/lIQDzhDHZOPE90CIrIO+uOq+w8QN7wJ0M7S+EQNIBJR9bJdHAnxUTZEU=,iv:OoEaWZzE4cWpsQ7vyAp6Y3pbsgLEnwEsKwXKAEeaUeU=,tag:ACZhWTMilZgI1uTVLFrftg==,type:str]
+                                    hide: ENC[AES256_GCM,data:ggzUV0A=,iv:fwKtuYcO836/ujxYwwOCq4eNjjhEDr+PJrGBrErKiTc=,tag:shtPwVPchoWSYsZoaYT4WQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:lueauQ==,iv:dfKU44DuDqobwJjNQYFm9O+qp2qDtORNFQTd+SK7Gzo=,tag:8YvRSJPcP19Hlmv4kDYe8g==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:+AjvZoM=,iv:v5F76vfSnYbbV/HCAmhYuYHfp3S1KhqQctlI8H4C+yw=,tag:BQqPPi4uqYO+E1n7ufYD1g==,type:int]
+                                    queryType: ENC[AES256_GCM,data:NcdBfVQ=,iv:nMq35XNEgFB1Veum0e0x6/biNK+JGWZ5XLR+XSynsO8=,tag:8caDMPukztVd7aop/V1InA==,type:str]
+                                    range: ENC[AES256_GCM,data:wETBjA==,iv:R9o5b0o3/uWJDTqtlGGcFxW/BAEIZY2cQwE4l1JLKcI=,tag:f/799exid8Uy7AlTWUMf3A==,type:bool]
+                                    refId: ENC[AES256_GCM,data:9VO3mBo=,iv:/IkrO/zHGAlWA554v4PrDJPZv9cq1ZHyBsg7XYVOkVI=,tag:pBt/vDzxXkF3OAJCAW5OvA==,type:str]
+                                - refId: ENC[AES256_GCM,data:0NRxU4YK,iv:Eoi2ypWW95tZIUIW87CyMRd2G4Jha3oi6A3Uy3XZQi4=,tag:eYqkP7wB0q0J5ER7pJc5rA==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:DjxK,iv:IBfN/wR0/5YUfedOPWT2PEhP89toWZPbQvmRxkSqrTY=,tag:PyalsMn0TRXVtRNDqjIEbw==,type:int]
+                                    to: ENC[AES256_GCM,data:Sw==,iv:gJHW92BWmrzrfVTIbBHyUe0j3T2/5LVX7SGl0TlXlEI=,tag:9ORA9xzvgf7/tZvca277lA==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:g7BWJkiRE5w=,iv:CjwFFSDEpioq/noMKKZ3jABq7Eg5MqhlcqqDrLGf/O0=,tag:y3DeSEHFpoOHOLVtnQlpIg==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:gvM=,iv:DLSis3DnRYKogRoYmc2mx6L5tzibD8ko8c2UKJakvoE=,tag:JMIlnKi2cH8ayIqBvlE+yw==,type:int]
+                                            type: ENC[AES256_GCM,data:4MU=,iv:RKEHavWdDxWi1ToACoqMncpcnV7FG6CSms1HqGhEdOY=,tag:UX3/jR5Jn4PEk/61dFxdCw==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:CpHY,iv:ANY7MstILBKGo3n1v8JNaeu3ccpWup6Eln800Xtrxo4=,tag:RDGG4LzLjzFDAkqQvRa6Zg==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:Yg==,iv:aL3TFltmTAZ/ATwWgBPiQ0wnwcdIkraGt2picmY3tQg=,tag:GzX3qAkiJKHpkTOV548IEw==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:Al3MQg==,iv:xNmLfvGVtuhK9xjgSevREFyulCqWZURMcPYN5Wk89zM=,tag:29dTEFEnDGsah8JoSVkBiw==,type:str]
+                                          type: ENC[AES256_GCM,data:YUr7zBU=,iv:DTYs7U371QvCivbyWtDRvi4wi9ze5t7xKT+1nDjET1s=,tag:LHwdACem9xA65ctKRjnk5Q==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:5l79a0pT9Ps=,iv:ziyN8vigDud1KSzm30ofVtCI1CM04m1Hk+LeL7ZmJRI=,tag:uO1l3RZB9BWa5zIqt4zQww==,type:str]
+                                        uid: ENC[AES256_GCM,data:HzeRoOp4r3E=,iv:L82R8RvvrdR+wf7LNtfyS2rJuWORjIFo68h7bazHjog=,tag:yJmZkChLUeDycjmvry65BA==,type:str]
+                                    expression: ENC[AES256_GCM,data:2Q==,iv:fWaS0Y3Vw3u1kZNVzhHSk5hErOPboQK9sgRUDRm1Hus=,tag:szL9yqxO8HKePgwdKxKEHA==,type:str]
+                                    hide: ENC[AES256_GCM,data:UFmFatY=,iv:Lybp0ybRvlacg10csifr4XnpQ6ZkAKfwCpzSeS1cJ8k=,tag:M9BU3AyB1eXDQRqswXJgXQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:17mRRw==,iv:IR4uVyoMpIoEvcIBv0kXsmERYH1uthWjXywixvWQ3Mc=,tag:rWZRbOXK6apxUBaImbuqXQ==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:F+BWFkU=,iv:PwOBraXu+n7NuP81ulWrkipLFx991x9XjYJmcqmC/WY=,tag:f2bvKNj5rlwZ/JDazUpsYA==,type:int]
+                                    refId: ENC[AES256_GCM,data:5JQfUxcU,iv:cVleInz7Gp6dTH4UCzupDYvij5UAFWiMumYS51Gsf10=,tag:2g9nN0L+nfLRMCd2/QBNwg==,type:str]
+                                    type: ENC[AES256_GCM,data:me+Jk/a4RGk3,iv:rjAaQb0ZaObLeYj7mpHqI+MIZI8GejK34omXRDgMIVw=,tag:4wSH9ZR0ZPiwdbtO6o8JUQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:LA==,iv:hSjF02hMVG6D2yr+wWX/z1c2Ot1R2hFJVJ0xF+eh5fA=,tag:Uuh1YyECH9v714D9lpJrQA==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:njR3,iv:/atg0bpMnbUCOn3+6GDgGAGz7msXb5s4IxA2EUTK0xk=,tag:is5MWWk/1uSiIoRzLYh7BQ==,type:int]
+                                    to: ENC[AES256_GCM,data:3A==,iv:uukEJUXIP1CYgxPNfKQP/mYmNrc7rsjfxAVgg+A3D0M=,tag:52OeK1+E2YA5fDiTKHaBOA==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:ZB+1ce81Ck8=,iv:Ejg8iLqzpw/OkQ820cBL8RKstaz8zRqgOKEfnqsVstE=,tag:a3KxdY8UFiTHGhmjr7nQew==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:8g==,iv:8dEIKq1X79ku03j8yXhXd9bEWXCy1+bJajhFI8WPswU=,tag:ognbgYuC/DDJdDBtdXfDjw==,type:int]
+                                                - ENC[AES256_GCM,data:qg==,iv:gO1bkO95fcVw1b8gaE3ceI/frmFyUCgN2o9baEcSebk=,tag:pFfuud1O7s59Lgx9/Yv+ig==,type:int]
+                                            type: ENC[AES256_GCM,data:nZE=,iv:6frnYoQv5u1qEF6wmmht7fzqsO+hSv3kZYcHmAuDhow=,tag:WxKAJ8giEe+e36NX/siQKg==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:cUfv,iv:ey7/e5zHsaRNp3eZIjb3T+H7pVmLK93lT+ThpendjtM=,tag:Guuzhm3XY3XulBpd7RQ+FA==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:7ll6,iv:mcy8fY6UeAFbWF7xwpPzfmdOrEpFjLzVUFjQS3x+qhU=,tag:+PMfW8asp9fmFtCkdWsFsw==,type:str]
+                                          type: ENC[AES256_GCM,data:jps60gY=,iv:NrtCCOciN9LWTQ6RHphvQStuM3wWZmVOUhRiir/4UfQ=,tag:PSg0wkwfRBnq+Xly2w5F+w==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:TYh77+pukrHNTg==,iv:hOGXYA6hcPGc425uyyBTzhTTdMyVm9/F1ww0jHih3c8=,tag:++pdEba0r8MbCwXU4O1e8Q==,type:str]
+                                        type: ENC[AES256_GCM,data:Fjcmy/cQed0=,iv:gGetaRbIQHHXJopUFfCoGMYdSQGNJsFrUQEB5HxJXDs=,tag:KGeAIbXdivKx+9pA6RAeHg==,type:str]
+                                        uid: ENC[AES256_GCM,data:zkKrHvNka0E=,iv:GHqwO9rgi8SJpXHQFjaqoZbXJfJ2Tx0V0CkGZiH+8KI=,tag:eQvNOU106u8AoqHoCNN1NA==,type:str]
+                                    expression: ENC[AES256_GCM,data:xcyw+bA=,iv:+qI9a5jCn66NQj7EB14df9j8+P9DIQ+9BKO/zdlw4Lo=,tag:9ocu9j4EBEGQUIJD4WHSHw==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:DnjMeg==,iv:mkcXjsYPFj1wlB+Xb5xN4NEgeatiZFentrntExt9G9I=,tag:RXqMwvEba3xJJ5lOCnY2aw==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:1MZvdKQ=,iv:MsPJEmmiXjxeH16WOTGCWb/b0wsYu3ZNIbRMd/QWmqA=,tag:wJF+FrGtqo/w9t6PVWR0Fw==,type:int]
+                                    reducer: ENC[AES256_GCM,data:TDuyfQ==,iv:7ZpQWCX7s4449zGRRbUv+F/aE4w+seyDkCUqRJpQ/SY=,tag:YM3I2lBh63GCXGzehNVA5w==,type:str]
+                                    refId: ENC[AES256_GCM,data:PQ==,iv:UDztl55NqxMysolE7p6Wbr1lu3M5JyxdZ2+VHZ5GFIE=,tag:LybTfZrZ5TZ95bkO18fGHQ==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:DjUa1IV9KhiS,iv:uTBWd2t56G1F1ty1Srm36we3fbinSAGMJtghNUlSwaw=,tag:3tyds3JEZk5uLpNru9FW/A==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:lw==,iv:B2+E5n+/I19NSCKZnOjg8MVB1I6FkELy9EDajt6L3vU=,tag:33UBMeknuHa+srVNmi+gYQ==,type:int]
+                                    type: ENC[AES256_GCM,data:DYJ8GwNn,iv:x7k0Qv9ezJcxVmRLWX0nGse2zMnRLzGpDkiX4XtyjqY=,tag:9QM101sjFvzpYPe9VDM9YQ==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Unusual logging for synapse.
+                              isPaused: false
+                contactpoints.yaml:
+                    apiVersion: 1
+                    contactPoints:
+                        - orgId: 1
+                          name: MidnightThoughts Ops
+                          receivers:
+                            - uid: "1"
+                              name: MidnightThoughts Ops
+                              type: email
+                              sendReminder: true
+                              frequency: 1m
+                              settings:
+                                addresses: ops@nordgedanken.dev;mtrnord@nordgedanken.dev;mtrnord1@gmail.com
+                policies.yaml:
+                    apiVersion: 1
+                    policies:
+                        - orgId: 1
+                          receiver: MidnightThoughts Ops
+                          group_by:
+                            - grafana_folder
+                            - alertname
+            plugins:
+                - grafana-piechart-panel
+                - grafana-worldmap-panel
+                - https://grafana.com/api/plugins/parseable-parseable-datasource/versions/1.0.2/download;parseable-parseable-datasource
+                - isovalent-hubble-datasource
+                - isovalent-hubbleprocessancestry-panel
+                - chaosmeshorg-datasource
+            smtp:
+                existingSecret: smtp-auth-secret
+            extraSecretMounts:
+                - name: auth-generic-oauth-secret-mount
+                  secretName: auth-generic-oauth-secret
+                  defaultMode: 288
+                  mountPath: /etc/secrets/auth_generic_oauth
+                  readOnly: true
+                - name: parseable-secret-mount
+                  secretName: parseable-secret
+                  defaultMode: 288
+                  mountPath: /etc/secrets/parseable
+                  readOnly: true
+            defaultDashboardsTimezone: Europe/Berlin
+            dashboardProviders:
+                dashboardproviders.yaml:
+                    apiVersion: 1
+                    providers:
+                        - name: default
+                          orgId: 1
+                          folder: ""
+                          type: file
+                          disableDeletion: false
+                          editable: true
+                          options:
+                            path: /var/lib/grafana/dashboards/default
+                        - name: monitoring
+                          orgId: 1
+                          folder: Monitoring
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/monitoring
+                        - name: zammad
+                          orgId: 1
+                          folder: Zammad
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/zammad
+                        - name: matrix
+                          orgId: 1
+                          folder: Matrix
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/matrix
+                        - name: nats
+                          orgId: 1
+                          folder: Nats
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/nats
+            datasources:
+                datasources.yaml:
+                    apiVersion: 1
+                    datasources:
+                        - name: Parseable
+                          type: parseable-parseable-datasource
+                          url: http://parseable.parseable.svc.cluster.local
+                          access: proxy
+                          isDefault: false
+                          basicAuth: true
+                          basicAuthUser: MTRNord
+                          secureJsonData:
+                            basicAuthPassword: $__file{/etc/secrets/parseable/password}
+                        - name: ChaosMesh
+                          type: chaosmeshorg-datasource
+                          url: http://chaos-dashboard.chaosmesh.svc.cluster.local:2333
+                          access: proxy
+                          isDefault: false
+                        - name: Tempo
+                          type: tempo
+                          uid: tempo
+                          access: proxy
+                          url: http://tempo.monitoring.svc.cluster.local:3100
+                          isDefault: false
+                          jsonData:
+                            httpMethod: GET
+                            serviceMap:
+                                datasourceUid: prometheus
+                            lokiSearch:
+                                datasourceUid: loki
+                        - name: Hubble
+                          type: isovalent-hubble-datasource
+                          uid: hubble
+                          access: proxy
+                          url: http://hubble-relay.kube-system.svc.cluster.local:80
+                          isDefault: false
+                          jsonData:
+                            serviceMap:
+                                datasourceUid: prometheus
+                            tempoDatasourceUid: tempo
+                            prometheusDatasourceUid: prometheus
+                        - name: ES - Chat Sessions
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-chat_sessions
+                          jsonData:
+                            index: zammad_production_chat_session
+                            timeField: created_at
+                        - name: ES - CTI Log
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-cti_log
+                          jsonData:
+                            index: zammad_production_cti_log
+                            timeField: start_at
+                        - name: ES - Ticket Articles
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-ticket_articles
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: article.created_at
+                        - name: ES - Tickets by closed_at
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-closed_ticket
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: close_at
+                        - name: ES - Tickets by created_at
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-created_ticket
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: created_at
+                        - name: ES - Tickets by first_response_at
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-first_response_at
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: first_response_at
+            dashboards:
+                default:
+                    nodeexporter:
+                        gnetId: 1860
+                        revision: 22
+                        datasource: VictoriaMetrics
+                monitoring:
+                    asterisk:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/asterisk.json
+                    traefik:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
+                    postgres-dashboard:
+                        url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
+                    minio-dashboard:
+                        url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-dashboard.json
+                        #minio-bucket:
+                        #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-bucket.json
+                        #minio-replication:
+                        #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-replication.json
+                zammad:
+                    ticket_statistics:
+                        gnetId: 14222
+                        revision: 2
+                        datasource:
+                            - name: DS_ES_- TICKETS BY CREATED_AT
+                              value: zammad-es-created_ticket
+                            - name: DS_ES_- TICKETS BY CLOSED_AT
+                              value: zammad-es-closed_ticket
+                            - name: DS_ES_- TICKET ARTICLES
+                              value: zammad-es-ticket_articles
+                            - name: DS_ES_- CHAT SESSIONS
+                              value: zammad-es-chat_sessions
+                            - name: DS_ES_- CTI LOG
+                              value: zammad-es-cti_log
+                    chat_sessions_statistics:
+                        gnetId: 14224
+                        revision: 1
+                        datasource:
+                            - name: DS_ES_- TICKETS BY CREATED_AT
+                              value: zammad-es-created_ticket
+                            - name: DS_ES_- TICKETS BY CLOSED_AT
+                              value: zammad-es-closed_ticket
+                            - name: DS_ES_- TICKET ARTICLES
+                              value: zammad-es-ticket_articles
+                            - name: DS_ES_- CHAT SESSIONS
+                              value: zammad-es-chat_sessions
+                            - name: DS_ES_- CTI LOG
+                              value: zammad-es-cti_log
+                    cti_log_statistics:
+                        gnetId: 14223
+                        revision: 1
+                        datasource:
+                            - name: DS_ES_- TICKETS BY CREATED_AT
+                              value: zammad-es-created_ticket
+                            - name: DS_ES_- TICKETS BY CLOSED_AT
+                              value: zammad-es-closed_ticket
+                            - name: DS_ES_- TICKET ARTICLES
+                              value: zammad-es-ticket_articles
+                            - name: DS_ES_- CHAT SESSIONS
+                              value: zammad-es-chat_sessions
+                            - name: DS_ES_- CTI LOG
+                              value: zammad-es-cti_log
+                matrix:
+                    synapse-dashboard:
+                        #url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
+                        url: https://raw.githubusercontent.com/element-hq/synapse/develop/contrib/grafana/synapse.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
+                    draupnir4all:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
+                    matrix-media-repo-dashboard:
+                        url: https://raw.githubusercontent.com/t2bot/matrix-media-repo/main/docs/grafana.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
+            ingress:
+                enabled: true
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-http
+                hosts:
+                    - grafana.midnightthoughts.space
+                tls:
+                    - secretName: grafana.midnightthoughts.space
+                      hosts:
+                        - grafana.midnightthoughts.space
+            grafana.ini:
+                server:
+                    root_url: https://grafana.midnightthoughts.space
+                smtp:
+                    enabled: true
+                    host: mail.nordgedanken.dev:465
+                    from_address: ops@nordgedanken.dev
+                paths:
+                    data: ENC[AES256_GCM,data:eoqHlx+UQTDS1ECcETBPhjM=,iv:32DSO/Xy6EsGVppZsP8XZgndNnGT9wWpfsi085RbwU4=,tag:JQCVdmbTTQJLc2HzP/Mngg==,type:str]
+                    logs: /var/log/grafana
+                    plugins: /var/lib/grafana/plugins
+                    provisioning: /etc/grafana/provisioning
+                analytics:
+                    check_for_updates: true
+                log:
+                    mode: console
+                grafana_net:
+                    url: https://grafana.net
+                auth.generic_oauth:
+                    enabled: true
+                    scopes: openid email profile roles
+                    name: OAuth
+                    allow_sign_up: true
+                    client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+                    client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+                    auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
+                    token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
+                    api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
+                    role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
+            imageRenderer:
+                enabled: true
+        kubeProxy:
+            enabled: false
+    postRenderers:
+        - kustomize:
+            patches:
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated from chart hooks
+                    kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
+                    name: kube-prometheus-stack-admission
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
+                    kind: PrometheusRule
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKR0lVd0VCMk56bXE5cHZK
+            TUhJUFh0Yk1PSW8ybXZnaEd0bnRISDl4a2tRClFzMEo5TnRpZTFMVDJyY0d2SmZ0
+            dlhlaFZhVmhRcGVhYit2a0QxY25IbUUKLS0tIFE0U2JhTnd1ZnNLOXpWUm81YUIy
+            cUNQV2pyNmZxa0U0Rm1IRzBtaGx4VmsKYWTVMYlUIstF08gpCCqD2Qs9helQUQy6
+            YrsIuU0X6YWBhqyvYldklUnUVwKfT+I71v8Zt7PHiaL5bHz80uey2g==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-04-16T11:28:32Z"
+    mac: ENC[AES256_GCM,data:fQ2cgTo5GRSRgVLNqq8OD3GGV5OBkMux5DejQkz9d0c1tIm4nTwqOqJAhfoJDOunb4/Gk7VaN9MT/pxKXYR43IwI6ALADGoECHgZ//ecvq8HZCsa2Hn8oCsMn3IOKkRxGun6AvV9M+LljfTgh3MXCRfRWuMteIYOCpcXyduTNe4=,iv:XZsZiOLlUBcOSB+Jhn8a5uaGxZvPqb1iVxp5AoDhDOU=,tag:u1yC4rEionpxHurWMmmJzg==,type:str]
+    pgp: []
+    encrypted_regex: ^(AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
