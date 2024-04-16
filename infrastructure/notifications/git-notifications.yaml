@@ -11,17 +11,6 @@ spec:
     name: github
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
-kind: Provider
-metadata:
-  name: flux-system-gitea
-  namespace: flux-system
-spec:
-  type: gitea
-  address: https://git.nordgedanken.dev/mtrnord/gitops
-  secretRef:
-    name: gitea
----
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
 metadata:
   name: deployment-status-github
@@ -29,19 +18,6 @@ metadata:
 spec:
   providerRef:
     name: flux-system-github
-  eventSeverity: info
-  eventSources:
-    - kind: Kustomization
-      name: "*"
----
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
-kind: Alert
-metadata:
-  name: deployment-status-gitea
-  namespace: flux-system
-spec:
-  providerRef:
-    name: flux-system-gitea
   eventSeverity: info
   eventSources:
     - kind: Kustomization
