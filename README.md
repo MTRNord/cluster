@@ -166,3 +166,7 @@ infra-controllers       main@sha1:21ebd912      False   True    Applied revision
 - [ ]  Port validate script
 - [x] ~~Setup CI for github and woodpecker~~ (Fluxcd can pull it)
 - [x] Verify sops is working as expected and then publish repo
+
+## Kubeaudit
+
+`find ./  | grep .yaml | xargs -I{} -d'\n' kubeaudit all -k ./kubeaudit-config.yml -f {} > audit.txt`

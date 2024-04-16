@@ -17,9 +17,9 @@ spec:
     metadata:
       labels:
         app: sliding-proxy-midnightthoughts
+        container.kubeaudit.io/sliding-proxy-midnightthoughts-container.allow-run-as-root: ""
     spec:
       securityContext:
-        #runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       automountServiceAccountToken: false
@@ -56,10 +56,8 @@ spec:
               drop:
                 - ALL
             readOnlyRootFilesystem: true
-            #runAsNonRoot: true
-
             privileged: false
-            runAsNonRoot: true
+            runAsNonRoot: false
           resources: {}
   strategy: {}
 ---
