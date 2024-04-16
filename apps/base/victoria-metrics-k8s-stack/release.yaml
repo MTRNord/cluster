@@ -14,7 +14,10 @@ spec:
                 name: victoriametrics
             interval: 60m
     install:
-        crds: Create
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
     upgrade:
         crds: CreateReplace
         # Force recreation due to Helm not properly patching Deployment with e.g. added port,
