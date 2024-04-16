@@ -24,6 +24,18 @@ spec:
     values:
         prometheus:
             prometheusSpec:
+                retention: 365d
+                secrets:
+                    - prometheus-asterisk-secret
+                additionalScrapeConfigs:
+                    - job_name: asterisk
+                      scheme: https
+                      basic_auth:
+                        username: asterisk
+                        password_file: /etc/prometheus/secrets/prometheus-asterisk-secret/asterisk-secret
+                      static_configs:
+                        - targets:
+                            - pbx.midnightthoughts.space
                 resources:
                     requests:
                         cpu: 0m
@@ -51,7 +63,402 @@ spec:
                 useExistingSecret: true
         namespaceOverride: monitoring
         grafana:
-            adminPassword: ENC[AES256_GCM,data:ZpF1Th/DBoNUL5VLQUzQvTzB13edtcaPSQSN7NfSyRKBhrLHvROesREurugWmcCbxD7bEhhTMDp4fOAgBdzdfw==,iv:XrNKbFVk75qp1bBvv24ACiXvD+jMkBKC4SLTJeW8a8U=,tag:W2Nt8sV+UfkAlfUGToKFVw==,type:str]
+            adminPassword: ENC[AES256_GCM,data:L6yfEaJ0gYc3JaL+xnqeoSynhU+HbhC+iaM2xRh0yiFgDUXFaEoNZI7cur4nlrsmEj8OPetKUdDpD6MRm+jzQg==,iv:ZH3MhJUlSmIzBxZ4WcAtBkcVfu75R3jfMer7Cep2B5s=,tag:K7eJ4h50NVW0XBr96U/byA==,type:str]
+            alerting:
+                rules.yaml:
+                    apiVersion: 1
+                    groups:
+                        - orgId: 1
+                          name: Kube-system
+                          folder: Cluster
+                          interval: 1m
+                          rules:
+                            - uid: d2b94d3a-2483-4be4-bf2a-2fd9f9fac406
+                              title: Coredns Failure
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:XrjbgFM=,iv:ZRUDAfC4h/car2MYVXMPGndkhs7CU/PD0f4xynCw1Ss=,tag:z+qURh9xZ/NTH8Sl8tKsKg==,type:str]
+                                  queryType: ENC[AES256_GCM,data:C7gCmXw=,iv:IlE3u7K9RQMhXapeS/CkbRaIFZi6I33cPlzcUkVkCHg=,tag:GxQyI/owsu/LPv7uXyCvZQ==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:CX6O,iv:ILNXt63GERzWFkuofr6Lyvl/D2lXcWw9+dgnQF3FA+M=,tag:DrxiC7cDyGRh5Km0aK3cqA==,type:int]
+                                    to: ENC[AES256_GCM,data:Fg==,iv:7zIMfA/lL9cN7ikBxTNDMBX0FIlVFiC1yjdF/xQne6c=,tag:cRymIdceGkqRwq+bLFdGwg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:vAVJjw==,iv:1O5oFo+S4wT2/+wBYXkI1oE3Ds/E9XCi3DWHq6jAmAI=,tag:MER2rAWUceZIx2NmMuP30A==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:CEVBNw==,iv:Gcn2ucS8gon9St5EGiBJwAGeoGj6ETo9+IiZlXi7d1U=,tag:mmEMJ+2OPgQL94/DlXNd1A==,type:str]
+                                        uid: ENC[AES256_GCM,data:ozw52A==,iv:n3i6R5pkLJ3LPau4/cTeeKC9uii3mnUYWBs+X908Gl4=,tag:c4D0lyT6TV21ncyjpbKUeQ==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:HbsbFgxkXA==,iv:v5DwuwMRGmFcUsqPHO4jixgRqEaTPyxUBmpeyLjhYWE=,tag:ycfVYJqCoEHInJx6Qyg10w==,type:str]
+                                    expr: ENC[AES256_GCM,data:AIunUBCr7jSn5p7k7dPsTHX/xD+8Gmv6iM2fL/suETlrxLBQUj6wDsdDyPSKbLxzYeC2oJmgZbREod61YXF9tjzKmHS1,iv:hlC+dIyVHn76lDP5rdeNS2b8EIOwiWdEuovpAXJ6WVQ=,tag:G/XZoStg6kiIIBEn13H47g==,type:str]
+                                    hide: ENC[AES256_GCM,data:gBMVeKg=,iv:tnxlGc+/w6ahqD+wepXioYQZAxmvwnhqoo4duxaEApA=,tag:R24UdUpeTHZ/OVbv8ezNAQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:W8G1Uw==,iv:WYgu5qL6bqtTe+kRT1GhUndSyBcV744FDlTQd4G4bgI=,tag:sLEviVLD6MoyT3VjEuFHqQ==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:3pe0/Q4=,iv:KUa5KsgMPwchD9UPRZy6QHAM57MAs5dN4wVNtrKueBw=,tag:GYV3iymoEx4ax87jr0c8Sg==,type:int]
+                                    queryType: ENC[AES256_GCM,data:wLaQly4=,iv:8U+3M6GC1f3IgiI3/xcPjWTjreyYPi0vk9WupF4kAbE=,tag:gN9J4BmoFho6NOiFLqIv6Q==,type:str]
+                                    range: ENC[AES256_GCM,data:T0KJVQ==,iv:DVefQmbPmmG5hhmEQP3EUiogrJXj09NqWYyh2CZvNW4=,tag:KVE0oKRt7JrMlLmXAaZ+fQ==,type:bool]
+                                    refId: ENC[AES256_GCM,data:hyayqjk=,iv:4Or92QiO9QFPEDmzrzukRp+iKDSks/ZoAS2K7e+Q9vQ=,tag:iXgXzgFKQla7Hh66pIP8Xw==,type:str]
+                                - refId: ENC[AES256_GCM,data:ffoL/Uce,iv:+ERAPgggoOGv7a25/wTMlLBd8aG32sqFPCoC1WT/26I=,tag:11wCZGe3aaNeRstfPO2wYg==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:MBgn,iv:BHNhIOwza4PMAwItrxYh/1z4m3LL1/ojlSLDNkhtwLE=,tag:memlRggdOCudIak87ak2NQ==,type:int]
+                                    to: ENC[AES256_GCM,data:6w==,iv:rXddawBZ1SgbNeRbGwMfqcJt/FXSFDiH1y+ZwFxNU3A=,tag:eaRSoDAOmY/hBZbiROV7Lg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:OzLGMcilpKk=,iv:c7YsfiLIvizCzAq21uMD1lx9NWJv0InFPcWGenvqNW4=,tag:62WBI+Z2X11leVlFVmDmxg==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:Uw==,iv:wZZ7Zi4R3VZhraPhZZBvsqja+1z/RBaRJVXUGXjfm7k=,tag:5Pocp+nAdKa9DV2PXNMbTA==,type:int]
+                                            type: ENC[AES256_GCM,data:ChA=,iv:71SKoBCYCNBdnF346KsLKYNSnS+xOhCL82OBNt6nG9k=,tag:AxwQ1RmlwyrHqpJLCYwNyQ==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:K+Dz,iv:zgws46i9KUoeKbQUkMqzM0A0YevkjHvAqcvcoyNEzcY=,tag:Cj70wkzLOZKdtXPG+jmPPw==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:XA==,iv:TLeSOpvzk7pMmNJ2Dun8C+GCcn3b7BfpsVBoglbKMPk=,tag:HEScGNCn+N3xquekG9/nOQ==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:tiwMeg==,iv:wHUrQ0uQuihfpjTA4rVx3qQIj+wQ3+5Q0lwOLvD2wHg=,tag:EiZ5qDA6XGjDxGvKty3F8g==,type:str]
+                                          type: ENC[AES256_GCM,data:2vi4wQA=,iv:wl+qq4l4bGOwnlBi11dQb/mXoNDdjKGg+JzNMTGNQS8=,tag:9e/TB+Glffc9APp7WuQMIw==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:6vKoZmvVa98=,iv:LDWymRVZBz+yn4aTrO8f4EZXoeQBA8seZMT4ICydA5Y=,tag:mgA88dKdbM7F+CkL7/+Zbw==,type:str]
+                                        uid: ENC[AES256_GCM,data:Ef3WlIDVFtk=,iv:4k/1/JScSEmJRzls/4fga+K5udKFE88K91b2fEkrOyk=,tag:eNaPgqmpGYM9EcxCX1GPJw==,type:str]
+                                    expression: ENC[AES256_GCM,data:sQ==,iv:xB8BzVnrXSQ5lbyC0puBzsHTXfTJQeRou1OYbxYkjoE=,tag:JSsxvkLDh79vOPR2Adsi3Q==,type:str]
+                                    hide: ENC[AES256_GCM,data:XccfM5E=,iv:Uy14SksmY0ML412FA26CuzZ/kbFEP329xByKIQ4LkqI=,tag:Hg4bPjSVhmYOc9kwiBHxoQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:VG25kQ==,iv:WYjoOc/LYkXalKf+g1k7xbLPQhqWwpMtb/uZskv1eRY=,tag:y6sOrTPcZWlrkj5geOLPSg==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:KITzqzQ=,iv:3MKxIAc1GCqOwOPmCvg1cdIRbcNadjm9dlEd5uEkhTA=,tag:4ndHC6s6rGcpX0ZL4ZN0Gw==,type:int]
+                                    refId: ENC[AES256_GCM,data:9zUySsxb,iv:aIK6gU/pgmMWrvwB3J0BrSEn/D47KzGgFcDaY3L/OMQ=,tag:M/e8C/PwdKBww3gRftrQXA==,type:str]
+                                    type: ENC[AES256_GCM,data:jyRvo1HSC9eb,iv:/DBCMCWbUkP9k4FnN38vZnLZ8ZstGiYjAGSTp8Kz/Bc=,tag:4pjWAeIxfAeHU+Ds5TYAhA==,type:str]
+                                - refId: ENC[AES256_GCM,data:ag==,iv:YyD/tNAUC4hLYT5MyUd3TPvY3RRRgtgQw2DfpS4E6xQ=,tag:K7jyzgxTvCwdKEBzflJyuw==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:/xg4,iv:pQCtinVXqyfOb25xj8tfXTz8bZX6V29it9faJIYDJlI=,tag:pnGKHFMKGRhnTv72Tv6BRw==,type:int]
+                                    to: ENC[AES256_GCM,data:JA==,iv:bENsUizlR/VL2DyIGGp4LeOjSLNnoQHbOKg3WoA8t6I=,tag:1Khp5hndp4tyWMOfUWwdHg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:xWr9mL5WsyE=,iv:r3Vjb7pP8PwfM7+W3UtnB9qV13B10yl/EHNo3RYJCIw=,tag:fZUrhNhuzADepE3NzPTi5w==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:EQ==,iv:wJdZMTzTX+Za8wYLW0Ka6xy6MN2PSIgwY/iBHiaOzv8=,tag:FRoGJkYVHz097u6stScQOw==,type:int]
+                                                - ENC[AES256_GCM,data:2Q==,iv:WFKEKa3GQVc6t1nvs+md6n2we4nKrNMOmOX2Px1o1z4=,tag:EQ+0Zb6bCIHjyYklA5zwIA==,type:int]
+                                            type: ENC[AES256_GCM,data:qmY=,iv:Ym/udyMtYOEWN9cLeK2jBE2eNrdr8llqVaaP20Ohm68=,tag:qPkAcpexa9DcYz6qPOoGMg==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:34ar,iv:AspAEd2NTpunmFpSmUG+eHFT9V5HpI3AZ/zbDt4OPgI=,tag:frf1r9SXw4/rDsFe3meopA==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:36Gi,iv:TnANgljyRltQo7Q9/g3/tzeT/YLnUJTmVsbbQi7Eo34=,tag:iuR1MYoGKB261/N3jCzMlQ==,type:str]
+                                          type: ENC[AES256_GCM,data:66BVygI=,iv:boozxqdHUr5xuVXKHs64+VZFAuXdxJkG+iub0xXYKhU=,tag:dKBLe8DAHWvZkvqMfLBmCg==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:g8Y17p88Dmsd7Q==,iv:ADOGfVVJoR/ZBHyfES1bqJAmUAEwGvRZCl7iaj8f3Vg=,tag:bRFOXJgCBNm7F9BdaM5aVQ==,type:str]
+                                        type: ENC[AES256_GCM,data:H8+sNxhWZjw=,iv:3V+wpINK60hdXEtCvUVmY5TxTLeKlnxW4T+BaeT8VlQ=,tag:eT0KDbowKW4YvFrCbHJrAQ==,type:str]
+                                        uid: ENC[AES256_GCM,data:TAS9UtKKIlo=,iv:13bcWcqa7Vze0aZYDyEbzeBNXUsZI7OOGQNn5zBQeMk=,tag:ePNX6wcE9YdmXsRFOWdQdw==,type:str]
+                                    expression: ENC[AES256_GCM,data:D8DnPUE=,iv:1n46Bh7Z5AGQ68TCVQwXerByr9Pb73cYOv76K79a5Wo=,tag:+JgDzR7Wec1gE5EOo3gOHg==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:CnMBDw==,iv:wC5eEmYcJjv2WO6uhGF8wiq4Ad0LWEYRhKclUGREyUQ=,tag:Cdji1suDqaMhXmCL5Rz/5Q==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:8IVZ2TI=,iv:0eNgp5msgfGQW65DuySRrTX+TXHwmUcNaPp/SRjEg38=,tag:JrbATjsqGhyaX4PXr19oUQ==,type:int]
+                                    reducer: ENC[AES256_GCM,data:F4cG0w==,iv:QT1eo7L8V6dYs8sHaZm5rISXgAs1318osSnYMBaLfaw=,tag:+WI4XCJtNb6KXVpO1n/PUw==,type:str]
+                                    refId: ENC[AES256_GCM,data:Tg==,iv:Z0IxT/jQDHE9ag3QplzsCnCYTDMYVDv581sYC0BYl+g=,tag:DykKRmUid8CNL5+QFyO28A==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:4ASz4oPaofKA,iv:V9i4J4EYeB0UltpbLI8lci9s3tawgLpi5FAJfEhSDeI=,tag:Eq5UEed2FcA89W4a3YGhmQ==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:kg==,iv:NMtyi7kizRzXIgtD09rp4lpm5FsaOpIgvsUB6hLuDEM=,tag:rHTxbq85PpfvcYOQK9qNWw==,type:int]
+                                    type: ENC[AES256_GCM,data:MRA4PK1O,iv:5bYhHG0lR8Qbmc7fb6g/VA6SUUkI1sw9F/hbAqc990w=,tag:8hmCZZCFzNynvR/0e+bv3w==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: High amount of i/o timeouts in coredns
+                              isPaused: false
+                        - orgId: 1
+                          name: Matrix Synapse
+                          folder: Matrix
+                          interval: 1m
+                          rules:
+                            - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
+                              title: DNSQueryRefusedError
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:FQuje9c=,iv:JbZnLpjWguWC6KhRx8OXEzHrDYPw8/d7o7dhB+B2P9s=,tag:iOOIit4xssoznuCu4SlHiw==,type:str]
+                                  queryType: ENC[AES256_GCM,data:j9zDVPQ=,iv:GvzV04OqsiYRFER/uvUYJ9C7jj51iAx1eyW/Jzieles=,tag:yPSD9Z0PbGxbJYPvB9Dx0A==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:2Z0w,iv:AWFuTbQeiGo1A0ZhP+AauK49k6B3BX558dYFyVLRJtw=,tag:HSE/d054YhGviJbSmQmkpA==,type:int]
+                                    to: ENC[AES256_GCM,data:Xw==,iv:6lR2HVxatpRgoB4/nKir7/lxzaFi6QMN7GtsCv3pe/g=,tag:wTmOy+XBLg5wxVEnutQccg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:HLAN7Q==,iv:yarcWCkJ3eA6NMrUYPEi4FrFuYyzsYO3AQZ+mSeCUPQ=,tag:hc3gg34JW7NNtnCH4fX70w==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:s9R/9A==,iv:HaXwNCRVQMSEv+dn/YToCEfODS01ea57hGmJWNsWdng=,tag:ulhXOidRDmroWQz9Fu4ayg==,type:str]
+                                        uid: ENC[AES256_GCM,data:W9vOOg==,iv:N6z75mcQ+heYe7Z8YoQmSub7kUgRkkPQxzZy9dHX6Yg=,tag:H/lDaDkzhj+bwF5pbLoOcA==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:a/0dpVRlKA==,iv:MlQ8INNYfLkEjtiL7B+swoiK1hlz/1O0AJT5ItHuphc=,tag:5V8XTVMPijTm9xg+CPFPiA==,type:str]
+                                    expr: ENC[AES256_GCM,data:P90nUR1CuVs2WLz83aRJWaFhL6fxh5XRi8h0D0yq2viW9JIHGApZ3oOua4kCwYemLVfE07lyIXEFilD+Y5XhiMA3MZQFzw0Rtyt2UYzeDP0=,iv:mAErEyLh6fy2oe5SPoP53/P4o6rxFuw9c/1+2danLKY=,tag:hXCC0BBWh1yRHmqvG/7XLw==,type:str]
+                                    hide: ENC[AES256_GCM,data:c325FMU=,iv:Bhpg9EYAPTvWuqP+AHM//+kwmpK0/GLCBu4zTFdovlg=,tag:gxRKdyE9zpUTcjBBPnm+mA==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:3Q63RQ==,iv:GEhR3FqnGHoSfyS12w7l7XnaCXJIQIZxj5+IuOPt8kM=,tag:bK5s2bHVOQAZKZt6qEEOoA==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:r+OtcFQ=,iv:yDwAMABbDIxERMt2vJiNt2c0/Zin3AfS3wb/BJQLezs=,tag:edOUuxSxGbfXjszjd/wbGg==,type:int]
+                                    queryType: ENC[AES256_GCM,data:Gr6O5sA=,iv:MTVc80c70j9g9Uyaqsh4lvKA03Q5w7xNxVme8K5em3o=,tag:rue5dOrOP+t8PAxNby+vfA==,type:str]
+                                    range: ENC[AES256_GCM,data:cWOYnA==,iv:A0qfk7FwOd+6Gkrtqi/DM6ZKIfFxe1b0pZSlGn+Pk5A=,tag:DS57Kmymp2LTh1CXO+6MLw==,type:bool]
+                                    refId: ENC[AES256_GCM,data:MFMFysg=,iv:2FTqRLF5TYu7XxZ3Y6ihpwiVL4YHucEOaDWKJS7PcGg=,tag:XHR/gXPGyDBIss/d9Z8SVA==,type:str]
+                                - refId: ENC[AES256_GCM,data:CUB2GGgx,iv:qeojKuwc31FGmHcwsNsX4OoWQbYe/8GPgUe7+2JAnJw=,tag:1ExgXI97dL2Ue6pFODlShg==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:ikMt,iv:UAFObbrkYe+Lc6go/Eb5KMgmpx42q1r8G3tmj/Grtao=,tag:gnF8xPkcwUTTPpbGwpinQg==,type:int]
+                                    to: ENC[AES256_GCM,data:PA==,iv:MSbRm87mlGXCtiLbhFtmcry19ExIxOQCDjr0b+xV+8Q=,tag:/R11BaSi2dV4ebJaeUTEbg==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:O0/Q7UT/X90=,iv:yTxhGL8heVyTlxj+F5wmXNbTbO0xAwFPOfvf/RnMP9M=,tag:QX8RpeUH+EpkQVm13I9irA==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:zQ==,iv:664Yw92gRYSVIlBNQ4hA3F/v+yA9ADcxSVd/Ll9S9QE=,tag:QbAlx9qTs1m3XdXx6VTIYg==,type:int]
+                                            type: ENC[AES256_GCM,data:vtU=,iv:fYy6A2CI1uSBYyyBdYUM8rOY0sfwr4eiINVt1XYpPrI=,tag:KSNotJbEdMiPWoBXb9PbIg==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:lLJZ,iv:6qcMGeSCCBLlymfxN+KuC06nLF4bJ9qDu5iS3fDXEiQ=,tag:xjIhQmeRS2OT57e9Zg2F2w==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:pA==,iv:OxlNLpEaijJSDuqeWjortDw0HbnigGWHaHdFu5gIyDE=,tag:lyrQetKHR6mQmFHMLWccww==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:gQql0w==,iv:a8N6ttVvMhI0kwVQmdgjZ7kkq3vMW5SfJgL0IQMR6DI=,tag:AW4DTNMJChSE8czPUng7HA==,type:str]
+                                          type: ENC[AES256_GCM,data:0k6548g=,iv:5s5YP7n+nGDOg6k43AJEYa/ZU/5D51y7eAbW6L+ut44=,tag:F52EC7ZW++r+aWqe7W3dWw==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:+U1r/0ebZ8c=,iv:NR9uvFipeH5l9D1KEoZT2oS534lECdl2aaq1MiPl+yo=,tag:CBqIVU0u39eVUWW1F54Ljw==,type:str]
+                                        uid: ENC[AES256_GCM,data:rWuK34X+bAg=,iv:ye5Jn773TS6nJsVwczrcjysLSraDFgoSFOQYRquX6OU=,tag:PgyqnHDbjhDDKe6rDpbkxQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:uw==,iv:vPuTArs6PXXtA0YlWdYUusegZ0WdiDrpH2DYpgDZcZI=,tag:g6mW9CQ7M2YZPecWytsjpA==,type:str]
+                                    hide: ENC[AES256_GCM,data:YSMAX0g=,iv:39jg/3fyKpKHRhdaaD/3E3/UgmhP5P5dX/Lojrw7osc=,tag:fkRxCmZaSgEWNi91TCb+HA==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:M/2bLQ==,iv:IxNdBZbyu2HX2SalGKitOWe0b+OUIhLr9qbORIGxCsI=,tag:Ced6M9iTryaILHFOM930uw==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:lluaznU=,iv:a0qDd5EQfrARKsmEDW8R18E9oSa4uwGM1uVIV368Kl0=,tag:D9wHTFwALD5kpDeuz/hadw==,type:int]
+                                    refId: ENC[AES256_GCM,data:j81CLjlD,iv:h37WaWyPZuDEO0Z0j+SZ7wsFVhCScGKJjfx/B6t+Vck=,tag:jRRSU9i2b4bG1MfyMp2qsg==,type:str]
+                                    type: ENC[AES256_GCM,data:ANPgDYvmLPsD,iv:bOVIdOnOtv2iDuLa9LFRj3vvL/N3tMY+fKvlmt+u3ko=,tag:aW78i+mi1UDY6/oHCYvxfQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:Cg==,iv:6HwwX+Ip3yPIrlahsWDmkQELoGGn/s+OcLOWRRUkdiQ=,tag:YZM33uNhICJvN6ENlcBd0Q==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:c9ue,iv:p0lQvKglncGqxtXsVy0AN8F70SnslNhLJRNSVpwGhq4=,tag:exm9lyFQew9TXF00Fl0xbw==,type:int]
+                                    to: ENC[AES256_GCM,data:pw==,iv:9FFE479aB34rywWBlcWUIN0JU0HDCgai6UBcPwqrKmA=,tag:aXx/8VUqIzSEtW38wSmQoA==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:wlg5OawPfyw=,iv:/6hix5QbFOfycJu+1nWwDSWbpTBjsiP0VILQGFGQkIU=,tag:jW4ytDFKS36uAZtO/YiQTA==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:xw==,iv:905zBOax36EnxJmOO9IPdkHYNC7MDiPOgR895cls+p0=,tag:kHMOtOdWoiY/vjXRKdG/+g==,type:int]
+                                                - ENC[AES256_GCM,data:cQ==,iv:stG2ww8bM7tWCKGaiCY3NZU0/wtDe9TOXBY+8CYvpdY=,tag:UiCEwlzbOpFh7r8qFIMb3g==,type:int]
+                                            type: ENC[AES256_GCM,data:Xog=,iv:DGwzxfaqxeW79VFNKuRUjc6aRNj8MP0SA7LoTqDyaOA=,tag:or88hFJty5Qxr1bwisJ0xw==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:n3z4,iv:V69mjqT/yMXB0zZvrIkSWp4pi0/MOBiw0lF8AFqp01k=,tag:dn7qJGNf5UsYXB3ROZe3GA==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:toKW,iv:9DlbkadSBrWd0o4Zq3+JWUEq2Il09qPTUBwd39OtKWw=,tag:31vHqZMlpCbiBl9/usSkCw==,type:str]
+                                          type: ENC[AES256_GCM,data:QeO1yVk=,iv:P4GjY+nTZcOA6LBOM+MiDXRFKQD8+wkD8SyA/7pifO4=,tag:+ttAy3NDY66Js3dbB5U4rA==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:Ug8SL/FYrOxJfg==,iv:H9dNUtJCxn/PC5oAvre+LDABb79w54IdWwkqNw8AFcs=,tag:0pHZ7u8TPRNjsE+2ZoUlyw==,type:str]
+                                        type: ENC[AES256_GCM,data:58559WSybrU=,iv:rKa6E0MTK9NaMEVoxhX8k0vjAAbtGJWtGOzaE035jz8=,tag:kHlUgA0n19KL6lNiY9bI7w==,type:str]
+                                        uid: ENC[AES256_GCM,data:HHuGzyDVuRY=,iv:oq+7pGxqwBtC/sNh3noB/xi1ddmdb+1XfZoPGuEKAMo=,tag:zvnGNUmI2lQUcQ6bs6KyGQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:OM3GonM=,iv:8GGXWYri0bVrA7O7eOA0fDk+6ZzPuedbM+QeLWYWXh8=,tag:kSmpjNlEJktNWpoe9PCb4A==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:D3707A==,iv:X3ua7UYw0+cx5KERPb8Onh06NdKAMLSjceTAGHwNwXc=,tag:KPviOtaZ9+6qR/vwUAc3ZQ==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:kNgv050=,iv:gBibKhzTzqFss+YqZTIS8pqt4osSgpvSNFLmbK0qYgc=,tag:nW+uDqrTyiXAgzJex/eI9A==,type:int]
+                                    reducer: ENC[AES256_GCM,data:mKXHOA==,iv:vuXl3883d2oo4HdV+mPZp+91mD9f8MLThmYXWYSfL+M=,tag:b/Hcn/QKmYQG5zEYr92iCg==,type:str]
+                                    refId: ENC[AES256_GCM,data:Yw==,iv:8X7Tya7BIOP5w9ZQvDXZTQj1zxPPG1QJ9EBVHp9brVw=,tag:yRB0a3/TPa3zxacCsWuknQ==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:sbyBah68TY2E,iv:CzXsCdVZmO/CdxPanaJmvjYBynKXXaR2umQJTMXCjVw=,tag:eCNht/ssKz3sARgXMKD+gA==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:aQ==,iv:aWjh08ddS6All6bfTdK81bZOlW/b1mNsTq5gveCExzI=,tag:g6eqmBRq69QA2lIKO48Tuw==,type:int]
+                                    type: ENC[AES256_GCM,data:qjhEUUKm,iv:Um8c05WmXdYZoMAB41ps4i/PagOhdYejjAb+Fo8ApIA=,tag:Rdc+lnErxZQ6hMHR2Eu9mw==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Matrix Synapse DNS Errors are higher than usual
+                              isPaused: false
+                            - uid: de30a1da-84da-45f4-a4a5-d641dbd92e6c
+                              title: psycopg2.errors.ReadOnlySqlTransaction
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:+iq3Skg=,iv:Q72W2U5uC2SyrQQX5ObTqrfHeTV9lAohSV+y246lY78=,tag:M5zk6EhVdz2g9gbAUeBCDw==,type:str]
+                                  queryType: ENC[AES256_GCM,data:yq2iVo8=,iv:/S+d8l2tEe0SaB40yw+8yXpGIUUp73XgOXj7Is75dZg=,tag:LpRFPFSBaYhrEFu9D2AWVw==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:+LPi,iv:5bX/ZSgoBBN0lPUdBk+8AJ9CnkfD5rfbSkdmiLp5AGg=,tag:SFUslisI9uGFIZ+A7UNfPg==,type:int]
+                                    to: ENC[AES256_GCM,data:LA==,iv:aqpjdB2pko1n+3O7YrW3ADT4cIpL8FixV75i1AuuzQw=,tag:nCKgVZLu7kkKr8vXjuEZAw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:gFkIDg==,iv:WMffwRNU5VwMplJAp0FPTW/zP5vPnzJf7sR6a0rLgXM=,tag:6azVH6zIUoNlVRZheh3r+A==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:7Nys5A==,iv:wgzr7JO+VSkQJDjg2nZ3FRRv0ROGqx8TrATZ5Ufh9E4=,tag:pDwVQbmsjJRYoytC0qREPw==,type:str]
+                                        uid: ENC[AES256_GCM,data:ERMBYg==,iv:y4Lycx4nJTwx6NfzNucqWry5Vd5KwEDt0jvNQXCRPYk=,tag:esv3BqaCRY+SDr4wjtmilg==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:Lh4KjzJ8iA==,iv:NDVIh4gJzH2aKWXFPdbxeat8VL6jE9idRcz75qqb0IU=,tag:epPkmobn/ZzDNYTbMjS7Pw==,type:str]
+                                    expr: ENC[AES256_GCM,data:43Ewd1vq/7hoOOZv/mqt15uS5yP2N6dwOKSWg6uR9XzV1u1oERa+So43LxkUV8NzE9YQLxGuD3A+jOPjRZMTMD9wAFLFTkWwh+7a5Rzqkulp/wB7cSrbgXgnBG96D5z73rY=,iv:rpOG3jeBbL5iwZ78Icf82fJoGKTTPzDK6EvKYMIkLxg=,tag:mo9R8/ZgVARZNl2wTMKGhw==,type:str]
+                                    hide: ENC[AES256_GCM,data:oOkYWkI=,iv:C/8r2qdJvRUTQQOZFl9l+YKXL7B4vu5NYr+TszHBwZg=,tag:fL/+0DbmgNd6NKwuCTpJog==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:2gR/xA==,iv:zuYc515pEqsBkwlDyDnQNLi6vv6YXvBdSYE5hamcLSA=,tag:PyiCrOu3e55d4BBg7KQs1g==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:eQ4Ms80=,iv:ZivHmfAE9NLXCrodvdZ+1a5ynWNW0HRjpOdzkeY14JY=,tag:6QU2gmOQHcRKBOHS2CMc1A==,type:int]
+                                    queryType: ENC[AES256_GCM,data:dcbVJI4=,iv:FI7yxjjd7V4zx105rHeNKaHi76BTJW6kuzrZyoCfBho=,tag:fBzYgJoxmhNVL4MHb1oz6Q==,type:str]
+                                    range: ENC[AES256_GCM,data:UjkHPQ==,iv:/jQ0VSVjpxJ1360URI41s7jxoqhvf9Cl0gt4/cHAzYk=,tag:20fOdgCxJxAg3uWLL02MSw==,type:bool]
+                                    refId: ENC[AES256_GCM,data:JOkm7O4=,iv:Sxjbk7q/t5in7y3vqa3Awp9IPj2RHUMTkay3eI/0+0A=,tag:kVX9q8cjJeRkpuyLNLYHCA==,type:str]
+                                - refId: ENC[AES256_GCM,data:XM1u6EUe,iv:ZMS1trYOdvj8XOGdh+B62sfo9Hr86pxmJ2OInxSd6BA=,tag:0ueMNZEDbhA8Z7rcpN2QEg==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:8jbO,iv:YByIfWhK6XQC8HtC6ozyUo5qjr/BMWKf3QzExnAlVxk=,tag:oQjvYv5Ja7NJSFtLMtK9Cw==,type:int]
+                                    to: ENC[AES256_GCM,data:cA==,iv:yr8lA+PuF3gR42ULjNNUFYroW6+w0+7U/9CEuupjN4A=,tag:tZy4qeHFw9wL1hvAxxXpFw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:+Gnvll+/tYM=,iv:K0QvzaDlZC+kmHlI3KnBbtWL8ZLivCgFc7/6feEQoS8=,tag:55wsXHKycDxTFY1zGT1+Wg==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:G13h,iv:VtUHJvRlv9YIBPS3Lna7J6rdzB4RUpfaiFx35Oo8f3s=,tag:oIu+xASEmyPBQ9vHhuuyuQ==,type:float]
+                                            type: ENC[AES256_GCM,data:Emw=,iv:hAv1KWqASs+OCHhLbs1e+9RgvCGaFEZ/gj/KiKQFbP0=,tag:mMp0P0zs2DWtzS6ychmIkw==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:ds/f,iv:3DuSH55ndKZaPEzP7QiUAUXIrSKAKtlRns5wbCPcqHY=,tag:RAB+uKm8Zf+ABdi8YPkzkg==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:zQ==,iv:vUT2UW3p6v5QAiuOxlizrcydWdfaDj9dp8IoPUH6Dpw=,tag:da1HTUrpK9bS1I/7OGIG9Q==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:SyNl+w==,iv:93NwxIGo6buLvZbvhFWVN9KiFClzlvCPtjEvGAC94xI=,tag:qEdbN/fJwJwT+dOKEJDKhA==,type:str]
+                                          type: ENC[AES256_GCM,data:CZZS8HA=,iv:P30OzOJLtnHSKCnJXuvjyDVRUKfHgpIYv5ddfT1e9T8=,tag:TKASo17r4HgNhclGNjKoeQ==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:wMhoJwHK5so=,iv:TefwTT4uahxNp0OBanIq96Fo7d1T0qLmQwYuBRbD0ZM=,tag:T0K/09UvDt/vrL37sIJ0Cg==,type:str]
+                                        uid: ENC[AES256_GCM,data:5JF7Gji0Xas=,iv:eVzzY72KldzOj5W44kfDU1+4t159mhkqBdjHfqvRQ94=,tag:ziCBAuZrURT7YN9AePeAEw==,type:str]
+                                    expression: ENC[AES256_GCM,data:aw==,iv:vL981nzEcnGm6/crCD2ZbJvj8IxrvyfCNc74Y9PKvQs=,tag:oUInZhSdpTuv/su8VvUDEQ==,type:str]
+                                    hide: ENC[AES256_GCM,data:F9C0ie8=,iv:3dGsIClAqKY6ohyGqGVuaItC6FpxzdE61PwFchQf5uc=,tag:eewKNUPtlCRe7YnfcP5lQQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:tjxcnw==,iv:gL5AwPEP8n/C2ueS2SAiMV/SNUl16Zaq9QwJNgj+48E=,tag:BgcUyVlgYZKeE6efiWlmfQ==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:lKBsqxM=,iv:H9oUR8rbS0/0p9ggP7J2/AP2tHe3xbEFoElH7i+E6t4=,tag:7ZQEwpOcX4IKHATk7nRSaw==,type:int]
+                                    refId: ENC[AES256_GCM,data:8TNCzjd/,iv:wREdhnSOiDhVHrnUJPxLGJiSfec7fACeEw+gAOX7MRI=,tag:6VtYfDj2xpZI39gTF7uviA==,type:str]
+                                    type: ENC[AES256_GCM,data:JF1ExwVus0Df,iv:WviCsFhJQEnm17k4TMvV8Plk9HGSa3c9oMvLJJ7UkWc=,tag:njkad0Ljwz1HW8t+DSVXww==,type:str]
+                                - refId: ENC[AES256_GCM,data:FQ==,iv:xp6uYbS3usbPCfeDekdZ8sYVvebHJiisQ7F5knb2+Ow=,tag:/IH9ewn9zKcjPJoFQTB6vw==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:NWrj,iv:ID+u5Ji1jBHtuqjxyLUa0Hsz6acXEoO+r5Ebx+N1ux8=,tag:wV+ztI1VFaWjlaGfPqYiMA==,type:int]
+                                    to: ENC[AES256_GCM,data:Sw==,iv:sTQ4IBeokkTOR7WHlijWij67aEXe9PbHJrAIiU2FyU8=,tag:BpW3WrA5TKefXses2l1R2w==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:mQw3ZMlU7ro=,iv:NB11jrRjjKdFKC3myNhCM45QauVc2X0O8IHfyi0ubDE=,tag:Rm2f8WWivGJW2ErSm5Fs5w==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:0A==,iv:q8tk9xz28XxYqjgCEroiirFUnqMG5nHwYHs8rbrReFI=,tag:xChc8CxDzt58W9aeXUhyhQ==,type:int]
+                                                - ENC[AES256_GCM,data:AA==,iv:k34XJxi+1vnh/FIelvErLIYPWB0yboazATfrWIUIKn4=,tag:5rzaJNMKPoZm7bnXPwLang==,type:int]
+                                            type: ENC[AES256_GCM,data:Qko=,iv:/iJvnzaQ5AIn1rGP/pULzN3R4Rp8uQwCjwOJkxAZ8BE=,tag:EXB+aimTsONdoEzyDVPk6w==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:oX1p,iv:CIRWIfUlXqVG2tErc0IfXm+YM48XzF/4XwMosj7HJCE=,tag:wfUvlyQglSfTKK47N+aHIw==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:2GTE,iv:dKHmKGdjUBln87ak4tFX3o0sL+LmHdTJU75FTjqTQiQ=,tag:+Aec34izdR7VwFFLX7A7BA==,type:str]
+                                          type: ENC[AES256_GCM,data:dg9hRqQ=,iv:chEwaOPVSzqxwsD7dwLx1UfOQZ8t6eE/Y1Juec9+2/Y=,tag:FJndxw8F1871SJrJOGZKqg==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:gxnvBtunMd4F/Q==,iv:gHboVcI3T2oxbx436OdKkepr7mH5/Dm0dqlXJ4ggeZw=,tag:kmC7pe4/2Bfst6cBZiWQ1w==,type:str]
+                                        type: ENC[AES256_GCM,data:/X9WUtXGIic=,iv:xXL3Kb8TZ7qjslJMB0g84HEimc926JmYk6RWzwP5Yuo=,tag:8dDnV1F8qvyP49tvbYXmpA==,type:str]
+                                        uid: ENC[AES256_GCM,data:X9j84zkEtZ8=,iv:HMWU+QS/gwTE3d3Ok1XvfBO85idjMj2HGwoUP92wCt8=,tag:2iKcTeAta958V8xx4SViJw==,type:str]
+                                    expression: ENC[AES256_GCM,data:tAVGaZU=,iv:8lngxa4j/GRIGba/GgiHf4MqZKbRG+5soA0IYY5bJek=,tag:04tfPb/z5Ym9J2XerFl08w==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:PYg85w==,iv:i82pMujeatetp1DzzdJ9hn+v/nrfyAijRndhU92xjfw=,tag:987+wC0j/Qz6mBbGwXYN7Q==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:qrans9o=,iv:MATPkPO9fMlpBeJDm967RWqAPdksbTujxdCJdirAsaA=,tag:8/bM7tQAWq3cL7wju9KiBw==,type:int]
+                                    reducer: ENC[AES256_GCM,data:a7gkmA==,iv:+VleYkH3ZnI35IV52h3HpOfaTGPe+2dot8LoVHjWGaQ=,tag:Bn5sdXE++knJt9yjilno8w==,type:str]
+                                    refId: ENC[AES256_GCM,data:AA==,iv:l7GAAoXn2O2omWfp0OxShTwq8R05OgHK1C6fMnyqd0E=,tag:iUcAKpaqfwyNj5/WTfOAjg==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:MvCD130GO1h9,iv:mfKDQkXfNIemcNfkJltzOU3PFB5hZHiFocElNxzT3HA=,tag:8VUKvZ5rVooauuek0tscKA==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:PQ==,iv:j6rlOk30YRAnO/VWzXXyhe+6RNYjpK6oZeOE8AkZYA0=,tag:ofQIjc+K5m+FJ9a6DrtLCA==,type:int]
+                                    type: ENC[AES256_GCM,data:j/uh9hhk,iv:TqDql0KmMmyHSuqVr925C5Lvng/Ta875gmPD8pTSZis=,tag:9uwWvM7tMY9lYdYrmKLIDQ==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Matrix Database rolled over but synapse crashed
+                              isPaused: false
+                            - uid: d16dc343-31d9-466a-bdc1-c2466b0bc18f
+                              title: Unusual synapse logging
+                              condition: Thresh
+                              data:
+                                - refId: ENC[AES256_GCM,data:Q7pGec4=,iv:ZdEDSRHz2WjetHnUaBazuvOJ6wRmIfABOv/h9kRN5oQ=,tag:BgDq4hjYojvccdMRrsY2tw==,type:str]
+                                  queryType: ENC[AES256_GCM,data:y9KeUrA=,iv:qgDSNh1fjJlh8/ussvgKwVPtKvfSAOxagXAnZvRSJuE=,tag:/KcYLv0Mgal7y+C7nsPCSQ==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:frvz,iv:EEOV1jeUqGxB6N05rXca2nUcHn16zmzwt7eccbDFCEg=,tag:Zb18qDZlxZNtZ6tIgzWtXA==,type:int]
+                                    to: ENC[AES256_GCM,data:FQ==,iv:Iy0t6Gs7ITPAhbRwSMlymPo1dP1ivuKUR2J4bV1Dj2k=,tag:s7oqLAt+N4DYNQ2HZYIyyw==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:y7jdYw==,iv:Ktfhzx0LTn1hi8uebJ/QvU0hPPClk++3EzadxflqvTg=,tag:DkBI8bmo1Oc0JHRVYvUlSg==,type:str]
+                                  model:
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:HI56YQ==,iv:na7khjhH5y0JYvEhbaXlKH56Dj/Ne57+aLlw66oUvSA=,tag:PEmXxBNMOe6xPk5ycJjNqg==,type:str]
+                                        uid: ENC[AES256_GCM,data:4RmIYA==,iv:b+2XwWrwbOt+ACQDHzo/DyrcSezqKpdSHeol49IbEWA=,tag:b+beVtYBfuw5YPe7BRQFog==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:GU+MC7lRIA==,iv:U7VZBjfKNOItZYSSwzXinB2Nqs5fv9fC9jE3wvWhDIk=,tag:cxhev4lup18cuG6DptBBeQ==,type:str]
+                                    expr: ENC[AES256_GCM,data:ILM8gP5Z5cJT+Z46gmqjwWhQce66Mu5XwimIu5VIAZHGLmX+YBS0LE+1GUgJjXTIj07YEQNwdq0wt3XctGbMHnkBwH5/GHf7bMhuBX1/nZjs5nN9bt54uKLfAM1tgI3syzLSq1PlMrfOHt6hQnCCqiU+Gg5lJwuSHPqL1y1qIj01Ntg4DHGwP0Q2txJyGfFgypHIPPD0Rnqc2WXJAogPjNEKgYyQaKP+0oaJEEw=,iv:hqbZKnVSMtt+nOwUZPFpCmhRnDOazBi7NKqEGftFWuU=,tag:CHe5YjKFnD6akbTsrKTnXQ==,type:str]
+                                    hide: ENC[AES256_GCM,data:Mp/xbq0=,iv:ScyvWL3LT3E3iAAtvOszITwhKqMvyyTRFn8gmhNk0oY=,tag:wHQj/QB8CJRckOpvQETkIQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:Ef8vcg==,iv:KeWLpX5xwJwbh4Z6BJyI3JfEvsyr9Rfx63hoWQt+SsA=,tag:ma/WZZ7cD3iWAuUWFXwB4g==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:+JOR68Y=,iv:h1ewrfChh5bzMk6n91tG7/zOc7dGIdVxpXun/85c1ms=,tag:lZ0sjVnVpNzPQCA4WzbxNA==,type:int]
+                                    queryType: ENC[AES256_GCM,data:VDTriZs=,iv:16NFPSpCurVmEOn7KldasVSQQO3wqzEpPVkp3p2oJoI=,tag:Uef2PPgwbLc5PSsIEL1wBQ==,type:str]
+                                    range: ENC[AES256_GCM,data:1NWVcA==,iv:nYheeN7Dk9aUG96Z2+QzCQka4mzWo2p3a0INZXC9wFU=,tag:bz576QhORXJD87geW8HUZA==,type:bool]
+                                    refId: ENC[AES256_GCM,data:sBtmS4s=,iv:EdcYILNkUI6bdEiArX9ucDFekGGAykln57LTdDiWbRs=,tag:2fOr6OnUAag0dONBLvepSw==,type:str]
+                                - refId: ENC[AES256_GCM,data:xJxM2ZxE,iv:+1mBiIUDUPTG28KY3tf/bwgB5uVgoDKMhl6cuONvLW4=,tag:5H4V8fNdMuVEJ7hZuclo8g==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:pZYL,iv:KFys6EaOid5h20PHfrVSW2YruoP/JntXFDOfy+FCQFA=,tag:yy24qdEbbdaAwwuCAMTiYA==,type:int]
+                                    to: ENC[AES256_GCM,data:aQ==,iv:JxaLAS09C8kEYsV5DoZaqDenQEaDZWnyrIdOLxXqeSg=,tag:ocH8Lzmo5fBYU8S/w9U25A==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:nh7odBYG7Bo=,iv:/iLZdiuvL/xI09btlFyAxa59uaMDZTQuyVRZb6XSftE=,tag:hJjyCzoIePeZkgtq3nGySQ==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:zvU=,iv:J/OmM4xOK3m+8Cfc2XLW4ZgnyllhxunScy37yE1mQvo=,tag:63GIL4LzVXT2+JEiH2PTrA==,type:int]
+                                            type: ENC[AES256_GCM,data:2aA=,iv:UTZi+DUbqzOGqbaJx7bFiBYfxHID5BxHvm9eatyB1JE=,tag:vkWOkyu8dodzHetaI1a9tw==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:gLGS,iv:UcoDo6ODi/mth5NY9O4qi2kaSPAv8j/1Bpqpc90KIdY=,tag:+TZ3cyAaXdoxfCOFmEMnfQ==,type:str]
+                                          query:
+                                            params:
+                                                - ENC[AES256_GCM,data:hw==,iv:dMpk6sfpn/HXyLST3J3vwzB8/pOE1nZTusVapIunX8U=,tag:dSH64K8iON4+LGM7TwsMMQ==,type:str]
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:piqylw==,iv:kSwoDnRS2sXT6nWiJ1Sym/68QN6RVA4/5OkUX77XWTU=,tag:N+NS7NTncQVhf73MU+WXBQ==,type:str]
+                                          type: ENC[AES256_GCM,data:OgQuzz0=,iv:/n8HzOvK/KkM6HYBlRS0LIO8+sNkaQbpB0bdmeEVE1c=,tag:8IeH163PhaKhUoJAgA2upA==,type:str]
+                                    datasource:
+                                        type: ENC[AES256_GCM,data:Eo4cVH1+2Lg=,iv:8iEn2dlK3rlpMZtdCm/ECIBNuniO6BacyYuDx7521jE=,tag:0CLdWqYSIejyjc/Xk1PKjw==,type:str]
+                                        uid: ENC[AES256_GCM,data:3ZP7ZwbjTxU=,iv:JUsyzPwPTli9KXNQCJZZ6vx8WSTaX0oTbfk4uNnzijA=,tag:Fcu8cN8n09rc0SfR54CHIQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:KQ==,iv:Hmks9T1d99cJ1qmLV0tMvvNLyYFdmsodmInN37uTvKo=,tag:zhs+x9/YdJc7KVk4BvKMAw==,type:str]
+                                    hide: ENC[AES256_GCM,data:fEKC/Do=,iv:ebYOYTJd6Yt1VXo2TWelUg5Pm1hHWZfYJOZ5ca8me2w=,tag:lwHFbhi6tVpBoV70XoUnHQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:XEV2hA==,iv:ewPtq7F2KqyOJQT97hgr3YGAKENyaEhL1btALkPMR20=,tag:5TGGE0swyD5SyQy1C8Vd6w==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:ft2nEAo=,iv:0xKYPIJbpwzAfwsZhd9lxF3iWUsdHhtpnnDcDDi21MA=,tag:N2JAjLRdCKKYD6yEZ0lpfg==,type:int]
+                                    refId: ENC[AES256_GCM,data:4v6PCxKm,iv:gFqH6EGawvaryKaIRwQRtIoC00ZepfDI0zv2546Vavc=,tag:EZtvANN/f0I1yqHv7PT/iw==,type:str]
+                                    type: ENC[AES256_GCM,data:PgDmJaUX840F,iv:XbuXlDlXagYfzcIoJI81iQQu0DjLc2Ksj4vqpG/cEwM=,tag:epD7SElMswcv0s2NWqWeoQ==,type:str]
+                                - refId: ENC[AES256_GCM,data:lw==,iv:vpXiXAm8BLc1robufE4+6d9arIK2QDRcNOO+z3ETd9k=,tag:nbpZHjbls3y0MczXyMS/pg==,type:str]
+                                  relativeTimeRange:
+                                    from: ENC[AES256_GCM,data:rof+,iv:Pg/c2gI5DOfErVZOz9WbkwJ6NJ3ZQogz0ETh0clTJXI=,tag:IlUTQv/cjNx6dlEYU9hg1A==,type:int]
+                                    to: ENC[AES256_GCM,data:nw==,iv:WhKBUpguS3CUpH0K9ZgGSZWN2Elo2UFYC3ZgznaG+Is=,tag:79MD+F86zpx1q/naDrUZjQ==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:ffFTy5o+k9E=,iv:ICyA0YyW7RvMZDilLcZTZtaL1AevNdczBY/pawU7Qss=,tag:wr5OEZuYtkfMGgECtUOTGA==,type:str]
+                                  model:
+                                    conditions:
+                                        - evaluator:
+                                            params:
+                                                - ENC[AES256_GCM,data:sw==,iv:kVq2YoJWliZ4DUDGBfu2KZX1DA3EFqIBqf+lu/Z+5lU=,tag:WPlXq48HdIEZdV4gyDo4sw==,type:int]
+                                                - ENC[AES256_GCM,data:Mw==,iv:EOdVUKRztBMEjaZNIQjuDnRZaVrO3untXYYhUj+/oe0=,tag:zXjd4rhfklTcqZbL0l1XgQ==,type:int]
+                                            type: ENC[AES256_GCM,data:rvs=,iv:X0KXqoz3Tx0EQdgZmMX+LSKbE1TmN0Slnl2EH1d/IaM=,tag:rcmnvcPK4iOvuRO+UAPTkg==,type:str]
+                                          operator:
+                                            type: ENC[AES256_GCM,data:+1AE,iv:K34xjtG4796OOaF9LoB+crEP1ibq9UCF8VQJymJwALw=,tag:iec/Eezar14CiydftIZBvg==,type:str]
+                                          query:
+                                            params: []
+                                          reducer:
+                                            params: []
+                                            type: ENC[AES256_GCM,data:r0A3,iv:OMszF8XVjkQStttgc7Ihequ5TJnpki1KZ1uFbW/QRVw=,tag:/EZg5/0Kk9TML7cWdmYxrA==,type:str]
+                                          type: ENC[AES256_GCM,data:6YC3Hbs=,iv:OPYbN1h6KCxF/V/q8AANneBZeDSLva/vC7FFh5/QxdM=,tag:lVA6M5yxXquu9J5EW0EdrA==,type:str]
+                                    datasource:
+                                        name: ENC[AES256_GCM,data:X0RwKv1kc1TrzQ==,iv:oLlNGpFJxUlho3EfdEBv0X+9fBQW7JowfFWtGD9+aT0=,tag:cxcHT42IrR1XQoiafhbViA==,type:str]
+                                        type: ENC[AES256_GCM,data:JJK85SsN1E4=,iv:gq/2LSBkvGWb8JgPtH+j6p9efc6Cq0s3jZpbJKXOsko=,tag:GiIhQyiRUnVD1JZcOw5k3Q==,type:str]
+                                        uid: ENC[AES256_GCM,data:YyxDNN2nXEI=,iv:k73Jj33CgpQI3us7j91J2R1Ksx92nJ6cNoNkx6/hJ/I=,tag:AoF7sJNM3Fu+ZmxMt4K4jQ==,type:str]
+                                    expression: ENC[AES256_GCM,data:BTed8J0=,iv:T+6+DYQT1CJ41i7mgG+40ZK4aHDcvcvQNW/ueG+Yhyk=,tag:mRRXsV/7VdP9AbEiTYc34Q==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:IoFAEw==,iv:qVbZ6HNZ09Fy3zgCF6nciYWgbMd94NWTldcdSG01l0E=,tag:xH+bZn85BlN0gkZlSqVRlA==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:260W+5A=,iv:p7/aa4XZQHVkSn9V8D1yBUlSqUxh2bEGmNnhKcRwqoA=,tag:Qdc9nzeGjmfeCLSNPC0upA==,type:int]
+                                    reducer: ENC[AES256_GCM,data:ABuFZw==,iv:z9J1Nz/BIQ3ozI7M8Q0xcVWxDX6n4ua1YYdqbV/Yv5A=,tag:GJpnNDiXkOk5ZdLI9pfTPQ==,type:str]
+                                    refId: ENC[AES256_GCM,data:fw==,iv:+EK79g3nvxM1zpl24wivnrh4HTYkyoBTSkme3DloA0I=,tag:Ws7TtHhuXrAMVRWKMBhb0Q==,type:str]
+                                    settings:
+                                        mode: ENC[AES256_GCM,data:IgdIYALiCVSL,iv:u+8z2yrJLVWPIPBJlrF0yyM8e0GQp5rzZA5Q2P2Xf8k=,tag:Qlbweeh22t8uxSIKeEjmpg==,type:str]
+                                        replaceWithValue: ENC[AES256_GCM,data:6A==,iv:Bu6f66vyOMIgcw7gZHXS9+xlpKKgp9WIup7rSZJbYog=,tag:CpzSKfT4z2WpIjafc/Rnag==,type:int]
+                                    type: ENC[AES256_GCM,data:+kYAumQS,iv:8g7OMfmH8h9KDV0sfd/zJ31z9wfrcxHbBYPmsnEVH1Y=,tag:FJnIFx08uqiyJdLf44mIOA==,type:str]
+                              noDataState: OK
+                              execErrState: Error
+                              for: 5m
+                              annotations:
+                                summary: Unusual logging for synapse.
+                              isPaused: false
+                contactpoints.yaml:
+                    apiVersion: 1
+                    contactPoints:
+                        - orgId: 1
+                          name: MidnightThoughts Ops
+                          receivers:
+                            - uid: "1"
+                              name: MidnightThoughts Ops
+                              type: email
+                              sendReminder: true
+                              frequency: 1m
+                              settings:
+                                addresses: ops@nordgedanken.dev;mtrnord@nordgedanken.dev;mtrnord1@gmail.com
+                policies.yaml:
+                    apiVersion: 1
+                    policies:
+                        - orgId: 1
+                          receiver: MidnightThoughts Ops
+                          group_by:
+                            - grafana_folder
+                            - alertname
             plugins:
                 - grafana-piechart-panel
                 - grafana-worldmap-panel
@@ -283,13 +690,25 @@ spec:
                         datasource:
                             - name: DS_PROMETHEUS
                               value: Prometheus
+            ingress:
+                enabled: true
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-http
+                hosts:
+                    - grafana.midnightthoughts.space
+                tls:
+                    - secretName: grafana.midnightthoughts.space
+                      hosts:
+                        - grafana.midnightthoughts.space
             grafana.ini:
+                server:
+                    root_url: https://grafana.midnightthoughts.space
                 smtp:
                     enabled: true
                     host: mail.nordgedanken.dev:465
                     from_address: ops@nordgedanken.dev
                 paths:
-                    data: ENC[AES256_GCM,data:Oj4kMrYqvdUO448JHrEHVdg=,iv:FZ4Pq7hm8/EtaTRKATmJTAMRBy1bk4Bt1xO4ZgLUtkw=,tag:0T2xCcdhxWThpm0RYuUw2Q==,type:str]
+                    data: ENC[AES256_GCM,data:NLlX8+KqfY/yxj46ts6LWl4=,iv:NoZzydt9Oe+P8cWDBju1WX1zmZw6k7JffVsxd6Yi8LU=,tag:QEVA3FupDhY/qtIzik2poQ==,type:str]
                     logs: /var/log/grafana
                     plugins: /var/lib/grafana/plugins
                     provisioning: /etc/grafana/provisioning
@@ -341,14 +760,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwU3AvOVZ0M2xKUkk3b1RN
-            TzZoemV6My9FL1lpWWljTWhzand4TFU5UlNnCkppaU9iSlVISEphbCtaa1hVMWhC
-            YTdZeER2bnNxNGpkdVM3azhRTlA1eGcKLS0tIEhNcXYwYTFsY1RZcG4vS1JMK0ZK
-            eG1mcm1pazdsT3FaZk01YW95ckl4cG8KUJmQwCm3YYvUtjTfScke/YvAwjiC8AIu
-            kIdpHXiIh6Wn1UHcwXE/AuyK4mfwQEg7UVSAFIO3duDIuk+YJI25YQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCeHQ3Wk5qMkpEUWdYQ2do
+            elZOcWNZNlh5RXRTRWkyUmNkRXpaVmhqeVhjCnRJT1YxWFN4cTdWRlpxWE9JUkJ4
+            NHltY0FDSUlsU3dvQlNxSVJRaDRjYVUKLS0tIFBHVjA2NVpsVTVnb1czY0NFd1Nn
+            eHZ2eWdFOXlucWZiTDBtdGRza0YyVFUKTeb47DmYxKFXGC4d4fan+I73Zcpg3NyY
+            H6ZxRxhSHQOIrYP6nUCb4cYNWmAsi1A3YY3fA7Blx6WE/gacYrWIWw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-04-16T09:58:01Z"
-    mac: ENC[AES256_GCM,data:nSyq1KfjJxGwcGcm/6tYdT4GskFtR1R6Z6hgtMSKa8jPlOh6Pe2aYJ48R1xknK7yhuHFzcsOCfAI/W7TheI9r3zrAmY9lPuAQu1dIhOk/U8MZNQfy6w+a+nCr+f3Wo8gpTJdk1uxcFAqdXmpKJs6EWIxUEjKsvhyxN3COUuOfKI=,iv:225AwIc6pRbJHNGdI8AyArsM+rTTeB7pIDVOnZLJ4bY=,tag:btTuUSpEB8k0ul8PS7gUvw==,type:str]
+    lastmodified: "2024-04-16T10:11:31Z"
+    mac: ENC[AES256_GCM,data:FXYPw1zgGSEpjAlzYljgkjjMZqj+v6zJ9LVxhfIQ2S4yUYuCWYTuzYn7VoB3mbXId5+oFEFPPpiwJSw3KOIoJ91TBvvttp4IP/TKBRstGr7dNxRhfm4NL3gRQCF4Hw858thki1gBVdidsX09oI95zfTwChzoB08DZqRs8Zackn8=,iv:DQ/xoV0OCCbRtNzgP1/0UoKAVEbq5gYEBtgt/RVLcGI=,tag:Fbgvyv9zPpiLEi8A9Xq+uQ==,type:str]
     pgp: []
     encrypted_regex: ^(AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
