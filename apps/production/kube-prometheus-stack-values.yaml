@@ -417,6 +417,8 @@ spec:
                 - alertname
       ingress:
         enabled: true
+        annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-http
         hosts:
           - grafana.midnightthoughts.space
         tls:
