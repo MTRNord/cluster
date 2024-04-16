@@ -17,6 +17,8 @@ spec:
     metadata:
       labels:
         app: sliding-proxy-midnightthoughts
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/sliding-proxy-midnightthoughts-container: runtime/default
     spec:
       securityContext:
         #runAsNonRoot: true
@@ -57,6 +59,11 @@ spec:
                 - ALL
             readOnlyRootFilesystem: true
             #runAsNonRoot: true
+
+            privileged: false
+            runAsNonRoot: true
+          resources: {}
+  strategy: {}
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImagePolicy
