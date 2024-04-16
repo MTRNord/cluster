@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../base/vaultwarden
+  #- ../base/vaultwarden
   #- ../base/cosign
   #- ../base/woodpecker
   #- ../base/kube-prometheus-stack
@@ -31,14 +31,14 @@ resources:
   - ../base/authentik
   - ../base/chaosmesh
   - ../base/calendar
-  - ../base/matrix/element-call
-  - ../base/matrix/element-call-synapse
-  - ../base/openldap
-  - ../base/n8n
+  #- ../base/matrix/element-call
+  #- ../base/matrix/element-call-synapse
+  #- ../base/openldap
+  #- ../base/n8n
   #- ../base/workadventure
 patchesStrategicMerge:
   #- cosign-values.yaml
-  - vaultwarden-values.yaml
+  #- vaultwarden-values.yaml
   #- woodpecker-values.yaml
   - loki-stack-values.yaml
   - postgres-operator-values.yaml
@@ -51,4 +51,4 @@ patchesStrategicMerge:
   - synapse-draupnir.yaml
   - forgejo.yaml
   - vector-values.yaml
-  - synapse-element-call.yaml
+  #- synapse-element-call.yaml
