@@ -22,6 +22,8 @@ spec:
         force: true
     # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
     values:
+        defaultRules:
+            create: true
         # prometheus:
         #     prometheusSpec:
         #         retention: 365d
@@ -61,8 +63,6 @@ spec:
         # alertmanager:
         #     alertmanagerSpec:
         #         useExistingSecret: true
-        victoria-metrics-operator:
-          enabled: false
         grafana:
             adminPassword: ENC[AES256_GCM,data:XadhI3oLKWFlmr0HjTvmOBoZ/6iizwi5No18mIbKMuXW/eslvXkeLBdsiT1xXMgJ3p1Rmv10DkYlZVlHfm5eWw==,iv:44wXjDsjMG1dx+WlwMMqUBWq/GC891txHKX/dUktC2U=,tag:FB3e5wheDY9N7rsLgf+t1w==,type:str]
             alerting:
