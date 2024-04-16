@@ -635,16 +635,24 @@ spec:
                 monitoring:
                     asterisk:
                         url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/asterisk.json
-                        datasource: VictoriaMetrics
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: VictoriaMetrics
                     traefik:
                         url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
-                        datasource: VictoriaMetrics
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: VictoriaMetrics
                     postgres-dashboard:
                         url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
-                        datasource: VictoriaMetrics
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: VictoriaMetrics
                     minio-dashboard:
                         url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-dashboard.json
-                        datasource: VictoriaMetrics
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: VictoriaMetrics
                         #minio-bucket:
                         #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-bucket.json
                         #minio-replication:
@@ -701,7 +709,9 @@ spec:
                               value: VictoriaMetrics
                     draupnir4all:
                         url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
-                        datasource: VictoriaMetrics
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: VictoriaMetrics
                     matrix-media-repo-dashboard:
                         url: https://raw.githubusercontent.com/t2bot/matrix-media-repo/main/docs/grafana.json
                         datasource:
