@@ -1,333 +1,354 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: kube-prometheus
-  namespace: monitoring
+    name: kube-prometheus
+    namespace: monitoring
 spec:
-  interval: 5m
-  chart:
-    spec:
-      version: 57.1.x
-      chart: kube-prometheus-stack
-      sourceRef:
-        kind: HelmRepository
-        name: prometheus-community
-      interval: 60m
-  install:
-    crds: Create
-  upgrade:
-    crds: CreateReplace
-    # Force recreation due to Helm not properly patching Deployment with e.g. added port,
-    # causing spurious drift detection
-    force: true
-  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-  values:
-    prometheus:
-      prometheusSpec:
-        resources:
-          requests:
-            cpu: 0m
-            memory: 0Mi
-        #tolerations:
-        #  - key: "arch"
-        #    operator: "Equal"
-        #    value: "arm64"
-        #    effect: "NoSchedule"
-        enableRemoteWriteReceiver: true
-        podMonitorSelectorNilUsesHelmValues: false
-        serviceMonitorSelectorNilUsesHelmValues: false
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: nfs-csi
-              accessModes:
-                - ReadWriteMany
-              resources:
-                requests:
-                  storage: 25Gi
-            selector: {}
-    alertmanager:
-      alertmanagerSpec:
-        useExistingSecret: true
-    namespaceOverride: monitoring
-    grafana:
-      plugins:
-        - grafana-piechart-panel
-        - grafana-worldmap-panel
-        - https://grafana.com/api/plugins/parseable-parseable-datasource/versions/1.0.2/download;parseable-parseable-datasource
-        - isovalent-hubble-datasource
-        - isovalent-hubbleprocessancestry-panel
-        - chaosmeshorg-datasource
-      smtp:
-        existingSecret: smtp-auth-secret
-      extraSecretMounts:
-        - name: auth-generic-oauth-secret-mount
-          secretName: auth-generic-oauth-secret
-          defaultMode: 288
-          mountPath: /etc/secrets/auth_generic_oauth
-          readOnly: true
-        - name: parseable-secret-mount
-          secretName: parseable-secret
-          defaultMode: 288
-          mountPath: /etc/secrets/parseable
-          readOnly: true
-      defaultDashboardsTimezone: Europe/Berlin
-      dashboardProviders:
-        dashboardproviders.yaml:
-          apiVersion: 1
-          providers:
-            - name: monitoring
-              orgId: 1
-              folder: Monitoring
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/monitoring
-            - name: zammad
-              orgId: 1
-              folder: Zammad
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/zammad
-            - name: matrix
-              orgId: 1
-              folder: Matrix
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/matrix
-            - name: nats
-              orgId: 1
-              folder: Nats
-              type: file
-              disableDeletion: true
-              editable: false
-              updateIntervalSeconds: 10
-              allowUiUpdates: false
-              options:
-                path: /var/lib/grafana/dashboards/nats
-      datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Parseable
-              type: parseable-parseable-datasource
-              url: http://parseable.parseable.svc.cluster.local
-              access: proxy
-              isDefault: false
-              basicAuth: true
-              basicAuthUser: MTRNord
-              secureJsonData:
-                  basicAuthPassword: $__file{/etc/secrets/parseable/password}
-            - name: ChaosMesh
-              type: chaosmeshorg-datasource
-              url: http://chaos-dashboard.chaosmesh.svc.cluster.local:2333
-              access: proxy
-              isDefault: false
-            - name: Tempo
-              type: tempo
-              uid: tempo
-              access: proxy
-              url: http://tempo.monitoring.svc.cluster.local:3100
-              isDefault: false
-              jsonData:
-                httpMethod: GET
-                serviceMap:
-                  datasourceUid: prometheus
-                lokiSearch:
-                  datasourceUid: 'loki'
-            - name: Hubble
-              type: isovalent-hubble-datasource
-              uid: hubble
-              access: proxy
-              url: http://hubble-relay.kube-system.svc.cluster.local:80
-              isDefault: false
-              jsonData:
-                serviceMap:
-                  datasourceUid: prometheus
-                tempoDatasourceUid: tempo
-                prometheusDatasourceUid: prometheus
-            - name: ES - Chat Sessions
-              type: elasticsearch
-              access: proxy
-              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
-              isDefault: false
-              uid: zammad-es-chat_sessions
-              jsonData:
-                index: 'zammad_production_chat_session'
-                timeField: 'created_at'
-            - name: ES - CTI Log
-              type: elasticsearch
-              access: proxy
-              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
-              isDefault: false
-              uid: zammad-es-cti_log
-              jsonData:
-                index: 'zammad_production_cti_log'
-                timeField: 'start_at'
-            - name: ES - Ticket Articles
-              type: elasticsearch
-              access: proxy
-              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
-              isDefault: false
-              uid: zammad-es-ticket_articles
-              jsonData:
-                index: 'zammad_production_ticket'
-                timeField: 'article.created_at'
-            - name: ES - Tickets by closed_at
-              type: elasticsearch
-              access: proxy
-              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
-              isDefault: false
-              uid: zammad-es-closed_ticket
-              jsonData:
-                index: 'zammad_production_ticket'
-                timeField: 'close_at'
-            - name: ES - Tickets by created_at
-              type: elasticsearch
-              access: proxy
-              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
-              isDefault: false
-              uid: zammad-es-created_ticket
-              jsonData:
-                index: 'zammad_production_ticket'
-                timeField: 'created_at'
-            - name: ES - Tickets by first_response_at
-              type: elasticsearch
-              access: proxy
-              url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
-              isDefault: false
-              uid: zammad-es-first_response_at
-              jsonData:
-                index: 'zammad_production_ticket'
-                timeField: 'first_response_at'
-      dashboards:
-        monitoring:
-          asterisk:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/asterisk.json
-          traefik:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
-          postgres-dashboard:
-            url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
-          minio-dashboard:
-            url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-dashboard.json
-          #minio-bucket:
-          #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-bucket.json
-          #minio-replication:
-          #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-replication.json
-        zammad:
-          ticket_statistics:
-            gnetId: 14222
-            revision: 2
-            datasource:
-              - name: "DS_ES_- TICKETS BY CREATED_AT"
-                value: "zammad-es-created_ticket"
-              - name: "DS_ES_- TICKETS BY CLOSED_AT"
-                value: "zammad-es-closed_ticket"
-              - name: "DS_ES_- TICKET ARTICLES"
-                value: "zammad-es-ticket_articles"
-              - name: "DS_ES_- CHAT SESSIONS"
-                value: "zammad-es-chat_sessions"
-              - name: "DS_ES_- CTI LOG"
-                value: "zammad-es-cti_log"
-          chat_sessions_statistics:
-            gnetId: 14224
-            revision: 1
-            datasource:
-              - name: "DS_ES_- TICKETS BY CREATED_AT"
-                value: "zammad-es-created_ticket"
-              - name: "DS_ES_- TICKETS BY CLOSED_AT"
-                value: "zammad-es-closed_ticket"
-              - name: "DS_ES_- TICKET ARTICLES"
-                value: "zammad-es-ticket_articles"
-              - name: "DS_ES_- CHAT SESSIONS"
-                value: "zammad-es-chat_sessions"
-              - name: "DS_ES_- CTI LOG"
-                value: "zammad-es-cti_log"
-          cti_log_statistics:
-            gnetId: 14223
-            revision: 1
-            datasource:
-              - name: "DS_ES_- TICKETS BY CREATED_AT"
-                value: "zammad-es-created_ticket"
-              - name: "DS_ES_- TICKETS BY CLOSED_AT"
-                value: "zammad-es-closed_ticket"
-              - name: "DS_ES_- TICKET ARTICLES"
-                value: "zammad-es-ticket_articles"
-              - name: "DS_ES_- CHAT SESSIONS"
-                value: "zammad-es-chat_sessions"
-              - name: "DS_ES_- CTI LOG"
-                value: "zammad-es-cti_log"
-        matrix:
-          synapse-dashboard:
-            #url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
-            url: https://raw.githubusercontent.com/element-hq/synapse/develop/contrib/grafana/synapse.json
-            datasource:
-              - name: "DS_PROMETHEUS"
-                value: "Prometheus"
-          draupnir4all:
-            url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
-          matrix-media-repo-dashboard:
-            url: https://raw.githubusercontent.com/t2bot/matrix-media-repo/main/docs/grafana.json
-            datasource:
-              - name: "DS_PROMETHEUS"
-                value: "Prometheus"
-      grafana.ini:
-        smtp:
-          enabled: true
-          host: mail.nordgedanken.dev:465
-          from_address: ops@nordgedanken.dev
-        paths:
-          data: /var/lib/grafana/
-          logs: /var/log/grafana
-          plugins: /var/lib/grafana/plugins
-          provisioning: /etc/grafana/provisioning
-        analytics:
-          check_for_updates: true
-        log:
-          mode: console
-        grafana_net:
-          url: https://grafana.net
-        auth.generic_oauth:
-          enabled: true
-          scopes: openid email profile roles
-          name: OAuth
-          allow_sign_up: true
-          client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
-          client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
-          auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
-          token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
-          api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
-          role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
-      imageRenderer:
-        enabled: true
-    kubeProxy:
-      enabled: false
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              # Ignore these objects from Flux diff as they are mutated from chart hooks
-              kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
-              name: kube-prometheus-stack-admission
-            patch: |
-              - op: add
-                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
-                value: disabled
-          - target:
-              # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
-              kind: PrometheusRule
-            patch: |
-              - op: add
-                path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
-                value: disabled
+    interval: 5m
+    chart:
+        spec:
+            version: 57.1.x
+            chart: kube-prometheus-stack
+            sourceRef:
+                kind: HelmRepository
+                name: prometheus-community
+            interval: 60m
+    install:
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
+    # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+    values:
+        prometheus:
+            prometheusSpec:
+                resources:
+                    requests:
+                        cpu: 0m
+                        memory: 0Mi
+                #tolerations:
+                #  - key: "arch"
+                #    operator: "Equal"
+                #    value: "arm64"
+                #    effect: "NoSchedule"
+                enableRemoteWriteReceiver: true
+                podMonitorSelectorNilUsesHelmValues: false
+                serviceMonitorSelectorNilUsesHelmValues: false
+                storageSpec:
+                    volumeClaimTemplate:
+                        spec:
+                            storageClassName: nfs-csi
+                            accessModes:
+                                - ReadWriteMany
+                            resources:
+                                requests:
+                                    storage: 25Gi
+                        selector: {}
+        alertmanager:
+            alertmanagerSpec:
+                useExistingSecret: true
+        namespaceOverride: monitoring
+        grafana:
+            adminPassword: ENC[AES256_GCM,data:ZpF1Th/DBoNUL5VLQUzQvTzB13edtcaPSQSN7NfSyRKBhrLHvROesREurugWmcCbxD7bEhhTMDp4fOAgBdzdfw==,iv:XrNKbFVk75qp1bBvv24ACiXvD+jMkBKC4SLTJeW8a8U=,tag:W2Nt8sV+UfkAlfUGToKFVw==,type:str]
+            plugins:
+                - grafana-piechart-panel
+                - grafana-worldmap-panel
+                - https://grafana.com/api/plugins/parseable-parseable-datasource/versions/1.0.2/download;parseable-parseable-datasource
+                - isovalent-hubble-datasource
+                - isovalent-hubbleprocessancestry-panel
+                - chaosmeshorg-datasource
+            smtp:
+                existingSecret: smtp-auth-secret
+            extraSecretMounts:
+                - name: auth-generic-oauth-secret-mount
+                  secretName: auth-generic-oauth-secret
+                  defaultMode: 288
+                  mountPath: /etc/secrets/auth_generic_oauth
+                  readOnly: true
+                - name: parseable-secret-mount
+                  secretName: parseable-secret
+                  defaultMode: 288
+                  mountPath: /etc/secrets/parseable
+                  readOnly: true
+            defaultDashboardsTimezone: Europe/Berlin
+            dashboardProviders:
+                dashboardproviders.yaml:
+                    apiVersion: 1
+                    providers:
+                        - name: monitoring
+                          orgId: 1
+                          folder: Monitoring
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/monitoring
+                        - name: zammad
+                          orgId: 1
+                          folder: Zammad
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/zammad
+                        - name: matrix
+                          orgId: 1
+                          folder: Matrix
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/matrix
+                        - name: nats
+                          orgId: 1
+                          folder: Nats
+                          type: file
+                          disableDeletion: true
+                          editable: false
+                          updateIntervalSeconds: 10
+                          allowUiUpdates: false
+                          options:
+                            path: /var/lib/grafana/dashboards/nats
+            datasources:
+                datasources.yaml:
+                    apiVersion: 1
+                    datasources:
+                        - name: Parseable
+                          type: parseable-parseable-datasource
+                          url: http://parseable.parseable.svc.cluster.local
+                          access: proxy
+                          isDefault: false
+                          basicAuth: true
+                          basicAuthUser: MTRNord
+                          secureJsonData:
+                            basicAuthPassword: $__file{/etc/secrets/parseable/password}
+                        - name: ChaosMesh
+                          type: chaosmeshorg-datasource
+                          url: http://chaos-dashboard.chaosmesh.svc.cluster.local:2333
+                          access: proxy
+                          isDefault: false
+                        - name: Tempo
+                          type: tempo
+                          uid: tempo
+                          access: proxy
+                          url: http://tempo.monitoring.svc.cluster.local:3100
+                          isDefault: false
+                          jsonData:
+                            httpMethod: GET
+                            serviceMap:
+                                datasourceUid: prometheus
+                            lokiSearch:
+                                datasourceUid: loki
+                        - name: Hubble
+                          type: isovalent-hubble-datasource
+                          uid: hubble
+                          access: proxy
+                          url: http://hubble-relay.kube-system.svc.cluster.local:80
+                          isDefault: false
+                          jsonData:
+                            serviceMap:
+                                datasourceUid: prometheus
+                            tempoDatasourceUid: tempo
+                            prometheusDatasourceUid: prometheus
+                        - name: ES - Chat Sessions
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-chat_sessions
+                          jsonData:
+                            index: zammad_production_chat_session
+                            timeField: created_at
+                        - name: ES - CTI Log
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-cti_log
+                          jsonData:
+                            index: zammad_production_cti_log
+                            timeField: start_at
+                        - name: ES - Ticket Articles
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-ticket_articles
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: article.created_at
+                        - name: ES - Tickets by closed_at
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-closed_ticket
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: close_at
+                        - name: ES - Tickets by created_at
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-created_ticket
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: created_at
+                        - name: ES - Tickets by first_response_at
+                          type: elasticsearch
+                          access: proxy
+                          url: http://zammad-elasticsearch.zammad.svc.cluster.local:9200
+                          isDefault: false
+                          uid: zammad-es-first_response_at
+                          jsonData:
+                            index: zammad_production_ticket
+                            timeField: first_response_at
+            dashboards:
+                monitoring:
+                    asterisk:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/asterisk.json
+                    traefik:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
+                    postgres-dashboard:
+                        url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
+                    minio-dashboard:
+                        url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-dashboard.json
+                        #minio-bucket:
+                        #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-bucket.json
+                        #minio-replication:
+                        #  url: https://raw.githubusercontent.com/minio/minio/master/docs/metrics/prometheus/grafana/minio-replication.json
+                zammad:
+                    ticket_statistics:
+                        gnetId: 14222
+                        revision: 2
+                        datasource:
+                            - name: DS_ES_- TICKETS BY CREATED_AT
+                              value: zammad-es-created_ticket
+                            - name: DS_ES_- TICKETS BY CLOSED_AT
+                              value: zammad-es-closed_ticket
+                            - name: DS_ES_- TICKET ARTICLES
+                              value: zammad-es-ticket_articles
+                            - name: DS_ES_- CHAT SESSIONS
+                              value: zammad-es-chat_sessions
+                            - name: DS_ES_- CTI LOG
+                              value: zammad-es-cti_log
+                    chat_sessions_statistics:
+                        gnetId: 14224
+                        revision: 1
+                        datasource:
+                            - name: DS_ES_- TICKETS BY CREATED_AT
+                              value: zammad-es-created_ticket
+                            - name: DS_ES_- TICKETS BY CLOSED_AT
+                              value: zammad-es-closed_ticket
+                            - name: DS_ES_- TICKET ARTICLES
+                              value: zammad-es-ticket_articles
+                            - name: DS_ES_- CHAT SESSIONS
+                              value: zammad-es-chat_sessions
+                            - name: DS_ES_- CTI LOG
+                              value: zammad-es-cti_log
+                    cti_log_statistics:
+                        gnetId: 14223
+                        revision: 1
+                        datasource:
+                            - name: DS_ES_- TICKETS BY CREATED_AT
+                              value: zammad-es-created_ticket
+                            - name: DS_ES_- TICKETS BY CLOSED_AT
+                              value: zammad-es-closed_ticket
+                            - name: DS_ES_- TICKET ARTICLES
+                              value: zammad-es-ticket_articles
+                            - name: DS_ES_- CHAT SESSIONS
+                              value: zammad-es-chat_sessions
+                            - name: DS_ES_- CTI LOG
+                              value: zammad-es-cti_log
+                matrix:
+                    synapse-dashboard:
+                        #url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
+                        url: https://raw.githubusercontent.com/element-hq/synapse/develop/contrib/grafana/synapse.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
+                    draupnir4all:
+                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
+                    matrix-media-repo-dashboard:
+                        url: https://raw.githubusercontent.com/t2bot/matrix-media-repo/main/docs/grafana.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
+            grafana.ini:
+                smtp:
+                    enabled: true
+                    host: mail.nordgedanken.dev:465
+                    from_address: ops@nordgedanken.dev
+                paths:
+                    data: ENC[AES256_GCM,data:Oj4kMrYqvdUO448JHrEHVdg=,iv:FZ4Pq7hm8/EtaTRKATmJTAMRBy1bk4Bt1xO4ZgLUtkw=,tag:0T2xCcdhxWThpm0RYuUw2Q==,type:str]
+                    logs: /var/log/grafana
+                    plugins: /var/lib/grafana/plugins
+                    provisioning: /etc/grafana/provisioning
+                analytics:
+                    check_for_updates: true
+                log:
+                    mode: console
+                grafana_net:
+                    url: https://grafana.net
+                auth.generic_oauth:
+                    enabled: true
+                    scopes: openid email profile roles
+                    name: OAuth
+                    allow_sign_up: true
+                    client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+                    client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+                    auth_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/auth
+                    token_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/token
+                    api_url: https://keycloak.midnightthoughts.space/realms/master/protocol/openid-connect/userinfo
+                    role_attribute_path: contains(resource_access.grafana.roles[*], 'admin') && 'Admin' || contains(resource_access.grafana.roles[*], 'editor') && 'Editor' || 'Viewer'
+            imageRenderer:
+                enabled: true
+        kubeProxy:
+            enabled: false
+    postRenderers:
+        - kustomize:
+            patches:
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated from chart hooks
+                    kind: (ValidatingWebhookConfiguration|MutatingWebhookConfiguration)
+                    name: kube-prometheus-stack-admission
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+                - target:
+                    # Ignore these objects from Flux diff as they are mutated at apply time but not at dry-run time
+                    kind: PrometheusRule
+                  patch: |
+                    - op: add
+                      path: /metadata/annotations/helm.toolkit.fluxcd.io~1driftDetection
+                      value: disabled
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwU3AvOVZ0M2xKUkk3b1RN
+            TzZoemV6My9FL1lpWWljTWhzand4TFU5UlNnCkppaU9iSlVISEphbCtaa1hVMWhC
+            YTdZeER2bnNxNGpkdVM3azhRTlA1eGcKLS0tIEhNcXYwYTFsY1RZcG4vS1JMK0ZK
+            eG1mcm1pazdsT3FaZk01YW95ckl4cG8KUJmQwCm3YYvUtjTfScke/YvAwjiC8AIu
+            kIdpHXiIh6Wn1UHcwXE/AuyK4mfwQEg7UVSAFIO3duDIuk+YJI25YQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-04-16T09:58:01Z"
+    mac: ENC[AES256_GCM,data:nSyq1KfjJxGwcGcm/6tYdT4GskFtR1R6Z6hgtMSKa8jPlOh6Pe2aYJ48R1xknK7yhuHFzcsOCfAI/W7TheI9r3zrAmY9lPuAQu1dIhOk/U8MZNQfy6w+a+nCr+f3Wo8gpTJdk1uxcFAqdXmpKJs6EWIxUEjKsvhyxN3COUuOfKI=,iv:225AwIc6pRbJHNGdI8AyArsM+rTTeB7pIDVOnZLJ4bY=,tag:btTuUSpEB8k0ul8PS7gUvw==,type:str]
+    pgp: []
+    encrypted_regex: ^(AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
