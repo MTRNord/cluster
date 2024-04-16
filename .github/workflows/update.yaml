@@ -11,7 +11,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  
+
 jobs:
   components:
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
       - name: Check for updates
         id: update
         run: |
-          flux install \
+          flux install --components-extra=image-reflector-controller,image-automation-controller \
             --export > ./clusters/production/flux-system/gotk-components.yaml
 
           VERSION="$(flux -v)"
