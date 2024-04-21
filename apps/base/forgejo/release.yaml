@@ -108,21 +108,21 @@ spec:
                     PROTOCOL: smtps
                     USER: ops@nordgedanken.dev
                     PASSWD: ENC[AES256_GCM,data:6m3GRvlNGctk,iv:dM2bgyjzeRWMZqOcslZXQBYYGiKzATh90xKJZq8CErs=,tag:xjFGdeXbn4/Mx1RKNDpBxg==,type:str]
-                # session:
-                #     #PROVIDER: redis-cluster
-                #     PROVIDER: redis
-                #     PROVIDER_CONFIG: redis://:@forgejo-keydb.forgejo.svc.cluster.local:6379/0
-                #     #PROVIDER_CONFIG: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
-                # cache:
-                #     ENABLED: true
-                #     ADAPTER: redis
-                #     #ADAPTER: redis-cluster
-                #     #HOST: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
-                #     HOST: redis://:@forgejo-keydb.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s
-                # queue:
-                #     TYPE: redis
-                #     #CONN_STR: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
-                #     CONN_STR: redis://:@forgejo-keydb.forgejo.svc.cluster.local:6379/0
+                session:
+                    #PROVIDER: redis-cluster
+                    PROVIDER: redis
+                    PROVIDER_CONFIG: redis://:@forgejo-keydb.forgejo.svc.cluster.local:6379/0
+                    #PROVIDER_CONFIG: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
+                cache:
+                    ENABLED: true
+                    ADAPTER: redis
+                    #ADAPTER: redis-cluster
+                    #HOST: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
+                    HOST: redis://:@forgejo-keydb.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s
+                queue:
+                    TYPE: redis
+                    #CONN_STR: redis+cluster://:@forgejo-redis-cluster-headless.forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s&
+                    CONN_STR: redis://:@forgejo-keydb.forgejo.svc.cluster.local:6379/0
                 database:
                     DB_TYPE: postgres
                     HOST: matrix-postgres-cluster.matrix-postgres-cluster.svc.cluster.local:5432
