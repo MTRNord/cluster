@@ -30,6 +30,8 @@ spec:
         namespace: cert-manager
       interval: 12h
   values:
+    extraArgs:
+      "--feature-gates=ExperimentalGatewayAPISupport": "true"
     installCRDs: true
     enableCertificateOwnerRef: false
     tolerations:
