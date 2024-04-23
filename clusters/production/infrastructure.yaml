@@ -71,6 +71,13 @@ spec:
       target:
         kind: ClusterIssuer
         name: letsencrypt-http
+    - patch: |
+        - op: replace
+          path: /spec/acme/server
+          value: https://acme-v02.api.letsencrypt.org/directory
+      target:
+        kind: ClusterIssuer
+        name: letsencrypt-http-gwapi
   decryption:
     provider: sops
     secretRef:

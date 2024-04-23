@@ -23,7 +23,21 @@
 #           ingress:
 #             ingressClassName: traefik
 #             serviceType: ClusterIP
-
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  gatewayClassName: cilium
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+        namespaces:
+          from: All
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -41,5 +55,24 @@ spec:
           ingress:
             ingressClassName: traefik
             serviceType: ClusterIP
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http-gwapi
+spec:
+  acme:
+    email: info@nordgedanken.dev
+    # The server is replaced in /clusters/production/infrastructure.yaml
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-dns-account-key
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: cert-manager
+                namespace: cert-manager
+                kind: Gateway
 ---
 # Fix for flux
