@@ -1,5 +1,5 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: postgres-operator
@@ -19,6 +19,10 @@ spec:
     crds: Create
   upgrade:
     crds: CreateReplace
+  values:
+    image:
+      registry: ghcr.io
+      repository: zalando/postgres-operator
   # values:
   #   tolerations:
   #     - key: "arch"
@@ -26,7 +30,7 @@ spec:
   #       value: "arm64"
   #       effect: "NoSchedule"
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: postgres-operator-ui
@@ -46,10 +50,7 @@ spec:
     crds: Create
   upgrade:
     crds: CreateReplace
-  #values:
-    # Not supported
-    # tolerations:
-    #   - key: "arch"
-    #     operator: "Equal"
-    #     value: "arm64"
-    #     effect: "NoSchedule"
+  values:
+    image:
+      registry: ghcr.io
+      repository: zalando/postgres-operator-ui
