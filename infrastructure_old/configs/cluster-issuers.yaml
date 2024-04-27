@@ -1,0 +1,87 @@
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: ClusterIssuer
+# metadata:
+#   name: letsencrypt-dns
+# spec:
+#   acme:
+#     email: info@nordgedanken.dev
+#     # The server is replaced in /clusters/production/infrastructure.yaml
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     privateKeySecretRef:
+#       name: letsencrypt-dns-account-key
+#     solvers:
+#       # - dns01:
+#       #     rfc2136:
+#       #       nameserver: "[2a01:4f9:4a:451c:2::5]:53"
+#       #       tsigAlgorithm: HMACSHA256
+#       #       tsigKeyName: lego_letsencrypt
+#       #       tsigSecretSecretRef:
+#       #         key: tsig-secret
+#       #         name: tsig-secret
+#       - http01:
+#           ingress:
+#             ingressClassName: traefik
+#             serviceType: ClusterIP
+#
+# Blocked by https://github.com/cilium/cilium/issues/21926
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: Gateway
+# metadata:
+#   name: cert-manager
+#   namespace: cert-manager
+# spec:
+#   gatewayClassName: cilium
+#   listeners:
+#   - name: http
+#     protocol: HTTP
+#     port: 80
+#     allowedRoutes:
+#         namespaces:
+#           from: All
+#   addresses:
+#   - type: "IPAddress"
+#     value: 10.0.1.2
+#   - type: "IPAddress"
+#     value: 10.0.2.3
+#   - type: "IPAddress"
+#     value: 10.0.2.2
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http
+spec:
+  acme:
+    email: info@nordgedanken.dev
+    # The server is replaced in /clusters/production/infrastructure.yaml
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-dns-account-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: traefik
+            serviceType: ClusterIP
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: ClusterIssuer
+# metadata:
+#   name: letsencrypt-http-gwapi
+# spec:
+#   acme:
+#     email: info@nordgedanken.dev
+#     # The server is replaced in /clusters/production/infrastructure.yaml
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     privateKeySecretRef:
+#       name: letsencrypt-dns-account-key
+#     solvers:
+#       - http01:
+#           gatewayHTTPRoute:
+#             parentRefs:
+#               - name: cert-manager
+#                 namespace: cert-manager
+#                 kind: Gateway
+---
+# Fix for flux

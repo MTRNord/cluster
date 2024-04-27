@@ -1,0 +1,20 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: hsts
+spec:
+  headers:
+    stsSeconds: 63072000
+    stsPreload: true
+    stsIncludeSubdomains: true
+    frameDeny: false
+    browserXssFilter: true
+    contentTypeNosniff: true
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: compress
+spec:
+  compress: {}

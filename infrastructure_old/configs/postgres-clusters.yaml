@@ -2,16 +2,21 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: postgres-cluster
+  name: matrix-postgres-cluster
 ---
 apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
   labels:
-    team: midnightthoughts
-  name: postgres-cluster
-  namespace: postgres-cluster
+    team: matrix
+  name: matrix-postgres-cluster
+  namespace: matrix-postgres-cluster
 spec:
+  tolerations:
+    - key: "arch"
+      operator: "Equal"
+      value: "arm64"
+      effect: "NoSchedule"
   enableShmVolume: true
   databases:
     synapse: synapse
@@ -34,10 +39,10 @@ spec:
   resources:
     requests:
       cpu: 150m
-      memory: 3Gi
+      memory: 5Gi
     limits:
       cpu: 2000m
-      memory: 5Gi
+      memory: 10Gi
   postgresql:
     version: "15"
     parameters:
@@ -46,13 +51,13 @@ spec:
       superuser_reserved_connections: "3"
 
       # Memory settings
-      shared_buffers: "1024 MB"
-      work_mem: "32 MB"
-      maintenance_work_mem: '320 MB'
+      shared_buffers: "4GB"
+      work_mem: "64 MB"
+      maintenance_work_mem: "1GB"
       huge_pages: off
-      effective_cache_size: '3 GB'
-      effective_io_concurrency: "150"
-      random_page_cost: "1.5"
+      effective_cache_size: "11 GB"
+      effective_io_concurrency: "100"
+      random_page_cost: "1.1"
 
       # Cost of a sequentially-fetched disk page
       seq_page_cost: "0.7"
@@ -85,8 +90,8 @@ spec:
       # Checkpointing
       checkpoint_timeout: "15 min"
       checkpoint_completion_target: "0.9"
-      min_wal_size: '512 MB'
-      max_wal_size: '1024 MB'
+      min_wal_size: "1GB"
+      max_wal_size: "8GB"
 
       # archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
       # archive_command: "/bin/true" # not doing anything yet with WAL-s
@@ -107,10 +112,10 @@ spec:
       bgwriter_flush_after: "0"
 
       # Parallel queries
-      max_worker_processes: "4"
-      max_parallel_workers_per_gather: "2"
-      max_parallel_maintenance_workers: "2"
-      max_parallel_workers: "4"
+      max_worker_processes: "12"
+      max_parallel_workers_per_gather: "6"
+      max_parallel_maintenance_workers: "6"
+      max_parallel_workers: "12"
       parallel_leader_participation: "on"
 
       # Advanced features
@@ -127,7 +132,7 @@ spec:
       autovacuum_vacuum_cost_limit: "400"
       vacuum_cost_limit: "300"
 
-  teamId: midnightthoughts
+  teamId: matrix
   users:
     synapse: []
     draupnir_synapse: []
@@ -147,6 +152,7 @@ spec:
     forgejo: []
   volume:
     size: 50Gi
+    storageClass: local-hostpath
 
   patroni:
     failsafe_mode: true

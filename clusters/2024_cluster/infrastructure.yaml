@@ -11,7 +11,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure_old/controllers
+  path: ./infrastructure/controllers
   prune: true
   wait: true
   decryption:
@@ -33,7 +33,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure_old/notifications
+  path: ./infrastructure/notifications
   prune: true
   decryption:
     provider: sops
@@ -54,7 +54,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure_old/configs
+  path: ./infrastructure/configs
   prune: true
   patches:
     # - patch: |
@@ -129,7 +129,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure_old/monitoring
+  path: ./infrastructure/monitoring
   prune: true
   decryption:
     provider: sops
