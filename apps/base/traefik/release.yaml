@@ -57,9 +57,9 @@ spec:
           enabled: false
     service:
       annotations:
-        load-balancer.hetzner.cloud/location: fsn1
-        load-balancer.hetzner.cloud/use-private-ip: "true"
+        load-balancer.hetzner.cloud/location: hel1
         load-balancer.hetzner.cloud/name: traefik
+        load-balancer.hetzner.cloud/use-private-ip: "true"
         load-balancer.hetzner.cloud/uses-proxyprotocol: "true"
       spec:
         externalTrafficPolicy: Cluster
@@ -95,12 +95,13 @@ spec:
           options: ""
           certResolver: ""
           domains: []
+        # Not supported by hetzner
         http3:
-          enabled: true
+          enabled: false
           advertisedPort: 443
-        #middlewares:
-        #  - traefik-ingress-hsts@kubernetescrd
-        #  - traefik-ingress-compress@kubernetescrd
+        middlewares:
+          - traefik-ingress-hsts@kubernetescrd
+          - traefik-ingress-compress@kubernetescrd
       ssh:
         port: 2222
         expose:
