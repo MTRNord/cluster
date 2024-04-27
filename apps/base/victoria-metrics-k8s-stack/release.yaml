@@ -429,7 +429,7 @@ spec:
             plugins:
                 - grafana-piechart-panel
                 - grafana-worldmap-panel
-                - https://grafana.com/api/plugins/parseable-parseable-datasource/versions/1.0.2/download;parseable-parseable-datasource
+                #- https://grafana.com/api/plugins/parseable-parseable-datasource/versions/1.0.2/download;parseable-parseable-datasource
                 - isovalent-hubble-datasource
                 - isovalent-hubbleprocessancestry-panel
                 - chaosmeshorg-datasource
@@ -441,11 +441,11 @@ spec:
                   defaultMode: 288
                   mountPath: /etc/secrets/auth_generic_oauth
                   readOnly: true
-                - name: parseable-secret-mount
-                  secretName: parseable-secret
-                  defaultMode: 288
-                  mountPath: /etc/secrets/parseable
-                  readOnly: true
+                # - name: parseable-secret-mount
+                #   secretName: parseable-secret
+                #   defaultMode: 288
+                #   mountPath: /etc/secrets/parseable
+                #   readOnly: true
             defaultDashboardsTimezone: Europe/Berlin
             dashboardProviders:
                 dashboardproviders.yaml:
@@ -508,15 +508,15 @@ spec:
                           uid: prometheus
                           url: http://vmsingle-vm-victoria-metrics-k8s-stack.monitoring.svc:8429/
                           access: proxy
-                        - name: Parseable
-                          type: parseable-parseable-datasource
-                          url: http://parseable.parseable.svc.cluster.local
-                          access: proxy
-                          isDefault: false
-                          basicAuth: true
-                          basicAuthUser: MTRNord
-                          secureJsonData:
-                            basicAuthPassword: $__file{/etc/secrets/parseable/password}
+                        # - name: Parseable
+                        #   type: parseable-parseable-datasource
+                        #   url: http://parseable.parseable.svc.cluster.local
+                        #   access: proxy
+                        #   isDefault: false
+                        #   basicAuth: true
+                        #   basicAuthUser: MTRNord
+                        #   secureJsonData:
+                        #     basicAuthPassword: $__file{/etc/secrets/parseable/password}
                         - name: ChaosMesh
                           type: chaosmeshorg-datasource
                           url: http://chaos-dashboard.chaosmesh.svc.cluster.local:2333
