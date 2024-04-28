@@ -1,5 +1,5 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: postgres-operator
@@ -7,13 +7,13 @@ metadata:
 spec:
   chart:
     spec:
-      version: "1.10.x"
+      version: "1.11.x"
   values:
     configKubernetes:
       cluster_name_label: "midnightthoughts"
       enable_readiness_probe: true
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: postgres-operator-ui
@@ -21,7 +21,7 @@ metadata:
 spec:
   chart:
     spec:
-      version: "1.10.x"
+      version: "1.11.x"
   values:
     envs:
       teams:
