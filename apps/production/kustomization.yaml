@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  #- ../base/vaultwarden
   #- ../base/cosign
   #- ../base/woodpecker
   #- ../base/kube-prometheus-stack
@@ -38,7 +37,6 @@ resources:
   #- ../base/workadventure
 patchesStrategicMerge:
   #- cosign-values.yaml
-  #- vaultwarden-values.yaml
   #- woodpecker-values.yaml
   - loki-stack-values.yaml
   - postgres-operator-values.yaml
