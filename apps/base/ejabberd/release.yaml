@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: ejabberd
+  namespace: ejabberd
+spec:
+  releaseName: ejabberd
+  chart:
+    spec:
+      chart: ejabberd
+      sourceRef:
+        kind: HelmRepository
+        name: ejabberd
+  values:
+    sqlDatabase:
+      enabled: true
+      updateSqlSchema: true
+      config:
+        ssl_type: pgsql
+        ssl_server: postgres-cluster.postgres-cluster.svc.cluster.local
+        sql_port: 5432
+        sql_ssl: true
+        sql_database: ejabberd
+        sql_username: ejabberd
+        # TODO:
+        sql_password: ENC[AES256_GCM,data:FNXCNt75slk=,iv:HS7g8MYQbbg+BsX7mlMtqCtlNmOa+AdJzwVkkTbRkXc=,tag:OyOEzAmO46rStFdGsbQceA==,type:str]
+    certFiles:
+      secretName:
+        - xmpp-midnightthoughts
+      sideCar:
+        enabled: true
+    authentification:
+      auth_method:
+        - sql
+      auth_password_format: scram
+      auth_scram_hash: sha256
+      disable_sasl_mechanisms:
+        - digest-md5
+        - x-oauth2
+    hosts:
+      - localhost
+      - xmpp.midnightthoughts.space
+    erlangCookie: ENC[AES256_GCM,data:SH8h3dEcJ+ZYAPrqc8akDYW/hC87vjb+L/8SZbha0VoO2hgu9PZmBVk/l+3uw5ZC0E7vLla6rIotQcWw/qqd1w==,iv:DPGHGIrnPzAi6jFFyAf7+USrT7Y7aJP8l1GgwP/OFN8=,tag:0xMXz1BbGk5ePcP9xfOo1w==,type:str]
+    service:
+      annotations:
+        load-balancer.hetzner.cloud/location: fsn1
+        load-balancer.hetzner.cloud/use-private-ip: "true"
+        load-balancer.hetzner.cloud/name: traefik
+sops:
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrNFBML3NyWmxaVTlNYzVV
+        cmp4cGdSWGYzN3hkQnBYVUwvM2Z1anRoNTNrCnlsa05kOWtPRXIzRm04OTZqT1N0
+        UUU5UUdhVzZ6VEdyYkE1V25kUjNWYlEKLS0tIFhyVi9ON05aZXBnWWd2cGZpbDRE
+        ck9PeHlQU1ZsZWZTd3NFdDN4MUo5WkkKQcENla/Iliif2PyhWw4X0kXUQj9uj4a+
+        iWo+4QJ/A1rxjIdfiRdytjhP8KdfysY2qw482yUD6IEAAVwlJLnmBw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2024-04-27T18:28:46Z"
+  mac: ENC[AES256_GCM,data:GC9sG7jtP45C7I/cRVL7bLLFGeCytimC1U8HwY3X0ZinZjEeYooekVcT9NIP+hWTrhOUx4Ud0q4sX9g733E376kakq2np3iCGRcDKHzF95sXfRQJuiveVkUNRdsYapeNC/fUETp4e07lspVuwxGFvGgviOuzFQBnPnqywpW40yA=,iv:7C/LFsPv8YycnDpFfKXgZA+s6lCQ0f1OcfzPSlGEtWI=,tag:Ir3ZBXMjvwDF0FVwoehdUw==,type:str]
+  pgp: []
+  encrypted_regex: ^(sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+  version: 3.8.1
