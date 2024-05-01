@@ -12,7 +12,7 @@ spec:
   selector:
     app: mjolnir-fluffy
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.containo.us/v1alpha2
 kind: Middleware
 metadata:
   name: mjolnir-fluffy-fix-cors
@@ -30,7 +30,7 @@ spec:
     accessControlMaxAge: 100
     addVaryHeader: true
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.containo.us/v1alpha2
 kind: Middleware
 metadata:
   name: mjolnir-fluffy-replacepathregex
