@@ -25,7 +25,7 @@ spec:
       uriOverride: ENC[AES256_GCM,data:ptv/omzNlx38wVRgnFS2FCFgPrP+vkvZU9McvBK5GNK49nXYwHL9C9FukcowC23I8qSAWs65EJwDe8Yy2eeyr6FOtN3/kJuJyVyHgPMvRpXg2+89vBCbmfm51AENt6XFD6Se0foFKczxJmJRXCG6A+cevRkXoVlMz23k5152BTPnElqGDiPqCPuCejYKRFhzjg2vZe38M7BX6zVliLw=,iv:PRX2nl8eFnPg5+SBZvC+C2pgQDWgnyTU7ShapP808nk=,tag:89RVmNFGaOfheaSMuncWpA==,type:str]
     ingress:
       enabled: true
-      labels:
+      additionalAnnotations:
         cert-manager.io/cluster-issuer: letsencrypt-dns
       tlsSecret: vault.midnightthoughts.space-crt
       hostname: vault.midnightthoughts.space
