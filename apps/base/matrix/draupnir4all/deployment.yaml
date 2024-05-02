@@ -24,15 +24,6 @@ spec:
         app.kubernetes.io/instance: main-process
         app.kubernetes.io/name: draupnir4all
     spec:
-      # affinity:
-      #   nodeAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       nodeSelectorTerms:
-      #       - matchExpressions:
-      #         - key: kubernetes.io/hostname
-      #           operator: NotIn
-      #           values:
-      #           - worker-2
       tolerations:
         - key: "arch"
           operator: "Equal"
@@ -44,9 +35,9 @@ spec:
           imagePullPolicy: Always
           env:
             - name: TRACING_ENABLED
-              value: "true"
+              value: "false"
             - name: TRACING_DIAG_ENABLED
-              value: "true"
+              value: "false"
             #- name: TRACING_DIAG_VERBOSE
             #  value: "true"
             - name: TRACING_TRACE_URL
@@ -72,7 +63,7 @@ spec:
               cpu: "1000m"
             requests:
               memory: "512Mi"
-              cpu: "500m"
+              cpu: "250m"
           ports:
             - containerPort: 9001
               name: widgets
