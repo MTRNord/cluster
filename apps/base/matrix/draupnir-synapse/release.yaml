@@ -49,12 +49,19 @@ spec:
                 - name: docker
         persistence:
             size: 2Gi
-            accessMode: ReadWriteMany
-            existingClaim: draupnir-synapse-v2
+            accessMode: ReadWriteSingle
         volumePermissions:
             enabled: true
         workers:
             default:
+                volumeMounts:
+                    - name: configs
+                      mountPath: /data
+                      readOnly: true
+                volumes:
+                    - name: configs
+                      secret:
+                        secretName: ENC[AES256_GCM,data:OdQxzt9pNqEeQWrWxxU+NWdXkw==,iv:9oyTMkdyKkWheSommQSnPwWlIEJJAIQnQSUX6xqNI24=,tag:tG0RlbAD4BFmLjuVuMpimQ==,type:str]
                 extraConfig:
                     opentracing:
                         enabled: true
@@ -139,6 +146,14 @@ spec:
                 listeners:
                     - replication
         synapse:
+            extraVolumeMounts:
+                - name: configs
+                  mountPath: /data
+                  readOnly: true
+            extraVolumes:
+                - name: configs
+                  secret:
+                    secretName: ENC[AES256_GCM,data:08iJNCC69IlJoZefkdjotWfpwQ==,iv:pmsnJmtBZB9pJG4ThlbWNRkYu0pvmcr4vxMTJblEmBg=,tag:V8N0ePPec5eFhXnylbjkKw==,type:str]
             ## Liveness probe configuration to use
             ##
             livenessProbe:
@@ -179,7 +194,7 @@ spec:
             sslmode: require
             database: draupnir_synapse
             username: draupnir_synapse
-            password: ENC[AES256_GCM,data:kQIHr42+coKkDoVU/9SWfIUiNuAmuZ8Dl+2d+Vv0gUvyfeurSvzoIntLCEkSnxgLi91GcUoMcjiycUGVnvPkTQ==,iv:58sXfJ9Q0YtGm7sY/QqQT3LnVcZuINrs2OBJ186PPNM=,tag:PYJFx0UqeChYoW5JsTQAzA==,type:str]
+            password: ENC[AES256_GCM,data:fGW6F1wvWSURZqr7TAwFUedBxAwJOThemHVtu+qY2q9ewnY6OTVxLn51Fg4i8g2QjNe8xaP4/vaz4cF+u1NYWA==,iv:TE83gVchbBMWbKlk+TWK7LHOgf/s48JnqPbRkgOzcTQ=,tag:V71MlOITWC1dX3jcmtIlQg==,type:str]
         signingkey:
             job:
                 enabled: false
@@ -210,25 +225,6 @@ spec:
                 cert-manager.io/cluster-issuer: letsencrypt-dns
                 traefik.ingress.kubernetes.io/router.tls: "true"
                 traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
-        workers:
-            default:
-                volumeMounts:
-                    - name: configs
-                      mountPath: /data
-                      readOnly: true
-                volumes:
-                    - name: configs
-                      secret:
-                        secretName: ENC[AES256_GCM,data:NDCIn9YtNxlKHVjPn9+Rm5SG8Q==,iv:UDZPXuUkrm3odCcHnFudXEMQbU4BjEEJxf5F3x6NCiI=,tag:EtyfaxGEXW0FHy25Aj0Ylg==,type:str]
-        synapse:
-            extraVolumeMounts:
-                - name: configs
-                  mountPath: /data
-                  readOnly: true
-            extraVolumes:
-                - name: configs
-                  secret:
-                    secretName: ENC[AES256_GCM,data:Ti0CM/yUjx7vQJnmhqxJ8W8NkA==,iv:11MFd0TLbA3LW4zqrvgSfHC8x7zlv6D7/5CGBuMojPE=,tag:1OIhl68TeexYC1XOQjGfyQ==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -238,14 +234,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBvS2RZNmt0dEQ0UUxxaVg5
-            dmczeUZTU1ZUTElISmhpMWNKZnFTNkc2NGxnCmpPWnZoZStGbWxscG1rYjFqRUlJ
-            eVZjTk8wTENOc3cxd3ZLdnROWlFUMDgKLS0tIEJVOVFKY3hzNmNpMjJhY1pXOHFJ
-            RkxTR1RIZVFMcEJUb1AxTU1BaU5NNzAKWzAF33WSKxOEDMY9d+SFqMqVmoTYba8w
-            IQ+Sfs/DUOrpXk6cvbZpT70U6JfhmnHMBkmh02DhtmjYtCnEKlEdMg==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBFcFZQeHV2bFdibDFHZkJW
+            VHpvRGNSK2dCR1dhbmkza3hXR2IzVk1IRXlvCkhGYURmRGY1U2o2eU85UGtsZnpR
+            S0pCNW45WllWeDhmSk9ETDk4cG9Hb3cKLS0tIGF6Umg1ajFPNVJRUDByNVRyak9s
+            S3dQc2Iwa1EyOHROOStsWUFpSGo3VW8K9QYE2CMS7SHdmjCsAIy3WnhZeyidsuaU
+            klt6O9fM61n/x3+EsJ8vk+4nScog7rcaZ8EzUJzgbQ8nQ1dDqhvkdw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-05-03T19:56:13Z"
-    mac: ENC[AES256_GCM,data:UUwJ90GD9n33+32FPNjiYkFC0FwNDFiXb7H1s2pnMgJ9+Ot3z4n8S5MEWD5/KhojeF5X9kry32YyscRn6sd6BwFccZgU2Rdp2wxL2zw2ScFZTbAL6dzo43jRxwGhg47+IKa3h0PMzifeUVMXosZ6kSFIozDOXWHjh5cSsDC0Etg=,iv:+GxvcfGtRiufm6FxdaUcjH2thDlh5m11QN9LEixER3I=,tag:7IX86t7BZvzLYqy4uOvrww==,type:str]
+    lastmodified: "2024-05-03T20:03:45Z"
+    mac: ENC[AES256_GCM,data:V9sH8Cme7WXl88O8D7YGWBota6hxk2aGrdbdd26hfsv6LfwIxIriF7c1SPB3uYTrNGkSdFMH7PIx2FZyJppgrCFjPD8JuO3k4DUl3H+2Q9A8ISs8OmF7uZpkt9uUcslAaN7G06FKQ3l+D7EhlBKEokwoJ+vcNvDtV7Y2/6I2+wU=,iv:dBYwnhosNZhSgjt99fOc5iwzgcxWbmmLnvntpmuf5v8=,tag:CRI9SpSijN0g9y8Unz7qaw==,type:str]
     pgp: []
     encrypted_regex: ^(clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
