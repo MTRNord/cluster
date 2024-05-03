@@ -16,6 +16,9 @@ spec:
             retries: 3
     values:
         extraConfig:
+            use_presence: false
+            app_service_config_files:
+                - /data/draupnir-registration.yaml
             stream_writers:
                 events: event_persister
             run_background_tasks_on: background_worker
@@ -39,6 +42,9 @@ spec:
                     min_cache_ttl: 5m
         wellknown:
             enabled: true
+            client:
+                m.homeserver:
+                    base_url: https://matrix.draupnir.midnightthoughts.space
             extraData:
                 support:
                     admins:
@@ -200,17 +206,9 @@ spec:
                 enabled: false
         serverName: draupnir.midnightthoughts.space
         publicServerName: matrix.draupnir.midnightthoughts.space
-        wellknown:
-            client:
-                m.homeserver:
-                    base_url: https://matrix.draupnir.midnightthoughts.space
         config:
             reportStats: true
             enableRegistration: false
-        extraConfig:
-            use_presence: false
-            app_service_config_files:
-                - /data/draupnir-registration.yaml
         ingress:
             traefikPaths: true
             hosts:
