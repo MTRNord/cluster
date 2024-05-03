@@ -1,231 +1,251 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: draupnir-synapse
-  namespace: matrix
+    name: draupnir-synapse
+    namespace: matrix
 spec:
-  chart:
-    spec:
-      chart: matrix-synapse
-      sourceRef:
-        kind: HelmRepository
-        name: ananace-charts
-  interval: 50m
-  install:
-    remediation:
-      retries: 3
-  values:
-    extraConfig:
-      stream_writers:
-        events: event_persister
-      run_background_tasks_on: background_worker
-      opentracing:
-        enabled: true
-        homeserver_whitelist:
-          - "matrix.midnightthoughts.space"
-        jaeger_config:
-          local_agent:
-            reporting_host: tempo.monitoring.svc.cluster.local
-      presence:
-        enabled: false
-      federation_sender_instances:
-        - federation-sender-1
-        - federation-sender-2
-      event_cache_size: 10K
-      caches:
-        global_factor: 10
-        expire_caches: true
-        cache_entry_ttl: 240m
-        cache_autotuning:
-          max_cache_memory_usage: 2048M
-          target_cache_memory_usage: 1024M
-          min_cache_ttl: 5m
-    wellknown:
-      enabled: true
-      extraData:
-        support:
-          admins:
-            - email_address: "support@nordgedanken.dev"
-              role: "admin"
-    image:
-      pullSecrets:
-        - name: docker
-    persistence:
-      size: 10Gi
-      accessMode: ReadWriteMany
-      existingClaim: draupnir-synapse-v2
-    volumePermissions:
-      enabled: true
-    workers:
-      default:
-        # affinity:
-        #   nodeAffinity:
-        #     requiredDuringSchedulingIgnoredDuringExecution:
-        #       nodeSelectorTerms:
-        #       - matchExpressions:
-        #         - key: kubernetes.io/hostname
-        #           operator: NotIn
-        #           values:
-        #           - worker-2
-        tolerations:
-          - key: "arch"
-            operator: "Equal"
-            value: "arm64"
-            effect: "NoSchedule"
-        extraEnv:
-          - name: JAEGER_AGENT_HOST
-            value: tempo.monitoring.svc.cluster.local
-          #- name: LD_PRELOAD
-          #  value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+    chart:
+        spec:
+            chart: matrix-synapse
+            sourceRef:
+                kind: HelmRepository
+                name: ananace-charts
+    interval: 50m
+    install:
+        remediation:
+            retries: 3
+    values:
         extraConfig:
-          opentracing:
+            stream_writers:
+                events: event_persister
+            run_background_tasks_on: background_worker
+            opentracing:
+                enabled: true
+                homeserver_whitelist:
+                    - matrix.midnightthoughts.space
+            presence:
+                enabled: false
+            federation_sender_instances:
+                - federation-sender-1
+                - federation-sender-2
+            event_cache_size: 10K
+            caches:
+                global_factor: 10
+                expire_caches: true
+                cache_entry_ttl: 240m
+                cache_autotuning:
+                    max_cache_memory_usage: 2048M
+                    target_cache_memory_usage: 1024M
+                    min_cache_ttl: 5m
+        wellknown:
             enabled: true
-            homeserver_whitelist:
-              - "matrix.midnightthoughts.space"
-            jaeger_config:
-              local_agent:
-                reporting_host: tempo.monitoring.svc.cluster.local
-          event_cache_size: 30K
-          caches:
-            global_factor: 10
-            expire_caches: true
-            cache_entry_ttl: 1080m
-            sync_response_cache_duration: 2m
-            cache_autotuning:
-              max_cache_memory_usage: 4069M
-              target_cache_memory_usage: 2048M
-              min_cache_ttl: 5m
-      generic_frontend:
-        replicaCount: 2
-        enabled: true
-        generic: true
-        listeners: [client]
-        csPaths:
-          # Client API requests
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/createRoom$"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$"
-          - "/_matrix/client/(r0|v3|unstable)/account/whoami$"
-          - "/_matrix/client/(r0|v3|unstable)/devices$"
-          - "/_matrix/client/versions$"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$"
-
-          # Encryption requests
-          - "/_matrix/client/(r0|v3|unstable)/keys/query$"
-          - "/_matrix/client/(r0|v3|unstable)/keys/changes$"
-          - "/_matrix/client/(r0|v3|unstable)/keys/claim$"
-          - "/_matrix/client/(r0|v3|unstable)/room_keys/"
-          - "/_matrix/client/(r0|v3|unstable)/keys/upload/"
-
-          # Registration/login requests
-          - "/_matrix/client/(r0|v3|unstable)/register$"
-          - "/_matrix/client/(r0|v3|unstable)/register/available$"
-
-          # Event sending requests
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/join/"
-          - "/_matrix/client/(api/v1|r0|v3|unstable)/profile/"
-      federation_reader:
-        replicaCount: 2
-        enabled: true
-        generic: true
-        listeners: [federation]
-        paths:
-          - "/_matrix/federation/v1/send/"
-      appservice:
-        enabled: true
-        name: appservices
-        generic: true
-      federation_sender_1:
-        labels:
-          synapse-component: federation-sender
-        app: federation_sender
-        name: federation-sender-1
-        enabled: true
-      federation_sender_2:
-        labels:
-          synapse-component: federation-sender
-        app: federation_sender
-        name: federation-sender-2
-        enabled: true
-      background_worker:
-        name: background_worker
-        replicaCount: 1
-        enabled: true
-        generic: true
-      event_persister:
-        name: event_persister
-        replicaCount: 1
-        enabled: true
-        generic: true
-        listeners: [replication]
-    synapse:
-      # affinity:
-      #   nodeAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       nodeSelectorTerms:
-      #       - matchExpressions:
-      #         - key: kubernetes.io/hostname
-      #           operator: NotIn
-      #           values:
-      #           - worker-2
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-      ## Liveness probe configuration to use
-      ##
-      livenessProbe:
-        timeoutSeconds: 60
-        failureThreshold: 5
-        httpGet:
-          path: /health
-          port: http
-
-      ## Readiness probe configuration to use
-      ##
-      readinessProbe:
-        timeoutSeconds: 60
-        failureThreshold: 5
-        httpGet:
-          path: /health
-          port: http
-
-      extraCommands: []
-      extraEnv:
-        - name: JAEGER_AGENT_HOST
-          value: tempo.monitoring.svc.cluster.local
-        #- name: LD_PRELOAD
-        #  value: /usr/lib/x86_64-linux-gnu/libjemalloc.so.2
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/_synapse/metrics"
-        prometheus.io/port: "9090"
-
-    externalRedis:
-      host: draupnir-synapse-keydb.matrix.svc.cluster.local
-      port: 6379
-      password: null
-    redis:
-      enabled: false
-      usePassword: false
-      password: null
-      auth:
-        enabled: false
-        password: null
-    postgresql:
-      enabled: false
-    externalPostgresql:
-      #host: postgres.internal.midnightthoughts.space
-      host: 10.0.3.1
-      port: 5000
-
-      ## Password key to be retrieved from existing secret
-      existingSecretPasswordKey: password
-      #sslmode: require
+            extraData:
+                support:
+                    admins:
+                        - email_address: support@nordgedanken.dev
+                          role: admin
+        image:
+            pullSecrets:
+                - name: docker
+        persistence:
+            size: 2Gi
+            accessMode: ReadWriteMany
+            existingClaim: draupnir-synapse-v2
+        volumePermissions:
+            enabled: true
+        workers:
+            default:
+                extraConfig:
+                    opentracing:
+                        enabled: true
+                        homeserver_whitelist:
+                            - matrix.midnightthoughts.space
+                    event_cache_size: 30K
+                    caches:
+                        global_factor: 10
+                        expire_caches: true
+                        cache_entry_ttl: 1080m
+                        sync_response_cache_duration: 2m
+                        cache_autotuning:
+                            max_cache_memory_usage: 4069M
+                            target_cache_memory_usage: 2048M
+                            min_cache_ttl: 5m
+            generic_frontend:
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - client
+                csPaths:
+                    # Client API requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/createRoom$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$
+                    - /_matrix/client/(r0|v3|unstable)/account/whoami$
+                    - /_matrix/client/(r0|v3|unstable)/devices$
+                    - /_matrix/client/versions$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$
+                    # Encryption requests
+                    - /_matrix/client/(r0|v3|unstable)/keys/query$
+                    - /_matrix/client/(r0|v3|unstable)/keys/changes$
+                    - /_matrix/client/(r0|v3|unstable)/keys/claim$
+                    - /_matrix/client/(r0|v3|unstable)/room_keys/
+                    - /_matrix/client/(r0|v3|unstable)/keys/upload/
+                    # Registration/login requests
+                    - /_matrix/client/(r0|v3|unstable)/register$
+                    - /_matrix/client/(r0|v3|unstable)/register/available$
+                    # Event sending requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/join/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/profile/
+            federation_reader:
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - federation
+                paths:
+                    - /_matrix/federation/v1/send/
+            appservice:
+                enabled: true
+                name: appservices
+                generic: true
+            federation_sender_1:
+                labels:
+                    synapse-component: federation-sender
+                app: federation_sender
+                name: federation-sender-1
+                enabled: true
+            federation_sender_2:
+                labels:
+                    synapse-component: federation-sender
+                app: federation_sender
+                name: federation-sender-2
+                enabled: true
+            background_worker:
+                name: background_worker
+                replicaCount: 1
+                enabled: true
+                generic: true
+            event_persister:
+                name: event_persister
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - replication
+        synapse:
+            ## Liveness probe configuration to use
+            ##
+            livenessProbe:
+                timeoutSeconds: 60
+                failureThreshold: 5
+                httpGet:
+                    path: /health
+                    port: http
+            ## Readiness probe configuration to use
+            ##
+            readinessProbe:
+                timeoutSeconds: 60
+                failureThreshold: 5
+                httpGet:
+                    path: /health
+                    port: http
+            extraCommands: []
+            annotations:
+                prometheus.io/scrape: "true"
+                prometheus.io/path: /_synapse/metrics
+                prometheus.io/port: "9090"
+        externalRedis:
+            host: draupnir-synapse-keydb.matrix.svc.cluster.local
+            port: 6379
+            password: null
+        redis:
+            enabled: false
+            usePassword: false
+            password: null
+            auth:
+                enabled: false
+                password: null
+        postgresql:
+            enabled: false
+        externalPostgresql:
+            host: postgres-cluster.postgres-cluster.svc.cluster.local
+            port: 5432
+            sslmode: require
+            database: draupnir_synapse
+            username: draupnir_synapse
+            password: ENC[AES256_GCM,data:kQIHr42+coKkDoVU/9SWfIUiNuAmuZ8Dl+2d+Vv0gUvyfeurSvzoIntLCEkSnxgLi91GcUoMcjiycUGVnvPkTQ==,iv:58sXfJ9Q0YtGm7sY/QqQT3LnVcZuINrs2OBJ186PPNM=,tag:PYJFx0UqeChYoW5JsTQAzA==,type:str]
+        signingkey:
+            job:
+                enabled: false
+        serverName: draupnir.midnightthoughts.space
+        publicServerName: matrix.draupnir.midnightthoughts.space
+        wellknown:
+            client:
+                m.homeserver:
+                    base_url: https://matrix.draupnir.midnightthoughts.space
+        config:
+            reportStats: true
+            enableRegistration: false
+        extraConfig:
+            use_presence: false
+            app_service_config_files:
+                - /data/draupnir-registration.yaml
+        ingress:
+            traefikPaths: true
+            hosts:
+                - draupnir.midnightthoughts.space
+                - matrix.draupnir.midnightthoughts.space
+            tls:
+                - hosts:
+                    - draupnir.midnightthoughts.space
+                    - matrix.draupnir.midnightthoughts.space
+                  secretName: draupnir-midnightthoughts-synapse-tls-secret
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+                traefik.ingress.kubernetes.io/router.tls: "true"
+                traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
+        workers:
+            default:
+                volumeMounts:
+                    - name: configs
+                      mountPath: /data
+                      readOnly: true
+                volumes:
+                    - name: configs
+                      secret:
+                        secretName: ENC[AES256_GCM,data:NDCIn9YtNxlKHVjPn9+Rm5SG8Q==,iv:UDZPXuUkrm3odCcHnFudXEMQbU4BjEEJxf5F3x6NCiI=,tag:EtyfaxGEXW0FHy25Aj0Ylg==,type:str]
+        synapse:
+            extraVolumeMounts:
+                - name: configs
+                  mountPath: /data
+                  readOnly: true
+            extraVolumes:
+                - name: configs
+                  secret:
+                    secretName: ENC[AES256_GCM,data:Ti0CM/yUjx7vQJnmhqxJ8W8NkA==,iv:11MFd0TLbA3LW4zqrvgSfHC8x7zlv6D7/5CGBuMojPE=,tag:1OIhl68TeexYC1XOQjGfyQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBvS2RZNmt0dEQ0UUxxaVg5
+            dmczeUZTU1ZUTElISmhpMWNKZnFTNkc2NGxnCmpPWnZoZStGbWxscG1rYjFqRUlJ
+            eVZjTk8wTENOc3cxd3ZLdnROWlFUMDgKLS0tIEJVOVFKY3hzNmNpMjJhY1pXOHFJ
+            RkxTR1RIZVFMcEJUb1AxTU1BaU5NNzAKWzAF33WSKxOEDMY9d+SFqMqVmoTYba8w
+            IQ+Sfs/DUOrpXk6cvbZpT70U6JfhmnHMBkmh02DhtmjYtCnEKlEdMg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-03T19:56:13Z"
+    mac: ENC[AES256_GCM,data:UUwJ90GD9n33+32FPNjiYkFC0FwNDFiXb7H1s2pnMgJ9+Ot3z4n8S5MEWD5/KhojeF5X9kry32YyscRn6sd6BwFccZgU2Rdp2wxL2zw2ScFZTbAL6dzo43jRxwGhg47+IKa3h0PMzifeUVMXosZ6kSFIozDOXWHjh5cSsDC0Etg=,iv:+GxvcfGtRiufm6FxdaUcjH2thDlh5m11QN9LEixER3I=,tag:7IX86t7BZvzLYqy4uOvrww==,type:str]
+    pgp: []
+    encrypted_regex: ^(clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
