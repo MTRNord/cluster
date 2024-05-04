@@ -2,13 +2,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mjolnir-freifunk
+  name: pantalaimon-freifunk
   namespace: matrix
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mjolnir-freifunk
+      app: pantalaimon-freifunk
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -17,26 +17,26 @@ spec:
   template:
     metadata:
       labels:
-        app: mjolnir-freifunk
+        app: pantalaimon-freifunk
     spec:
       containers:
-      - image: gnuxie/draupnir:latest
+      - image: matrixdotorg/pantalaimon:latest
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 60
+            path: /_matrix/client/v3/login
+            port: 8008
+          initialDelaySeconds: 5
           periodSeconds: 30
           successThreshold: 1
-          timeoutSeconds: 1
-        name: mjolnir-freifunk-container
+          timeoutSeconds: 10
+        name: pantalaimon-freifunk-container
         readinessProbe:
           httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 60
+            path: /_matrix/client/v3/login
+            port: 8008
+          initialDelaySeconds: 5
           periodSeconds: 30
         securityContext:
           allowPrivilegeEscalation: false
@@ -46,15 +46,15 @@ spec:
           readOnlyRootFilesystem: true
           #runAsNonRoot: true
         volumeMounts:
-        - mountPath: /data/config/production.yaml
+        - mountPath: /data/pantalaimon.conf
           name: config-volume
-          subPath: production.yaml
-        - mountPath: /data/storage
+          subPath: pantalaimon.conf
+        - mountPath: /data
           name: storage
       volumes:
       - configMap:
-          name: mjolnir-freifunk-config
+          name: pantalaimon-freifunk-config
         name: config-volume
       - name: storage
-        emptyDir:
-          sizeLimit: 2048Mi
+        persistentVolumeClaim:
+          claimName: pantalaimon-freifunk
