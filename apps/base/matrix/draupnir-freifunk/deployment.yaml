@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mjolnir-freifunk
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mjolnir-freifunk
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mjolnir-freifunk
+    spec:
+      containers:
+      - image: gnuxie/draupnir:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: mjolnir-freifunk-container
+        ports:
+        - containerPort: 8081
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          #runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /data/config/production.yaml
+          name: config-volume
+          subPath: production.yaml
+        - mountPath: /data/storage
+          name: storage
+      volumes:
+      - configMap:
+          name: mjolnir-freifunk-config
+        name: config-volume
+      - name: storage
+        persistentVolumeClaim:
+          claimName: mjolnir-freifunk
