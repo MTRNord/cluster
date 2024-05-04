@@ -4,19 +4,19 @@ resources:
   #- ../base/cosign
   #- ../base/woodpecker
   #- ../base/kube-prometheus-stack
-  - ../base/victoria-metrics-k8s-stack
-  - ../base/loki-stack
+  #- ../base/victoria-metrics-k8s-stack
+  #- ../base/loki-stack
   - ../base/postgres-operator
   - ../base/matrix
-  - ../base/postgres-exporter
+  #- ../base/postgres-exporter
   #- ../base/redmine
   #- ../base/mailu
-  - ../base/tempo
+  #- ../base/tempo
   - ../base/zammad
   - ../base/forgejo
-  - ../base/tetragon
-  - ../base/vector
-  - ../base/parseable
+  #- ../base/tetragon
+  #- ../base/vector
+  #- ../base/parseable
   #- ../base/zuul-operator
   #- ../base/zuul
   #- ../base/piwigo
@@ -28,7 +28,7 @@ resources:
   - ../base/umami
   - ../base/keycloak
   - ../base/authentik
-  - ../base/chaosmesh
+  #- ../base/chaosmesh
   - ../base/calendar
   #- ../base/matrix/element-call
   #- ../base/matrix/element-call-synapse
@@ -38,14 +38,14 @@ resources:
 patchesStrategicMerge:
   #- cosign-values.yaml
   #- woodpecker-values.yaml
-  - loki-stack-values.yaml
+  #- loki-stack-values.yaml
   - postgres-operator-values.yaml
   - media-repo-values.yaml
   - sliding-proxy-values.yaml
   - synapse-midnightthoughts.yaml
-  - postgres-exporter-values.yaml
+  #- postgres-exporter-values.yaml
   #- redmine-values.yaml
   #- mailu-values.yaml
   - forgejo.yaml
-  - vector-values.yaml
+  #- vector-values.yaml
   #- synapse-element-call.yaml
