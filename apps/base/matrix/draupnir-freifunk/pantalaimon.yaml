@@ -1,4 +1,23 @@
 ---
+apiVersion: v1
+data:
+  pantalaimon.conf: |
+    [Default]
+    LogLevel = Debug
+    SSL = True
+
+    [local-matrix]
+    Homeserver = https://matrix.midnightthoughts.space
+    ListenAddress = 0.0.0.0
+    ListenPort = 8008
+    SSL = True
+    UseKeyring = False
+    IgnoreVerification = True
+kind: ConfigMap
+metadata:
+  name: pantalaimon-freifunk-config
+  namespace: matrix
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
