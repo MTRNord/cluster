@@ -39,8 +39,8 @@ spec:
         app: pantalaimon-freifunk
     spec:
       containers:
-      - image: matrixdotorg/pantalaimon:latest
-        imagePullPolicy: Always
+      - image: ghcr.io/mtrnord/cluster/pantalaimon:0.10.5
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
           httpGet:
