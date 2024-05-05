@@ -50,7 +50,6 @@ spec:
             run_background_tasks_on: background_worker
             federation_sender_instances:
                 - federation-sender-1
-                - federation-sender-2
             enable_metrics: true
             mau_stats_only: true
             presence:
@@ -192,12 +191,6 @@ spec:
                     synapse-component: federation-sender
                 app: federation_sender
                 name: federation-sender-1
-                enabled: true
-            federation_sender_2:
-                labels:
-                    synapse-component: federation-sender
-                app: federation_sender
-                name: federation-sender-2
                 enabled: true
         synapse:
             ## Liveness probe configuration to use
