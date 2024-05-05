@@ -1,274 +1,274 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: matrix-synapse
-  namespace: matrix
+    name: matrix-synapse
+    namespace: matrix
 spec:
-  chart:
-    spec:
-      chart: matrix-synapse
-      sourceRef:
-        kind: HelmRepository
-        name: ananace-charts
-      version: 3.9.x
-  interval: 50m
-  install:
-    remediation:
-      retries: 3
-  values:
-    signingkey:
-      job:
-        enabled: false
-      existingSecret: matrix-synapse-signingkey
-      existingSecretKey: signing.key
-    serverName: midnightthoughts.space
-    publicServerName: matrix.midnightthoughts.space
-    config:
-      reportStats: true
-      enableRegistration: false
-      trustedKeyServers:
-        - server_name: matrix.org
-    wellknown:
-      enabled: true
-      client:
-        m.homeserver:
-          base_url: https://matrix.midnightthoughts.space
-        org.matrix.msc3575.proxy:
-          url: https://sliding.matrix.midnightthoughts.space
-      extraData:
-        support:
-          contacts:
-            - email_address: support@nordgedanken.dev
-              role: admin
-    image:
-      pullSecrets:
-        - name: docker
-    extraConfig:
-      registration_shared_secret: ENC[AES256_GCM,data:OaaLMNdLTnVsaiOKFqo6WVSwXebszYcfHBLzJejBNnJIU9NfO8iJk35ZzU5DLIEQVVZlUu0iW38fXrlr0Wtl8Q==,iv:FVweLwsqimASD4zGhcpqpUIRzHwGT0k9c3kLhylILWc=,tag:3XIp1WCjkwgWAIby+g/XqA==,type:str]
-      stream_writers:
-        events: event_persister
-      run_background_tasks_on: background_worker
-      federation_sender_instances:
-        - federation-sender-1
-        - federation-sender-2
-      enable_metrics: true
-      mau_stats_only: true
-      presence:
-        enabled: false
-      federation_metrics_domains:
-        - matrix.org
-        - t2bot.io
-        - t2l.io
-        - maunium.net
-      enable_media_repo: false
-      allow_public_rooms_without_auth: false
-      allow_public_rooms_over_federation: false
-      experimental_features:
-        msc2409_to_device_messages_enabled: true
-        msc2716_enabled: true
-      event_cache_size: 30K
-      caches:
-        global_factor: 10
-        expire_caches: true
-        cache_entry_ttl: 1080m
-        sync_response_cache_duration: 2m
-        cache_autotuning:
-          max_cache_memory_usage: 4069M
-          target_cache_memory_usage: 2048M
-          min_cache_ttl: 5m
-    persistence:
-      enabled: false
-    volumePermissions:
-      enabled: false
-    workers:
-      default:
+    chart:
+        spec:
+            chart: matrix-synapse
+            sourceRef:
+                kind: HelmRepository
+                name: ananace-charts
+            version: 3.9.x
+    interval: 50m
+    install:
+        remediation:
+            retries: 3
+    values:
+        signingkey:
+            job:
+                enabled: false
+            existingSecret: matrix-synapse-signingkey
+            existingSecretKey: signing.key
+        serverName: midnightthoughts.space
+        publicServerName: matrix.midnightthoughts.space
+        config:
+            reportStats: true
+            enableRegistration: false
+            trustedKeyServers:
+                - server_name: matrix.org
+        wellknown:
+            enabled: true
+            client:
+                m.homeserver:
+                    base_url: https://matrix.midnightthoughts.space
+                org.matrix.msc3575.proxy:
+                    url: https://sliding.matrix.midnightthoughts.space
+            extraData:
+                support:
+                    contacts:
+                        - email_address: support@nordgedanken.dev
+                          role: admin
+        image:
+            pullSecrets:
+                - name: docker
         extraConfig:
-          event_cache_size: 30K
-          caches:
-            global_factor: 10
-            expire_caches: true
-            cache_entry_ttl: 1080m
-            sync_response_cache_duration: 2m
-            cache_autotuning:
-              max_cache_memory_usage: 4069M
-              target_cache_memory_usage: 2048M
-              min_cache_ttl: 5m
-      federation_reader:
-        replicaCount: 1
-        enabled: true
-        generic: true
-        listeners:
-          - federation
-        paths:
-          - /_matrix/federation/v1/send/
-      event_persister:
-        name: event_persister
-        replicaCount: 1
-        enabled: true
-        generic: true
-        listeners:
-          - replication
-      background_worker:
-        name: background_worker
-        replicaCount: 1
-        enabled: true
-        generic: true
-      generic_frontend:
-        replicaCount: 1
-        enabled: true
-        generic: true
-        listeners:
-          - client
-        csPaths:
-          # Sync requests
-          - /_matrix/client/(r0|v3)/sync$
-          - /_matrix/client/(api/v1|r0|v3)/events$
-          - /_matrix/client/(api/v1|r0|v3)/initialSync$
-          - /_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$
-          # Client API requests
-          - /_matrix/client/(api/v1|r0|v3|unstable)/createRoom$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/joined_members$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/context/.*$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/members$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$
-          - /_matrix/client/v1/rooms/.*/hierarchy$
-          - /_matrix/client/(v1|unstable)/rooms/.*/relations/
-          - /_matrix/client/v1/rooms/.*/threads$
-          - /_matrix/client/unstable/org.matrix.msc2716/rooms/.*/batch_send$
-          - /_matrix/client/unstable/im.nheko.summary/rooms/.*/summary$
-          - /_matrix/client/(r0|v3|unstable)/account/3pid$
-          - /_matrix/client/(r0|v3|unstable)/account/whoami$
-          - /_matrix/client/(r0|v3|unstable)/devices$
-          - /_matrix/client/versions$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/voip/turnServer$
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/
-          - /_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$
-          - /_matrix/client/v1/rooms/.*/timestamp_to_event$
-          - /_matrix/client/(api/v1|r0|v3|unstable/.*)/rooms/.*/aliases
-          - /_matrix/client/(api/v1|r0|v3|unstable)/search$
-          - /_matrix/client/(r0|v3|unstable)/user/.*/filter(/|$)
-          # Encryption requests
-          - /_matrix/client/(r0|v3|unstable)/keys/query$
-          - /_matrix/client/(r0|v3|unstable)/keys/changes$
-          - /_matrix/client/(r0|v3|unstable)/keys/claim$
-          - /_matrix/client/(r0|v3|unstable)/room_keys/
-          - /_matrix/client/(r0|v3|unstable)/keys/upload/
-          # Registration/login requests
-          - /_matrix/client/(api/v1|r0|v3|unstable)/login$
-          - /_matrix/client/(r0|v3|unstable)/register$
-          - /_matrix/client/(r0|v3|unstable)/register/available$
-          - /_matrix/client/v1/register/m.login.registration_token/validity$
-          # Event sending requests
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send
-          - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/
-          # - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
-          # - "/_matrix/client/(api/v1|r0|v3|unstable)/join/"
-          # - "/_matrix/client/(api/v1|r0|v3|unstable)/knock/"
-          - /_matrix/client/(api/v1|r0|v3|unstable)/profile/
-          # # User directory search requests
-          # - /_matrix/client/(r0|v3|unstable)/user_directory/search$
-          # Worker event streams
-          # See https://matrix-org.github.io/synapse/latest/workers.html#stream-writers
-          #
-          # The account_data event stream
-          # - /_matrix/client/(r0|v3|unstable)/.*/tags
-          # - /_matrix/client/(r0|v3|unstable)/.*/account_data
-          # The receipts event stream
-          # - /_matrix/client/(r0|v3|unstable)/rooms/.*/receipt
-          # - /_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers
-          # The presence event stream
-          # - /_matrix/client/(api/v1|r0|v3|unstable)/presence/
-      pusher:
-        enabled: true
-      appservice:
-        enabled: true
-        name: appservices
-        generic: true
-      federation_sender_1:
-        labels:
-          synapse-component: federation-sender
-        app: federation_sender
-        name: federation-sender-1
-        enabled: true
-      federation_sender_2:
-        labels:
-          synapse-component: federation-sender
-        app: federation_sender
-        name: federation-sender-2
-        enabled: true
-    synapse:
-      ## Liveness probe configuration to use
-      ##
-      livenessProbe:
-        timeoutSeconds: 60
-        failureThreshold: 5
-        httpGet:
-          path: /health
-          port: http
-      ## Readiness probe configuration to use
-      ##
-      readinessProbe:
-        timeoutSeconds: 60
-        failureThreshold: 5
-        httpGet:
-          path: /health
-          port: http
-      extraCommands: []
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: /_synapse/metrics
-        prometheus.io/port: "9090"
-    externalRedis:
-      host: matrix-synapse-keydb.matrix.svc.cluster.local
-      port: 6379
-      password: null
-    redis:
-      enabled: false
-      usePassword: false
-      password: null
-      auth:
-        enabled: false
-        password: null
-    postgresql:
-      enabled: false
-    externalPostgresql:
-      host: postgres-cluster.postgres-cluster.svc.cluster.local
-      port: 5432
-      sslmode: require
-      username: synapse
-      database: synapse
-      password: ENC[AES256_GCM,data:FeVzqxvKZuPY0HCrjS4OR3FyAi4WLXNSAgEzh95v5SINmIlfHdqlpSUvj0OQZPRlKs3cdm36DHXhb5xp5AC3oQ==,iv:CFcxmdcz4t9eWVF0PT8dXmN/seCyfB7hB1FFcDE671k=,tag:5xjPXTwVTuWzZz2o0u6Ldg==,type:str]
-    ingress:
-      traefikPaths: true
-      hosts:
-        - midnightthoughts.space
-        - matrix.midnightthoughts.space
-      tls:
-        - hosts:
-            - midnightthoughts.space
-            - matrix.midnightthoughts.space
-          secretName: midnightthoughts-synapse-tls-secret
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-dns
+            registration_shared_secret: ENC[AES256_GCM,data:63Ywov6rmIGNYCqa0WoKYE3vGbCrunswNYlfNXlfA71HDJvkeWn0dH7nYbYD9cCdVQpo+kmCE0Q+TWu6QhNhoA==,iv:2p6UnVjKjnsovMg0ugbaNLxIl2B/xhWGk8ftU8chQPE=,tag:ZxuiERtDWFrdkTxKz0/8SQ==,type:str]
+            stream_writers:
+                events: event_persister
+            run_background_tasks_on: background_worker
+            federation_sender_instances:
+                - federation-sender-1
+                - federation-sender-2
+            enable_metrics: true
+            mau_stats_only: true
+            presence:
+                enabled: false
+            federation_metrics_domains:
+                - matrix.org
+                - t2bot.io
+                - t2l.io
+                - maunium.net
+            enable_media_repo: false
+            allow_public_rooms_without_auth: false
+            allow_public_rooms_over_federation: false
+            experimental_features:
+                msc2409_to_device_messages_enabled: true
+                msc2716_enabled: true
+            event_cache_size: 30K
+            caches:
+                global_factor: 10
+                expire_caches: true
+                cache_entry_ttl: 1080m
+                sync_response_cache_duration: 2m
+                cache_autotuning:
+                    max_cache_memory_usage: 4069M
+                    target_cache_memory_usage: 2048M
+                    min_cache_ttl: 5m
+        persistence:
+            enabled: false
+        volumePermissions:
+            enabled: false
+        workers:
+            default:
+                extraConfig:
+                    event_cache_size: 30K
+                    caches:
+                        global_factor: 10
+                        expire_caches: true
+                        cache_entry_ttl: 1080m
+                        sync_response_cache_duration: 2m
+                        cache_autotuning:
+                            max_cache_memory_usage: 4069M
+                            target_cache_memory_usage: 2048M
+                            min_cache_ttl: 5m
+            federation_reader:
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - federation
+                paths:
+                    - /_matrix/federation/v1/send/
+            event_persister:
+                name: event_persister
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - replication
+            background_worker:
+                name: background_worker
+                replicaCount: 1
+                enabled: true
+                generic: true
+            generic_frontend:
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - client
+                csPaths:
+                    # Sync requests
+                    - /_matrix/client/(r0|v3)/sync$
+                    - /_matrix/client/(api/v1|r0|v3)/events$
+                    - /_matrix/client/(api/v1|r0|v3)/initialSync$
+                    - /_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$
+                    # Client API requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/createRoom$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/joined_members$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/context/.*$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/members$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$
+                    - /_matrix/client/v1/rooms/.*/hierarchy$
+                    - /_matrix/client/(v1|unstable)/rooms/.*/relations/
+                    - /_matrix/client/v1/rooms/.*/threads$
+                    - /_matrix/client/unstable/org.matrix.msc2716/rooms/.*/batch_send$
+                    - /_matrix/client/unstable/im.nheko.summary/rooms/.*/summary$
+                    - /_matrix/client/(r0|v3|unstable)/account/3pid$
+                    - /_matrix/client/(r0|v3|unstable)/account/whoami$
+                    - /_matrix/client/(r0|v3|unstable)/devices$
+                    - /_matrix/client/versions$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/voip/turnServer$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$
+                    - /_matrix/client/v1/rooms/.*/timestamp_to_event$
+                    - /_matrix/client/(api/v1|r0|v3|unstable/.*)/rooms/.*/aliases
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/search$
+                    - /_matrix/client/(r0|v3|unstable)/user/.*/filter(/|$)
+                    # Encryption requests
+                    - /_matrix/client/(r0|v3|unstable)/keys/query$
+                    - /_matrix/client/(r0|v3|unstable)/keys/changes$
+                    - /_matrix/client/(r0|v3|unstable)/keys/claim$
+                    - /_matrix/client/(r0|v3|unstable)/room_keys/
+                    - /_matrix/client/(r0|v3|unstable)/keys/upload/
+                    # Registration/login requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/login$
+                    - /_matrix/client/(r0|v3|unstable)/register$
+                    - /_matrix/client/(r0|v3|unstable)/register/available$
+                    - /_matrix/client/v1/register/m.login.registration_token/validity$
+                    # Event sending requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/
+                    # - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
+                    # - "/_matrix/client/(api/v1|r0|v3|unstable)/join/"
+                    # - "/_matrix/client/(api/v1|r0|v3|unstable)/knock/"
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/profile/
+                    # # User directory search requests
+                    # - /_matrix/client/(r0|v3|unstable)/user_directory/search$
+                    # Worker event streams
+                    # See https://matrix-org.github.io/synapse/latest/workers.html#stream-writers
+                    #
+                    # The account_data event stream
+                    # - /_matrix/client/(r0|v3|unstable)/.*/tags
+                    # - /_matrix/client/(r0|v3|unstable)/.*/account_data
+                    # The receipts event stream
+                    # - /_matrix/client/(r0|v3|unstable)/rooms/.*/receipt
+                    # - /_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers
+                    # The presence event stream
+                    # - /_matrix/client/(api/v1|r0|v3|unstable)/presence/
+            pusher:
+                enabled: true
+            appservice:
+                enabled: true
+                name: appservices
+                generic: true
+            federation_sender_1:
+                labels:
+                    synapse-component: federation-sender
+                app: federation_sender
+                name: federation-sender-1
+                enabled: true
+            federation_sender_2:
+                labels:
+                    synapse-component: federation-sender
+                app: federation_sender
+                name: federation-sender-2
+                enabled: true
+        synapse:
+            ## Liveness probe configuration to use
+            ##
+            livenessProbe:
+                timeoutSeconds: 60
+                failureThreshold: 5
+                httpGet:
+                    path: /health
+                    port: http
+            ## Readiness probe configuration to use
+            ##
+            readinessProbe:
+                timeoutSeconds: 60
+                failureThreshold: 5
+                httpGet:
+                    path: /health
+                    port: http
+            extraCommands: []
+            annotations:
+                prometheus.io/scrape: "true"
+                prometheus.io/path: /_synapse/metrics
+                prometheus.io/port: "9090"
+        externalRedis:
+            host: matrix-synapse-keydb.matrix.svc.cluster.local
+            port: 6379
+            password: null
+        redis:
+            enabled: false
+            usePassword: false
+            password: null
+            auth:
+                enabled: false
+                password: null
+        postgresql:
+            enabled: false
+        externalPostgresql:
+            host: postgres-cluster.postgres-cluster.svc.cluster.local
+            port: 5432
+            sslmode: require
+            username: synapse
+            database: synapse
+            password: ENC[AES256_GCM,data:c8Sat4NUe39MOc9ubgsdIqkqNObrfyaLcOCgMWuLai25jz6aOhvUcRwv3LzujMHievs9lt/ewMeXvY1Xpg2m8w==,iv:B/y4iLa2nNLTL5lEyUA02TiIEA/szErbdo599bAMr2Q=,tag:nIgTkUxE8JWpW8CJGEw/8A==,type:str]
+        ingress:
+            traefikPaths: true
+            hosts:
+                - midnightthoughts.space
+                - matrix.midnightthoughts.space
+            tls:
+                - hosts:
+                    - midnightthoughts.space
+                    - matrix.midnightthoughts.space
+                  secretName: midnightthoughts-synapse-tls-secret
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
 sops:
-  kms: []
-  gcp_kms: []
-  azure_kv: []
-  hc_vault: []
-  age:
-    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTajZERDFhUlBpZTdzc0k1
-        MnltMWxZMW45eFFQdzBENS9xd0E2UEI3ZlNrCm9lSnpsYURMV1g0M3ZOUUJSUWZC
-        ck05VHMzbWZiRDZUTlViZGQ4Q25VaU0KLS0tIHBBL3k1cTVLY1pVZSsxYWl5eE9D
-        K29Gc1A0YmZCc1hEa2Jkc0ttYTIwaUEK9wXYaG2BVLwKSaBSN3tgH1LyUYwt82XD
-        IF1doFIr7JdL6ZQPXdMgHPsYf6nEoqJ7lLmJSXjPeve2pIa0+9b5ug==
-        -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2024-05-05T11:10:15Z"
-  mac: ENC[AES256_GCM,data:qT82NWymlJv+vhQpv0a4kIObi6SO7SlI0O6x5HEp4ekUhr3JFgDC743MgbBzST/psJQVCPhMP+7AwVXhPNfhRHdazIzjXBK8mZGBai2pPQN80grfgUpJzBN9Z6njfxLZmQ5x3J4nmlk1G52vORb2t19ku3n+WQKzSX3zSPdIf8E=,iv:8qHsducftSH9/kfC7SR8TXSB3yrK/TO4q+Gwvki9G4o=,tag:CsHia++7reNtEIOZhgHlyA==,type:str]
-  pgp: []
-  encrypted_regex: ^(clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-  version: 3.8.1
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBHUmpIelBGMW9CU0k1TUt3
+            RmdKbys2VVJEdjVvZ2RpVWxtVFE5dGNSMFF3ClZrL01WOGlqV01aaFdrM0tnallk
+            Zmh5RDRxckNxYVM4VWVYNjJVRmVFNkUKLS0tIGF4WjlHdFJnajdTQVVaYm9LdUdr
+            N0h1bVg1eUE2VkJWSWpaSjRKVUl1MjQKLJ+rgjNibtM0aabQItqJWiGOhptiWWLH
+            61HEH1Q2Knko+7l9+lrfwxf28vay+k+PGaQqoTZwANT5A/lgQpJXvA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-05T22:22:21Z"
+    mac: ENC[AES256_GCM,data:/20NUpr03p7Om3sNcU6YKznhmWdWFoRczcIwDMRPLtJaqfHVLacgJenXYSbk69j0JFo5jXdmt2zlwXSDacCrjGw7YVsk/hrSI58YPaOouVkXF3arnffZLJ/xp0G6x0M+5/8PQ9Go3kYSFjnd7i9un6f3CA1Il2B6id8teUwla7w=,iv:OOjVpSaPrDSfRYENLaWaemvE0NK+f8HHhjW0ieufVu8=,tag:6wmS5Chfgzay/TNwPWGB1Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
