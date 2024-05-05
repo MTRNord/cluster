@@ -44,7 +44,7 @@ spec:
             pullSecrets:
                 - name: docker
         extraConfig:
-            registration_shared_secret: ENC[AES256_GCM,data:63Ywov6rmIGNYCqa0WoKYE3vGbCrunswNYlfNXlfA71HDJvkeWn0dH7nYbYD9cCdVQpo+kmCE0Q+TWu6QhNhoA==,iv:2p6UnVjKjnsovMg0ugbaNLxIl2B/xhWGk8ftU8chQPE=,tag:ZxuiERtDWFrdkTxKz0/8SQ==,type:str]
+            registration_shared_secret: ENC[AES256_GCM,data:+WWpKcg+usoClCB0njow2ZGjfnpWu2Fd2YaUF3lmgA+9dgZmrTzp7q3fKaZj0csRJYapDwY/VNUHQQpmIrOQYg==,iv:wIe4VFLYogQj/W/redNfZ2jGd09hVLRZTSYzqrwG8ks=,tag:ITq2tNJLd4hE7yrWXaj+Mg==,type:str]
             stream_writers:
                 events: event_persister
             run_background_tasks_on: background_worker
@@ -77,7 +77,8 @@ spec:
                     target_cache_memory_usage: 2048M
                     min_cache_ttl: 5m
         persistence:
-            enabled: false
+            enabled: true
+            size: 20Gi
         volumePermissions:
             enabled: false
         workers:
@@ -239,7 +240,7 @@ spec:
             sslmode: require
             username: synapse
             database: synapse
-            password: ENC[AES256_GCM,data:c8Sat4NUe39MOc9ubgsdIqkqNObrfyaLcOCgMWuLai25jz6aOhvUcRwv3LzujMHievs9lt/ewMeXvY1Xpg2m8w==,iv:B/y4iLa2nNLTL5lEyUA02TiIEA/szErbdo599bAMr2Q=,tag:nIgTkUxE8JWpW8CJGEw/8A==,type:str]
+            password: ENC[AES256_GCM,data:hQdR/+q2rsTXrzmKt4orIEin32r/tsrERF5TAOPSI2CnGMJ6ULL0+bRMr02V/BSr4SFN+YuZZLg85G0bKvi2TA==,iv:Yd8jgRnRmW0m66PVqj20xnPyBtxkxGJhsoSjtXZq4ek=,tag:WAZFoWbJnOxfbAGXH/ggaw==,type:str]
         ingress:
             traefikPaths: true
             hosts:
@@ -261,14 +262,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBHUmpIelBGMW9CU0k1TUt3
-            RmdKbys2VVJEdjVvZ2RpVWxtVFE5dGNSMFF3ClZrL01WOGlqV01aaFdrM0tnallk
-            Zmh5RDRxckNxYVM4VWVYNjJVRmVFNkUKLS0tIGF4WjlHdFJnajdTQVVaYm9LdUdr
-            N0h1bVg1eUE2VkJWSWpaSjRKVUl1MjQKLJ+rgjNibtM0aabQItqJWiGOhptiWWLH
-            61HEH1Q2Knko+7l9+lrfwxf28vay+k+PGaQqoTZwANT5A/lgQpJXvA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWakF3bXVEYkY2S2liN0FB
+            S3pjVGIzeXVocVlIMVd5QTlhbVZNQlJJcEc0CncrTU5ObjBYRjVRSEtmNnhlYXVu
+            Qmd1T1pTaytWa3lsaFptZTZ3dEZ4ZXcKLS0tIERhRDlXNHAwQlhPZmNMbU1SbzFY
+            a2xsSHMvRWMwRGJRWGZJVnNWU09UWUUKkFBe5Qu8fI2nJ7aD9VcRKSVfuOjrcg5J
+            kBGq0VSA4dwW1xNkKPI8ZT7QY5fLyDq0bbpaCSYgGrNWsjigKdAVww==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-05-05T22:22:21Z"
-    mac: ENC[AES256_GCM,data:/20NUpr03p7Om3sNcU6YKznhmWdWFoRczcIwDMRPLtJaqfHVLacgJenXYSbk69j0JFo5jXdmt2zlwXSDacCrjGw7YVsk/hrSI58YPaOouVkXF3arnffZLJ/xp0G6x0M+5/8PQ9Go3kYSFjnd7i9un6f3CA1Il2B6id8teUwla7w=,iv:OOjVpSaPrDSfRYENLaWaemvE0NK+f8HHhjW0ieufVu8=,tag:6wmS5Chfgzay/TNwPWGB1Q==,type:str]
+    lastmodified: "2024-05-05T22:25:46Z"
+    mac: ENC[AES256_GCM,data:oVc3fBAhzOpRslavfuYjJoboWTd7mq9bNpBG6ioKbIcp1FON3Vfcz7OGdTVzvcOkepgULZiFZhITEgssW0UuXfEHAWqwTUCgvh28rHk4x8ke4NLLKDUNc/1EmAhX4dllugClLIuWEWd7voYRGi/VDLFG/1hKCQuEHANK3d449QM=,iv:hmm6EAFQceulULCwaaHwYfT1nQpj+qLHaaxShiUXfl0=,tag:LARVO+LDJ8fNSB8OHtCfzw==,type:str]
     pgp: []
     encrypted_regex: ^(clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
