@@ -1,0 +1,25 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: kube-system
+spec:
+  releaseName: external-dns
+  chart:
+    spec:
+      chart: external-dns
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+  interval: 50m
+  values:
+    extraArgs:
+      - --cloudflare-dns-records-per-page=5000
+    provider: 
+      name: cloudflare
+    env:
+      - name: CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-api-token-secret
+            key: api-token
