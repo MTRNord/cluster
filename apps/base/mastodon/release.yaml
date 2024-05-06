@@ -53,12 +53,9 @@ spec:
             local_domain: mtrnord.blog
             persistence:
                 assets:
-                    accessMode: ReadWriteOnce
-            system:
-                accessMode: ReadWriteOnce
-                resources:
-                    requests:
-                        storage: 10Gi
+                    existingClaim: mastodon-assets
+                system:
+                    existingClaim: mastodon-system
             secrets:
                 secret_key_base: ENC[AES256_GCM,data:gWUxmzSPSSF+mz8BpeXg03nNV/G87RClHkFevWN6QJ3HouF1MaHhJRlbVAjhuds6s9GOuAZFzdgwBB2rCoD9TA8Jbr2RAiWBSjpJoEH7Tyiqb8LfvSjbmIv0wOz1E1426W9im9gkUo7w2XAyEFNC40XR7+Ras+KyGlFjErB1sMs=,iv:ALNEQTDdXr0JZubFWMx3pcXb34bFxb5LjjByJ74D9w4=,tag:oME/83Z09zgXWtsrTaVWxA==,type:str]
                 otp_secret: ENC[AES256_GCM,data:cfswS8t2U2zjCqnVKWKlDEwuVz3G8MeRX51mYVB0rTiVcr/a1aJG35dLjZg6xjBcKyGzdSv45lOkkHAZaGwsJov4suwnmUc9+Z0eFT17dpfuqpBWNdJa3U8Iz1YLnWuaKRANrtfymEKy3QkpqlQr0tW0FVz2lIw2ikW1RXxHWuQ=,iv:2dL9bqj7TsTZ0LHbWxGL9d9iwoSW7j5BHg3MBWiBH/4=,tag:SfqZsL+SAUeMDIWb+BYCYg==,type:str]
