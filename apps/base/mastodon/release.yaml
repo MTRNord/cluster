@@ -37,6 +37,7 @@ spec:
                     - mastodon.mtrnord.blog
                   secretName: mastodon.mtrnord.blog-tls
         mastodon:
+            authorizedFetch: true
             local_domain: mtrnord.blog
             persistence:
                 assets:
@@ -47,11 +48,11 @@ spec:
                     requests:
                         storage: 10Gi
             secrets:
-                secret_key_base: ""
-                otp_secret: ""
+                secret_key_base: ENC[AES256_GCM,data:ZGqsyzlpM+KGj323kbSpo9DG1bFaLT1Q9Eh4elTWGBlsOif4h66dPwHmQit6UQRmVopwbDvyJGBYLeggqu59GsaE0pZhC3uvFQx6A+7IvlMRr6kIY7j7q+ZKmC0bZwXdgOMJiGbGbzl5KNF7TpdQY/PrJiAIzBOgdZOfazimoDA=,iv:HX1iqiG3YQThmP2wWJPjm0gCv78UvhM4vtT+8mVR/ik=,tag:6fER1rf76TgFIMDAALP9ZQ==,type:str]
+                otp_secret: ENC[AES256_GCM,data:v3TB+7WwU4vEDyNy//z4XyMAe8do/mvEAW4TXaGQh9nkaIoZO6DBIs/F1EYrwd3e/hKF9lcOeyfHiZf5xDlHJfx31yz5K7ZvxNTp0Fhhe0WngQJfEQDSEuB0rC7NYhyPGKbq8izPiYoGPWtFKXs/iHdYejExdzeXa6i4JjWYmSk=,iv:rbDHXFWgUSSVVsGgh19D/IZTll3oWezHqEChX+9eeqs=,tag:X8N5KCGDYjwjyhotZwgHZw==,type:str]
                 vapid:
-                    private_key: ""
-                    public_key: ""
+                    private_key: ENC[AES256_GCM,data:NqCN3rNLTKV6EvSBbDmI408hnwy2fC2w4yXlewjPf1OAdVnQkruZQfTkDeI=,iv:dJ4emgMMdQPU5ltLNgdG1gKliP/61TICSITBSBWWlCM=,tag:khG5QZ6yko5QwkBhoj9dog==,type:str]
+                    public_key: ENC[AES256_GCM,data:2Ht6QxFiGD86yeLAwAWrQqdaWq5PLujkPzEf6dn+DoTw96vTpoZch5/sK7zSZxH3HZZ7AaXOqYCwONL/yRtbPyZnBRyIeMeBWmd3YDL1UuUEOUTb2+2I8g==,iv:BN/XN+JvNq2EjOeI+Mj+8l1ziALoX3VepxDUa6rCNRk=,tag:3BiiaXhc9SE9In6gMYj3fw==,type:str]
                 activeRecordEncryption:
                     primaryKey: ""
                     deterministicKey: ""
@@ -65,13 +66,13 @@ spec:
                 server: smtp.fastmail.com
                 login: mtrnor@nordgedanken.dev
                 tls: true
-                password: ENC[AES256_GCM,data:MS+dQ9nrQGWJ,iv:TuGCuoxWL9ZtH5a/jnWQz16tchUF8nMm/V28ybRzOOg=,tag:4eWxHMrPY7VIhDnGcHDrOQ==,type:str]
+                password: ENC[AES256_GCM,data:MSiaBSoTC+GN,iv:ZK/aHHfICdNpRbeAMD2YI+YuUdZj1FQm9SH3Igkan0k=,tag:P09CD+4iJwHMpS8W1vMxmg==,type:str]
             web_domain: mastodon.mtrnord.blog
         postgresql:
             auth:
                 database: mastodon
                 username: mastodon
-                password: ENC[AES256_GCM,data:usl2oYm7WRxk5MX5wiGubXfqkQJalIAMyMLEMfObjW9v1HUa0vdGYaNn3UQpk8QMkQxXcNS5Bx0Em2ME/+Z22g==,iv:GNLLAM4Do39d5Su8zOaSz3QzIHW4X1RzR3dF+OsIbNY=,tag:4daZTFThXhlSTZFJKSV4HA==,type:str]
+                password: ENC[AES256_GCM,data:ELO6soiPbcuTb+Es3mW9KRZWHI9yPXVx+yc8TJgHT0LUE/KMrD2yJ/6mRchwgaMSAbjKLTPACtH9gpyp98piKQ==,iv:2+iB8h4geSnYsgg8mq23xQWevtteTLw1yLj5Phdk7F4=,tag:uTdy1oUUhPVZeFwsjAjb3A==,type:str]
             enabled: false
             postgresqlHostname: main-ctrlc.postgres.svc
             postgresqlReplicaHostname: main-ctrlc-repl.postgres.svc
@@ -88,14 +89,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXWHJMSEs2VzQ1QUsxSXZX
-            bWRQM0YwUFpjalF4WHdpUStKUkpXajlXM1N3CmhqU3M2eXcyNWhoTXplYkRTT2Fm
-            Uy9lS1paREpvZEpCVkU2VVJxVnl2a3cKLS0tIExnOFEzbzF4NC9SRFZxeWxvRjhV
-            VlMyM0s0bWFQRFNXcmhRbEQwZ29nL0EKNlCrwnfmYcRv8z+Cl7vP/FTMNP2mECX+
-            Qv+0qNpLiiKsGBzZi6ZkGiEE6QnZMJ3l7XauuxbwJ1SYH5zN2DMvLQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4L0ZGSXFxYmpvYmNYOENM
+            Z2UyNThCa0IvTys0WjhlQWRRYVhYM0M5QlVnClJtNjJMeG1CODJOV2M0Vldvejg1
+            Rm9FTHlJL2t0MXYraklTeGZ5R0gycXcKLS0tIHpUTzQ1YWhKWGFwbXFtcC90cVN4
+            UytXOWYxdjdlWnpMV1RpRkFEeDlQb1kKjlF+0RZx0PMvA+ygZ8Tgm3MKo15DhISm
+            3IrimRIVMxG1PhOG6jaBx/58STW9+IbormX0lPTJ+EHWjVHQKaYtow==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-05-06T11:06:24Z"
-    mac: ENC[AES256_GCM,data:dAe/AXyGoYgFVDLQr14DQM9Afecf1z0Ots1DFjwsJl4YOrYBn98YDTLSHd+MoeuANSzSoKu8iuRUdeiEOabO24gjsmpphgu6ek2JFQ18LmIs8f95rG1qwk1R3O8OSeFWgEBQtHFvb/t407fOAkO+t/SKlLMv2T75lHXBzI6KMhY=,iv:xGmGqXU7O0/F3S+xJiKi+C/vAU/aegEmP3/kHOWzxNs=,tag:QqLUYI5lY9YS2ILxreDGTQ==,type:str]
+    lastmodified: "2024-05-06T11:18:01Z"
+    mac: ENC[AES256_GCM,data:1MYw/+kzG0nRvCsRuH7c3ipJKiWiYiEVEm4S/tXCLNLlQceCnv74RPorBhPOdSj6y49D3QJffYvwee/LgfBvUv2sGNdHj5qb1LxR6G7p42kA7nLSM6AEXdxD5rNj0Uu198f148qFu0jnoh5YRpvFyiAhg9tTG7dIRhI9Z8InjF0=,iv:CXLqnouSCXULKDiquMdj8Ra4O82a2TN54ci1chpUUWY=,tag:Z/cy2kXtZ3beZpkbEQ51vw==,type:str]
     pgp: []
-    encrypted_regex: ^(token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    encrypted_regex: ^(secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
     version: 3.8.1
