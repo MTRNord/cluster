@@ -1,0 +1,101 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: mastodon
+    namespace: mastodon
+spec:
+    interval: 1h
+    releaseName: mastodon
+    chart:
+        spec:
+            chart: .
+            sourceRef:
+                kind: GitRepository
+                name: mastodon
+                namespace: mastodon
+    values:
+        podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                        - key: app.kubernetes.io/part-of
+                          operator: In
+                          values:
+                            - rails
+                  topologyKey: kubernetes.io/hostname
+        elasticsearch:
+            enabled: false
+        ingress:
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hosts:
+                - host: mastodon.mtrnord.blog
+                  paths:
+                    - path: /
+            tls:
+                - hosts:
+                    - mastodon.mtrnord.blog
+                  secretName: mastodon.mtrnord.blog-tls
+        mastodon:
+            local_domain: mtrnord.blog
+            persistence:
+                assets:
+                    accessMode: ReadWriteOnce
+            system:
+                accessMode: ReadWriteOnce
+                resources:
+                    requests:
+                        storage: 10Gi
+            secrets:
+                secret_key_base: ""
+                otp_secret: ""
+                vapid:
+                    private_key: ""
+                    public_key: ""
+                activeRecordEncryption:
+                    primaryKey: ""
+                    deterministicKey: ""
+                    keyDerivationSalt: ""
+            singleUserMode: true
+            smtp:
+                domain: smtp.fastmail.com
+                port: 465
+                from_address: Mastodon <ops@nordgedanken.dev>
+                reply_to: noreply@nordgedanken.dev
+                server: smtp.fastmail.com
+                login: mtrnor@nordgedanken.dev
+                tls: true
+                password: ENC[AES256_GCM,data:MS+dQ9nrQGWJ,iv:TuGCuoxWL9ZtH5a/jnWQz16tchUF8nMm/V28ybRzOOg=,tag:4eWxHMrPY7VIhDnGcHDrOQ==,type:str]
+            web_domain: mastodon.mtrnord.blog
+        postgresql:
+            auth:
+                database: mastodon
+                username: mastodon
+                password: ENC[AES256_GCM,data:usl2oYm7WRxk5MX5wiGubXfqkQJalIAMyMLEMfObjW9v1HUa0vdGYaNn3UQpk8QMkQxXcNS5Bx0Em2ME/+Z22g==,iv:GNLLAM4Do39d5Su8zOaSz3QzIHW4X1RzR3dF+OsIbNY=,tag:4daZTFThXhlSTZFJKSV4HA==,type:str]
+            enabled: false
+            postgresqlHostname: main-ctrlc.postgres.svc
+            postgresqlReplicaHostname: main-ctrlc-repl.postgres.svc
+        redis:
+            enabled: false
+            hostname: keydb
+        replicaCount: 1
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXWHJMSEs2VzQ1QUsxSXZX
+            bWRQM0YwUFpjalF4WHdpUStKUkpXajlXM1N3CmhqU3M2eXcyNWhoTXplYkRTT2Fm
+            Uy9lS1paREpvZEpCVkU2VVJxVnl2a3cKLS0tIExnOFEzbzF4NC9SRFZxeWxvRjhV
+            VlMyM0s0bWFQRFNXcmhRbEQwZ29nL0EKNlCrwnfmYcRv8z+Cl7vP/FTMNP2mECX+
+            Qv+0qNpLiiKsGBzZi6ZkGiEE6QnZMJ3l7XauuxbwJ1SYH5zN2DMvLQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-06T11:06:24Z"
+    mac: ENC[AES256_GCM,data:dAe/AXyGoYgFVDLQr14DQM9Afecf1z0Ots1DFjwsJl4YOrYBn98YDTLSHd+MoeuANSzSoKu8iuRUdeiEOabO24gjsmpphgu6ek2JFQ18LmIs8f95rG1qwk1R3O8OSeFWgEBQtHFvb/t407fOAkO+t/SKlLMv2T75lHXBzI6KMhY=,iv:xGmGqXU7O0/F3S+xJiKi+C/vAU/aegEmP3/kHOWzxNs=,tag:QqLUYI5lY9YS2ILxreDGTQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
