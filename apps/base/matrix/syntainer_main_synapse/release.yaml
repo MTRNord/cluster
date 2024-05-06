@@ -26,7 +26,8 @@ spec:
             url: https://matrix.midnightthoughts.space
             token: ENC[AES256_GCM,data:PvFFL0T9y+xgPLf2VGLbYinkAfq/T0JQeR4/QmaaHNkpWssMtuXeQW6l,iv:Wfp7I1HhgyDRdoOUjcS2CWX6F/+YZct5Vh5CWbCkOIo=,tag:HT8cwqxOboz8a7RNnJPPYg==,type:str]
         extraCommands:
-            - echo "2 2 * * * /usr/local/bin/autocompressor.sh" >> /conf/synatainer.crontab
+            - 'echo "2 2 * * * /usr/local/bin/autocompressor.sh" >> /conf/synatainer.crontab'
+            - 'cat /conf/synatainer.crontab'
 sops:
     kms: []
     gcp_kms: []
