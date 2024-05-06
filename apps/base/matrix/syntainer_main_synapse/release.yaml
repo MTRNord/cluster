@@ -1,0 +1,49 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: synatainer
+    namespace: matrix
+spec:
+    chart:
+        spec:
+            chart: synatainer
+            sourceRef:
+                kind: HelmRepository
+                name: ananace-charts
+            version: 1.1.4
+    interval: 50m
+    install:
+        remediation:
+            retries: 3
+    values:
+        postgresql:
+            host: postgres-cluster.postgres-cluster.svc.cluster.local
+            port: 5432
+            database: synapse
+            username: synapse
+            password: ENC[AES256_GCM,data:6bM1/BhyhLqZz+FhB6lXpu7TkdW+RzNtuXUWnMCXeZjNV+PoPUb6jr7zFfW7BlJBvatYjVeDknzJ4aISZBI6ug==,iv:zUUKNaibnThJZLBMPVEjJZkcoq5royrgHMizCXJjLhE=,tag:kvLo2L+YL6cWCqaPCG96tQ==,type:str]
+        synapse:
+            url: https://matrix.midnightthoughts.space
+            token: ENC[AES256_GCM,data:PvFFL0T9y+xgPLf2VGLbYinkAfq/T0JQeR4/QmaaHNkpWssMtuXeQW6l,iv:Wfp7I1HhgyDRdoOUjcS2CWX6F/+YZct5Vh5CWbCkOIo=,tag:HT8cwqxOboz8a7RNnJPPYg==,type:str]
+        extraCommands:
+            - echo "2 2 * * * /usr/local/bin/autocompressor.sh" >> /conf/synatainer.crontab
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0WUx3czdhYUZIWi9NdkNy
+            VnM3dTVQc0M4VmovWEc4MmhYMnk5K1YvS0NVCm84K3d5UkQ4alNya2hYbFZPbjdS
+            WEUyOWczUzFTVElpZnVOdWtCQkJxemMKLS0tIE5ueU13Zml3c1QvRTJMalNVQkRo
+            eTdRaG5LYUdxY1M4eUswRU56Nzd2WGcK9YGs2xEK6nPz5dzWLcoVI4NnfJTKZ7Cg
+            gq2815A03FqvlCACl7VhO7kr87wN7BPSu74PeewFSn3yYusHzoBYCA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-06T08:58:16Z"
+    mac: ENC[AES256_GCM,data:VlE5+hLYuOeKA2oPt6ROaOPieKEuyxwf+QM6h+brJW4nNiETwgEmyYlBTFIifd7JMKrJrqX3vDLh0OfbuWPnueT67ZOL8bk+JRUZcA25lDlDtTn13IR48OBCOXyj58ZOGFLj8khDn+ceESX5MtUUVbwRuephzbAQ4PHQjOpGvUw=,iv:/Amm32bJW4fnoxtp5pvyP8+tgpLP8nMGMGDZm3qd704=,tag:MfAvclkSBi93LjZKsYGzVQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
