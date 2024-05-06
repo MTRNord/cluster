@@ -83,8 +83,8 @@ spec:
                 username: mastodon
                 password: ENC[AES256_GCM,data:dgLh1Cf8p/iAYou7lqeSnZ1yxNSoK+qRFCVWlLEiN/f6MhuVI1EUAHxynM2S+s3NjtLSKJkMwDa+VfhmThOg5w==,iv:k+Oc4fRWOe30iImbInvghpdqmUICazMC/3CB2wwP29g=,tag:8+wZBRSNhL9uJ5Eiq1ZB4A==,type:str]
             enabled: false
-            postgresqlHostname: main-ctrlc.postgres.svc
-            postgresqlReplicaHostname: main-ctrlc-repl.postgres.svc
+            postgresqlHostname: postgres-cluster.postgres-cluster.svc.cluster.local
+            #postgresqlReplicaHostname: main-ctrlc-repl.postgres.svc
         redis:
             enabled: true
             #hostname: keydb
