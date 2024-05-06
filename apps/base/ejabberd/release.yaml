@@ -42,10 +42,7 @@ spec:
       - xmpp.midnightthoughts.space
     erlangCookie: ENC[AES256_GCM,data:SH8h3dEcJ+ZYAPrqc8akDYW/hC87vjb+L/8SZbha0VoO2hgu9PZmBVk/l+3uw5ZC0E7vLla6rIotQcWw/qqd1w==,iv:DPGHGIrnPzAi6jFFyAf7+USrT7Y7aJP8l1GgwP/OFN8=,tag:0xMXz1BbGk5ePcP9xfOo1w==,type:str]
     service:
-      annotations:
-        load-balancer.hetzner.cloud/location: fsn1
-        load-balancer.hetzner.cloud/use-private-ip: "true"
-        load-balancer.hetzner.cloud/name: traefik
+      type: ClientIP
 sops:
   kms: []
   gcp_kms: []
