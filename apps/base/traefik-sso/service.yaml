@@ -30,7 +30,7 @@ metadata:
   name: traefik-sso
   namespace: traefik-ingress
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: letsencrypt-http
     traefik.ingress.kubernetes.io/router.middlewares: traefik-ingress-sso@kubernetescrd
 spec:
   rules:
