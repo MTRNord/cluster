@@ -16,6 +16,30 @@ spec:
     listen:
       stun:
         protocol: TCP
+      c2s:
+        options:
+          starttls_required: true
+      c2s_tls:
+        enabled: true
+        port: 5223
+        # hostPort: 5223
+        # containerPort: 5223
+        expose: true
+        exposedPort: 5223
+        ## -- Different target ejabberd port on the cluster, useful for IP type LB
+        # targetPort: 80
+        # The port protocol (TCP/UDP)
+        protocol: TCP
+        # -- Use nodeport if set. This is useful if you have configured ejabberd in a
+        # LoadBalancer.
+        # nodePort: 30222
+        # -- ejabberd listener options w/o port, transport:
+        #    https://docs.ejabberd.im/admin/configuration/listen-options/
+        options:
+          ip: "::"
+          module: ejabberd_c2s
+          tls: true
+      
     image:
       repository: "mtrnord/cluster/ejabberd"
       pullPolicy: Always
