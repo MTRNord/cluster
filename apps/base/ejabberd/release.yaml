@@ -13,6 +13,17 @@ spec:
         kind: HelmRepository
         name: ejabberd
   values:
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 9000
+    seccompProfile:
+      type: RuntimeDefault
     listenGlobal:
       s2s_use_starttls: optional
     modules:
