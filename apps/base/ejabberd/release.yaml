@@ -17,7 +17,29 @@ spec:
       s2s_use_starttls: optional
     listen:
       stun:
+        enabled: false
+      s2s-tls:
+        enabled: true
+        port: 5270
+        # hostPort: 8000
+        ## -- defaults to port, must correspond to ports defined in ejabberd.listen
+        # containerPort: 8000
+        expose: true
+        exposedPort: 5270
+        ## -- Different target ejabberd port on the cluster, useful for IP type LB
+        # targetPort: 80
+        # The port protocol (TCP/UDP)
         protocol: TCP
+        # -- Use nodeport if set. This is useful if you have configured ejabberd in a
+        # LoadBalancer.
+        # nodePort: 30269
+        # -- ejabberd listener options w/o port, transport:
+        #    https://docs.ejabberd.im/admin/configuration/listen-options/
+        options:
+          ip: "::"
+          module: ejabberd_s2s_in
+          tls: true
+          # max_stanza_size: 524288
       c2s:
         options:
           starttls: true
