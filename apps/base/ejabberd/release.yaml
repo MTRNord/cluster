@@ -23,8 +23,7 @@ spec:
         sql_ssl: true
         sql_database: ejabberd
         sql_username: ejabberd
-        # TODO:
-        sql_password: ENC[AES256_GCM,data:FNXCNt75slk=,iv:HS7g8MYQbbg+BsX7mlMtqCtlNmOa+AdJzwVkkTbRkXc=,tag:OyOEzAmO46rStFdGsbQceA==,type:str]
+        sql_password: ENC[AES256_GCM,data:r4nYUV3g7uvesCkFMDcVjJUpGgqjciBx5PWSC9IMycMhmkPFQz4qpJy6pB03BPsFNhDtJU16mc5cMNslDWiFYw==,iv:pxN+te9ELH18Yhhdh8PUn/xTGaTYLaH4lJCi30YJ8f4=,tag:JqvDphQmOOzGmI9tVgwLkA==,type:str]
     certFiles:
       secretName:
         - xmpp-midnightthoughts
@@ -41,7 +40,7 @@ spec:
     hosts:
       - localhost
       - xmpp.midnightthoughts.space
-    erlangCookie: ENC[AES256_GCM,data:SH8h3dEcJ+ZYAPrqc8akDYW/hC87vjb+L/8SZbha0VoO2hgu9PZmBVk/l+3uw5ZC0E7vLla6rIotQcWw/qqd1w==,iv:DPGHGIrnPzAi6jFFyAf7+USrT7Y7aJP8l1GgwP/OFN8=,tag:0xMXz1BbGk5ePcP9xfOo1w==,type:str]
+    erlangCookie: ENC[AES256_GCM,data:EWfbPsdA9GsYluzAuobSqivguVfzpD9qYs8icJFaMsA47DP13mStW+i2vB7SD3MjjMoNnaV0uylxg3215HkgNQ==,iv:VrNZuIDXgt8UFQDI0Ppndv3oGY24DLHySFCZFoFp3Uw=,tag:otLR9NF5++n/tH83Yu2Z6A==,type:str]
     service:
       type: ClientIP
 sops:
@@ -53,14 +52,14 @@ sops:
     - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrNFBML3NyWmxaVTlNYzVV
-        cmp4cGdSWGYzN3hkQnBYVUwvM2Z1anRoNTNrCnlsa05kOWtPRXIzRm04OTZqT1N0
-        UUU5UUdhVzZ6VEdyYkE1V25kUjNWYlEKLS0tIFhyVi9ON05aZXBnWWd2cGZpbDRE
-        ck9PeHlQU1ZsZWZTd3NFdDN4MUo5WkkKQcENla/Iliif2PyhWw4X0kXUQj9uj4a+
-        iWo+4QJ/A1rxjIdfiRdytjhP8KdfysY2qw482yUD6IEAAVwlJLnmBw==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBjbmZRZGxockpqOTRzZDBP
+        UWV2WE1yZW04R1ViUzlmY2tCUC9iYkJTVDBjCjQ2N0ovTWtLaENSMFd3QXdsOHEv
+        RE9Nc3hMMVJseVJ5dUttcVIrcUV3aWsKLS0tIE90a3hYWVB6MmM1OVQ1WGNiUG9W
+        SGhZVEdvdFlpb1UyNlpxWFdSYXJSV3cKwVXmigChm+r2lLLr/D4yCB0KlD4Jt5Ck
+        qtIyNS7M1FkFpv5u2LCXDCo3cZJiuld3hH0823nMRGjesCUlL76I6A==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2024-04-27T18:28:46Z"
-  mac: ENC[AES256_GCM,data:GC9sG7jtP45C7I/cRVL7bLLFGeCytimC1U8HwY3X0ZinZjEeYooekVcT9NIP+hWTrhOUx4Ud0q4sX9g733E376kakq2np3iCGRcDKHzF95sXfRQJuiveVkUNRdsYapeNC/fUETp4e07lspVuwxGFvGgviOuzFQBnPnqywpW40yA=,iv:7C/LFsPv8YycnDpFfKXgZA+s6lCQ0f1OcfzPSlGEtWI=,tag:Ir3ZBXMjvwDF0FVwoehdUw==,type:str]
+  lastmodified: "2024-05-16T07:49:18Z"
+  mac: ENC[AES256_GCM,data:tMs43ZCuw/XQZzmITCoKx56QH3MA9q1eqhWP0z4Yhtjba4nIlJ/I8cXjDT/XvGuQ5P2zI1e9nIRQV/MmFGJ/JL96qTEAv2LQEJl0EHikaeRnAhwYLCuY4olwon0LME1Bu9jY7WE91mxa0m4n7WR7eRtzvNEXvXCUebyVZrWJxrw=,iv:e5LwNxcvypruirgs9F7+pkgoTSi0z2WaJb/7JadnNaE=,tag:R/6Mn6u4e4f77jE9ZkqgCw==,type:str]
   pgp: []
-  encrypted_regex: ^(sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+  encrypted_regex: ^(client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
   version: 3.8.1
