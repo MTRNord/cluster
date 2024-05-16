@@ -13,6 +13,9 @@ spec:
         kind: HelmRepository
         name: ejabberd
   values:
+    image:
+      repository: "MTRNord/cluster"
+      pullPolicy: Always
     sqlDatabase:
       enabled: true
       updateSqlSchema: true
