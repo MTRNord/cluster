@@ -13,6 +13,9 @@ spec:
         kind: HelmRepository
         name: ejabberd
   values:
+    listen:
+      stun:
+        protocol: TCP
     image:
       repository: "mtrnord/cluster/ejabberd"
       pullPolicy: Always
