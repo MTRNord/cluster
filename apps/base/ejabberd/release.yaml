@@ -13,9 +13,6 @@ spec:
         kind: HelmRepository
         name: ejabberd
   values:
-    # Seems like elector on arm may have issues :(
-    #elector:
-    #  enabled: false
     image:
       repository: "mtrnord/cluster/ejabberd"
       pullPolicy: Always
@@ -49,7 +46,10 @@ spec:
       - xmpp.midnightthoughts.space
     erlangCookie: ENC[AES256_GCM,data:EWfbPsdA9GsYluzAuobSqivguVfzpD9qYs8icJFaMsA47DP13mStW+i2vB7SD3MjjMoNnaV0uylxg3215HkgNQ==,iv:VrNZuIDXgt8UFQDI0Ppndv3oGY24DLHySFCZFoFp3Uw=,tag:otLR9NF5++n/tH83Yu2Z6A==,type:str]
     service:
-      type: ClusterIP
+      type: LoadBalancer
+      annotations:
+        load-balancer.hetzner.cloud/location: hel1
+        load-balancer.hetzner.cloud/name: traefik
 sops:
   kms: []
   gcp_kms: []
