@@ -17,8 +17,6 @@ spec:
       capabilities:
         drop:
           - ALL
-        add:
-          - NET_BIND_SERVICE
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       runAsUser: 9000
@@ -40,7 +38,7 @@ spec:
       stun:
         enabled: false
       https:
-        port: 443
+        port: 5443
         exposedPort: 443
         options:
           ip: "::"
