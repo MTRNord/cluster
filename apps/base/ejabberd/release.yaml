@@ -27,7 +27,9 @@ spec:
     modules:
       mod_host_meta:
         enabled: true
-        options: {}
+        options:
+          bosh_service_url: "https://@HOST@/bosh"
+          websocket_url: "wss://@HOST@/ws"
       mod_mam:
         enabled: true
         options:
