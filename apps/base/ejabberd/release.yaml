@@ -15,6 +15,10 @@ spec:
   values:
     listenGlobal:
       s2s_use_starttls: optional
+    modules:
+      mod_host_meta:
+        enabled: true
+        options: {}
     listen:
       stun:
         enabled: false
@@ -28,6 +32,8 @@ spec:
             /bosh: mod_bosh
             /upload: mod_http_upload
             /ws: ejabberd_http_ws
+            /.well-known/host-meta: mod_host_meta
+            /.well-known/host-meta.json: mod_host_meta
       s2s-tls:
         enabled: true
         port: 5270
