@@ -13,12 +13,17 @@ spec:
         kind: HelmRepository
         name: ejabberd
   values:
+    listenGlobal:
+      s2s_use_starttls: optional
     listen:
       stun:
         protocol: TCP
       c2s:
         options:
           starttls_required: true
+      s2s:
+        options:
+          starttls: true
       
     image:
       repository: "mtrnord/cluster/ejabberd"
