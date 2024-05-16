@@ -18,6 +18,16 @@ spec:
     listen:
       stun:
         enabled: false
+      https:
+        options:
+          ip: "::"
+          module: ejabberd_http
+          tls: true
+          request_handlers:
+            /admin: ejabberd_web_admin
+            /bosh: mod_bosh
+            /upload: mod_http_upload
+            /ws: ejabberd_http_ws
       s2s-tls:
         enabled: true
         port: 5270
