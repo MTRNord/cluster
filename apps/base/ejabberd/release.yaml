@@ -63,7 +63,44 @@ spec:
           ip: "::"
           module: ejabberd_c2s
           tls: true
-      
+    acl:
+      local:
+        user_regexp: ""
+      loopback:
+        ip:
+        - 127.0.0.0/8
+        - ::1/128
+      admin:
+        user: mtrnord@xmpp.midnightthoughts.space
+    api_permissions:
+      admin access:
+        what:
+        - '*'
+        - '!stop'
+        - '!start'
+        who:
+          access:
+            allow:
+            - acl: loopback
+            - acl: admin
+          oauth:
+            access:
+              allow:
+              - acl: loopback
+              - acl: admin
+            scope: ejabberd:admin
+      console commands:
+        from:
+        - ejabberd_ctl
+        - mod_http_api
+        what: '*'
+        who: all
+      public commands:
+        what:
+        - status
+        - connected_users_number
+        who:
+          ip: 127.0.0.1/8
     image:
       repository: "mtrnord/cluster/ejabberd"
       pullPolicy: Always
