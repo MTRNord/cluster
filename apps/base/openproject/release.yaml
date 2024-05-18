@@ -11,66 +11,62 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: openproject
-  interval: 50m
-  timeout: 25m
-  install:
-    timeout: 25m
-    remediation:
-      retries: 3
+  interval: 60m
   values:
-    postgresql:
-      primary:
-        tolerations:
-          - key: "arch"
-            operator: "Equal"
-            value: "arm64"
-            effect: "NoSchedule"
-        persistence:
-          storageClass: "nfs-client"
-          accessModes:
-            - ReadWriteMany
-    memcached:
-      tolerations:
-        - key: "arch"
-          operator: "Equal"
-          value: "arm64"
-          effect: "NoSchedule"
-    ## Whether to allocate persistent volume disk for the data directory.
-    ## In case of node failure, the node data directory will still persist.
-    ##
-    ## Ref.: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-    #
+    #affinity:
+    #  podAffinity:
+    #    requiredDuringSchedulingIgnoredDuringExecution:
+    #      labelSelector:
+    #        - matchExpressions:
+    #            - key:
+    #              operator: in
+    #              values:
+    #                - ""
+    initdb:
+      image:
+        tag: 15
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+      host: projects.midnightthoughts.space
+      tls:
+        secretName: projects.midnightthoughts.space-tls
+    openproject:
+      admin_user:
+        password: ENC[AES256_GCM,data:n0nKQZh7qpYb,iv:OIKAAI6TzpKpEE47dKW6u/5cXQn7nkcnU0W1NgIhqbE=,tag:Q6/VTIXW1obFgMcN4U8Yag==,type:str]
+        password_reset: "false"
+        name: MTRNord
+        mail: mtrnord@nordgedanken.dev
     persistence:
-      ## Whether to enable session affinity or not. It is required by ingress.
-      #
-      enabled: true
-
-      ## Define the volume access modes:
-      ##
-      ## "ReadWriteOnce" => The volume can be mounted as read-write by a single node. ReadWriteOnce access mode still can
-      ##                    allow multiple pods to access the volume when the pods are running on the same node.
-      ## "ReadOnlyMany" => The volume can be mounted as read-only by many nodes.
-      ## "ReadWriteMany" => The volume can be mounted as read-write by many nodes.
-      ## "ReadWriteOncePod" => The volume can be mounted as read-write by a single Pod. Use ReadWriteOncePod access mode if
-      ##                       you want to ensure that only one pod across whole cluster can read that PVC or write to it.
-      #
       accessModes:
-        - "ReadWriteMany"
-
-      ## Define custom storage annotations:
-      ##
-      annotations: {}
-
-      ## Define the volume size.
-      #
-      size: "5Gi"
-
-      ## Define the class of PV.
-      storageClassName: "nfs-client"
-    strategy:
-      type: "RollingUpdate"
-    tolerations:
-      - key: "arch"
-        operator: "Equal"
-        value: "arm64"
-        effect: "NoSchedule"
+        - ReadWriteOnce
+      size: 5Gi
+    postgresql:
+      bundled: false
+      conntection:
+        host: postgres-cluster.postgres-cluster.svc.cluster.local
+        port: 5432
+      auth:
+        username: openproject
+        database: openproject
+        password: ENC[AES256_GCM,data:9VHfS8uXps9ysdFVBNJjGFp26rJcieDqqhPUamlihZVsQKcuzXEXBjS8uWGLZ66GcXavJ9f91tQNIvsuZvNZiA==,iv:gNT+u7mKU8juW46knX6xfF0urC2Ihf9aXccVsMlBOD8=,tag:a12TWYESsSoN9GRleQMYXw==,type:str]
+sops:
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBa2Y1YnEwbytxelZxSGEw
+        aUZRWnpNUlBjU0EyWWt5Q1ZVRlNXY3duRURnCjlsaVhjb05nOThDRXdmczVFcUZM
+        SWgyWTZzRkpycEVja01YNXFlSVFUMWcKLS0tIDZ5akVtTENCS0ZSOFEwUkptQnhq
+        QXRCYmZmWjQ0eXNOWm44MFNIRW1xem8KtQQX9ywT4HwRDjjemurU4nwKObd5qRg1
+        yxPwK54TyezOpiSv4jBhCTGyULELEQUaWdPzunQuDJe/CJQ/kjvmMw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2024-05-18T15:52:35Z"
+  mac: ENC[AES256_GCM,data:b3h1sDHCMJ5v9lSnkY60BsDJeIU9Bc/44vY4ykUgZYvmJEw6djeX0FBHtv4vAJZrSu9hmGBiknhRfnDLFQ04ZfvVh1H95+h8yatLyBAPARjdUHyZskL9g4NSMbIZ9VnqNIPVxHQs16TpjtW0AUdc1rI7HvALKk+ZxIkfTpaxntM=,iv:qNmtO5o6bZ+EzJ9yiQtmTKa+Nu//GscbTH6T6QlD6bM=,tag:gWBRnWDHrkZge+mesxfwJA==,type:str]
+  pgp: []
+  encrypted_regex: ^(client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+  version: 3.8.1
