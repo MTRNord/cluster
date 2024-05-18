@@ -13,15 +13,15 @@ spec:
         name: openproject
   interval: 60m
   values:
-    #affinity:
-    #  podAffinity:
-    #    requiredDuringSchedulingIgnoredDuringExecution:
-    #      labelSelector:
-    #        - matchExpressions:
-    #            - key:
-    #              operator: in
-    #              values:
-    #                - ""
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          labelSelector:
+            - matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - openproject
     initdb:
       image:
         tag: 15
