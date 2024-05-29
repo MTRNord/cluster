@@ -13,6 +13,8 @@ spec:
         kind: HelmRepository
         name: ejabberd
   values:
+    imagePullSecrets:
+      - name: ghcr-pull
     securityContext:
       capabilities:
         drop:
