@@ -14,6 +14,8 @@ spec:
                 name: mastodon
                 namespace: mastodon
     values:
+        imagePullSecrets:
+            - name: ghcr-pull
         externalAuth:
             oidc:
                 enabled: true
