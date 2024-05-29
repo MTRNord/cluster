@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kube-fledged
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: kube-fledged
+  namespace: kube-fledged
+spec:
+  interval: 24h
+  url: https://senthilrch.github.io/kubefledged-charts/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: kube-fledged
+  namespace: kube-fledged
+spec:
+  interval: 60m
+  chart:
+    spec:
+      chart: kube-fledged
+      sourceRef:
+        kind: HelmRepository
+        name: kube-fledged
+        namespace: kube-fledged
+      interval: 12h
+  values: {}
+# ---
+# apiVersion: kubefledged.io/v1alpha2
+# kind: ImageCache
+# metadata:
+#   # Name of the image cache. A cluster can have multiple image cache objects
+#   name: imagecache
+#   namespace: kube-fledged
+# spec:
+#   # The "cacheSpec" field allows a user to define a list of images and onto which worker nodes those images should be cached (i.e. pre-pulled).
+#   cacheSpec:
+#   # Specifies a list of images (nginx:1.23.1) with no node selector, hence these images will be cached in all the nodes in the cluster
+#   - images:
+#     - ghcr.io/jitesoft/nginx:1.23.1
+#   # Specifies a list of images (cassandra:v7 and etcd:3.5.4-0) with a node selector, hence these images will be cached only on the nodes selected by the node selector
+#   - images:
+#     - us.gcr.io/k8s-artifacts-prod/cassandra:v7
+#     - us.gcr.io/k8s-artifacts-prod/etcd:3.5.4-0
+#     nodeSelector:
+#       tier: backend
+#   # Specifies a list of image pull secrets to pull images from private repositories into the cache
+#   imagePullSecrets:
+#   - name: myregistrykey
