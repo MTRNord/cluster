@@ -58,6 +58,10 @@ spec:
         - ghcr.io/fluxcd/notification-controller:v1.2.4 # Notification Controller
         - ghcr.io/fluxcd/image-reflector-controller:v0.31.2 # Image reflector controller
         - ghcr.io/fluxcd/image-automation-controller:v0.37.1 # Image automation controller
+        # Plausible
+        - curlimages/curl:8.2.1
+        - bitnami/clickhouse:23.3.9
+        - plausible/analytics:v2.0.0
   # Specifies a list of image pull secrets to pull images from private repositories into the cache
   imagePullSecrets:
     - name: ghcr-pull
