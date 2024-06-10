@@ -1,0 +1,64 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: plausible
+    namespace: plausible
+spec:
+    chart:
+        spec:
+            chart: plausible
+            sourceRef:
+                kind: HelmRepository
+                name: plausible
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        baseURL: https://plausible.midnightthoughts.space
+        disableRegistration: false
+        databaseURL: ENC[AES256_GCM,data:z6Y94/lc3x4rDVTg4aTT+TGyv+DV1qdWakDa7GpNF/16oN8rlXXbrlNZsWVBXHWfdOdxQjeS/NqXHPww4L3TchuplxNf06TJwYI1XzZLHs8gc5rjaqnBLRHCFAoxyLvedxg5XqYlogVomvyN4I0Nt2kwH6cY/DbGlvxupGVd6ARiDdiLTq06ydKdxKMr2fBp4+mY,iv:EPse7BREkj0vhrcKch8SGqhLjcc+cHZNyK3aUFIRLB0=,tag:uA0KI29yq4cVFG5DNaASdw==,type:str]
+        mailer:
+            # TODO: Set up mailer
+            enabled: false
+        postgresql:
+            enabled: false
+        clickhouse:
+            auth:
+                password: ENC[AES256_GCM,data:v9DDPtmgilC7p8pW5mjIoReyxBFROtVWbs/TycRfLt55PRh5egxONy0Lg/hkSD/a8XhPYHBIxe7S1t4KOzJOCg==,iv:iUGrt+J6KiNP1SGl1mM7RXlaY20Vrbf/bJ5qlk4N93U=,tag:HqoH2Dpr2QmeMjE9YalMjA==,type:str]
+            persistence:
+                enabled: true
+                size: 8Gi
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hosts:
+                - plausible.midnightthoughts.space
+            path: /
+            tls:
+                - secretName: plausible.midnightthoughts.space-tls
+                  hosts:
+                    - plausible.midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBicTQ5T2xpbW9vMjRiZmo0
+            UzlHWmNCUDFCQlQzQWU1TXJVVHlaQzVibGhZCkVEZUlCZ2NTYzUvUys0R3h6VlZ1
+            d2gwNzRicG40UVBsRndXdDZEdUxOekkKLS0tIFBzMG9pZ2FMc0c2VkQrVVRMZXpW
+            VlZ4WlF4WmxYWmNPZUk4T0x0QUxVNk0K3nbmFvvWC2t+5HfilmYgUzFzQmlBdAH0
+            TZKJf82hRsm1F8OOSBp/RoHbxX5vIKcqYvZyAVb2Qz+B+Lgs98TN9Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-06-10T16:38:16Z"
+    mac: ENC[AES256_GCM,data:aO9ob9jXr5UzqQ8SpR5+0NcKhP7KWMtSWxKaUDjjiKhfCGUmlm2Kqimu6Q1TYL81cxb2QHr4oQ8o2z1PlrOy0eRG932ZVYfqILgDTiuFLcLthjDFcp4V4ux1tMLGMEBxxEa7fZO1/xfm5CDyF+TiT11EPg7KwEL6klQZv8YjJMg=,iv:2ne0UP515rKlXkV+Xvfc6vZbdqmWEWqUISv9tM8mv0A=,tag:2gCUyjow4qSiBwjg17tEWg==,type:str]
+    pgp: []
+    encrypted_regex: ^(databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
