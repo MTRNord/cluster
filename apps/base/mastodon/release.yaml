@@ -81,6 +81,8 @@ spec:
                 tls: true
                 password: ENC[AES256_GCM,data:54t6Xa5r6N9r,iv:0bUcFxaHKvJbiR0RykGx/XTsFow+2cT9EWeC1LfR974=,tag:KLR8T+QHlNfoPL26DfGheg==,type:str]
             web_domain: mastodon.mtrnord.blog
+            extraEnvVars:
+                TRUSTED_PROXY_IP: 10.0.0.0/8
         postgresql:
             auth:
                 database: mastodon
