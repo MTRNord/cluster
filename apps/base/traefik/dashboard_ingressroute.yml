@@ -1,3 +1,4 @@
+---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
@@ -16,3 +17,18 @@ spec:
       kind: TraefikService
   tls:
     secretName: midnightthoughts-tls-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: midnightthoughts-tls-secret
+  namespace: traefik-ingress
+spec:
+  secretName: midnightthoughts-tls-secret
+  dnsNames:
+    - dashboard.kubernetes.midnightthoughts.space
+  issuerRef:
+    name: letsencrypt-dns
+    # We can reference ClusterIssuers by changing the kind here.
+    # The default value is Issuer (i.e. a locally namespaced Issuer)
+    kind: ClusterIssuer
