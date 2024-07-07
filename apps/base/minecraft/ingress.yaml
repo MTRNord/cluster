@@ -12,3 +12,17 @@ spec:
       services:
         - name: minecraft-minecraft
           port: 25565
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: voicechat
+  namespace: minecraft
+spec:
+  entryPoints:
+    - voicechat
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: minecraft-minecraft
+          port: 24454

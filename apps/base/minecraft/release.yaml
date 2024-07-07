@@ -41,6 +41,13 @@ spec:
             dataDir:
                 enabled: true
                 Size: 5Gi
+        extraPorts:
+            - name: voicechat
+              containerPort: 24454
+              protocol: TCP
+              service:
+                  enabled: true
+                  embedded: true
 sops:
     kms: []
     gcp_kms: []
