@@ -20,8 +20,10 @@ spec:
               operator: Equal
               value: minecraft
               effect: NoSchedule
-        nodeSelector:
-            kops.k8s.io/instancegroup: minecraft
+        resources:
+            requests:
+                memory: 8192Mi
+                cpu: 500m
         minecraftServer:
             # This must be overridden, since we can't accept this for the user.
             eula: "TRUE"
