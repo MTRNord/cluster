@@ -8,6 +8,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-redirect-https@kubernetescrd
 spec:
   entryPoints:
+    - web
     - websecure
   routes:
   - match: Host(`dashboard.kubernetes.midnightthoughts.space`)
