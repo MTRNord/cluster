@@ -12,35 +12,35 @@ spec:
     configKubernetes:
       cluster_name_label: "midnightthoughts"
       enable_readiness_probe: true
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
-kind: HelmRelease
-metadata:
-  name: postgres-operator-ui
-  namespace: postgres-operator
-spec:
-  chart:
-    spec:
-      version: "1.11.x"
-  values:
-    envs:
-      teams:
-        - "midnightthoughts"
-        - "matrix"
-      superuser_team: "midnightthoughts"
-      targetNamespace: "*"
-      operatorClusterNameLabel: "midnightthoughts"
-    ingress:
-      enabled: true
-      annotations:
-        traefik.ingress.kubernetes.io/router.middlewares: traefik-ingress-sso@kubernetescrd
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-      hosts:
-        - host: postgres-ui.midnightthoughts.space
-          paths: ["/"]
-      tls:
-        - secretName: postgres-ui.midnightthoughts.space-tls
-          hosts:
-            - postgres-ui.midnightthoughts.space
-    configKubernetes:
-      enable_pod_antiaffinity: true
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# kind: HelmRelease
+# metadata:
+#   name: postgres-operator-ui
+#   namespace: postgres-operator
+# spec:
+#   chart:
+#     spec:
+#       version: "1.11.x"
+#   values:
+#     envs:
+#       teams:
+#         - "midnightthoughts"
+#         - "matrix"
+#       superuser_team: "midnightthoughts"
+#       targetNamespace: "*"
+#       operatorClusterNameLabel: "midnightthoughts"
+#     ingress:
+#       enabled: true
+#       annotations:
+#         traefik.ingress.kubernetes.io/router.middlewares: traefik-ingress-sso@kubernetescrd
+#         cert-manager.io/cluster-issuer: letsencrypt-dns
+#       hosts:
+#         - host: postgres-ui.midnightthoughts.space
+#           paths: ["/"]
+#       tls:
+#         - secretName: postgres-ui.midnightthoughts.space-tls
+#           hosts:
+#             - postgres-ui.midnightthoughts.space
+#     configKubernetes:
+#       enable_pod_antiaffinity: true
