@@ -4,8 +4,6 @@ kind: IngressRoute
 metadata:
   name: traefik-dashboard
   namespace: traefik-ingress
-  annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-redirect-https@kubernetescrd
 spec:
   entryPoints:
     - web
