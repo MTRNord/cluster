@@ -1,0 +1,61 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: minecraft
+    namespace: minecraft
+spec:
+    releaseName: minecraft
+    interval: 60m
+    chart:
+        spec:
+            chart: minecraft
+            sourceRef:
+                kind: HelmRepository
+                name: minecraft
+    values:
+        image:
+            tag: java17
+        tolerations:
+            - key: ENC[AES256_GCM,data:3CcC,iv:MiL+RuLvNsmQ6/yznY4jsyaOf0G2K+1MzrLvltJF3Gk=,tag:aCnWYKqN+EzTuKCzvHWqFw==,type:str]
+              operator: Equal
+              value: minecraft
+              effect: NoSchedule
+        nodeSelector:
+            role: minecraft
+        minecraftServer:
+            # This must be overridden, since we can't accept this for the user.
+            eula: "TRUE"
+            version: 1.19.2
+            type: AUTO_CURSEFORGE
+            memory: 2048M
+            motd: Welcome to Minecraft for daguerreo!
+            ops: MTRNord
+            whitelist: MTRNord
+            autoCurseForge:
+                apiKey:
+                    key: ENC[AES256_GCM,data:ykOPD8hkntuxZ+PQN0LyAGE34e30DhQcxDZj2b0EMHDJYe1g0Y7wndOrFEjBmFy7TNoA6DfScVcdz1GZ,iv:zqCMcEet3jeO1787GPBbW4J/Ks8mt8Dva2SeEtc42WM=,tag:IzJkgr+AbLGN6V1oeM2zsw==,type:str]
+                pageUrl: https://www.curseforge.com/minecraft/modpacks/statech-industry
+        persistence:
+            dataDir:
+                enabled: true
+                Size: 5Gi
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBvb2pRbElmdlRPM2NwQnc1
+            Y3M3NG5weVI1THdBZWYyWjQ3SW5meVhSeUdNCkpaUWN0L3pTa2Nya2puQjQ2SkhE
+            TSszQmFDVE5rSWUwVjQ0a1NONGJUcmMKLS0tIEU2QXRSSlVCY0xuWENrMi9tUG1w
+            eG1aQ2h1cXdDSG1pRnVBUzh6dWgxWE0KzF1KQWFHwRnLDo0gsuLeWfT47SYKQEJN
+            RSnYn+Jxk5/n+UUtYkg4/RMeFUS5W25vdHaJdlNhszqo0V87diI/3w==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-07-07T18:59:07Z"
+    mac: ENC[AES256_GCM,data:q3WtBS6jyMFVs8FXjUDCInGbm1r6fgvsN1C6Gt2mlen3a6jsmTv4/k312jfXV8L9Tjhbq6KR7vR2A/EQVZ4nZXroI5szVpVY0lM0UgyepBNyxdW4bF3rkNFXSsebYXVMXsKyIFgkcpZXejcwTL36vz4bh6Sg8luqgMTUlSkIFQQ=,iv:6/Rr3ewhv1lmqV5NMa93Xnq0pm6W+RcdZQH2vJ4EKik=,tag:dG4oqPHx7RZCVLeXkH7UcQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
