@@ -37,17 +37,28 @@ spec:
                 apiKey:
                     key: ENC[AES256_GCM,data:ykOPD8hkntuxZ+PQN0LyAGE34e30DhQcxDZj2b0EMHDJYe1g0Y7wndOrFEjBmFy7TNoA6DfScVcdz1GZ,iv:zqCMcEet3jeO1787GPBbW4J/Ks8mt8Dva2SeEtc42WM=,tag:IzJkgr+AbLGN6V1oeM2zsw==,type:str]
                 pageUrl: https://www.curseforge.com/minecraft/modpacks/statech-industry
+            extraPorts:
+                - name: voicechat
+                containerPort: 24454
+                protocol: TCP
+                service:
+                    enabled: true
+                    embedded: true
+            serviceType: LoadBalancer
         persistence:
             dataDir:
                 enabled: true
                 Size: 5Gi
-        extraPorts:
-            - name: voicechat
-              containerPort: 24454
-              protocol: TCP
-              service:
-                  enabled: true
-                  embedded: true
+        serviceAnnotations:
+            load-balancer.hetzner.cloud/location: hel1
+            load-balancer.hetzner.cloud/name: traefik
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
+        rconServiceAnnotations:
+            load-balancer.hetzner.cloud/location: hel1
+            load-balancer.hetzner.cloud/name: traefik
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
 sops:
     kms: []
     gcp_kms: []
