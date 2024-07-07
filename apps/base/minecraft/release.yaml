@@ -54,10 +54,14 @@ spec:
                 Size: 5Gi
         serviceAnnotations:
             load-balancer.hetzner.cloud/location: hel1
-            load-balancer.hetzner.cloud/name: traefik
+            load-balancer.hetzner.cloud/name: minecraft
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
         rconServiceAnnotations:
             load-balancer.hetzner.cloud/location: hel1
-            load-balancer.hetzner.cloud/name: traefik
+            load-balancer.hetzner.cloud/name: minecraft
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
 sops:
     kms: []
     gcp_kms: []
