@@ -21,7 +21,7 @@ spec:
               value: minecraft
               effect: NoSchedule
         nodeSelector:
-            role: minecraft
+            kops.k8s.io/instancegroup: minecraft
         minecraftServer:
             # This must be overridden, since we can't accept this for the user.
             eula: "TRUE"
