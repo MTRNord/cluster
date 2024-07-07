@@ -16,6 +16,8 @@ spec:
       kind: TraefikService
   tls:
     secretName: midnightthoughts-tls-secret
+    domains:
+      - main: dashboard.kubernetes.midnightthoughts.space
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
