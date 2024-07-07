@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: minecraft
+  namespace: minecraft
+spec:
+  entryPoints:
+    - 25565/tcp
+  routes:
+    - match: HostSNI(`*`)
+      kind: Rule
+      services:
+        - name: svc-minecraft
+          port: 25565
