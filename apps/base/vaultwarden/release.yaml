@@ -32,6 +32,7 @@ spec:
     ingress:
       enabled: true
       additionalAnnotations:
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
         cert-manager.io/cluster-issuer: letsencrypt-dns
       tlsSecret: vault.midnightthoughts.space-crt
       hostname: vault.midnightthoughts.space
