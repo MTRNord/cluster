@@ -13,8 +13,10 @@ spec:
         name: external-dns
   interval: 50m
   values:
+    logLevel: debug
     extraArgs:
       - --cloudflare-dns-records-per-page=5000
+      - --exclude-target-net=10.0.0.0/8
     provider: 
       name: cloudflare
     env:
