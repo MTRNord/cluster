@@ -30,6 +30,12 @@ spec:
         configuration:
             enabled: true
             forceInit: true
+            trusted_proxies:
+                - 10.0.0.0/8
+                - 172.16.0.0/12
+                - 192.168.0.0/16
+                - 127.0.0.0/8
+                - 100.64.0.0/10
               # Template for the configuration.yaml file
             # Used the `tpl` function to render the template, so you can use Go template functions
             templateConfig: |-
