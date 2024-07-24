@@ -77,6 +77,9 @@ spec:
                     max_cache_memory_usage: 4069M
                     target_cache_memory_usage: 2048M
                     min_cache_ttl: 5m
+            modules:
+                - module: matrix_invitee_server_blocker.InviteeServerBlocker
+                  config: {}
         persistence:
             enabled: true
             size: 20Gi
@@ -105,6 +108,9 @@ spec:
                             max_cache_memory_usage: 4069M
                             target_cache_memory_usage: 2048M
                             min_cache_ttl: 5m
+                    modules:
+                        - module: matrix_invitee_server_blocker.InviteeServerBlocker
+                        config: {}
             federation_reader:
                 replicaCount: 1
                 enabled: true
