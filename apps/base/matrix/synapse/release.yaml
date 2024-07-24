@@ -16,15 +16,6 @@ spec:
         remediation:
             retries: 3
     values:
-        extraVolumes:
-            - name: matrix-org-blocker
-              emptyDir: {}
-        extraVolumeMounts:
-            - name: matrix-org-blocker
-              mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
-        extraCommands:
-            - 'apt-get update -yqq && apt-get install git -yqq'
-            - pip3 install git+https://codeberg.org/MTRNord/matrix-invitee-server-blocker.git
         signingkey:
             job:
                 enabled: false
@@ -233,7 +224,15 @@ spec:
                 httpGet:
                     path: /health
                     port: http
-            extraCommands: []
+            extraVolumes:
+                - name: matrix-org-blocker
+                  emptyDir: {}
+            extraVolumeMounts:
+                - name: matrix-org-blocker
+                  mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
+            extraCommands:
+                - 'apt-get update -yqq && apt-get install git -yqq'
+                - pip3 install git+https://codeberg.org/MTRNord/matrix-invitee-server-blocker.git
             annotations:
                 prometheus.io/scrape: "true"
                 prometheus.io/path: /_synapse/metrics
