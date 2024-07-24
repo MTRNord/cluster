@@ -16,6 +16,14 @@ spec:
         remediation:
             retries: 3
     values:
+        extraVolumes:
+            - name: matrix-org-blocker
+              emptyDir: {}
+        extraVolumeMounts:
+            - name: matrix-org-blocker
+              mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
+        extraCommands:
+            - pip3 install git+https://codeberg.org/MTRNord/matrix-invitee-server-blocker.git
         signingkey:
             job:
                 enabled: false
@@ -84,6 +92,14 @@ spec:
             enabled: false
         workers:
             default:
+                volumes:
+                    - name: matrix-org-blocker
+                      emptyDir: {}
+                volumeMounts:
+                    - name: matrix-org-blocker
+                      mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
+                extraCommands:
+                    - pip3 install git+https://codeberg.org/MTRNord/matrix-invitee-server-blocker.git
                 strategy:
                     type: Recreate
                 extraConfig:
