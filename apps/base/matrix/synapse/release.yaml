@@ -79,7 +79,9 @@ spec:
                     min_cache_ttl: 5m
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
-                  config: {}
+                  config:
+                    blocked_servers:
+                        - matrix.org
         persistence:
             enabled: true
             size: 20Gi
@@ -110,7 +112,9 @@ spec:
                             min_cache_ttl: 5m
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
-                          config: {}
+                          config:
+                            blocked_servers:
+                                - matrix.org
             federation_reader:
                 replicaCount: 1
                 enabled: true
