@@ -91,8 +91,7 @@ spec:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
                 extraCommands:
-                    - 'apt-get update -yqq && apt-get install git -yqq'
-                    - 'git config --global user.name "Your Name Here" && pip3 install git+https://codeberg.org/MTRNord/matrix-invitee-server-blocker.git'
+                    - pip install --index-url https://codeberg.org/api/packages/MTRNord/pypi/simple/ matrix-invitee-server-blocker
                 strategy:
                     type: Recreate
                 extraConfig:
@@ -231,8 +230,7 @@ spec:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
             extraCommands:
-                - 'apt-get update -yqq && apt-get install git -yqq'
-                - 'git config --global user.name "Your Name Here" && pip3 install git+https://codeberg.org/MTRNord/matrix-invitee-server-blocker.git'
+                - pip install --index-url https://codeberg.org/api/packages/MTRNord/pypi/simple/ matrix-invitee-server-blocker
             annotations:
                 prometheus.io/scrape: "true"
                 prometheus.io/path: /_synapse/metrics
