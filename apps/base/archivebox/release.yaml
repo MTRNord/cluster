@@ -1,0 +1,66 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: archivebox
+    namespace: archivebox
+spec:
+    releaseName: archivebox
+    chart:
+        spec:
+            chart: archivebox
+            sourceRef:
+                kind: HelmRepository
+                name: archivebox
+    interval: 50m
+    timeout: 25m
+    install:
+        timeout: 25m
+        remediation:
+            retries: 3
+    values:
+        global:
+            fallbackDefaults:
+                pvcSize: 1Gi
+        config:
+            admin_username: MTRNord
+            admin_password: ENC[AES256_GCM,data:dLc3F+2c48Jf,iv:ezwFr/9p9Nlimg629P1xSbhkYXfv0gU5jlK588ASqzc=,tag:pLKRF6PcZZFvMqpTl/4z3A==,type:str]
+        persistence:
+            data:
+                enabled: ENC[AES256_GCM,data:MfdLdg==,iv:XpOKU6l4bw//aCFpgTuDaTqP+B9fhMHyli9qcE+6LQI=,tag:9kOYT9RFRJ34CB/YpY27AQ==,type:bool]
+                size: ENC[AES256_GCM,data:myg9,iv:DUWCPfdEgBXR4KE5yDPHkLBQCc+SfTOgsA//FNCI0FU=,tag:6+nuSZwPU19WS+cAX0yPYQ==,type:str]
+                type: ENC[AES256_GCM,data:onHY,iv:1OjVz4vrldYmuBA/1P2U3ye8soosHqHokN124bn7M78=,tag:OxwJTlsLdqzthIhb0LXGlA==,type:str]
+        ingress:
+            main:
+                enabled: true
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-dns
+                    external-dns.alpha.kubernetes.io/hostname: archive.midnightthoughts.space
+                hosts:
+                    - host: archive.midnightthoughts.space
+                      paths:
+                        path: /
+                        pathType: Prefix
+                tls:
+                    - secretName: archive.midnightthoughts.space-tls
+                      hosts:
+                        - archive.midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzbWNOclA1eWFMYkhmZWRW
+            NDYxQ2Fra2xDeVp0Vjd6QkNMTUpnam5KeUJJCkJTWXJDcHgrRmVhVzNFYzh2OWMv
+            UENmQmJSMkFWYTBub0dYcFh0bzk2ODQKLS0tIDQ2Wm4wLzJVVDJudTU0b2M4dytV
+            VlVqTXJqSmZPbkE3YkE3TWVOcmxTZncK//jHxKDEXwB67Y0HR6waa1hsAAfyGHLt
+            DUuiYrUuTTlfc7gwpEVp3KbmkuHuoQO5WvKNQQRxMXjzzypB9V0gKg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-07-25T14:26:19Z"
+    mac: ENC[AES256_GCM,data:i+vYg+zmLSyQApvRXvu2EH++OcTD/85/yDubwwxyvlt1ZWU3aQ/r7eawOTrsEqOpNrlwUujtyu99uFAuzKP/kPww/qa+CRs8YIi2Xwp1ObF0vd2M75nW1MK6KpqJFt/hpx9W0fdStLpUbdoK+kvRScZvBg/c0SM9AbcttdBRVuc=,iv:Vo/1wWlRYH+Ej5Ba/fmxcX2TGZaoUYPgLv6xGAoas3o=,tag:Hp8ikjJbb6gDSa9WysgInA==,type:str]
+    pgp: []
+    encrypted_regex: ^(admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
