@@ -1,16 +1,14 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
     name: archivebox
     namespace: archivebox
 spec:
     releaseName: archivebox
-    chart:
-        spec:
-            chart: archivebox
-            sourceRef:
-                kind: OCIRepository
-                name: archivebox
+    chartRef:
+        namespace: archivebox
+        kind: OCIRepository
+        name: archivebox
     interval: 50m
     timeout: 25m
     install:
