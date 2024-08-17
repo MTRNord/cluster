@@ -16,13 +16,3 @@ metadata:
 spec:
   image: ghcr.io/matrix-org/sliding-sync
   interval: 15m
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: dragonfly
-  namespace: matrix
-spec:
-  type: "oci"
-  interval: 5m
-  url: oci://ghcr.io/dragonflydb/dragonfly
