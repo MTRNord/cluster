@@ -3,16 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: ananace-charts
-  namespace: matrix
+  namespace: draupnir-testing-1700824
 spec:
   interval: 5m
   url: https://ananace.gitlab.io/charts
----
-apiVersion: image.toolkit.fluxcd.io/v1beta2
-kind: ImageRepository
-metadata:
-  name: sliding-proxy
-  namespace: matrix
-spec:
-  image: ghcr.io/matrix-org/sliding-sync
-  interval: 15m
