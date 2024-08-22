@@ -46,6 +46,7 @@ spec:
             pullSecrets:
                 - name: ghcr-pull
         extraConfig:
+            enable_authenticated_media: true
             registration_shared_secret: ENC[AES256_GCM,data:mqzbnwBLhXjyO1gVncuWj8qTHG/FqQinHeYiyoGc1hlhKPErahrzZffzsxycax0vOiiI7p3pPgNq2f/R7t40Kg==,iv:KJOoP7efEMXYDZJVjsA9Dk9wacFWIvfObzZ3gBhjfFU=,tag:RbL5WutC7aZQTbx6Q0oAIQ==,type:str]
             stream_writers:
                 events: event_persister
@@ -102,6 +103,7 @@ spec:
                 strategy:
                     type: Recreate
                 extraConfig:
+                    enable_authenticated_media: true
                     event_cache_size: 30K
                     caches:
                         global_factor: 10
