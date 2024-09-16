@@ -32,11 +32,11 @@ spec:
             ingress:
                 enable: true
                 host: coder.midnightthoughts.space
-                wildcardHost: "*.coder.midnightthoughts.space"
+                wildcardHost: "*.workspaces.coder.midnightthoughts.space"
                 annotations:
                     cert-manager.io/cluster-issuer: letsencrypt-dns
                     external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
                 tls:
                     enable: true
                     secretName: coder.midnightthoughts.space-tls
-                    wildcardSecretName: wildcard-coder.midnightthoughts.space-tls
+                    wildcardSecretName: wildcard-workspaces-coder.midnightthoughts.space-tls
