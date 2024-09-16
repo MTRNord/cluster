@@ -29,6 +29,28 @@ spec:
                   value: "https://coder.midnightthoughts.space"
                 - name: CODER_WILDCARD_ACCESS_URL
                   value: "*.workspaces.coder.midnightthoughts.space"
+                - name: CODER_VERBOSE
+                  value: "true"
+                - name: CODER_OIDC_ISSUER_URL
+                  value: "https://auth.midnightthoughts.space/application/o/coder/"
+                - name: CODER_OIDC_EMAIL_FIELD
+                  value: "email"
+                - name: CODER_OIDC_USERNAME_FIELD
+                  value: "preferred_username"
+                - name: CODER_OIDC_SCOPES
+                  value: "openid,profile,email"
+                - name: CODER_OIDC_EMAIL_DOMAIN
+                  value: "nordgedanken.dev"
+                - name: CODER_OIDC_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                        key: client_id
+                        name: coder-oauth
+                - name: CODER_OIDC_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                        key: client_secret
+                        name: coder-oauth
             service:
                 type: ClusterIP
             ingress:
