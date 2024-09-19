@@ -17,6 +17,13 @@ spec:
             retries: 3
     values:
         extraConfig:
+            opentracing:
+                enabled: true
+                homeserver_whitelist:
+                    - matrix.midnightthoughts.space
+                jaeger_config:
+                    local_agent:
+                        reporting_host: tempo.monitoring.svc.cluster.local
             use_presence: false
             app_service_config_files:
                 - /data/draupnir-registration.yaml
@@ -75,6 +82,9 @@ spec:
                         enabled: true
                         homeserver_whitelist:
                             - matrix.midnightthoughts.space
+                        jaeger_config:
+                            local_agent:
+                                reporting_host: tempo.monitoring.svc.cluster.local
                     event_cache_size: 30K
                     caches:
                         global_factor: 10
