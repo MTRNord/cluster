@@ -15,14 +15,11 @@ spec:
     spec:
       containers:
         - name: mas
-          # Syn2Mas image
-          #image: ghcr.io/mtrnord/cluster/syn2mas:db_fix
-          # Normal image
           image: ghcr.io/element-hq/matrix-authentication-service:latest
-          #imagePullPolicy: Always
-          #args: [ "--command=advisor", "--synapseConfigFile=/homeserver.yaml" ]
+          imagePullPolicy: Always
           # Normal mode
-          args: [ "server" ]
+          #args: [ "server" ]
+          args: [ "help" ]
           ports:
             - containerPort: 8080
             - containerPort: 8081
@@ -31,9 +28,21 @@ spec:
             - name: mas-config
               mountPath: /config.yaml
               subPath: config
+          # Set MAS_CONIG env variable to the path of the config file
+          env:
+            - name: MAS_CONFIG
+              value: /config.yaml
+      initContainers:
+        - name: mas
+          image: ghcr.io/element-hq/matrix-authentication-service:latest
+          imagePullPolicy: Always
+          # Sync config
+          args: [ "config", "sync" ]
+          # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
+          volumeMounts:
             - name: mas-config
-              mountPath: /homeserver.yaml
-              subPath: merged-synapse-config
+              mountPath: /config.yaml
+              subPath: config
           # Set MAS_CONIG env variable to the path of the config file
           env:
             - name: MAS_CONFIG
