@@ -83,7 +83,6 @@ kind: Ingress
 metadata:
   name: mas
   annotations:
-    traefik.ingress.kubernetes.io/router.priority: "100000000000"
     cert-manager.io/cluster-issuer: letsencrypt-dns
     external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
 spec:
@@ -98,19 +97,7 @@ spec:
                 name:  mas
                 port:
                   number: 8080
-    - host: matrix.midnightthoughts.space
-      http:
-        paths:
-          - path: /_matrix/client/(.*)/(login|logout|refresh)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name:  mas
-                port:
-                  number: 8080
   tls:
     - hosts:
-        - midnightthoughts.space
-        - matrix.midnightthoughts.space
         - mas.matrix.midnightthoughts.space
       secretName: mas.matrix.midnightthoughts.space-tls-secret
