@@ -42,18 +42,20 @@ spec:
                     contacts:
                         - email_address: support@nordgedanken.dev
                           role: admin
+                org.matrix.msc2965.authentication:
+                    issuer: https://mas.matrix.midnightthoughts.space/
+                    account: https://mas.matrix.midnightthoughts.space/account
         image:
             pullSecrets:
                 - name: ghcr-pull
         extraConfig:
             enable_authenticated_media: true
-            registration_shared_secret: ENC[AES256_GCM,data:mqzbnwBLhXjyO1gVncuWj8qTHG/FqQinHeYiyoGc1hlhKPErahrzZffzsxycax0vOiiI7p3pPgNq2f/R7t40Kg==,iv:KJOoP7efEMXYDZJVjsA9Dk9wacFWIvfObzZ3gBhjfFU=,tag:RbL5WutC7aZQTbx6Q0oAIQ==,type:str]
+            registration_shared_secret: ENC[AES256_GCM,data:HWkCY37AKXXJkfS4YIO1lV65KUv10EgftiPz5D1Zc3qVEaCf9v5hDuKNf3JaEw47vtaa46fvh+ENP5is5WVJVQ==,iv:yOXHAW8y78ARP7bNgfHUUNguIzxtmnmAVzV2EWr0fKU=,tag:yzt62mNVhhgjHO97zZemeg==,type:str]
             stream_writers:
                 events: event_persister
             run_background_tasks_on: background_worker
             federation_sender_instances:
                 - federation-sender-1
-            enable_metrics: true
             mau_stats_only: true
             presence:
                 enabled: false
@@ -68,6 +70,14 @@ spec:
             experimental_features:
                 msc2409_to_device_messages_enabled: true
                 msc2716_enabled: true
+                msc3861:
+                    enabled: false
+                    issuer: https://mas.matrix.midnightthoughts.space/
+                    client_id: ENC[AES256_GCM,data:NTh2vurIF5Ub+vG2yo7HXm289RIJQ30zuIE=,iv:jVYut9h/PF1/U4GYuho6sjbvxYF7aUPQn82BHHiIP4g=,tag:CWItGR1+odAservQAM6LoA==,type:str]
+                    client_auth_method: client_secret_basic
+                    client_secret: ENC[AES256_GCM,data:AMwI0oTenzgjvMDvcAvgbF6Ll+mSRd7SEWQ0M2OBeiLWEXvI7sIIcc1mUWvYamTToF+LQs/x87Um4HUwSCb3xA==,iv:b1dJHdj6OcR3GynnuZuUD5CD33sKYG9A4J2TB1iQ/fU=,tag:DhoVqXoPWKzbT2I8zriZfg==,type:str]
+                    admin_token: ENC[AES256_GCM,data:NQqN72255S9UDwfW2ADX7ASk4OHBCfab2uBXPQm5K2Q=,iv:ZSLv7QQGZsvygWbi4EhpQkF+4sncnwxIgmhlBwnJwwc=,tag:T62HjzBtapXp9/0hfFGiIw==,type:str]
+                    account_management_url: https://mas.matrix.midnightthoughts.space/account
             event_cache_size: 30K
             caches:
                 global_factor: 10
@@ -99,7 +109,7 @@ spec:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
                 extraCommands:
-                    - ENC[AES256_GCM,data:/9aF+f39zQW0J9M95ZpVWueJEhf4fajM8u68IDEds+97mudmrHmdVKfXY6JU5BgYHpB5ntOeljaRa38DqnlDCAmotS1auZFCn/W3GoPQ12NfMpIdTGnl9O5/IG74tx8nNis6OyQyoRLGXNwjQKAnt/zlYYNwklzeASc2BRRgscRr355QjJw4j9dowz5CvoTw9NZeRZM2OqDOT+MMRg==,iv:zTmOWXZGDx0qMkg/vox8eoxoh9NgRJkdZNNNzlPOHe8=,tag:MW9TcXTXDvTwn0tQMpqYrg==,type:str]
+                    - ENC[AES256_GCM,data:7WZ6FG9FxAA5ULWKFupAvTU0/gSBhc/PHL21YmJpEACCtw6qB74rgXvJjewdqp4tcFyznOYoGQQIOpGcSfW7QFrmPRemoHJkqUd0Up4uLDsXqoBQ1FQrjJmfVel7JmL3hlmdy+OPuJ0E8WCM50ePeEFEpKw2A3YIyR3ty3FVVky8mfc+TwxB68ptoTNxUrBWy32eZmg062ZH/g8few==,iv:GMTazGHMrYti3D7kx4FVu+zWp5HBMF6OdUg2NcFntH8=,tag:7esWCYYPCzFhy9D7WyM+Fg==,type:str]
                 strategy:
                     type: Recreate
                 extraConfig:
@@ -183,7 +193,6 @@ spec:
                     - /_matrix/client/(r0|v3|unstable)/room_keys/
                     - /_matrix/client/(r0|v3|unstable)/keys/upload/
                     # Registration/login requests
-                    - /_matrix/client/(api/v1|r0|v3|unstable)/login$
                     - /_matrix/client/(r0|v3|unstable)/register$
                     - /_matrix/client/(r0|v3|unstable)/register/available$
                     - /_matrix/client/v1/register/m.login.registration_token/validity$
@@ -246,7 +255,7 @@ spec:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
             extraCommands:
-                - ENC[AES256_GCM,data:q1lJOc4WyRitlePhS0RewMk4XB1WHPKOA79RqoSmYOpddwPYW9+7H8NCORP3XBs0f3fLNFqak1uXK1JWksKcLnf/L/LtB8Qr623po42dh7VmJIcu334j4SrCSymIS0YrGlvpVjBy96FfxQGZNHBamPEiQzVFC8VY6CaWXylYOw+08X0Lli89Wq5XxeK2w+fmTViTdJxEuIrjDhfvbw==,iv:LlnWA0lCoIXdhWKGVFAu4tRc0wPEYBrXhJfWezQt7DI=,tag:LMq90tn5GC/XqfVqGNM8TQ==,type:str]
+                - ENC[AES256_GCM,data:ZZcg2MrL38uHK3Yp7YICZQOnEm2pkxottbdkEYuxNi69cVqXesFyUyUwPrwij7i6mmqJDYLpRC+ao0ofgKqciYEbLXQ9URjqqz1N7qfkvebAuvyW9Kc+3NE6QnjyTvp4NKi5E9nqNbUVeUTtEnSAQJOMmR2A//cD3wiZFmMhoIC3av1RPMdpOqj+F9D2XBP7Dbo4Wr/fQhBkoFx7aw==,iv:QdMqzpS8zaYAWoeFHVBBiH21/Op1AQeAPYhHgqwEVQ8=,tag:dfby8OFeOHixfzNKlfHauA==,type:str]
             annotations:
                 prometheus.io/scrape: "true"
                 prometheus.io/path: /_synapse/metrics
@@ -270,7 +279,7 @@ spec:
             sslmode: require
             username: synapse
             database: synapse
-            password: ENC[AES256_GCM,data:s/c9XvX/PsIXCr/i8TWrZlTHOSP0jvJbD04yCtXDEH0W4pr/nq/DWEzXbI2e6TsRLxzQwQLvxyaoJ4nL+dTIjw==,iv:Ztb+W8QlakKvlrgTb7OiNt/AKgrXCmvM9neyHWtURd8=,tag:xMUwrRc9vt9x9niaDQdUzA==,type:str]
+            password: ENC[AES256_GCM,data:vmauzewK0WTcf1/KKCD3bCKLzT1hptFsm7qDduy9nkCgbidRbpaMZVBewmnJCiI/7KqXb5f68LO7jydeeqfT8Q==,iv:GHyAKOw2PAc5xX8sznLx4vE+R2oi3fghF7j6mMB/glk=,tag:t7pki7yt8jzHhqYQaCwWpw==,type:str]
         ingress:
             traefikPaths: true
             hosts:
@@ -284,6 +293,7 @@ spec:
             annotations:
                 cert-manager.io/cluster-issuer: letsencrypt-dns
                 external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                traefik.ingress.kubernetes.io/router.priority: "1"
 sops:
     kms: []
     gcp_kms: []
@@ -293,14 +303,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrVVdQcXVMMmJBZVMxV1hm
-            b01iNEpyZkFnUE00MldvcnhtRUNNempkWmh3CmNsVWZQck1OaVdnOGwwNEtoYXRq
-            aUUxb21LQVhMVCtGUm9HOGg4YTViSU0KLS0tIHhlKzJXalI3MFRuUFp3QlBLR0h3
-            cHU1OW9Rc1R6RE4vcWJkTzNJNTNXVkUKQPDKoM9N1sLpEvtQrRRzMhafmGa82Gs7
-            J6+PZ1qf4gzFcEeKvwq4C6ly2X/jM2u5YdDDdFvg/gJCKlcJyAjV5w==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2b1B1ZUZIUUhJNWRMVG5K
+            WHpzMDA0YkdZMnVaUmRQOHVqaEU3RDZxVGlVCktCK0wwTWZIWEhqYXBscEp1NVVI
+            SXpTSkFHeFdnZ0ROSENqK3FvWk1mVVkKLS0tIHZlQmZ6dnRpMkV2eVRrY0xrYVBu
+            VDJWUVo3b3NDRlZQZ01jMW9Oc3c1UmsKG9RElTQQPCKeq9C6FcGUCvDtWJRhxa5B
+            AeDqY0PyLIzNTmdjt80SYr0vFbimkOALllstAOXYOGteJuIsAJKygA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-07-24T08:31:38Z"
-    mac: ENC[AES256_GCM,data:CaS7+ZkUtZUDa/IgnPUvN9gf44lYTo08BlOTqEW70ZlUOrDPG5CJRXi7tgpWtEnIC2y+w2bKyxxyG4ivOhk1i8r74xkX5vl3YFcQrDwQjeeawHcB2ao2esRBWlBel6dFLzC/zM+EVvpof6FFb0XgRg5vnmnqTtnHkFjRZjpXY+8=,iv:/c+12cDqvPVjIHcm7iQ47sFwFQ5LqXHUC++9My/NJk8=,tag:Q82yLZaTk7Dsb2yQU67yVw==,type:str]
+    lastmodified: "2024-09-25T15:36:19Z"
+    mac: ENC[AES256_GCM,data:fJ1jf0DAlGH3rbsYXwcMbDXUWoOr7tY7Cn6Kpn+4XLGlcRsYOrXR761IaxBVWM6YHabYo+wcUmZvlVcgo20xWS0RJkyBJ0hAGY+a45XBEXrHbUEJ7pZ7jho/H8J6wHAKCpgWO/OEg9vZch/TJuqCa4J311BT/Xwdt7LZJfgcQ7Y=,iv:CTsPiaHgaoVUfPEz+2yPQ+LBA5RyvKbQLYAswEYGu1g=,tag:EDfMYmO+9PLIRFLk/eueaw==,type:str]
     pgp: []
-    encrypted_regex: ^(extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    encrypted_regex: ^(admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token)$
     version: 3.8.1
