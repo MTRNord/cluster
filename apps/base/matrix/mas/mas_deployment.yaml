@@ -1,0 +1,93 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mas
+  template:
+    metadata:
+      labels:
+        app: mas
+    spec:
+      containers:
+        - name: mas
+          # Syn2Mas image
+          image: ghcr.io/element-hq/matrix-authentication-service/syn2mas:latest
+          # Normal image
+          image: ghcr.io/element-hq/matrix-authentication-service:latest
+          imagePullPolicy: Always
+          # Sleep mode
+          command: [ "/bin/bash", "-c", "--" ]
+          args: [ "while true; do sleep 30; done;" ]
+          # Normal mode
+          #args: [ "server" ]
+          ports:
+            - containerPort: 8080
+            - containerPort: 8081
+          # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
+          volumeMounts:
+            - name: mas-config
+              mountPath: /config.yaml
+              subPath: config
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 8081
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8081
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
+      # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
+      volumes:
+        - name: mas-config
+          secret:
+            secretName: mas-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mas
+spec:
+  selector:
+    app: mas
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mas
+  annotations:
+    traefik.ingress.kubernetes.io/router.priority: "42"
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+spec:
+  rules:
+    - host: mas.matrix.midnightthoughts.space
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name:  mas
+                port:
+                  number: http
+          - path: /foo
+            pathType: Exact
+            backend:
+              service:
+                name:  whoami
+                port:
+                  number: 80
