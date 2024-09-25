@@ -20,7 +20,7 @@ spec:
           # Normal image
           #image: ghcr.io/element-hq/matrix-authentication-service:latest
           imagePullPolicy: Always
-          args: [ "--command=advisor", "--synapseConfigFile=/synapse_config/homeserver.yaml" ]
+          args: [ "--command=advisor", "--synapseConfigFile=/homeserver.yaml" ]
           # Normal mode
           #args: [ "server" ]
           ports:
@@ -31,8 +31,9 @@ spec:
             - name: mas-config
               mountPath: /config.yaml
               subPath: config
-            - name: synapse-config
-              mountPath: /synapse_config
+            - name: mas-config
+              mountPath: /homeserver.yaml
+              subPath: merged-synapse-config
       livenessProbe:
         httpGet:
           path: /health
@@ -50,10 +51,6 @@ spec:
         - name: mas-config
           secret:
             secretName: mas-config
-        - name: synapse-config
-          configMap:
-            defaultMode: 420
-            name: matrix-synapse
 ---
 apiVersion: v1
 kind: Service
