@@ -20,7 +20,7 @@ spec:
           # Normal image
           #image: ghcr.io/element-hq/matrix-authentication-service:latest
           imagePullPolicy: Always
-          args: [ "--command=advisor", "--synapseConfigFile=/synapse.yaml" ]
+          args: [ "--command=advisor", "--synapseConfigFile=/synapse_config/homeserver.yaml" ]
           # Normal mode
           #args: [ "server" ]
           ports:
@@ -32,7 +32,7 @@ spec:
               mountPath: /config.yaml
               subPath: config
             - name: synapse-config
-              mountPath: /synapse.yaml
+              mountPath: /synapse_config
       livenessProbe:
         httpGet:
           path: /health
