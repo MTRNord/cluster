@@ -83,11 +83,11 @@ spec:
               service:
                 name:  mas
                 port:
-                  number: http
-          - path: /foo
-            pathType: Exact
+                  number: 8080
+          - path: /{path:^_matrix/client/(.*)/(login|logout|refresh)}
+            pathType: ImplementationSpecific
             backend:
               service:
-                name:  whoami
+                name:  mas
                 port:
-                  number: 80
+                  number: 8080
