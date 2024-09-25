@@ -98,7 +98,7 @@ spec:
                 name:  mas
                 port:
                   number: 8080
-          - path: ^/_matrix/client/(.*)/(login|logout|refresh)
+          - path: /_matrix/client/(.*)/(login|logout|refresh)
             pathType: ImplementationSpecific
             backend:
               service:
@@ -108,7 +108,7 @@ spec:
     - host: matrix.midnightthoughts.space
       http:
         paths:
-          - path: ^/_matrix/client/(.*)/(login|logout|refresh)
+          - path: /_matrix/client/(.*)/(login|logout|refresh)
             pathType: ImplementationSpecific
             backend:
               service:
@@ -118,7 +118,7 @@ spec:
     - host: midnightthoughts.space
       http:
         paths:
-          - path: ^/_matrix/client/(.*)/(login|logout|refresh)
+          - path: /_matrix/client/(.*)/(login|logout|refresh)
             pathType: ImplementationSpecific
             backend:
               service:
