@@ -280,7 +280,7 @@ spec:
             database: synapse
             password: ENC[AES256_GCM,data:orJwItlCEYBhVABMZoAYzbDNCcuDKD1/1Xiv/HAM11r5RdpeaSVC0nmNwQjsJdIsjvAObRU/PLMyP1AKI1TxHg==,iv:4m9Hh2q25Am37Ah8cRfXYD33FElZ3xrPjGQeJAy8Yh0=,tag:/+Hvhd1xJVaWgj1Fd54b8w==,type:str]
         ingress:
-            traefikPaths: true
+            traefikPaths: false
             hosts:
                 - midnightthoughts.space
                 - matrix.midnightthoughts.space
@@ -292,8 +292,9 @@ spec:
             annotations:
                 cert-manager.io/cluster-issuer: letsencrypt-dns
                 external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-            csPaths:  
-                - path: /{path:_matrix/client/.*/(login|logout|refresh)$}
+                traefik.ingress.kubernetes.io/router.pathmatcher: PathPrefix
+            csPaths:
+                - path: /_matrix/client/.*/(login|logout|refresh)
                   pathType: ImplementationSpecific
                   backend:
                     service:
