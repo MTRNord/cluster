@@ -105,3 +105,29 @@ spec:
                 name:  mas
                 port:
                   number: 8080
+    - host: matrix.midnightthoughts.space
+      http:
+        paths:
+          - path: /{path:^_matrix/client/(.*)/(login|logout|refresh)}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name:  mas
+                port:
+                  number: 8080
+    - host: midnightthoughts.space
+      http:
+        paths:
+          - path: /{path:^_matrix/client/(.*)/(login|logout|refresh)}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name:  mas
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - midnightthoughts.space
+        - matrix.midnightthoughts.space
+        - mas.matrix.midnightthoughts.space
+      secretName: mas.matrix.midnightthoughts.space-tls-secret
