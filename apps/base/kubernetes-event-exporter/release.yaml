@@ -20,10 +20,12 @@ spec:
             receivers:
                 - name: "loki"
                   loki:
-                    url: http://loki-stack:3100/loki/api/v1/push
-                    headers:
-                        Content-Type: application/json
-                        User-Agent: "kube-event-exporter"
+                    url: http://loki-stack.svc.cluster.local:3100/loki/api/v1/push
+                    # headers:
+                    #     Content-Type: application/json
+                    #     User-Agent: "kube-event-exporter"
+                    streamLabels:
+                        app: kube-event-exporter
                     layout:
                         streams:
                             - streams:
