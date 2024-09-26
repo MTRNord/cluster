@@ -13,9 +13,10 @@ spec:
         config:
             logLevel: debug
             logFormat: json
-        routes:
-            - match:
-                - receiver: "loki"
+        route:
+            routes:
+                - match:
+                    - receiver: "loki"
         receivers:
             - name: "loki"
               loki:
