@@ -1,0 +1,25 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: kubernetes-event-exporter
+    namespace: monitoring
+spec:
+    interval: 30m
+    releaseName: kubernetes-event-exporter
+    chartRef:
+        kind: OCIRepository
+        name: kubernetes-event-exporter
+    values:
+        config:
+            logLevel: debug
+            logFormat: json
+        routes:
+            - match:
+                - receiver: "loki"
+        receivers:
+            - name: "loki"
+              loki:
+                  url: http://loki:3100/loki/api/v1/push
+                  headers:
+                      Content-Type: application/json
+                      User-Agent: "kube-event-exporter"
