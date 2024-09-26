@@ -13,20 +13,19 @@ spec:
         config:
             logLevel: debug
             logFormat: json
-        route:
-            routes:
-                - match:
-                    - receiver: "loki"
-        receivers:
-            - name: "loki"
-              loki:
-                  url: http://loki:3100/loki/api/v1/push
-                  headers:
-                      Content-Type: application/json
-                      User-Agent: "kube-event-exporter"
-
-                  layout:
-                      - streams:
+            route:
+                routes:
+                    - match:
+                        - receiver: "loki"
+            receivers:
+                - name: "loki"
+                  loki:
+                    url: http://loki:3100/loki/api/v1/push
+                    headers:
+                        Content-Type: application/json
+                        User-Agent: "kube-event-exporter"
+                    layout:
+                        - streams:
                             app: kube-api
                             source: event-exporter
                             message: "{{ .Message }}"
