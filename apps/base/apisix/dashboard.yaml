@@ -1,0 +1,30 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: apisix
+    namespace: apisix
+spec:
+    releaseName: apisix
+    interval: 60m
+    chart:
+        spec:
+            chart: apisix-dashboard
+            sourceRef:
+                kind: HelmRepository
+                name: apisix
+    values:
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                traefik.ingress.kubernetes.io/router.pathmatcher: PathRegexp
+            hosts:
+                - host: apisix.midnightthoughts.space
+                  paths:
+                      - /*
+            tls:
+                - secretName: midnightthoughts-space-tls
+                  hosts:
+                      - apisix.midnightthoughts.space
+

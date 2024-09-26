@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: apisix
+    namespace: apisix
+spec:
+    releaseName: apisix
+    interval: 60m
+    chart:
+        spec:
+            chart: apisix
+            sourceRef:
+                kind: HelmRepository
+                name: apisix
+    values:
+        timezone: "Europe/Berlin"
+        service:
+            type: ClusterIP
+        apisix:
+            wasm:
+                enabled: true
+            plugins: []
