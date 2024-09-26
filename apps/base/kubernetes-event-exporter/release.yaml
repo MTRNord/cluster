@@ -25,16 +25,16 @@ spec:
                       User-Agent: "kube-event-exporter"
 
                   layout:
-                      eventType: "kubernetes-event"
-                      createdAt: "{{ .GetTimestampMs }}"
-                      details:
-                          message: "{{ .Message }}"
-                          reason: "{{ .Reason }}"
-                          type: "{{ .Type }}"
-                          count: "{{ .Count }}"
-                          kind: "{{ .InvolvedObject.Kind }}"
-                          name: "{{ .InvolvedObject.Name }}"
-                          namespace: "{{ .Namespace }}"
-                          component: "{{ .Source.Component }}"
-                          host: "{{ .Source.Host }}"
-                          labels: "{{ toJson .InvolvedObject.Labels}}"
+                      - streams:
+                            app: kube-api
+                            source: event-exporter
+                            message: "{{ .Message }}"
+                            reason: "{{ .Reason }}"
+                            type: "{{ .Type }}"
+                            count: "{{ .Count }}"
+                            kind: "{{ .InvolvedObject.Kind }}"
+                            name: "{{ .InvolvedObject.Name }}"
+                            namespace: "{{ .Namespace }}"
+                            component: "{{ .Source.Component }}"
+                            host: "{{ .Source.Host }}"
+                            labels: "{{ toJson .InvolvedObject.Labels}}"
