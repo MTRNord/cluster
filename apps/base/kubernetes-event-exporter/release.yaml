@@ -24,17 +24,21 @@ spec:
                     headers:
                         Content-Type: application/json
                         User-Agent: "kube-event-exporter"
-                    # layout:
-                    #     - streams:
-                    #         app: kube-api
-                    #         source: event-exporter
-                    #         message: "{{ .Message }}"
-                    #         reason: "{{ .Reason }}"
-                    #         type: "{{ .Type }}"
-                    #         count: "{{ .Count }}"
-                    #         kind: "{{ .InvolvedObject.Kind }}"
-                    #         name: "{{ .InvolvedObject.Name }}"
-                    #         namespace: "{{ .Namespace }}"
-                    #         component: "{{ .Source.Component }}"
-                    #         host: "{{ .Source.Host }}"
-                    #         labels: "{{ toJson .InvolvedObject.Labels}}"
+                    layout:
+                        streams:
+                            - streams:
+                                app: kube-api
+                                source: event-exporter
+                                message: "{{ .Message }}"
+                                reason: "{{ .Reason }}"
+                                type: "{{ .Type }}"
+                                count: "{{ .Count }}"
+                                kind: "{{ .InvolvedObject.Kind }}"
+                                name: "{{ .InvolvedObject.Name }}"
+                                namespace: "{{ .Namespace }}"
+                                component: "{{ .Source.Component }}"
+                                host: "{{ .Source.Host }}"
+                                labels: "{{ toJson .InvolvedObject.Labels}}"
+                        values:
+                            - - "{{ mul .GetTimestampMs 1000000 }}"
+                              - "severity={{ .Type }} namespace={{ .InvolvedObject.Namespace }} object={{ .InvolvedObject.Kind }}/{{ .InvolvedObject.Name }} reason={{ .Reason }} message={{ .Message }}"
