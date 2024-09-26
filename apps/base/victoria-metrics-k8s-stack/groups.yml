@@ -1,0 +1,59 @@
+groups:
+    - orgId: 1
+      name: Draupnir4All
+      folder: Matrix
+      interval: 1m
+      rules:
+        - uid: fdz35yf78i8lcd
+          title: Draupnir4All Synapse online
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P4169E866C3094E38
+              model:
+                editorMode: code
+                expr: min_over_time(up{instance="draupnir-synapse",job=~"(appservice|background-worker|event-persister|federation-reader|federation-sender-1|federation-sender-2|generic-frontend|pusher|synapse)",index=~".*"}[2m])
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations: {}
+          labels:
+            service_id: draupnir4all
+          isPaused: false
