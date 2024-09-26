@@ -1,143 +1,123 @@
----
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: postgres-cluster
+    name: postgres-cluster
 ---
 apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
-  labels:
-    team: midnightthoughts
-  name: postgres-cluster
-  namespace: postgres-cluster
+    labels:
+        team: midnightthoughts
+    name: postgres-cluster
+    namespace: postgres-cluster
 spec:
-  enableShmVolume: true
-  databases:
-    synapse: synapse
-    draupnir_synapse: draupnir_synapse
-    d4all: draupnir_synapse
-    authentik: authentik
-    ejabberd: ejabberd
-    vaultwarden: vaultwarden
-    mastodon: mastodon
-    openproject: openproject
-    plausible: plausible
-    coder: coder
-    matrix_auth: matrix_auth
-  users:
-    synapse: []
-    draupnir_synapse: []
-    authentik: []
-    ejabberd: []
-    vaultwarden: []
-    mastodon: []
-    openproject: []
-    plausible: []
-    coder: []
-    matrix_auth: []
-  numberOfInstances: 3
-  resources:
-    requests:
-      cpu: 150m
-      memory: 3Gi
-    limits:
-      cpu: 4000m
-      memory: 8Gi
-  postgresql:
-    version: "15"
-    parameters:
-      # Connectivity
-      max_connections: "340"
-      superuser_reserved_connections: "3"
-
-      # Memory settings
-      shared_buffers: "1024 MB"
-      work_mem: "32 MB"
-      maintenance_work_mem: '320 MB'
-      huge_pages: off
-      effective_cache_size: '3 GB'
-      effective_io_concurrency: "150"
-      random_page_cost: "1.5"
-
-      # Cost of a sequentially-fetched disk page
-      seq_page_cost: "0.7"
-      # Cost of processing each row in a query
-      cpu_tuple_cost: "0.01"
-
-      # Cost of processing each index entry during an index scan
-      cpu_index_tuple_cost: "0.005"
-
-      # Cost of processing each operator or function executed during a query
-      cpu_operator_cost: "0.0025"
-
-      # Cost of setting up parallel workers for a parallel operation
-      parallel_setup_cost: "1000.0"
-
-      # Minimum amount of table data for a parallel scan to be considered
-      min_parallel_table_scan_size: "8MB"
-
-
-      # Monitoring
-      shared_preload_libraries: "pg_buffercache,pg_stat_statements,pg_cron,pg_stat_kcache"
-      track_io_timing: on
-      track_functions: pl
-
-      # Replication
-      wal_level: replica
-      max_wal_senders: "10"
-      synchronous_commit: on
-
-      # Checkpointing
-      checkpoint_timeout: "15 min"
-      checkpoint_completion_target: "0.9"
-      min_wal_size: '512 MB'
-      max_wal_size: '1024 MB'
-
-      # archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
-      # archive_command: "/bin/true" # not doing anything yet with WAL-s
-
-      password_encryption: scram-sha-256
-
-      # WAL writing
-      wal_compression: "on"
-      wal_buffers: "-1"
-      wal_writer_delay: 200ms
-      wal_writer_flush_after: 1MB
-      wal_keep_size: "3650 MB"
-
-      # Background writer
-      bgwriter_delay: 200ms
-      bgwriter_lru_maxpages: "100"
-      bgwriter_lru_multiplier: "2.0"
-      bgwriter_flush_after: "0"
-
-      # Parallel queries
-      max_worker_processes: "4"
-      max_parallel_workers_per_gather: "2"
-      max_parallel_maintenance_workers: "2"
-      max_parallel_workers: "4"
-      parallel_leader_participation: "on"
-
-      # Advanced features
-      enable_partitionwise_join: "on"
-      enable_partitionwise_aggregate: "on"
-      jit: "on"
-      max_slot_wal_keep_size: "1000 MB"
-      track_wal_io_timing: "on"
-      maintenance_io_concurrency: "150"
-      wal_recycle: "on"
-
-      autovacuum_analyze_scale_factor: "0.05"
-      autovacuum_vacuum_scale_factor: "0.02"
-      autovacuum_vacuum_cost_limit: "400"
-      vacuum_cost_limit: "300"
-
-  teamId: midnightthoughts
-  volume:
-    size: 100Gi
-
-  patroni:
-    failsafe_mode: true
-    synchronous_mode: false
-    #synchronous_mode: true
+    enableShmVolume: true
+    databases:
+        synapse: synapse
+        draupnir_synapse: draupnir_synapse
+        d4all: draupnir_synapse
+        authentik: authentik
+        ejabberd: ejabberd
+        vaultwarden: vaultwarden
+        mastodon: mastodon
+        openproject: openproject
+        plausible: plausible
+        coder: coder
+        matrix_auth: matrix_auth
+    users:
+        synapse: []
+        draupnir_synapse: []
+        authentik: []
+        ejabberd: []
+        vaultwarden: []
+        mastodon: []
+        openproject: []
+        plausible: []
+        coder: []
+        matrix_auth: []
+    numberOfInstances: 3
+    resources:
+        requests:
+            cpu: 150m
+            memory: 3Gi
+        limits:
+            cpu: 4000m
+            memory: 8Gi
+    postgresql:
+        version: "15"
+        parameters:
+            # Connectivity
+            max_connections: "340"
+            superuser_reserved_connections: "3"
+            # Memory settings
+            shared_buffers: "1024 MB"
+            work_mem: "32 MB"
+            maintenance_work_mem: '320 MB'
+            huge_pages: off
+            effective_cache_size: '3 GB'
+            effective_io_concurrency: "150"
+            random_page_cost: "1.5"
+            # Cost of a sequentially-fetched disk page
+            seq_page_cost: "0.7"
+            # Cost of processing each row in a query
+            cpu_tuple_cost: "0.01"
+            # Cost of processing each index entry during an index scan
+            cpu_index_tuple_cost: "0.005"
+            # Cost of processing each operator or function executed during a query
+            cpu_operator_cost: "0.0025"
+            # Cost of setting up parallel workers for a parallel operation
+            parallel_setup_cost: "1000.0"
+            # Minimum amount of table data for a parallel scan to be considered
+            min_parallel_table_scan_size: "8MB"
+            # Monitoring
+            shared_preload_libraries: "pg_buffercache,pg_stat_statements,pg_cron,pg_stat_kcache"
+            track_io_timing: on
+            track_functions: pl
+            # Replication
+            wal_level: replica
+            max_wal_senders: "10"
+            synchronous_commit: on
+            # Checkpointing
+            checkpoint_timeout: "15 min"
+            checkpoint_completion_target: "0.9"
+            min_wal_size: '512 MB'
+            max_wal_size: '1024 MB'
+            # archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
+            # archive_command: "/bin/true" # not doing anything yet with WAL-s
+            password_encryption: scram-sha-256
+            # WAL writing
+            wal_compression: "on"
+            wal_buffers: "-1"
+            wal_writer_delay: 200ms
+            wal_writer_flush_after: 1MB
+            wal_keep_size: "3650 MB"
+            # Background writer
+            bgwriter_delay: 200ms
+            bgwriter_lru_maxpages: "100"
+            bgwriter_lru_multiplier: "2.0"
+            bgwriter_flush_after: "0"
+            # Parallel queries
+            max_worker_processes: "4"
+            max_parallel_workers_per_gather: "2"
+            max_parallel_maintenance_workers: "2"
+            max_parallel_workers: "4"
+            parallel_leader_participation: "on"
+            # Advanced features
+            enable_partitionwise_join: "on"
+            enable_partitionwise_aggregate: "on"
+            jit: "on"
+            max_slot_wal_keep_size: "1000 MB"
+            track_wal_io_timing: "on"
+            maintenance_io_concurrency: "150"
+            wal_recycle: "on"
+            autovacuum_analyze_scale_factor: "0.05"
+            autovacuum_vacuum_scale_factor: "0.02"
+            autovacuum_vacuum_cost_limit: "400"
+            vacuum_cost_limit: "300"
+    teamId: midnightthoughts
+    volume:
+        size: 100Gi
+    patroni:
+        failsafe_mode: true
+        synchronous_mode: false
+        #synchronous_mode: true

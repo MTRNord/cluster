@@ -1,14 +1,13 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sliding-proxy-midnightthoughts
-  namespace: matrix
+    name: sliding-proxy-midnightthoughts
+    namespace: matrix
 spec:
-  template:
-    spec:
-      containers:
-        - name: sliding-proxy-midnightthoughts-container
-          env:
-            - name: SYNCV3_SERVER
-              value: "https://matrix.midnightthoughts.space"
+    template:
+        spec:
+            containers:
+                - name: sliding-proxy-midnightthoughts-container
+                  env:
+                    - name: SYNCV3_SERVER
+                      value: "https://matrix.midnightthoughts.space"

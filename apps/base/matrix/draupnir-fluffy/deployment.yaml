@@ -1,60 +1,59 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mjolnir-fluffy
-  namespace: matrix
+    name: mjolnir-fluffy
+    namespace: matrix
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mjolnir-fluffy
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: mjolnir-fluffy
-    spec:
-      containers:
-      - image: gnuxie/draupnir:latest
-        imagePullPolicy: Always
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: mjolnir-fluffy-container
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 30
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
-          #runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /data/config/production.yaml
-          name: config-volume
-          subPath: production.yaml
-        - mountPath: /data/storage
-          name: storage
-      volumes:
-      - configMap:
-          name: mjolnir-fluffy-config
-        name: config-volume
-      - name: storage
-        emptyDir:
-          sizeLimit: 2048Mi
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mjolnir-fluffy
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            labels:
+                app: mjolnir-fluffy
+        spec:
+            containers:
+                - image: gnuxie/draupnir:latest
+                  imagePullPolicy: Always
+                  livenessProbe:
+                    failureThreshold: 3
+                    httpGet:
+                        path: /healthz
+                        port: 8080
+                    initialDelaySeconds: 60
+                    periodSeconds: 30
+                    successThreshold: 1
+                    timeoutSeconds: 1
+                  name: mjolnir-fluffy-container
+                  readinessProbe:
+                    httpGet:
+                        path: /health
+                        port: 8080
+                    initialDelaySeconds: 60
+                    periodSeconds: 30
+                  securityContext:
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                        drop:
+                            - ALL
+                    readOnlyRootFilesystem: true
+                    #runAsNonRoot: true
+                  volumeMounts:
+                    - mountPath: /data/config/production.yaml
+                      name: config-volume
+                      subPath: production.yaml
+                    - mountPath: /data/storage
+                      name: storage
+            volumes:
+                - configMap:
+                    name: mjolnir-fluffy-config
+                  name: config-volume
+                - name: storage
+                  emptyDir:
+                    sizeLimit: 2048Mi

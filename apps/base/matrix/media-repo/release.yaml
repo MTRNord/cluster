@@ -1,187 +1,183 @@
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: local-data-matrix-media-repo-postgresql-1
-  namespace: matrix
-  labels:
-    app: postgresql
-    release: matrix-media-repo
-    role: master
+    name: local-data-matrix-media-repo-postgresql-1
+    namespace: matrix
+    labels:
+        app: postgresql
+        release: matrix-media-repo
+        role: master
 spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 16Gi
-  storageClassName: nfs-client
+    accessModes:
+        - ReadWriteOnce
+    volumeMode: Filesystem
+    resources:
+        requests:
+            storage: 16Gi
+    storageClassName: nfs-client
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: matrix-media-repo
-  namespace: matrix
+    name: matrix-media-repo
+    namespace: matrix
 spec:
-  releaseName: matrix-media-repo
-  chart:
-    spec:
-      chart: matrix-media-repo
-      sourceRef:
-        kind: HelmRepository
-        name: ananace-charts
-  interval: 50m
-  install:
-    remediation:
-      retries: 3
-  values:
-    replicaCount: 1
-    image:
-      repository: ghcr.io/t2bot/matrix-media-repo
-      tag: v1.3.4
-#      pullPolicy: Always
-    podmonitor:
-      enabled: true
-    config:
-      metrics:
-        enabled: true
-        bindAddress: "0.0.0.0"
-        port: 9000
-      datastores:
-        - type: file
-          id: 15f18489315d4638cbe188248bab971822ec7f7e
-          enabled: true
-          forKinds: ["all"]
-          opts:
-            path: /media
-      federation:
-        backoffAt: 20
-      timeouts:
-        urlPreviewTimeoutSeconds: 10
-        federationTimeoutSeconds: 120
-        clientServerTimeoutSeconds: 30
-      featureSupport:
-        MSC2448:
-          enabled: true
-          maxWidth: 1024
-          maxHeight: 1024
-          thumbWidth: 64
-          thumbHeight: 64
-          xComponents: 4
-          yComponents: 3
-          punch: 1
-      quarantine:
-        replaceThumbnails: true
-        replaceDownloads: false
-        thumbnailPath: ""
-        allowLocalAdmins: true
-      identicons:
-        enabled: true
-      thumbnails:
-        maxSourceBytes: 1048576000
-        numWorkers: 10
-        maxPixels: 1048576000
-        sizes:
-          - width: 32
-            height: 32
-          - width: 96
-            height: 96
-          - width: 320
-            height: 240
-          - width: 640
-            height: 480
-          - width: 768
-            height: 240
-          - width: 800
-            height: 600
-          - width: 1000000
-            height: 1000000
-        dynamicSizing: true
-        types:
-          - "image/jpeg"
-          - "image/jpg"
-          - "image/png"
-          - "image/gif"
-          - "image/heif"
-          - "image/webp"
-          - "image/svg+xml"
-          - "audio/mpeg"
-          - "audio/ogg"
-          - "audio/wav"
-          - "audio/flac"
-          - "video/mp4"
-        allowAnimated: true
-        defaultAnimated: true
-        maxAnimateSizeBytes: 10485760
-        stillFrame: 0.5
-        expireAfterDays: 0
-      urlPreviews:
-        enabled: true
-        maxPageSizeBytes: 10485760
-        previewUnsafeCertificates: false
-        numWords: 50
-        maxLength: 200
-        numTitleWords: 30
-        maxTitleLength: 150
-        filePreviewTypes:
-          - "image/*"
-        numWorkers: 10
-        disallowedNetworks:
-          - 127.0.0.1/8
-          - 10.0.0.0/8
-          - 172.16.0.0/12
-          - 192.168.0.0/16
-          - 100.64.0.0/10
-          - 169.254.0.0/16
-          - ::1/128
-          - fe80::/64
-          - fc00::/7
-        allowedNetworks:
-          - 0.0.0.0/0
-          - "::/0"
-        expireAfterDays: 10
-        defaultLanguage: en-US,en
-        oEmbed: true
-      downloads:
-        maxBytes: 104857600
-        numWorkers: 10
-        failureCacheMinutes: 5
-        cache:
-          enabled: true
-          maxSizeBytes: 1048576000
-          maxFileSizeBytes: 1048576000
-          trackedMinutes: 30
-          minDownloads: 2
-          minCacheTimeSeconds: 300
-          minEvictedTimeSeconds: 60
-        expireAfterDays: 14
-      uploads:
-        maxBytes: 1048576000
-        minBytes: 100
-        reportedMaxBytes: 0
-
-    postgresql:
-      volumePermissions:
-        enabled: true
-
-      primary:
-        persistence:
-          size: 16G
-    extraRepo:
-      useForwardedHost: false
-      #jsonLogs: true
-      logLevel: "debug"
-
-    redis:
-      architecture: standalone
-      auth:
-        enabled: false
-      commonConfiguration: |-
-        # Enable AOF https://redis.io/topics/persistence#append-only-file
-        appendonly yes
-        # Disable RDB persistence, AOF persistence already enabled.
-        save ""
-        # Set maxmemory
-        maxmemory 1gb
-        # Make sure we clear stuff properly
-        maxmemory-policy allkeys-lfu
+    releaseName: matrix-media-repo
+    chart:
+        spec:
+            chart: matrix-media-repo
+            sourceRef:
+                kind: HelmRepository
+                name: ananace-charts
+    interval: 50m
+    install:
+        remediation:
+            retries: 3
+    values:
+        replicaCount: 1
+        image:
+            repository: ghcr.io/t2bot/matrix-media-repo
+            tag: v1.3.4
+            #      pullPolicy: Always
+        podmonitor:
+            enabled: true
+        config:
+            metrics:
+                enabled: true
+                bindAddress: "0.0.0.0"
+                port: 9000
+            datastores:
+                - type: file
+                  id: 15f18489315d4638cbe188248bab971822ec7f7e
+                  enabled: true
+                  forKinds: ["all"]
+                  opts:
+                    path: /media
+            federation:
+                backoffAt: 20
+            timeouts:
+                urlPreviewTimeoutSeconds: 10
+                federationTimeoutSeconds: 120
+                clientServerTimeoutSeconds: 30
+            featureSupport:
+                MSC2448:
+                    enabled: true
+                    maxWidth: 1024
+                    maxHeight: 1024
+                    thumbWidth: 64
+                    thumbHeight: 64
+                    xComponents: 4
+                    yComponents: 3
+                    punch: 1
+            quarantine:
+                replaceThumbnails: true
+                replaceDownloads: false
+                thumbnailPath: ""
+                allowLocalAdmins: true
+            identicons:
+                enabled: true
+            thumbnails:
+                maxSourceBytes: 1048576000
+                numWorkers: 10
+                maxPixels: 1048576000
+                sizes:
+                    - width: 32
+                      height: 32
+                    - width: 96
+                      height: 96
+                    - width: 320
+                      height: 240
+                    - width: 640
+                      height: 480
+                    - width: 768
+                      height: 240
+                    - width: 800
+                      height: 600
+                    - width: 1000000
+                      height: 1000000
+                dynamicSizing: true
+                types:
+                    - "image/jpeg"
+                    - "image/jpg"
+                    - "image/png"
+                    - "image/gif"
+                    - "image/heif"
+                    - "image/webp"
+                    - "image/svg+xml"
+                    - "audio/mpeg"
+                    - "audio/ogg"
+                    - "audio/wav"
+                    - "audio/flac"
+                    - "video/mp4"
+                allowAnimated: true
+                defaultAnimated: true
+                maxAnimateSizeBytes: 10485760
+                stillFrame: 0.5
+                expireAfterDays: 0
+            urlPreviews:
+                enabled: true
+                maxPageSizeBytes: 10485760
+                previewUnsafeCertificates: false
+                numWords: 50
+                maxLength: 200
+                numTitleWords: 30
+                maxTitleLength: 150
+                filePreviewTypes:
+                    - "image/*"
+                numWorkers: 10
+                disallowedNetworks:
+                    - 127.0.0.1/8
+                    - 10.0.0.0/8
+                    - 172.16.0.0/12
+                    - 192.168.0.0/16
+                    - 100.64.0.0/10
+                    - 169.254.0.0/16
+                    - ::1/128
+                    - fe80::/64
+                    - fc00::/7
+                allowedNetworks:
+                    - 0.0.0.0/0
+                    - "::/0"
+                expireAfterDays: 10
+                defaultLanguage: en-US,en
+                oEmbed: true
+            downloads:
+                maxBytes: 104857600
+                numWorkers: 10
+                failureCacheMinutes: 5
+                cache:
+                    enabled: true
+                    maxSizeBytes: 1048576000
+                    maxFileSizeBytes: 1048576000
+                    trackedMinutes: 30
+                    minDownloads: 2
+                    minCacheTimeSeconds: 300
+                    minEvictedTimeSeconds: 60
+                expireAfterDays: 14
+            uploads:
+                maxBytes: 1048576000
+                minBytes: 100
+                reportedMaxBytes: 0
+        postgresql:
+            volumePermissions:
+                enabled: true
+            primary:
+                persistence:
+                    size: 16G
+        extraRepo:
+            useForwardedHost: false
+            #jsonLogs: true
+            logLevel: "debug"
+        redis:
+            architecture: standalone
+            auth:
+                enabled: false
+            commonConfiguration: |-
+                # Enable AOF https://redis.io/topics/persistence#append-only-file
+                appendonly yes
+                # Disable RDB persistence, AOF persistence already enabled.
+                save ""
+                # Set maxmemory
+                maxmemory 1gb
+                # Make sure we clear stuff properly
+                maxmemory-policy allkeys-lfu

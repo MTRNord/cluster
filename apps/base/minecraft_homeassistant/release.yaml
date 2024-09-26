@@ -21,12 +21,12 @@ spec:
             hosts:
                 - host: homeassistant.daguerreo.midnightthoughts.space
                   paths:
-                      - path: /
-                        pathType: ImplementationSpecific
+                    - path: /
+                      pathType: ImplementationSpecific
             tls:
                 - secretName: homeassistant.daguerreo.midnightthoughts.space-tls
                   hosts:
-                      - homeassistant.daguerreo.midnightthoughts.space
+                    - homeassistant.daguerreo.midnightthoughts.space
         configuration:
             enabled: true
             forceInit: true
@@ -36,7 +36,7 @@ spec:
                 - 192.168.0.0/16
                 - 127.0.0.0/8
                 - 100.64.0.0/10
-              # Template for the configuration.yaml file
+                # Template for the configuration.yaml file
             # Used the `tpl` function to render the template, so you can use Go template functions
             templateConfig: |-
                 # Loads default set of integrations. Do not remove.

@@ -1,34 +1,33 @@
----
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: traefik-dashboard
-  namespace: traefik-ingress
+    name: traefik-dashboard
+    namespace: traefik-ingress
 spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`dashboard.kubernetes.midnightthoughts.space`)
-      kind: Rule
-      services:
-        - name: api@internal
-          kind: TraefikService
-  tls:
-    secretName: midnightthoughts-tls-secret
-    domains:
-      - main: dashboard.kubernetes.midnightthoughts.space
+    entryPoints:
+        - websecure
+    routes:
+        - match: Host(`dashboard.kubernetes.midnightthoughts.space`)
+          kind: Rule
+          services:
+            - name: api@internal
+              kind: TraefikService
+    tls:
+        secretName: midnightthoughts-tls-secret
+        domains:
+            - main: dashboard.kubernetes.midnightthoughts.space
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: midnightthoughts-tls-secret
-  namespace: traefik-ingress
+    name: midnightthoughts-tls-secret
+    namespace: traefik-ingress
 spec:
-  secretName: midnightthoughts-tls-secret
-  dnsNames:
-    - dashboard.kubernetes.midnightthoughts.space
-  issuerRef:
-    name: letsencrypt-dns
-    # We can reference ClusterIssuers by changing the kind here.
-    # The default value is Issuer (i.e. a locally namespaced Issuer)
-    kind: ClusterIssuer
+    secretName: midnightthoughts-tls-secret
+    dnsNames:
+        - dashboard.kubernetes.midnightthoughts.space
+    issuerRef:
+        name: letsencrypt-dns
+        # We can reference ClusterIssuers by changing the kind here.
+        # The default value is Issuer (i.e. a locally namespaced Issuer)
+        kind: ClusterIssuer

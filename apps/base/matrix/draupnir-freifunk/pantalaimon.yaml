@@ -1,79 +1,78 @@
----
 apiVersion: v1
 data:
-  pantalaimon.conf: |
-    [Default]
-    LogLevel = Debug
-    SSL = True
+    pantalaimon.conf: |
+        [Default]
+        LogLevel = Debug
+        SSL = True
 
-    [local-matrix]
-    Homeserver = https://matrix.midnightthoughts.space
-    ListenAddress = 0.0.0.0
-    ListenPort = 8008
-    SSL = True
-    UseKeyring = False
-    IgnoreVerification = True
+        [local-matrix]
+        Homeserver = https://matrix.midnightthoughts.space
+        ListenAddress = 0.0.0.0
+        ListenPort = 8008
+        SSL = True
+        UseKeyring = False
+        IgnoreVerification = True
 kind: ConfigMap
 metadata:
-  name: pantalaimon-freifunk-config
-  namespace: matrix
+    name: pantalaimon-freifunk-config
+    namespace: matrix
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pantalaimon-freifunk
-  namespace: matrix
+    name: pantalaimon-freifunk
+    namespace: matrix
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: pantalaimon-freifunk
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: pantalaimon-freifunk
-    spec:
-      containers:
-      - image: ghcr.io/mtrnord/cluster/pantalaimon:0.10.5
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /_matrix/client/v3/login
-            port: 8008
-          initialDelaySeconds: 5
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 10
-        name: pantalaimon-freifunk-container
-        readinessProbe:
-          httpGet:
-            path: /_matrix/client/v3/login
-            port: 8008
-          initialDelaySeconds: 5
-          periodSeconds: 30
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
-          #runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /data/pantalaimon.conf
-          name: config-volume
-          subPath: pantalaimon.conf
-        - mountPath: /data
-          name: storage
-      volumes:
-      - configMap:
-          name: pantalaimon-freifunk-config
-        name: config-volume
-      - name: storage
-        persistentVolumeClaim:
-          claimName: pantalaimon-freifunk
+    replicas: 1
+    selector:
+        matchLabels:
+            app: pantalaimon-freifunk
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            labels:
+                app: pantalaimon-freifunk
+        spec:
+            containers:
+                - image: ghcr.io/mtrnord/cluster/pantalaimon:0.10.5
+                  imagePullPolicy: IfNotPresent
+                  livenessProbe:
+                    failureThreshold: 3
+                    httpGet:
+                        path: /_matrix/client/v3/login
+                        port: 8008
+                    initialDelaySeconds: 5
+                    periodSeconds: 30
+                    successThreshold: 1
+                    timeoutSeconds: 10
+                  name: pantalaimon-freifunk-container
+                  readinessProbe:
+                    httpGet:
+                        path: /_matrix/client/v3/login
+                        port: 8008
+                    initialDelaySeconds: 5
+                    periodSeconds: 30
+                  securityContext:
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                        drop:
+                            - ALL
+                    readOnlyRootFilesystem: true
+                    #runAsNonRoot: true
+                  volumeMounts:
+                    - mountPath: /data/pantalaimon.conf
+                      name: config-volume
+                      subPath: pantalaimon.conf
+                    - mountPath: /data
+                      name: storage
+            volumes:
+                - configMap:
+                    name: pantalaimon-freifunk-config
+                  name: config-volume
+                - name: storage
+                  persistentVolumeClaim:
+                    claimName: pantalaimon-freifunk

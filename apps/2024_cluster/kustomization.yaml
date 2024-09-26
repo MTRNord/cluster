@@ -1,29 +1,29 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../base/authentik
-  - ../base/victoria-metrics-k8s-stack
-  - ../base/traefik
-  - ../base/externaldns
-  - ../base/postgres-operator
-  - ../base/vaultwarden
-  - ../base/matrix/matrix-helm
-  - ../base/matrix/draupnir-synapse
-  - ../base/matrix/draupnir4all
-  - ../base/matrix/synapse
-  - ../base/matrix/mas
-  - ../base/matrix/draupnir-fluffy
-  - ../base/matrix/draupnir-freifunk
-  - ../base/mastodon
-  #- ../base/ejabberd
-  - ../base/openproject
-  #- ../base/plausible
-  # https://gitlab.com/mb-saces/synatainer/-/merge_requests/7
-  #- ../base/matrix/syntainer_main_synapse
-  - ../base/minecraft
-  - ../base/minecraft_homeassistant
-  - ../base/codeberg-runners
-  - ../base/coder
-  - ../base/tempo
+    - ../base/authentik
+    - ../base/victoria-metrics-k8s-stack
+    - ../base/traefik
+    - ../base/externaldns
+    - ../base/postgres-operator
+    - ../base/vaultwarden
+    - ../base/matrix/matrix-helm
+    - ../base/matrix/draupnir-synapse
+    - ../base/matrix/draupnir4all
+    - ../base/matrix/synapse
+    - ../base/matrix/mas
+    - ../base/matrix/draupnir-fluffy
+    - ../base/matrix/draupnir-freifunk
+    - ../base/mastodon
+    #- ../base/ejabberd
+    - ../base/openproject
+    #- ../base/plausible
+    # https://gitlab.com/mb-saces/synatainer/-/merge_requests/7
+    #- ../base/matrix/syntainer_main_synapse
+    - ../base/minecraft
+    - ../base/minecraft_homeassistant
+    - ../base/codeberg-runners
+    - ../base/coder
+    - ../base/tempo
 patchesStrategicMerge:
-  - postgres-operator-values.yaml
+    - postgres-operator-values.yaml

@@ -1,48 +1,47 @@
----
 apiVersion: operator.zuul-ci.org/v1alpha2
 kind: Zuul
 metadata:
-  name: zuul
-  namespace: zuul-system
+    name: zuul
+    namespace: zuul-system
 spec:
-  executor:
-    count: 1
-    #sshkey:
-    #  secretName: gerrit-secrets
-  scheduler:
-    config:
-      secretName: zuul-tenant-config
-  launcher:
-    config:
-      secretName: zuul-nodepool-config
-  web:
-    count: 1
-  connections:
-    github-ffslfl:
-      driver: github
-      app_id: 693479
-      secretName: zuul-github-config
+    executor:
+        count: 1
+        #sshkey:
+        #  secretName: gerrit-secrets
+    scheduler:
+        config:
+            secretName: zuul-tenant-config
+    launcher:
+        config:
+            secretName: zuul-nodepool-config
+    web:
+        count: 1
+    connections:
+        github-ffslfl:
+            driver: github
+            app_id: 693479
+            secretName: zuul-github-config
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: zuul-ingress
-  namespace: zuul-system
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-http
+    name: zuul-ingress
+    namespace: zuul-system
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-http
 spec:
-  rules:
-  - host: zuul.nordgedanken.dev
-    http:
-      paths:
-      - path: /
-        backend:
-          service:
-            name: zuul-web
-            port: 
-              number: 9000
-        pathType: ImplementationSpecific
-  tls:
-  - hosts:
-    - zuul.nordgedanken.dev
-    secretName: zuul.nordgedanken.dev-tls-secret
+    rules:
+        - host: zuul.nordgedanken.dev
+          http:
+            paths:
+                - path: /
+                  backend:
+                    service:
+                        name: zuul-web
+                        port:
+                            number: 9000
+                  pathType: ImplementationSpecific
+    tls:
+        - hosts:
+            - zuul.nordgedanken.dev
+          secretName: zuul.nordgedanken.dev-tls-secret

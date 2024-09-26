@@ -1,98 +1,98 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+    name: infra-controllers
+    namespace: flux-system
+spec:
+    interval: 1h
+    retryInterval: 1m
+    timeout: 5m
+    sourceRef:
+        kind: GitRepository
+        name: flux-system
+    path: ./infrastructure_old/controllers
+    prune: true
+    wait: true
+    decryption:
+        provider: sops
+        secretRef:
+            name: sops-age
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: infra-controllers
-  namespace: flux-system
+    name: infra-notifications
+    namespace: flux-system
 spec:
-  interval: 1h
-  retryInterval: 1m
-  timeout: 5m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure_old/controllers
-  prune: true
-  wait: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
+    dependsOn:
+        - name: infra-controllers
+    interval: 1h
+    retryInterval: 1m
+    timeout: 5m
+    sourceRef:
+        kind: GitRepository
+        name: flux-system
+    path: ./infrastructure_old/notifications
+    prune: true
+    decryption:
+        provider: sops
+        secretRef:
+            name: sops-age
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: infra-notifications
-  namespace: flux-system
+    name: infra-configs
+    namespace: flux-system
 spec:
-  dependsOn:
-    - name: infra-controllers
-  interval: 1h
-  retryInterval: 1m
-  timeout: 5m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure_old/notifications
-  prune: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
-kind: Kustomization
-metadata:
-  name: infra-configs
-  namespace: flux-system
-spec:
-  dependsOn:
-    - name: infra-controllers
-  interval: 1h
-  retryInterval: 1m
-  timeout: 5m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure_old/configs
-  prune: true
-  patches:
-    # - patch: |
-    #     - op: replace
-    #       path: /spec/acme/server
-    #       value: https://acme-v02.api.letsencrypt.org/directory
-    #   target:
-    #     kind: ClusterIssuer
-    #     name: letsencrypt-dns
-    - patch: |
-        - op: replace
-          path: /spec/acme/server
-          value: https://acme-v02.api.letsencrypt.org/directory
-      target:
-        kind: ClusterIssuer
-        name: letsencrypt-http
-    - patch: |
-        - op: replace
-          path: /spec/acme/server
-          value: https://acme-v02.api.letsencrypt.org/directory
-      target:
-        kind: ClusterIssuer
-        name: letsencrypt-http-gwapi
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
+    dependsOn:
+        - name: infra-controllers
+    interval: 1h
+    retryInterval: 1m
+    timeout: 5m
+    sourceRef:
+        kind: GitRepository
+        name: flux-system
+    path: ./infrastructure_old/configs
+    prune: true
+    patches:
+        # - patch: |
+        #     - op: replace
+        #       path: /spec/acme/server
+        #       value: https://acme-v02.api.letsencrypt.org/directory
+        #   target:
+        #     kind: ClusterIssuer
+        #     name: letsencrypt-dns
+        - patch: |
+            - op: replace
+              path: /spec/acme/server
+              value: https://acme-v02.api.letsencrypt.org/directory
+          target:
+            kind: ClusterIssuer
+            name: letsencrypt-http
+        - patch: |
+            - op: replace
+              path: /spec/acme/server
+              value: https://acme-v02.api.letsencrypt.org/directory
+          target:
+            kind: ClusterIssuer
+            name: letsencrypt-http-gwapi
+    decryption:
+        provider: sops
+        secretRef:
+            name: sops-age
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
-  name: flux-monitoring
-  namespace: flux-system
+    name: flux-monitoring
+    namespace: flux-system
 spec:
-  interval: 30m0s
-  ref:
-    branch: main
-  url: https://github.com/fluxcd/flux2
+    interval: 30m0s
+    ref:
+        branch: main
+    url: https://github.com/fluxcd/flux2
+
 # ---
 # apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 # kind: Kustomization
@@ -118,20 +118,20 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: infra-monitoring
-  namespace: flux-system
+    name: infra-monitoring
+    namespace: flux-system
 spec:
-  dependsOn:
-    - name: infra-controllers
-  interval: 1h
-  retryInterval: 1m
-  timeout: 5m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure_old/monitoring
-  prune: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
+    dependsOn:
+        - name: infra-controllers
+    interval: 1h
+    retryInterval: 1m
+    timeout: 5m
+    sourceRef:
+        kind: GitRepository
+        name: flux-system
+    path: ./infrastructure_old/monitoring
+    prune: true
+    decryption:
+        provider: sops
+        secretRef:
+            name: sops-age

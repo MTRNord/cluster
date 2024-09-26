@@ -29,10 +29,9 @@ spec:
         extraVolumes:
             - name: tetra-log
               hostPath:
-                  path: "/var/run/cilium/tetragon/"
-
+                path: "/var/run/cilium/tetragon/"
         # extraVolumeMounts -- Additional Volume to mount into Vector Containers.
-        extraVolumeMounts: 
+        extraVolumeMounts:
             - name: tetra-log
               mountPath: "/var/run/cilium/tetragon/"
               readOnly: true

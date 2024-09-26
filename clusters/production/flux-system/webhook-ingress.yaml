@@ -1,26 +1,25 @@
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: webhook-ingress
-  namespace: flux-system
-  labels:
     name: webhook-ingress
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-http
+    namespace: flux-system
+    labels:
+        name: webhook-ingress
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-http
 spec:
-  rules:
-    - host: webhook.kubernetes.midnightthoughts.space
-      http:
-        paths:
-          - pathType: Prefix
-            path: "/"
-            backend:
-              service:
-                name: webhook-receiver
-                port:
-                  number: 80
-  tls:
-    - secretName: webhook.kubernetes.midnightthoughts.space-tls
-      hosts:
-        - webhook.kubernetes.midnightthoughts.space
+    rules:
+        - host: webhook.kubernetes.midnightthoughts.space
+          http:
+            paths:
+                - pathType: Prefix
+                  path: "/"
+                  backend:
+                    service:
+                        name: webhook-receiver
+                        port:
+                            number: 80
+    tls:
+        - secretName: webhook.kubernetes.midnightthoughts.space-tls
+          hosts:
+            - webhook.kubernetes.midnightthoughts.space

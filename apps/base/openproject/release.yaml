@@ -1,77 +1,77 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: openproject
-  namespace: openproject
+    name: openproject
+    namespace: openproject
 spec:
-  releaseName: openproject
-  chart:
-    spec:
-      chart: openproject
-      sourceRef:
-        kind: HelmRepository
-        name: openproject
-  interval: 60m
-  values:
-    image:
-      repository: openproject/openproject
-      tag: 14-slim
-    affinity:
-      podAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-                - key: app.kubernetes.io/name
-                  operator: In
-                  values:
-                    - openproject
-            topologyKey: kubernetes.io/hostname
-    initdb:
-      image:
-        tag: 15
-    ingress:
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-        external-dns.alpha.kubernetes.io/hostname: projects.midnightthoughts.space
-      host: projects.midnightthoughts.space
-      tls:
-        secretName: projects.midnightthoughts.space-tls
-    openproject:
-      admin_user:
-        password: ENC[AES256_GCM,data:n0nKQZh7qpYb,iv:OIKAAI6TzpKpEE47dKW6u/5cXQn7nkcnU0W1NgIhqbE=,tag:Q6/VTIXW1obFgMcN4U8Yag==,type:str]
-        password_reset: "false"
-        name: MTRNord
-        mail: mtrnord@nordgedanken.dev
-    persistence:
-      accessModes:
-        - ReadWriteOnce
-      size: 5Gi
-    postgresql:
-      bundled: false
-      connection:
-        host: postgres-cluster.postgres-cluster.svc.cluster.local
-        port: 5432
-      auth:
-        username: openproject
-        database: openproject
-        password: ENC[AES256_GCM,data:9VHfS8uXps9ysdFVBNJjGFp26rJcieDqqhPUamlihZVsQKcuzXEXBjS8uWGLZ66GcXavJ9f91tQNIvsuZvNZiA==,iv:gNT+u7mKU8juW46knX6xfF0urC2Ihf9aXccVsMlBOD8=,tag:a12TWYESsSoN9GRleQMYXw==,type:str]
+    releaseName: openproject
+    chart:
+        spec:
+            chart: openproject
+            sourceRef:
+                kind: HelmRepository
+                name: openproject
+    interval: 60m
+    values:
+        image:
+            repository: openproject/openproject
+            tag: 14-slim
+        affinity:
+            podAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    - labelSelector:
+                        matchExpressions:
+                            - key: app.kubernetes.io/name
+                              operator: In
+                              values:
+                                - openproject
+                      topologyKey: kubernetes.io/hostname
+        initdb:
+            image:
+                tag: 15
+        ingress:
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+                external-dns.alpha.kubernetes.io/hostname: projects.midnightthoughts.space
+            host: projects.midnightthoughts.space
+            tls:
+                secretName: projects.midnightthoughts.space-tls
+        openproject:
+            admin_user:
+                password: ENC[AES256_GCM,data:n0nKQZh7qpYb,iv:OIKAAI6TzpKpEE47dKW6u/5cXQn7nkcnU0W1NgIhqbE=,tag:Q6/VTIXW1obFgMcN4U8Yag==,type:str]
+                password_reset: "false"
+                name: MTRNord
+                mail: mtrnord@nordgedanken.dev
+        persistence:
+            accessModes:
+                - ReadWriteOnce
+            size: 5Gi
+        postgresql:
+            bundled: false
+            connection:
+                host: postgres-cluster.postgres-cluster.svc.cluster.local
+                port: 5432
+            auth:
+                username: openproject
+                database: openproject
+                password: ENC[AES256_GCM,data:9VHfS8uXps9ysdFVBNJjGFp26rJcieDqqhPUamlihZVsQKcuzXEXBjS8uWGLZ66GcXavJ9f91tQNIvsuZvNZiA==,iv:gNT+u7mKU8juW46knX6xfF0urC2Ihf9aXccVsMlBOD8=,tag:a12TWYESsSoN9GRleQMYXw==,type:str]
 sops:
-  kms: []
-  gcp_kms: []
-  azure_kv: []
-  hc_vault: []
-  age:
-    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBa2Y1YnEwbytxelZxSGEw
-        aUZRWnpNUlBjU0EyWWt5Q1ZVRlNXY3duRURnCjlsaVhjb05nOThDRXdmczVFcUZM
-        SWgyWTZzRkpycEVja01YNXFlSVFUMWcKLS0tIDZ5akVtTENCS0ZSOFEwUkptQnhq
-        QXRCYmZmWjQ0eXNOWm44MFNIRW1xem8KtQQX9ywT4HwRDjjemurU4nwKObd5qRg1
-        yxPwK54TyezOpiSv4jBhCTGyULELEQUaWdPzunQuDJe/CJQ/kjvmMw==
-        -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2024-05-18T15:52:35Z"
-  mac: ENC[AES256_GCM,data:b3h1sDHCMJ5v9lSnkY60BsDJeIU9Bc/44vY4ykUgZYvmJEw6djeX0FBHtv4vAJZrSu9hmGBiknhRfnDLFQ04ZfvVh1H95+h8yatLyBAPARjdUHyZskL9g4NSMbIZ9VnqNIPVxHQs16TpjtW0AUdc1rI7HvALKk+ZxIkfTpaxntM=,iv:qNmtO5o6bZ+EzJ9yiQtmTKa+Nu//GscbTH6T6QlD6bM=,tag:gWBRnWDHrkZge+mesxfwJA==,type:str]
-  pgp: []
-  encrypted_regex: ^(client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-  version: 3.8.1
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBa2Y1YnEwbytxelZxSGEw
+            aUZRWnpNUlBjU0EyWWt5Q1ZVRlNXY3duRURnCjlsaVhjb05nOThDRXdmczVFcUZM
+            SWgyWTZzRkpycEVja01YNXFlSVFUMWcKLS0tIDZ5akVtTENCS0ZSOFEwUkptQnhq
+            QXRCYmZmWjQ0eXNOWm44MFNIRW1xem8KtQQX9ywT4HwRDjjemurU4nwKObd5qRg1
+            yxPwK54TyezOpiSv4jBhCTGyULELEQUaWdPzunQuDJe/CJQ/kjvmMw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-18T15:52:35Z"
+    mac: ENC[AES256_GCM,data:b3h1sDHCMJ5v9lSnkY60BsDJeIU9Bc/44vY4ykUgZYvmJEw6djeX0FBHtv4vAJZrSu9hmGBiknhRfnDLFQ04ZfvVh1H95+h8yatLyBAPARjdUHyZskL9g4NSMbIZ9VnqNIPVxHQs16TpjtW0AUdc1rI7HvALKk+ZxIkfTpaxntM=,iv:qNmtO5o6bZ+EzJ9yiQtmTKa+Nu//GscbTH6T6QlD6bM=,tag:gWBRnWDHrkZge+mesxfwJA==,type:str]
+    pgp: []
+    encrypted_regex: ^(client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1

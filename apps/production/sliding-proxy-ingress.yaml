@@ -1,38 +1,37 @@
----
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: sliding-proxy-midnightthoughts
-  name: sliding-proxy-midnightthoughts-srv
-  namespace: matrix
+    labels:
+        app: sliding-proxy-midnightthoughts
+    name: sliding-proxy-midnightthoughts-srv
+    namespace: matrix
 spec:
-  ports:
-    - port: 8888
-  selector:
-    app: sliding-proxy-midnightthoughts
+    ports:
+        - port: 8888
+    selector:
+        app: sliding-proxy-midnightthoughts
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-http
-  name: sliding-proxy-midnightthoughts
-  namespace: matrix
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-http
+    name: sliding-proxy-midnightthoughts
+    namespace: matrix
 spec:
-  ingressClassName: traefik
-  rules:
-    - host: sliding.matrix.midnightthoughts.space
-      http:
-        paths:
-          - backend:
-              service:
-                name: sliding-proxy-midnightthoughts-srv
-                port:
-                  number: 8888
-            path: /
-            pathType: Prefix
-  tls:
-    - hosts:
-        - sliding.matrix.midnightthoughts.space
-      secretName: sliding-proxy-midnightthoughts-tls-secret
+    ingressClassName: traefik
+    rules:
+        - host: sliding.matrix.midnightthoughts.space
+          http:
+            paths:
+                - backend:
+                    service:
+                        name: sliding-proxy-midnightthoughts-srv
+                        port:
+                            number: 8888
+                  path: /
+                  pathType: Prefix
+    tls:
+        - hosts:
+            - sliding.matrix.midnightthoughts.space
+          secretName: sliding-proxy-midnightthoughts-tls-secret

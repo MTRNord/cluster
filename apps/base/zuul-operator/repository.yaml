@@ -1,19 +1,12 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: zuul
-  namespace: zuul-system
+    name: zuul
+    namespace: zuul-system
 spec:
-  interval: 5m
-  url: https://opendev.org/zuul/zuul-operator.git
-  ref:
-    branch: master
-  ignore: |
-    # exclude all
-    /*
-    # include deploy dir
-    !/deploy    
-    # exclude the rbac.yaml
-    /deploy/rbac.yaml
-    # exclude the zuul-ci_v1alpha2_zuul_cr.yaml
-    /deploy/crds/zuul-ci_v1alpha2_zuul_cr.yaml
+    interval: 5m
+    url: https://opendev.org/zuul/zuul-operator.git
+    ref:
+        branch: master
+    ignore: "# exclude all\n/*\n# include deploy dir\n!/deploy    \n# exclude the rbac.yaml\n/deploy/rbac.yaml\n# exclude
+        the zuul-ci_v1alpha2_zuul_cr.yaml\n/deploy/crds/zuul-ci_v1alpha2_zuul_cr.yaml\n"

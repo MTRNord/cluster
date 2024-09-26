@@ -1,67 +1,67 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kube-fledged
+    name: kube-fledged
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: kube-fledged
-  namespace: kube-fledged
+    name: kube-fledged
+    namespace: kube-fledged
 spec:
-  interval: 24h
-  url: https://senthilrch.github.io/kubefledged-charts/
+    interval: 24h
+    url: https://senthilrch.github.io/kubefledged-charts/
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: kube-fledged
-  namespace: kube-fledged
+    name: kube-fledged
+    namespace: kube-fledged
 spec:
-  interval: 60m
-  chart:
-    spec:
-      chart: kube-fledged
-      sourceRef:
-        kind: HelmRepository
-        name: kube-fledged
-        namespace: kube-fledged
-      interval: 12h
-  values: {}
+    interval: 60m
+    chart:
+        spec:
+            chart: kube-fledged
+            sourceRef:
+                kind: HelmRepository
+                name: kube-fledged
+                namespace: kube-fledged
+            interval: 12h
+    values: {}
 ---
 apiVersion: kubefledged.io/v1alpha2
 kind: ImageCache
 metadata:
-  # Name of the image cache. A cluster can have multiple image cache objects
-  name: imagecache
-  namespace: kube-fledged
+    # Name of the image cache. A cluster can have multiple image cache objects
+    name: imagecache
+    namespace: kube-fledged
 spec:
-  # The "cacheSpec" field allows a user to define a list of images and onto which worker nodes those images should be cached (i.e. pre-pulled).
-  cacheSpec:
-    # Specifies a list of images (nginx:1.23.1) with no node selector, hence these images will be cached in all the nodes in the cluster
-    - images:
-        - docker.io/senthilrch/kubefledged-controller:v0.10.0 # Controller kube-fleged
-        - docker.io/senthilrch/kubefledged-webhook-server:v0.10.0 # Webhook server kube-flered
-        - quay.io/cilium/cilium:v1.15.4@sha256:b760a4831f5aab71c711f7537a107b751d0d0ce90dd32d8b358df3c5da385426 # Cilium
-        - ghcr.io/mastodon/mastodon:v4.2.8 # Mastodon
-        - ghcr.io/element-hq/synapse:v1.108.0 # Synapse
-        - ghcr.io/zalando/spilo-16:3.2-p2 # Spilo
-        - eqalpha/keydb:latest # Keydb
-        - gnuxie/draupnir:latest # Draupnir upstream
-        - ghcr.io/mtrnord/cluster/pantalaimon:0.10.5 # Pantalaimon
-        - ghcr.io/mtrnord/cluster/draupnir:d4all # D4All
-        - ghcr.io/matrix-org/sliding-sync # Sliding sync
-        - openproject/openproject:14-slim # Openproject
-        - ghcr.io/fluxcd/source-controller:v1.2.4 # Source Control
-        - ghcr.io/fluxcd/kustomize-controller:v1.2.2 # Kustomize controller
-        - ghcr.io/fluxcd/helm-controller:v0.37.4 # Helm Controller
-        - ghcr.io/fluxcd/notification-controller:v1.2.4 # Notification Controller
-        - ghcr.io/fluxcd/image-reflector-controller:v0.31.2 # Image reflector controller
-        - ghcr.io/fluxcd/image-automation-controller:v0.37.1 # Image automation controller
-        # Plausible
-        - curlimages/curl:8.2.1
-        - bitnami/clickhouse:23.3.9
-        - plausible/analytics:v2.0.0
-  # Specifies a list of image pull secrets to pull images from private repositories into the cache
-  imagePullSecrets:
-    - name: ghcr-pull
+    # The "cacheSpec" field allows a user to define a list of images and onto which worker nodes those images should be cached (i.e. pre-pulled).
+    cacheSpec:
+        # Specifies a list of images (nginx:1.23.1) with no node selector, hence these images will be cached in all the nodes in the cluster
+        - images:
+            - docker.io/senthilrch/kubefledged-controller:v0.10.0 # Controller kube-fleged
+            - docker.io/senthilrch/kubefledged-webhook-server:v0.10.0 # Webhook server kube-flered
+            - quay.io/cilium/cilium:v1.15.4@sha256:b760a4831f5aab71c711f7537a107b751d0d0ce90dd32d8b358df3c5da385426 # Cilium
+            - ghcr.io/mastodon/mastodon:v4.2.8 # Mastodon
+            - ghcr.io/element-hq/synapse:v1.108.0 # Synapse
+            - ghcr.io/zalando/spilo-16:3.2-p2 # Spilo
+            - eqalpha/keydb:latest # Keydb
+            - gnuxie/draupnir:latest # Draupnir upstream
+            - ghcr.io/mtrnord/cluster/pantalaimon:0.10.5 # Pantalaimon
+            - ghcr.io/mtrnord/cluster/draupnir:d4all # D4All
+            - ghcr.io/matrix-org/sliding-sync # Sliding sync
+            - openproject/openproject:14-slim # Openproject
+            - ghcr.io/fluxcd/source-controller:v1.2.4 # Source Control
+            - ghcr.io/fluxcd/kustomize-controller:v1.2.2 # Kustomize controller
+            - ghcr.io/fluxcd/helm-controller:v0.37.4 # Helm Controller
+            - ghcr.io/fluxcd/notification-controller:v1.2.4 # Notification Controller
+            - ghcr.io/fluxcd/image-reflector-controller:v0.31.2 # Image reflector controller
+            - ghcr.io/fluxcd/image-automation-controller:v0.37.1 # Image automation controller
+            # Plausible
+            - curlimages/curl:8.2.1
+            - bitnami/clickhouse:23.3.9
+            - plausible/analytics:v2.0.0
+    # Specifies a list of image pull secrets to pull images from private repositories into the cache
+    imagePullSecrets:
+        - name: ghcr-pull

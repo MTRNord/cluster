@@ -1,103 +1,102 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mas
+    name: mas
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mas
-  template:
-    metadata:
-      labels:
-        app: mas
-    spec:
-      containers:
-        - name: mas
-          image: ghcr.io/element-hq/matrix-authentication-service:latest
-          imagePullPolicy: Always
-          # Normal mode
-          args: [ "server" ]
-          #args: [ "help" ]
-          ports:
-            - containerPort: 8080
-            - containerPort: 8081
-          # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
-          volumeMounts:
-            - name: mas-config
-              mountPath: /config.yaml
-              subPath: config
-          # Set MAS_CONIG env variable to the path of the config file
-          env:
-            - name: MAS_CONFIG
-              value: /config.yaml
-      initContainers:
-        - name: mas-config
-          image: ghcr.io/element-hq/matrix-authentication-service:latest
-          imagePullPolicy: Always
-          # Sync config
-          args: [ "config", "sync" ]
-          # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
-          volumeMounts:
-            - name: mas-config
-              mountPath: /config.yaml
-              subPath: config
-          # Set MAS_CONIG env variable to the path of the config file
-          env:
-            - name: MAS_CONFIG
-              value: /config.yaml
-      livenessProbe:
-        httpGet:
-          path: /health
-          port: 8081
-        initialDelaySeconds: 10
-        timeoutSeconds: 5
-      readinessProbe:
-        httpGet:
-          path: /health
-          port: 8081
-        initialDelaySeconds: 10
-        timeoutSeconds: 5
-      # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
-      volumes:
-        - name: mas-config
-          secret:
-            secretName: mas-config
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mas
+    template:
+        metadata:
+            labels:
+                app: mas
+        spec:
+            containers:
+                - name: mas
+                  image: ghcr.io/element-hq/matrix-authentication-service:latest
+                  imagePullPolicy: Always
+                  # Normal mode
+                  args: ["server"]
+                  #args: [ "help" ]
+                  ports:
+                    - containerPort: 8080
+                    - containerPort: 8081
+                  # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
+                  volumeMounts:
+                    - name: mas-config
+                      mountPath: /config.yaml
+                      subPath: config
+                  # Set MAS_CONIG env variable to the path of the config file
+                  env:
+                    - name: MAS_CONFIG
+                      value: /config.yaml
+            initContainers:
+                - name: mas-config
+                  image: ghcr.io/element-hq/matrix-authentication-service:latest
+                  imagePullPolicy: Always
+                  # Sync config
+                  args: ["config", "sync"]
+                  # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
+                  volumeMounts:
+                    - name: mas-config
+                      mountPath: /config.yaml
+                      subPath: config
+                  # Set MAS_CONIG env variable to the path of the config file
+                  env:
+                    - name: MAS_CONFIG
+                      value: /config.yaml
+            livenessProbe:
+                httpGet:
+                    path: /health
+                    port: 8081
+                initialDelaySeconds: 10
+                timeoutSeconds: 5
+            readinessProbe:
+                httpGet:
+                    path: /health
+                    port: 8081
+                initialDelaySeconds: 10
+                timeoutSeconds: 5
+            # Mount the mas config which is stored in the mas-config secret at the config path and should go to /config.yaml
+            volumes:
+                - name: mas-config
+                  secret:
+                    secretName: mas-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mas
+    name: mas
 spec:
-  selector:
-    app: mas
-  ports:
-  - name: http
-    protocol: TCP
-    port: 8080
-    targetPort: 8080
+    selector:
+        app: mas
+    ports:
+        - name: http
+          protocol: TCP
+          port: 8080
+          targetPort: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mas
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-dns
-    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+    name: mas
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
 spec:
-  rules:
-    - host: mas.matrix.midnightthoughts.space
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name:  mas
-                port:
-                  number: 8080
-  tls:
-    - hosts:
-        - mas.matrix.midnightthoughts.space
-      secretName: mas.matrix.midnightthoughts.space-tls-secret
+    rules:
+        - host: mas.matrix.midnightthoughts.space
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: mas
+                        port:
+                            number: 8080
+    tls:
+        - hosts:
+            - mas.matrix.midnightthoughts.space
+          secretName: mas.matrix.midnightthoughts.space-tls-secret

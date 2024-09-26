@@ -1,59 +1,57 @@
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: umami
-  namespace: umami
+    name: umami
+    namespace: umami
 spec:
-  ports:
-  - port: 3000
-    name: web
-  selector:
-    app: umami
+    ports:
+        - port: 3000
+          name: web
+    selector:
+        app: umami
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: umami
-  namespace: umami
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-http
-    traefik.ingress.kubernetes.io/router.middlewares: umami-umami-cors@kubernetescrd
+    name: umami
+    namespace: umami
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-http
+        traefik.ingress.kubernetes.io/router.middlewares: umami-umami-cors@kubernetescrd
 spec:
-  tls:
-  - hosts:
-    - umami.nordgedanken.dev
-    secretName: umami-certs
-  rules:
-  - host: umami.nordgedanken.dev
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: umami
-            port:
-              number: 3000
-
+    tls:
+        - hosts:
+            - umami.nordgedanken.dev
+          secretName: umami-certs
+    rules:
+        - host: umami.nordgedanken.dev
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: umami
+                        port:
+                            number: 3000
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: umami-cors
-  namespace: umami
+    name: umami-cors
+    namespace: umami
 spec:
-  headers:
-    accessControlAllowMethods:
-      - "GET"
-      - "OPTIONS"
-      - "PUT"
-      - "POST"
-    accessControlAllowHeaders:
-      - "*"
-    accessControlAllowOriginList:
-      - "https://nordgedanken.dev"
-      - "https://umami.nordgedanken.dev"
-      - "https://mtrnord.blog"
-    accessControlMaxAge: 100
-    addVaryHeader: false
+    headers:
+        accessControlAllowMethods:
+            - "GET"
+            - "OPTIONS"
+            - "PUT"
+            - "POST"
+        accessControlAllowHeaders:
+            - "*"
+        accessControlAllowOriginList:
+            - "https://nordgedanken.dev"
+            - "https://umami.nordgedanken.dev"
+            - "https://mtrnord.blog"
+        accessControlMaxAge: 100
+        addVaryHeader: false

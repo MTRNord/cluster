@@ -1,28 +1,27 @@
----
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Provider
 metadata:
-  name: matrix
-  namespace: flux-system
+    name: matrix
+    namespace: flux-system
 spec:
-  type: matrix
-  address: https://matrix.midnightthoughts.space
-  channel: "!ZjzjALRuiBeaBxbHhE:nordgedanken.dev"
-  secretRef:
-    name: matrix-token
+    type: matrix
+    address: https://matrix.midnightthoughts.space
+    channel: "!ZjzjALRuiBeaBxbHhE:nordgedanken.dev"
+    secretRef:
+        name: matrix-token
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
 metadata:
-  name: main-infos
-  namespace: flux-system
+    name: main-infos
+    namespace: flux-system
 spec:
-  summary: "production cluster"
-  providerRef:
-    name: matrix
-  eventSeverity: error
-  eventSources:
-    - kind: GitRepository
-      name: "*"
-    - kind: Kustomization
-      name: "*"
+    summary: "production cluster"
+    providerRef:
+        name: matrix
+    eventSeverity: error
+    eventSources:
+        - kind: GitRepository
+          name: "*"
+        - kind: Kustomization
+          name: "*"

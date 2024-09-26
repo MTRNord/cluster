@@ -1,55 +1,54 @@
----
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cert-manager
+    name: cert-manager
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: cert-manager
-  namespace: cert-manager
+    name: cert-manager
+    namespace: cert-manager
 spec:
-  interval: 24h
-  url: https://charts.jetstack.io
+    interval: 24h
+    url: https://charts.jetstack.io
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: cert-manager
-  namespace: cert-manager
+    name: cert-manager
+    namespace: cert-manager
 spec:
-  interval: 30m
-  chart:
-    spec:
-      chart: cert-manager
-      version: "1.x"
-      sourceRef:
-        kind: HelmRepository
-        name: cert-manager
-        namespace: cert-manager
-      interval: 12h
-  values:
-    extraArgs:
-      - "--feature-gates=AdditionalCertificateOutputFormats=true"
-    installCRDs: true
-    enableCertificateOwnerRef: false
-    prometheus:
-      servicemonitor:
-        enabled: false
+    interval: 30m
+    chart:
+        spec:
+            chart: cert-manager
+            version: "1.x"
+            sourceRef:
+                kind: HelmRepository
+                name: cert-manager
+                namespace: cert-manager
+            interval: 12h
+    values:
+        extraArgs:
+            - "--feature-gates=AdditionalCertificateOutputFormats=true"
+        installCRDs: true
+        enableCertificateOwnerRef: false
+        prometheus:
+            servicemonitor:
+                enabled: false
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-certmanager-ingress
-  namespace: flux-system
+    name: allow-certmanager-ingress
+    namespace: flux-system
 spec:
-  podSelector:
-    matchLabels:
-      acme.cert-manager.io/http01-solver: "true"
-  ingress:
-    - ports:
-        - protocol: TCP
-          port: 8089
-  policyTypes:
-    - Ingress
+    podSelector:
+        matchLabels:
+            acme.cert-manager.io/http01-solver: "true"
+    ingress:
+        - ports:
+            - protocol: TCP
+              port: 8089
+    policyTypes:
+        - Ingress

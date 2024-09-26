@@ -42,31 +42,31 @@ spec:
                   containerPort: 30002
                   protocol: UDP
                   service:
-                      enabled: true
-                      embedded: false
-                      type: NodePort
-                      nodePort: 30002
-                      port: 30002
+                    enabled: true
+                    embedded: false
+                    type: NodePort
+                    nodePort: 30002
+                    port: 30002
                   ingress:
-                      enabled: false
+                    enabled: false
                 - name: dynmap
                   containerPort: 8123
                   protocol: TCP
                   service:
-                      enabled: true
-                      embedded: false
-                      port: 8123
+                    enabled: true
+                    embedded: false
+                    port: 8123
                   ingress:
-                      enabled: true
-                      annotations:
-                          cert-manager.io/cluster-issuer: letsencrypt-dns
-                      hosts:
-                          - name: map.daguerreo.midnightthoughts.space
-                            path: /
-                      tls:
-                          - secretName: map.daguerreo.midnightthoughts.space-tls
-                            hosts:
-                                - map.daguerreo.midnightthoughts.space
+                    enabled: true
+                    annotations:
+                        cert-manager.io/cluster-issuer: letsencrypt-dns
+                    hosts:
+                        - name: map.daguerreo.midnightthoughts.space
+                          path: /
+                    tls:
+                        - secretName: map.daguerreo.midnightthoughts.space-tls
+                          hosts:
+                            - map.daguerreo.midnightthoughts.space
             #serviceType: LoadBalancer
             serviceType: NodePort
             nodePort: 30001

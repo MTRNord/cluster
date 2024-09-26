@@ -1,132 +1,132 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: traefik
-  namespace: traefik-ingress
+    name: traefik
+    namespace: traefik-ingress
 spec:
-  releaseName: traefik
-  interval: 60m
-  chart:
-    spec:
-      chart: traefik
-      sourceRef:
-        kind: HelmRepository
-        name: traefik
-  values:
-    logs:
-      general:
-        level: INFO
-    ingressRoute:
-      dashboard:
-        enabled: false
-    dashboard:
-      enabled: true
-    ingressClass:
-      enabled: true
-      isDefaultClass: true
-    persistence:
-      enabled: false
-    additionalArguments:
-      - "--api.dashboard=true"
-      #- "--entryPoints.web.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
-      #- "--entryPoints.websecure.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
-      - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
-      - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
-    priorityClassName: "system-cluster-critical"
-    securityContext:
-      capabilities:
-        drop: ["ALL"]
-        add: ["CAP_NET_BIND_SERVICE"]
-      readOnlyRootFilesystem: true
-      runAsGroup: 65532
-      runAsNonRoot: true
-      runAsUser: 65532
-    metrics:
-      prometheus:
-        entryPoint: metrics
-        serviceMonitor:
-          metricRelabelings: []
-          relabelings: []
-          jobLabel: traefik
-          interval: 30s
-          honorLabels: true
+    releaseName: traefik
+    interval: 60m
+    chart:
+        spec:
+            chart: traefik
+            sourceRef:
+                kind: HelmRepository
+                name: traefik
+    values:
+        logs:
+            general:
+                level: INFO
+        ingressRoute:
+            dashboard:
+                enabled: false
+        dashboard:
+            enabled: true
+        ingressClass:
+            enabled: true
+            isDefaultClass: true
+        persistence:
+            enabled: false
+        additionalArguments:
+            - "--api.dashboard=true"
+            #- "--entryPoints.web.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
+            #- "--entryPoints.websecure.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
+            - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
+            - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
+        priorityClassName: "system-cluster-critical"
+        securityContext:
+            capabilities:
+                drop: ["ALL"]
+                add: ["CAP_NET_BIND_SERVICE"]
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+        metrics:
+            prometheus:
+                entryPoint: metrics
+                serviceMonitor:
+                    metricRelabelings: []
+                    relabelings: []
+                    jobLabel: traefik
+                    interval: 30s
+                    honorLabels: true
+                service:
+                    enabled: true
         service:
-          enabled: true
-    service:
-    # meow
-      annotations:
-        load-balancer.hetzner.cloud/location: hel1
-        load-balancer.hetzner.cloud/name: traefik
-        load-balancer.hetzner.cloud/use-private-ip: "true"
-        load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
-      spec:
-        externalTrafficPolicy: Local
-    deployment:
-      replicas: 2
-    tlsOptions:
-      default:
-        minVersion: VersionTLS13
-    experimental:
-      http3:
-        enabled: true
-    ports:
-      traefik:
-        port: 9000
-        expose:
-          default: false
-        exposedPort: 9000
-        protocol: TCP
-      web:
-        port: 8000
-        expose:
-          default: true
-        exposedPort: 80
-        protocol: TCP
-      # minecraft:
-      #   port: 25566
-      #   expose:
-      #     default: true
-      #   exposedPort: 25565
-      #   protocol: TCP
-      # voicechat:
-      #   port: 24455
-      #   expose:
-      #     default: true
-      #   exposedPort: 24454
-      #   protocol: TCP
-      websecure:
-        port: 8443
-        expose:
-          default: true
-        exposedPort: 443
-        protocol: TCP
-        tls:
-          enable: true
-          options: ""
-          certResolver: ""
-          domains: []
-        # Not supported by hetzner
-        http3:
-          enabled: false
-        #  advertisedPort: 443
-        middlewares:
-          - traefik-ingress-hsts@kubernetescrd
-          - traefik-ingress-compress@kubernetescrd
-      metrics:
-        port: 9100
-        expose:
-          default: false
-        exposedPort: 9100
-        protocol: TCP
-    instanceLabelOverride: traefik
-    topologySpreadConstraints:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/name: '{{ template "traefik.name" . }}'
-        maxSkew: 1
-        topologyKey: kubernetes.io/hostname
-        whenUnsatisfiable: ScheduleAnyway
-    providers:
-      kubernetesIngress:
-        publishedService:
-          enabled: true
+            # meow
+            annotations:
+                load-balancer.hetzner.cloud/location: hel1
+                load-balancer.hetzner.cloud/name: traefik
+                load-balancer.hetzner.cloud/use-private-ip: "true"
+                load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
+            spec:
+                externalTrafficPolicy: Local
+        deployment:
+            replicas: 2
+        tlsOptions:
+            default:
+                minVersion: VersionTLS13
+        experimental:
+            http3:
+                enabled: true
+        ports:
+            traefik:
+                port: 9000
+                expose:
+                    default: false
+                exposedPort: 9000
+                protocol: TCP
+            web:
+                port: 8000
+                expose:
+                    default: true
+                exposedPort: 80
+                protocol: TCP
+            # minecraft:
+            #   port: 25566
+            #   expose:
+            #     default: true
+            #   exposedPort: 25565
+            #   protocol: TCP
+            # voicechat:
+            #   port: 24455
+            #   expose:
+            #     default: true
+            #   exposedPort: 24454
+            #   protocol: TCP
+            websecure:
+                port: 8443
+                expose:
+                    default: true
+                exposedPort: 443
+                protocol: TCP
+                tls:
+                    enable: true
+                    options: ""
+                    certResolver: ""
+                    domains: []
+                # Not supported by hetzner
+                http3:
+                    enabled: false
+                #  advertisedPort: 443
+                middlewares:
+                    - traefik-ingress-hsts@kubernetescrd
+                    - traefik-ingress-compress@kubernetescrd
+            metrics:
+                port: 9100
+                expose:
+                    default: false
+                exposedPort: 9100
+                protocol: TCP
+        instanceLabelOverride: traefik
+        topologySpreadConstraints:
+            - labelSelector:
+                matchLabels:
+                    app.kubernetes.io/name: '{{ template "traefik.name" . }}'
+              maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: ScheduleAnyway
+        providers:
+            kubernetesIngress:
+                publishedService:
+                    enabled: true

@@ -1,79 +1,79 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: vaultwarden
-  namespace: vaultwarden
+    name: vaultwarden
+    namespace: vaultwarden
 spec:
-  releaseName: vaultwarden
-  chart:
-    spec:
-      version: 0.22.7
-      chart: vaultwarden
-      sourceRef:
-        kind: HelmRepository
-        name: vaultwarden
-  interval: 50m
-  install:
-    remediation:
-      retries: 3
-  values:
-    pushNotifications:
-      installationId: ENC[AES256_GCM,data:FnBfSpv3K+R2rWmkooHY9aWjD5c3aMAm6xufiu8/Apg3dZc2,iv:3p2wTGW8u10ZNXTOPoPy8OIalRFhGkjVrWta5JQhOxY=,tag:1veQwIkIGlIEou9bGaIVmQ==,type:str]
-      installationKey: ENC[AES256_GCM,data:fsJxLQlRpyaWEQD4BNbchEcSuzA=,iv:MiMY+O2fRNhQ3mW/JhJMsCJ2S+5D8btCy5btFIWLHB8=,tag:OzxZIN25dnNEQgN0NIXnkQ==,type:str]
-      relayUri: https://push.bitwarden.eu
-      identityUri: https://identity.bitwarden.eu
-    signupsAllowed: false
-    domain: https://vault.midnightthoughts.space
-    signupDomains: nordgedanken.dev
-    timeZone: Europe/Berlin
-    database:
-      type: postgresql
-      uriOverride: ENC[AES256_GCM,data:e55ev6b5dQKJeIGFU+fnXz0bGeuhqP2MRQHTmU1aA5OgAGN3N5XsWN8/xnbfB4/vURkzX73GMnyfsMNDt0UlLpEs/UCiZSbZsHKorwO+Av+z2xFdwCIOvQFmomAbohAersYQViNvuEIOddjTfOwz9RmR7zYsyCabj4v9ZsThvWsze0bj9pFXzQLNAQdsJ7idAsGWHEG1pF/3JOgDzxo=,iv:m8DzQOYggwHxbqCt4GsHKSoKyI99SE5429iawtY/LBY=,tag:zLFCGOlF8xXiHS6TPYKEFg==,type:str]
-    ingress:
-      enabled: true
-      additionalAnnotations:
-        external-dns.alpha.kubernetes.io/hostname: vault.midnightthoughts.space
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-      tlsSecret: vault.midnightthoughts.space-crt
-      hostname: vault.midnightthoughts.space
-      nginxIngressAnnotations: false
-      class: traefik
-    adminToken:
-      value: $argon2id$v=19$m=19456,t=2,p=1$R0VoUlJ2T3I5UDRiL0h0cGgvTzYwbHhIL0poeFNpWmkzZThPUDh3TnNtND0$dm7crNLYaQFcGS7KZ38aKTyrV+E2RdyYKx1wDSjpu4s
-    smtp:
-      host: smtps-proxy.fastmail.com
-      from: vault@nordgedanken.dev
-      fromName: Vault Administrator
-      username:
-        value: mtrnord@nordgedanken.dev
-      password:
-        value: ENC[AES256_GCM,data:4FHuk1sZ/e3ectoPM2Zp5w==,iv:K0RlQY8q2dB7+r2iDjJc7J1vtsAkO/8haNOps/OmrQc=,tag:/IFTtNjJEQKkK7a0hb8ntQ==,type:str]
-      security: force_tls
-      port: 465
-    data:
-      name: ENC[AES256_GCM,data:H/c6xvK5/SIgcm1f0AONlQ==,iv:rabTAXdgczRnpFq6SbHh9W998GLGOcKNuz1CvSEjBgo=,tag:B3ek4Gaqq5xDiTBxGCChKA==,type:str]
-      size: ENC[AES256_GCM,data:WOAd,iv:UUfcDBTLgNXziLfqhc3NGoZAunxro3hp+OQ3Uyz5OV8=,tag:yOEAh9sSfEQDGt2HtktH7g==,type:str]
-    resources:
-      requests:
-        cpu: 50m
-        memory: 256Mi
+    releaseName: vaultwarden
+    chart:
+        spec:
+            version: 0.22.7
+            chart: vaultwarden
+            sourceRef:
+                kind: HelmRepository
+                name: vaultwarden
+    interval: 50m
+    install:
+        remediation:
+            retries: 3
+    values:
+        pushNotifications:
+            installationId: ENC[AES256_GCM,data:FnBfSpv3K+R2rWmkooHY9aWjD5c3aMAm6xufiu8/Apg3dZc2,iv:3p2wTGW8u10ZNXTOPoPy8OIalRFhGkjVrWta5JQhOxY=,tag:1veQwIkIGlIEou9bGaIVmQ==,type:str]
+            installationKey: ENC[AES256_GCM,data:fsJxLQlRpyaWEQD4BNbchEcSuzA=,iv:MiMY+O2fRNhQ3mW/JhJMsCJ2S+5D8btCy5btFIWLHB8=,tag:OzxZIN25dnNEQgN0NIXnkQ==,type:str]
+            relayUri: https://push.bitwarden.eu
+            identityUri: https://identity.bitwarden.eu
+        signupsAllowed: false
+        domain: https://vault.midnightthoughts.space
+        signupDomains: nordgedanken.dev
+        timeZone: Europe/Berlin
+        database:
+            type: postgresql
+            uriOverride: ENC[AES256_GCM,data:e55ev6b5dQKJeIGFU+fnXz0bGeuhqP2MRQHTmU1aA5OgAGN3N5XsWN8/xnbfB4/vURkzX73GMnyfsMNDt0UlLpEs/UCiZSbZsHKorwO+Av+z2xFdwCIOvQFmomAbohAersYQViNvuEIOddjTfOwz9RmR7zYsyCabj4v9ZsThvWsze0bj9pFXzQLNAQdsJ7idAsGWHEG1pF/3JOgDzxo=,iv:m8DzQOYggwHxbqCt4GsHKSoKyI99SE5429iawtY/LBY=,tag:zLFCGOlF8xXiHS6TPYKEFg==,type:str]
+        ingress:
+            enabled: true
+            additionalAnnotations:
+                external-dns.alpha.kubernetes.io/hostname: vault.midnightthoughts.space
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            tlsSecret: vault.midnightthoughts.space-crt
+            hostname: vault.midnightthoughts.space
+            nginxIngressAnnotations: false
+            class: traefik
+        adminToken:
+            value: $argon2id$v=19$m=19456,t=2,p=1$R0VoUlJ2T3I5UDRiL0h0cGgvTzYwbHhIL0poeFNpWmkzZThPUDh3TnNtND0$dm7crNLYaQFcGS7KZ38aKTyrV+E2RdyYKx1wDSjpu4s
+        smtp:
+            host: smtps-proxy.fastmail.com
+            from: vault@nordgedanken.dev
+            fromName: Vault Administrator
+            username:
+                value: mtrnord@nordgedanken.dev
+            password:
+                value: ENC[AES256_GCM,data:4FHuk1sZ/e3ectoPM2Zp5w==,iv:K0RlQY8q2dB7+r2iDjJc7J1vtsAkO/8haNOps/OmrQc=,tag:/IFTtNjJEQKkK7a0hb8ntQ==,type:str]
+            security: force_tls
+            port: 465
+        data:
+            name: ENC[AES256_GCM,data:H/c6xvK5/SIgcm1f0AONlQ==,iv:rabTAXdgczRnpFq6SbHh9W998GLGOcKNuz1CvSEjBgo=,tag:B3ek4Gaqq5xDiTBxGCChKA==,type:str]
+            size: ENC[AES256_GCM,data:WOAd,iv:UUfcDBTLgNXziLfqhc3NGoZAunxro3hp+OQ3Uyz5OV8=,tag:yOEAh9sSfEQDGt2HtktH7g==,type:str]
+        resources:
+            requests:
+                cpu: 50m
+                memory: 256Mi
 sops:
-  kms: []
-  gcp_kms: []
-  azure_kv: []
-  hc_vault: []
-  age:
-    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-      enc: |
-        -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoMWJEWHFTS2NPbDUrM3NG
-        d29iTjNhbzYyTVVYOUNMWXZwdE5LMVMrc1hZCmh2Lzg0aThVK0NGYnRmODJ3WmdQ
-        Y3JtaFlXRE1qZXk2TDR0Nkl3aVZlRDQKLS0tIE5uU0dFR3FURWc4NURDNHJqZ3lm
-        SWdZeTZSVVJGZEVBNjViY1ZxTjNtbUkKbZEVIUkaxy9jN7fZOkZNNP2DNSZI4xm1
-        uF3jRXfiX3i1yekY5Y/a7QD+nXSaArzsqyzHrXYGQ5oRbcmbRwy7fw==
-        -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2024-05-03T17:28:56Z"
-  mac: ENC[AES256_GCM,data:7QRsqvXi7jzWfPhoO1t2VD2JNzzIsGkkqm7uxLdf7Ct+hrH3J+LsKA49ybi+tgHXwNzA/pkddi5anMBHeJROktnAiGGK46a2iS0oMOjlkEB2CD81WkIjAtfldwq/NHi0i4y7RXcAZN5r1ObIFN+QkKlQ2a+/vXBdWoKeJWe+1is=,iv:nlimsDUpF8qydb4XgPtGXwNu5p3AJowT4e3wmMtFX2o=,tag:NOD6pIcoNI4HM0mVU3V9Lg==,type:str]
-  pgp: []
-  encrypted_regex: ^(installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-  version: 3.8.1
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoMWJEWHFTS2NPbDUrM3NG
+            d29iTjNhbzYyTVVYOUNMWXZwdE5LMVMrc1hZCmh2Lzg0aThVK0NGYnRmODJ3WmdQ
+            Y3JtaFlXRE1qZXk2TDR0Nkl3aVZlRDQKLS0tIE5uU0dFR3FURWc4NURDNHJqZ3lm
+            SWdZeTZSVVJGZEVBNjViY1ZxTjNtbUkKbZEVIUkaxy9jN7fZOkZNNP2DNSZI4xm1
+            uF3jRXfiX3i1yekY5Y/a7QD+nXSaArzsqyzHrXYGQ5oRbcmbRwy7fw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-03T17:28:56Z"
+    mac: ENC[AES256_GCM,data:7QRsqvXi7jzWfPhoO1t2VD2JNzzIsGkkqm7uxLdf7Ct+hrH3J+LsKA49ybi+tgHXwNzA/pkddi5anMBHeJROktnAiGGK46a2iS0oMOjlkEB2CD81WkIjAtfldwq/NHi0i4y7RXcAZN5r1ObIFN+QkKlQ2a+/vXBdWoKeJWe+1is=,iv:nlimsDUpF8qydb4XgPtGXwNu5p3AJowT4e3wmMtFX2o=,tag:NOD6pIcoNI4HM0mVU3V9Lg==,type:str]
+    pgp: []
+    encrypted_regex: ^(installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    version: 3.8.1
