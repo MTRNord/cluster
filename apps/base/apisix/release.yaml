@@ -13,7 +13,7 @@ spec:
                 kind: HelmRepository
                 name: apisix
     values:
-        timezone: "Europe/Berlin"
+        timezone: Europe/Berlin
         service:
             type: ClusterIP
             externalTrafficPolicy: ""
@@ -25,3 +25,44 @@ spec:
         etcd:
             enabled: true
             replicaCount: 1
+        dashboard:
+            enabled: true
+            ingress:
+                enabled: true
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-dns
+                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                    traefik.ingress.kubernetes.io/router.pathmatcher: PathRegexp
+                hosts:
+                    - host: apisix.midnightthoughts.space
+                      paths:
+                        - /*
+                tls:
+                    - secretName: midnightthoughts-space-tls
+                      hosts:
+                        - apisix.midnightthoughts.space
+            config:
+                authentication:
+                    users:
+                        - username: MTRNord
+                          password: ENC[AES256_GCM,data:edfqGNWxdIUi,iv:zCcstjCVAbpULKDEPzZp0tdcV88nY98JCdTvD1zoodc=,tag:g5V/ueDWMGLFFGU/oqhhTw==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTSTRqQXJndEl2a2hxS2ZB
+            bFVBS3BISzZqZkRwVW1VcThTa2EwZEpKNWhvClB1MFdnU1dmbDBOY05Qc0ZCSVdW
+            UUcwbmU4MW1Kc2Z2TWFTK29TSldERzQKLS0tIGxyaXBmQWpER3dNQ0d4YWh1WnF1
+            MHQ2R2VoVENSdTliZ1hYSEUzMTUvNk0K9NZSlt1v3mPAhq/8GX2TiyFTps0eQYFV
+            3k28au3WCfI+hAvEprem1nzoQsQkJT9bEQr4CQd0pxwcfWDPBYaPUw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-09-26T18:33:17Z"
+    mac: ENC[AES256_GCM,data:PD83MfJZfgvoADqEsgid8+oNTTWrpmlIEuIr6Z+UujVyxNvhnvxpwRErr5a5ZI1TE2+TA8i4Jc/7i8Yg5RebLyFEkUzYhT/RFP1DC1H0ThrUU7f8FM1cWXUiZ64PnVrMouLk4ZQVeNGTySGU+vxTfLIuZSrBdqbJCa+tJmB68kA=,iv:RCUXmDp5O4+ayKOXXKlIzIDvEVAqmfzMD98VTLHL3BQ=,tag:G72Rs2wLc0i645eZFiIQOA==,type:str]
+    pgp: []
+    encrypted_regex: ^(admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.8.1
