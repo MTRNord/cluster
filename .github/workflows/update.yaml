@@ -20,7 +20,7 @@ jobs:
             - name: Check for updates
               id: update
               run: "flux install --components-extra=image-reflector-controller,image-automation-controller \\\n  --export
-                > ./clusters/production/flux-system/gotk-components.yaml\n\nVERSION=\"$(flux -v)\"\necho \"flux_version=$VERSION\"
+                > ./clusters/2024_cluster/flux-system/gotk-components.yaml\n\nVERSION=\"$(flux -v)\"\necho \"flux_version=$VERSION\"
                 >> $GITHUB_OUTPUT          \n"
             - name: Create Pull Request
               uses: peter-evans/create-pull-request@v4
