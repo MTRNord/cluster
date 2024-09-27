@@ -1,990 +1,1002 @@
-apiVersion: 1
-groups:
-    - orgId: 1
-        name: CertManager
-        folder: Cluster
-        interval: 5m
-        rules:
-        - uid: ddz3zj028wb28b
-            title: CertManagerHittingRateLimits
-            condition: B
-            data:
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: prometheus
-                model:
-                editorMode: code
-                expr: |-
-                    sum by (host) (
-                                    rate(certmanager_http_acme_client_request_count{status="429"}[5m])
-                                ) > 0
-                instant: true
-                intervalMs: 1000
-                legendFormat: __auto
-                maxDataPoints: 43200
-                range: false
-                refId: A
-            - refId: B
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params: []
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - B
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: B
-                type: reduce
-            noDataState: Ok
-            execErrState: Error
-            for: 5m
-            annotations:
-            description: Depending on the rate limit, cert-manager may be unable to generate certificates for up to a week.
-            summary: Cert manager hitting LetsEncrypt rate limits.
-            labels: {}
-            isPaused: false
-    - orgId: 1
-        name: Resources
-        folder: Cluster
-        interval: 15m
-        rules:
-        - uid: bdz3y4mow1o1se
-            title: KubePersistentVolumeFillingUp
-            condition: B
-            data:
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: prometheus
-                model:
-                datasource:
-                    type: prometheus
-                    uid: prometheus
-                editorMode: code
-                expr: |-
-                    (
-                        kubelet_volume_stats_available_bytes{job="kubelet", namespace=~".*", metrics_path="/metrics"}
-                        /
-                        kubelet_volume_stats_capacity_bytes{job="kubelet", namespace=~".*", metrics_path="/metrics"}
-                    ) < 0.03
-                    and
-                    kubelet_volume_stats_used_bytes{job="kubelet", namespace=~".*", metrics_path="/metrics"} > 0
-                    unless on(cluster, namespace, persistentvolumeclaim)
-                    kube_persistentvolumeclaim_access_mode{ access_mode="ReadOnlyMany"} == 1
-                    unless on(cluster, namespace, persistentvolumeclaim)
-                    kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
-                instant: true
-                intervalMs: 1000
-                legendFormat: __auto
-                maxDataPoints: 43200
-                range: false
-                refId: A
-            - refId: B
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: B
-                type: reduce
-            noDataState: OK
-            execErrState: Error
-            for: 20m
-            annotations:
-            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup
-            summary: |-
-                The PersistentVolume claimed by {{ $labels.persistentvolumeclaim }}
-                in Namespace {{ $labels.namespace }}
-                {{ with $labels.cluster - }}
-                on Cluster {{ . }}
-                {{ - end }}
-                is only {{ $value | humanizePercentage }}
-                free.
-            labels: {}
-            isPaused: false
-        - uid: cdz3yt59a0miob
-            title: KubePersistentVolumeErrors
-            condition: B
-            data:
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: prometheus
-                model:
-                editorMode: code
-                expr: |-
-                    kube_persistentvolume_status_phase{phase=~"Failed|Pending",job="kube-state-metrics"}
-                        > 0
-                instant: true
-                intervalMs: 1000
-                legendFormat: __auto
-                maxDataPoints: 43200
-                range: false
-                refId: A
-            - refId: B
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params: []
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - B
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: B
-                type: reduce
-            noDataState: OK
-            execErrState: Error
-            for: 20m
-            annotations:
-            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumeerrors
-            summary: |-
-                The persistent volume {{ $labels.persistentvolume }}
-                {{ with $labels.cluster - }}
-                on Cluster {{ . }}
-                {{ - end }}
-                has status {{ $labels.phase }}
-                .
-            isPaused: false
-        - uid: cdz3ywkoiwgzka
-            title: KubePersistentVolumeInodesFillingUp
-            condition: B
-            data:
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: prometheus
-                model:
-                editorMode: code
-                expr: |-
-                    (
-                        kubelet_volume_stats_inodes_free{job="kubelet", namespace=~".*", metrics_path="/metrics"}
-                        /
-                        kubelet_volume_stats_inodes{job="kubelet", namespace=~".*", metrics_path="/metrics"}
-                    ) < 0.15
-                    and
-                    kubelet_volume_stats_inodes_used{job="kubelet", namespace=~".*", metrics_path="/metrics"} > 0
-                    and
-                    predict_linear(kubelet_volume_stats_inodes_free{job="kubelet", namespace=~".*", metrics_path="/metrics"}[6h], 4 * 24 * 3600) < 0
-                    unless on(cluster, namespace, persistentvolumeclaim)
-                    kube_persistentvolumeclaim_access_mode{ access_mode="ReadOnlyMany"} == 1
-                    unless on(cluster, namespace, persistentvolumeclaim)
-                    kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
-                instant: true
-                intervalMs: 1000
-                legendFormat: __auto
-                maxDataPoints: 43200
-                range: false
-                refId: A
-            - refId: B
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params: []
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - B
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: B
-                type: reduce
-            noDataState: Ok
-            execErrState: Error
-            for: 20m
-            annotations:
-            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumeinodesfillingup
-            summary: |-
-                Based on recent sampling, the PersistentVolume claimed by {{ $labels.persistentvolumeclaim }}
-                in Namespace {{ $labels.namespace }}
-                {{ with $labels.cluster - }}
-                on Cluster {{ . }}
-                {{ - end }}
-                is expected to run out of inodes within four days. Currently {{ $value | humanizePercentage }}
-                of its inodes are free.
-            isPaused: false
-    - orgId: 1
-        name: Draupnir4All
-        folder: Matrix
-        interval: 1m
-        rules:
-        - uid: adz3nhdki7d34d
-            title: Draupnir4All Synapse "Failed"
-            condition: B
-            data:
-            - refId: A
-                queryType: instant
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `Failed` | name =~ `.*draupnir-synapse.*` [5m])
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: instant
-                refId: A
-            - refId: B
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: max
-                refId: B
-                type: reduce
-            - refId: C
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: B
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: C
-                type: threshold
-            noDataState: OK
-            execErrState: Error
-            for: 1m
-            annotations: {}
-            labels:
-            service_id: draupnir4all
-            isPaused: false
-        - uid: ddz3nijqshjb4e
-            title: Draupnir4All Synapse "BackOff"
-            condition: B
-            data:
-            - refId: A
-                queryType: instant
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `BackOff` | name =~ `.*draupnir-synapse.*` [5m])
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: instant
-                refId: A
-            - refId: B
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: max
-                refId: B
-                type: reduce
-            - refId: C
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: B
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: C
-                type: threshold
-            noDataState: OK
-            execErrState: Error
-            for: 1m
-            annotations: {}
-            labels:
-            service_id: draupnir4all
-            isPaused: false
-        - uid: cdz3njjeosphce
-            title: Draupnir4All "BackOff"
-            condition: B
-            data:
-            - refId: A
-                queryType: instant
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `BackOff` | name =~ `.*draupnir4all.*` [5m])
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: instant
-                refId: A
-            - refId: B
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: max
-                refId: B
-                type: reduce
-            - refId: C
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: B
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: C
-                type: threshold
-            noDataState: OK
-            execErrState: Error
-            for: 1m
-            annotations: {}
-            labels:
-            service_id: draupnir4all
-            isPaused: false
-        - uid: adz3nkklsv2tcd
-            title: Draupnir4All "Failed"
-            condition: B
-            data:
-            - refId: A
-                queryType: instant
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `Failed` | name =~ `.*draupnir4all.*` [5m])
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: instant
-                refId: A
-            - refId: B
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: max
-                refId: B
-                type: reduce
-            - refId: C
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: B
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: C
-                type: threshold
-            noDataState: OK
-            execErrState: Error
-            for: 1m
-            annotations: {}
-            labels:
-            service_id: draupnir4all
-            isPaused: false
-    - orgId: 1
-        name: Kube-system
-        folder: Cluster
-        interval: 1m
-        rules:
-        - uid: d2b94d3a-2483-4be4-bf2a-2fd9f9fac406
-            title: Coredns Failure
-            condition: Thresh
-            isPaused: false
-            data:
-            - refId: Count
-                queryType: range
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: rate({namespace="kube-system", app="coredns"} |= `i/o timeout` [15m])
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: range
-                range: true
-                refId: Count
-            - refId: Thresh
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 1
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - C
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: Thresh
-                type: threshold
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: Count
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: A
-                settings:
-                    mode: replaceNN
-                    replaceWithValue: 0
-                type: reduce
-            noDataState: OK
-            execErrState: Error
-            for: 2m
-            annotations:
-            summary: High amount of i/o timeouts in coredns
-    - orgId: 1
-        name: Matrix Synapse
-        folder: Matrix
-        interval: 1m
-        rules:
-        - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
-            title: DNSQueryRefusedError
-            condition: Thresh
-            isPaused: false
-            data:
-            - refId: Count
-                queryType: range
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: range
-                range: true
-                refId: Count
-            - refId: Thresh
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 1
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - C
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: Thresh
-                type: threshold
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: Count
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: A
-                settings:
-                    mode: replaceNN
-                    replaceWithValue: 0
-                type: reduce
-            noDataState: OK
-            execErrState: Error
-            for: 2m
-            annotations:
-            summary: Matrix Synapse DNS Errors are higher than usual
-        - uid: de30a1da-84da-45f4-a4a5-d641dbd92e6c
-            title: psycopg2.errors.ReadOnlySqlTransaction
-            condition: Thresh
-            isPaused: false
-            data:
-            - refId: Count
-                queryType: range
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: rate({namespace="matrix", app="matrix-synapse"} |= `psycopg2.errors.ReadOnlySqlTransaction` [15m])
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: range
-                range: true
-                refId: Count
-            - refId: Thresh
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0.1
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - C
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: Thresh
-                type: threshold
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: Count
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: A
-                settings:
-                    mode: replaceNN
-                    replaceWithValue: 0
-                type: reduce
-            noDataState: OK
-            execErrState: Error
-            for: 2m
-            annotations:
-            summary: Matrix Database rolled over but synapse crashed
-        - uid: d16dc343-31d9-466a-bdc1-c2466b0bc18f
-            title: Unusual synapse logging
-            condition: Thresh
-            isPaused: false
-            data:
-            - refId: Count
-                queryType: range
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: loki
-                model:
-                datasource:
-                    type: loki
-                    uid: loki
-                editorMode: builder
-                expr: sum by(level) (count_over_time({namespace="matrix", app="matrix-synapse"} | pattern `<_> - <component> - <_> - <level> - <trace>- <detail>` | level != `INFO` [$__interval]))
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                queryType: range
-                range: true
-                refId: Count
-            - refId: Thresh
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 20
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params:
-                            - C
-                        reducer:
-                        params: []
-                        type: last
-                        type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                hide: false
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: Thresh
-                type: threshold
-            - refId: A
-                relativeTimeRange:
-                from: 600
-                to: 0
-                datasourceUid: __expr__
-                model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 0
-                            - 0
-                        type: gt
-                        operator:
-                        type: and
-                        query:
-                        params: []
-                        reducer:
-                        params: []
-                        type: avg
-                        type: query
-                datasource:
-                    name: Expression
-                    type: __expr__
-                    uid: __expr__
-                expression: Count
-                intervalMs: 1000
-                maxDataPoints: 43200
-                reducer: last
-                refId: A
-                settings:
-                    mode: replaceNN
-                    replaceWithValue: 0
-                type: reduce
-            noDataState: OK
-            execErrState: Error
-            for: 2m
-            annotations:
-            summary: Unusual logging for synapse.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: grafana-rules
+    namespace: monitoring
+data:
+    rules.yaml: |
+        apiVersion: 1
+        groups:
+          - orgId: 1
+            name: CertManager
+            folder: Cluster
+            interval: 5m
+            rules:
+              - uid: ddz3zj028wb28b
+                title: CertManagerHittingRateLimits
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: |-
+                        sum by (host) (
+                                      rate(certmanager_http_acme_client_request_count{status="429"}[5m])
+                                    ) > 0
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: A
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params: []
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: B
+                      type: reduce
+                noDataState: Ok
+                execErrState: Error
+                for: 5m
+                annotations:
+                  description: Depending on the rate limit, cert-manager may be unable to generate certificates for up to a week.
+                  summary: Cert manager hitting LetsEncrypt rate limits.
+                labels: {}
+                isPaused: false
+          - orgId: 1
+            name: Resources
+            folder: Cluster
+            interval: 15m
+            rules:
+              - uid: bdz3y4mow1o1se
+                title: KubePersistentVolumeFillingUp
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: prometheus
+                    model:
+                      datasource:
+                        type: prometheus
+                        uid: prometheus
+                      editorMode: code
+                      expr: |-
+                        (
+                          kubelet_volume_stats_available_bytes{job="kubelet", namespace=~".*", metrics_path="/metrics"}
+                            /
+                          kubelet_volume_stats_capacity_bytes{job="kubelet", namespace=~".*", metrics_path="/metrics"}
+                        ) < 0.03
+                        and
+                        kubelet_volume_stats_used_bytes{job="kubelet", namespace=~".*", metrics_path="/metrics"} > 0
+                        unless on(cluster, namespace, persistentvolumeclaim)
+                        kube_persistentvolumeclaim_access_mode{ access_mode="ReadOnlyMany"} == 1
+                        unless on(cluster, namespace, persistentvolumeclaim)
+                        kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: A
+                  - refId: B
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: B
+                      type: reduce
+                noDataState: OK
+                execErrState: Error
+                for: 20m
+                annotations:
+                  runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup
+                  summary: |-
+                    The PersistentVolume claimed by {{ $labels.persistentvolumeclaim }}
+                    in Namespace {{ $labels.namespace }}
+                    {{ with $labels.cluster - }}
+                    on Cluster {{ . }}
+                    {{ - end }}
+                    is only {{ $value | humanizePercentage }}
+                    free.
+                labels: {}
+                isPaused: false
+              - uid: cdz3yt59a0miob
+                title: KubePersistentVolumeErrors
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: |-
+                        kube_persistentvolume_status_phase{phase=~"Failed|Pending",job="kube-state-metrics"}
+                          > 0
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: A
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params: []
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: B
+                      type: reduce
+                noDataState: OK
+                execErrState: Error
+                for: 20m
+                annotations:
+                  runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumeerrors
+                  summary: |-
+                    The persistent volume {{ $labels.persistentvolume }}
+                    {{ with $labels.cluster - }}
+                    on Cluster {{ . }}
+                    {{ - end }}
+                    has status {{ $labels.phase }}
+                    .
+                isPaused: false
+              - uid: cdz3ywkoiwgzka
+                title: KubePersistentVolumeInodesFillingUp
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: |-
+                        (
+                          kubelet_volume_stats_inodes_free{job="kubelet", namespace=~".*", metrics_path="/metrics"}
+                            /
+                          kubelet_volume_stats_inodes{job="kubelet", namespace=~".*", metrics_path="/metrics"}
+                        ) < 0.15
+                        and
+                        kubelet_volume_stats_inodes_used{job="kubelet", namespace=~".*", metrics_path="/metrics"} > 0
+                        and
+                        predict_linear(kubelet_volume_stats_inodes_free{job="kubelet", namespace=~".*", metrics_path="/metrics"}[6h], 4 * 24 * 3600) < 0
+                        unless on(cluster, namespace, persistentvolumeclaim)
+                        kube_persistentvolumeclaim_access_mode{ access_mode="ReadOnlyMany"} == 1
+                        unless on(cluster, namespace, persistentvolumeclaim)
+                        kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: A
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params: []
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: B
+                      type: reduce
+                noDataState: Ok
+                execErrState: Error
+                for: 20m
+                annotations:
+                  runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumeinodesfillingup
+                  summary: |-
+                    Based on recent sampling, the PersistentVolume claimed by {{ $labels.persistentvolumeclaim }}
+                    in Namespace {{ $labels.namespace }}
+                    {{ with $labels.cluster - }}
+                    on Cluster {{ . }}
+                    {{ - end }}
+                    is expected to run out of inodes within four days. Currently {{ $value | humanizePercentage }}
+                    of its inodes are free.
+                isPaused: false
+          - orgId: 1
+            name: Draupnir4All
+            folder: Matrix
+            interval: 1m
+            rules:
+              - uid: adz3nhdki7d34d
+                title: Draupnir4All Synapse "Failed"
+                condition: B
+                data:
+                  - refId: A
+                    queryType: instant
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `Failed` | name =~
+                        `.*draupnir-synapse.*` [5m])
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: instant
+                      refId: A
+                  - refId: B
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: max
+                      refId: B
+                      type: reduce
+                  - refId: C
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                noDataState: OK
+                execErrState: Error
+                for: 1m
+                annotations: {}
+                labels:
+                  service_id: draupnir4all
+                isPaused: false
+              - uid: ddz3nijqshjb4e
+                title: Draupnir4All Synapse "BackOff"
+                condition: B
+                data:
+                  - refId: A
+                    queryType: instant
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `BackOff` | name
+                        =~ `.*draupnir-synapse.*` [5m])
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: instant
+                      refId: A
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: max
+                      refId: B
+                      type: reduce
+                  - refId: C
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                noDataState: OK
+                execErrState: Error
+                for: 1m
+                annotations: {}
+                labels:
+                  service_id: draupnir4all
+                isPaused: false
+              - uid: cdz3njjeosphce
+                title: Draupnir4All "BackOff"
+                condition: B
+                data:
+                  - refId: A
+                    queryType: instant
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `BackOff` | name
+                        =~ `.*draupnir4all.*` [5m])
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: instant
+                      refId: A
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: max
+                      refId: B
+                      type: reduce
+                  - refId: C
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                noDataState: OK
+                execErrState: Error
+                for: 1m
+                annotations: {}
+                labels:
+                  service_id: draupnir4all
+                isPaused: false
+              - uid: adz3nkklsv2tcd
+                title: Draupnir4All "Failed"
+                condition: B
+                data:
+                  - refId: A
+                    queryType: instant
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: count_over_time({app="kube-event-exporter"} | json | namespace = `matrix` | reason = `Failed` | name =~
+                        `.*draupnir4all.*` [5m])
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: instant
+                      refId: A
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: max
+                      refId: B
+                      type: reduce
+                  - refId: C
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                noDataState: OK
+                execErrState: Error
+                for: 1m
+                annotations: {}
+                labels:
+                  service_id: draupnir4all
+                isPaused: false
+          - orgId: 1
+            name: Kube-system
+            folder: Cluster
+            interval: 1m
+            rules:
+              - uid: d2b94d3a-2483-4be4-bf2a-2fd9f9fac406
+                title: Coredns Failure
+                condition: Thresh
+                isPaused: false
+                data:
+                  - refId: Count
+                    queryType: range
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: rate({namespace="kube-system", app="coredns"} |= `i/o timeout` [15m])
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: range
+                      range: true
+                      refId: Count
+                  - refId: Thresh
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 1
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - C
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: Thresh
+                      type: threshold
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: Count
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: A
+                      settings:
+                        mode: replaceNN
+                        replaceWithValue: 0
+                      type: reduce
+                noDataState: OK
+                execErrState: Error
+                for: 2m
+                annotations:
+                  summary: High amount of i/o timeouts in coredns
+          - orgId: 1
+            name: Matrix Synapse
+            folder: Matrix
+            interval: 1m
+            rules:
+              - uid: b6db960c-c0bd-4d4f-b0f1-e1f216ec81cc
+                title: DNSQueryRefusedError
+                condition: Thresh
+                isPaused: false
+                data:
+                  - refId: Count
+                    queryType: range
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: rate({namespace="matrix", app="matrix-synapse"} |= `DNSQueryRefusedError` [15m])
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: range
+                      range: true
+                      refId: Count
+                  - refId: Thresh
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 1
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - C
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: Thresh
+                      type: threshold
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: Count
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: A
+                      settings:
+                        mode: replaceNN
+                        replaceWithValue: 0
+                      type: reduce
+                noDataState: OK
+                execErrState: Error
+                for: 2m
+                annotations:
+                  summary: Matrix Synapse DNS Errors are higher than usual
+              - uid: de30a1da-84da-45f4-a4a5-d641dbd92e6c
+                title: psycopg2.errors.ReadOnlySqlTransaction
+                condition: Thresh
+                isPaused: false
+                data:
+                  - refId: Count
+                    queryType: range
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: rate({namespace="matrix", app="matrix-synapse"} |= `psycopg2.errors.ReadOnlySqlTransaction` [15m])
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: range
+                      range: true
+                      refId: Count
+                  - refId: Thresh
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0.1
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - C
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: Thresh
+                      type: threshold
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: Count
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: A
+                      settings:
+                        mode: replaceNN
+                        replaceWithValue: 0
+                      type: reduce
+                noDataState: OK
+                execErrState: Error
+                for: 2m
+                annotations:
+                  summary: Matrix Database rolled over but synapse crashed
+              - uid: d16dc343-31d9-466a-bdc1-c2466b0bc18f
+                title: Unusual synapse logging
+                condition: Thresh
+                isPaused: false
+                data:
+                  - refId: Count
+                    queryType: range
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: loki
+                    model:
+                      datasource:
+                        type: loki
+                        uid: loki
+                      editorMode: builder
+                      expr: sum by(level) (count_over_time({namespace="matrix", app="matrix-synapse"} | pattern `<_> - <component>
+                        - <_> - <level> - <trace>- <detail>` | level != `INFO` [$__interval]))
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      queryType: range
+                      range: true
+                      refId: Count
+                  - refId: Thresh
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 20
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - C
+                          reducer:
+                            params: []
+                            type: last
+                          type: query
+                      datasource:
+                        type: __expr__
+                        uid: __expr__
+                      expression: A
+                      hide: false
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: Thresh
+                      type: threshold
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator:
+                            params:
+                              - 0
+                              - 0
+                            type: gt
+                          operator:
+                            type: and
+                          query:
+                            params: []
+                          reducer:
+                            params: []
+                            type: avg
+                          type: query
+                      datasource:
+                        name: Expression
+                        type: __expr__
+                        uid: __expr__
+                      expression: Count
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      reducer: last
+                      refId: A
+                      settings:
+                        mode: replaceNN
+                        replaceWithValue: 0
+                      type: reduce
+                noDataState: OK
+                execErrState: Error
+                for: 2m
+                annotations:
+                  summary: Unusual logging for synapse.

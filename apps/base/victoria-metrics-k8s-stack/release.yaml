@@ -7,7 +7,7 @@ spec:
     interval: 5m
     chart:
         spec:
-            version: 0.20.1
+            version: 0.25.17
             chart: victoria-metrics-k8s-stack
             sourceRef:
                 kind: HelmRepository
@@ -20,6 +20,11 @@ spec:
         # Force recreation due to Helm not properly patching Deployment with e.g. added port,
         # causing spurious drift detection
         force: true
+    valuesFrom:
+        - kind: ConfigMap
+          name: grafana-rules
+          valuesKey: rules.yaml
+          targetPath: grafana.alerting."rules.yaml"
     # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
     values:
         vmsingle:
@@ -30,10 +35,8 @@ spec:
             operator:
                 disable_prometheus_converter: false
         grafana:
-            adminPassword: ENC[AES256_GCM,data:P/fKbIc8YcDUIt3+uEbEWbpkdGgXm8Y6yeiOkD80qoJgzSFQLjBICKDmJ8WmjLjiE2ShUcPZcq4WpDP3oYfdKQ==,iv:3Z0lvW6pox4Hmc58p2A436NKf7+4/u8mYmcDN/HBLfk=,tag:ujUP5VUJuvUpONEx9ziiRg==,type:str]
+            adminPassword: ENC[AES256_GCM,data:0b/hfNHyH8V/pfaL80C4Mg2I06UGERrAB4/F2m3f1SxD82zU5nYTfJoA3Isia2+h+hOSG750V+xgETnJvK6jLw==,iv:p/0gV/N58cqrB7PTaioqOmUgTfpK5Yvk+iDNAW3LntA=,tag:zVgQv2U8hXc6xcdz2gLNKA==,type:str]
             alerting:
-                rules.yaml:
-                    file: rules.yaml
                 contactpoints.yaml:
                     apiVersion: 1
                     contactPoints:
@@ -53,7 +56,7 @@ spec:
                             - uid: adz30e8814wshd
                               type: pagerduty
                               settings:
-                                integrationKey: ENC[AES256_GCM,data:zvld3/CbWl7RdutJUYk7WKIuAZc5rV9r+p3VSwHfP88=,iv:esAWA1qdvmfNkT4pkPYYtdfjF/sGdEsU5nk7VtArAh0=,tag:RaOdLlOKQTb6NtS1hOq/5Q==,type:str]
+                                integrationKey: ENC[AES256_GCM,data:t41yH1YiQyW6MN4quqjWNIt4CYdlW8nw/jSbH+hLGVc=,iv:DYCXs8/Xy9FoXb2NraeZgPb4mZOn6/KMbBYX97QKPqg=,tag:RvcXwZ3Epf8EMRRPyRG7ZQ==,type:str]
                               disableResolveMessage: false
                         - orgId: 1
                           name: PagerDuty Draupnir4All
@@ -61,7 +64,7 @@ spec:
                             - uid: 3
                               type: pagerduty
                               settings:
-                                integrationKey: ENC[AES256_GCM,data:h/31zNsQaGxVArt2xi4VtBtRDW/UodL9i5h4YroakzY=,iv:OpqKxhByJf3hR38aRUdZMF7irV2aVR5/VxQACQ198co=,tag:fuI0gOvc7mTltMY4E9yFHw==,type:str]
+                                integrationKey: ENC[AES256_GCM,data:M4lSqEnFdssd/CursS2IyvU8GeIrrsiEZOX5TIR5vRs=,iv:b4PssYDQY0Kiomf2pY4mYwn7qO4WMeKwUm+YAZLePDw=,tag:o7TsZl8P/iecCSoouLiM6w==,type:str]
                               disableResolveMessage: false
                 policies.yaml:
                     apiVersion: 1
@@ -292,16 +295,6 @@ spec:
                               value: Prometheus
                             - name: DS_LOKI
                               value: loki
-                    asterisk:
-                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/asterisk.json
-                        datasource:
-                            - name: DS_PROMETHEUS
-                              value: Prometheus
-                    traefik:
-                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/traefik.json
-                        datasource:
-                            - name: DS_PROMETHEUS
-                              value: Prometheus
                     postgres-dashboard:
                         url: https://raw.githubusercontent.com/prometheus-community/postgres_exporter/master/postgres_mixin/dashboards/postgres-overview.json
                         datasource:
@@ -361,13 +354,7 @@ spec:
                               value: zammad-es-cti_log
                 matrix:
                     synapse-dashboard:
-                        #url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/synapse.json
                         url: https://raw.githubusercontent.com/element-hq/synapse/develop/contrib/grafana/synapse.json
-                        datasource:
-                            - name: DS_PROMETHEUS
-                              value: Prometheus
-                    draupnir4all:
-                        url: https://git.nordgedanken.dev/kubernetes/grafana/raw/branch/main/draupnir4all.json
                         datasource:
                             - name: DS_PROMETHEUS
                               value: Prometheus
@@ -395,7 +382,7 @@ spec:
                     host: smtp.fastmail.com:465
                     from_address: ops@nordgedanken.dev
                 paths:
-                    data: ENC[AES256_GCM,data:3TNvJfpZk+hxkAkGkzeUrOM=,iv:KRaZcynIqLoLWbl8C5b6JGjfRRKGpPuPZpFMItkAItM=,tag:Tvta6eiklS0uIu74asEtFA==,type:str]
+                    data: ENC[AES256_GCM,data:Nwfk4zMsu8+YU87Lm1mMoi8=,iv:kpujRNTf+4ing2CNTEg6u7U41Zo3b5j1Nne8Fwg0eBg=,tag:M7BgZv1uDgc7XxBAwhZn9g==,type:str]
                     logs: /var/log/grafana
                     plugins: /var/lib/grafana/plugins
                     provisioning: /etc/grafana/provisioning
@@ -411,8 +398,8 @@ spec:
                 auth.generic_oauth:
                     name: authentik
                     enabled: true
-                    client_id: ENC[AES256_GCM,data:2k/mlcOp9sRpzTaEmiM/6I8OtxhH65k0U6Kg+LHe+YgIzq/hKNNJvtseqd3DcCCiIqQ=,iv:B05jv9ISZPgvDFwedupbB474oE36QGMMjhmBNxl47aQ=,tag:/O9LMAlDsGalN1tY9iCt7A==,type:str]
-                    client_secret: ENC[AES256_GCM,data:HAaBT6n8C2lg6UfW9Ai+GQWDlh4tUeJP+mzlHZUaDm3Q6CclANwhgKjCb0Frz8vAhQblS06k,iv:CgRJYEvcP4fuqmERJVrZqZ9l83m+/jC5H8k5CVYHXAM=,tag:wTIaKpAxImXt2SM+OdHmaQ==,type:str]
+                    client_id: ENC[AES256_GCM,data:vbjkXdou2Omq06b+3zPGzCZ2PF2/sbRgx2qXFrz7lnEeR5E6pJrwtoUo0Gcxhk3vk7Q=,iv:AlX/++KA+4RsR7PN8a7pWV9e5qN/TapaBH4iKSeZQ08=,tag:+P3QUSVNiRG3Uxch8w/h3w==,type:str]
+                    client_secret: ENC[AES256_GCM,data:/zEugS7WUIzr9b6dR7ZdTa2ivclXKhEEXipGlDFgx7R2joPvoncmFq5GitxCd8vsIHQYRB1Y,iv:n5IEfrpYU4wZuXhnMeJVwh4edOJdRxniLa8MSyEpvVc=,tag:44gEVd7GifHEbbb6NR7oNA==,type:str]
                     scopes: openid email profile
                     auth_url: https://auth.midnightthoughts.space/application/o/authorize/
                     token_url: https://auth.midnightthoughts.space/application/o/token/
@@ -449,14 +436,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB1UGw5MDZuQWt3S0RHQWda
-            bE1kbjEyUEtPaXN0OEZBTkNkcjlqdGRpYkNjClZjUmYwTm5NMi9BS1IzRXRsUmdN
-            aDV3Ump3VHJJL2ZFdXJNcGo5YlR0V2sKLS0tIDgzT3dUbk9oNlRKeVNvcXNxaUFl
-            cDNPN1M3UEUwSU84K016c2s0dnVGcGsKxPUVHbKyPA8PcNdztXcqGggSpFK0YsTl
-            GNGkDWj19q8tsiOY5ho2A7EqtmsqTsVVUWaUNepYc8wGcVBc9gUcug==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDOGRjQUhYTUMxQWU4UzNB
+            ZnRLYzc0djBOV1d5ckRyTi95cTMzaFMreFMwCmFJVVh3MUxDWG1mN3BUUXpieFlu
+            L1BPM1d6S2dWdFBLdFBpQlUxeEJqRTgKLS0tIGpNaHJVVUVlM1BidEQ0ZTFQUVg0
+            anJyU3BZK2tKQ0ZYb3MxbXNqeElwN1UK9Xg1yuLGjwAzh5nkXcrfejTuejTgnWfM
+            ro0fy6SWB1jZL+Ciqp1xDRP7HcoZ6uXp9l3OoQWGGMoM+oi2CPDfsQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-09-27T00:06:32Z"
-    mac: ENC[AES256_GCM,data:Dp9AEsvZpK7ic/JBEZsspNvcU0O0A/Z2Ssu63XLzbEhNtUvIxujMjlGSCMeb8bGVIk83JjAHXGTH3XU9mugdcBVNOEMl8B42T4YPRuWZpgzMj4VaCO7qzXpS6BQIhOxRSQ2af8vwsBNCDM0L2lgrzSdj2jIPKU4CkadUUyBC4R8=,iv:xTeXHfYsVUK17UauKw2FhYdzP20zCyzG40rp8Tsx4/o=,tag:/YM4eoVG60VdlUPV1FLeew==,type:str]
+    lastmodified: "2024-09-27T00:23:26Z"
+    mac: ENC[AES256_GCM,data:2RDkt0H+aHJgTshmGSbX2BbcEqLABHDBxPZ33xqzyqNe53WuVuqaNuOXHiKgof7N2GzTHgTNlmLVNVZo8THpqj8F/M/dD/LReRTbMPf7VTkmsHBohmoNmlkoXsNtkhm8Myn++J81GiD/L3zlqeiSjHKYlvv9XKEF2Bq/21w6nOk=,iv:+PlpU1xgzfR54/dLiqdrk5QmItK4MYvs2m/g72Tn6Ig=,tag:v2CURmyH3NBkeLLzLxbD2Q==,type:str]
     pgp: []
     encrypted_regex: ^(admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.8.1
