@@ -28,6 +28,19 @@ spec:
         metrics:
             serviceMonitor:
                 enabled: true
+        ingress:
+            enabled: true
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+            hosts:
+                - host: testing.midnightthoughts.space
+                  paths:
+                    - /
+            tls:
+                - secretName: testing-midnightthoughts-space-tls
+                  hosts:
+                    - testing.midnightthoughts.space
         dashboard:
             enabled: true
             ingress:
