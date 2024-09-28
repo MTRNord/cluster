@@ -22,12 +22,24 @@ spec:
                 # Needs at least 1 plugin to be enabled
                 enabled: false
             plugins: []
+            nginx:
+                envs:
+                    - KUBERNETES_SERVICE_HOST=kubernetes.default.svc
+                    - KUBERNETES_SERVICE_PORT=443
         etcd:
             enabled: true
             replicaCount: 1
         metrics:
             serviceMonitor:
                 enabled: true
+        discovery:
+            enabled: true
+            registry:
+                kubernetes: {}
+        serviceAccount:
+            create: true
+        rbac:
+            create: true            
         ingress:
             enabled: true
             annotations:
