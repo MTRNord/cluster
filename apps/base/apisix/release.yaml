@@ -23,9 +23,7 @@ spec:
                 enabled: false
             plugins: []
             nginx:
-                envs:
-                    - KUBERNETES_SERVICE_HOST
-                    - KUBERNETES_SERVICE_PORT
+                envs: [KUBERNETES_SERVICE_HOST,KUBERNETES_SERVICE_PORT]
         etcd:
             enabled: true
             replicaCount: 1
@@ -35,7 +33,10 @@ spec:
         discovery:
             enabled: true
             registry:
-                kubernetes: {}
+                kubernetes:
+                    namespace_selector:
+                        match:
+                            - "^.*$"
         serviceAccount:
             create: true
         rbac:
