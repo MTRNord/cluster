@@ -20,23 +20,23 @@ spec:
                     - name: CACHET_URL
                       valueFrom:
                         secretKeyRef:
-                          name: cachet-sync
-                          key: cachet-url
+                            name: cachet-sync
+                            key: cachet-url
                     - name: WEBHOOK_SECRET
                       valueFrom:
                         secretKeyRef:
-                          name: cachet-sync
-                          key: webhook-secret
+                            name: cachet-sync
+                            key: webhook-secret
                     - name: CACHET_KEY
                       valueFrom:
                         secretKeyRef:
-                          name: cachet-sync
-                          key: cachet-key
+                            name: cachet-sync
+                            key: cachet-key
                     - name: PAGERDUTY_KEY
                       valueFrom:
                         secretKeyRef:
-                          name: cachet-sync
-                          key: pagerduty-key
+                            name: cachet-sync
+                            key: pagerduty-key
                   ports:
                     - containerPort: 8080
                       name: http
@@ -81,10 +81,11 @@ spec:
     rules:
         - host: webhook.status.midnightthoughts.space
           http:
-            paths: /
-            pathType: Prefix
-            backend:
-                service:
-                    name: pagerduty_cachet
-                    port:
-                        number: 80
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: pagerduty_cachet
+                        port:
+                            number: 80
