@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: pagerduty_cachet
+    namespace: cachet
+spec:
+    selector:
+        matchLabels:
+            app: pagerduty_cachet
+    template:
+        metadata:
+            labels:
+                app: pagerduty_cachet
+        spec:
+            containers:
+                - name: pagerduty_cachet
+                  image: ghcr.io/mtrnord/pagerduty_cachet:latest
+                  imagePullPolicy: Always
+                  env:
+                    - name: CACHET_URL
+                      valueFrom:
+                        secretKeyRef:
+                          name: cachet-sync
+                          key: cachet-url
+                    - name: WEBHOOK_SECRET
+                      valueFrom:
+                        secretKeyRef:
+                          name: cachet-sync
+                          key: webhook-secret
+                    - name: CACHET_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: cachet-sync
+                          key: cachet-key
+                    - name: PAGERDUTY_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: cachet-sync
+                          key: pagerduty-key
+                  ports:
+                    - containerPort: 8080
+                      name: http
+                      protocol: TCP
+                  livenessProbe:
+                    httpGet:
+                        path: /healthz
+                        port: appservice
+                        scheme: HTTP
+                    initialDelaySeconds: 15
+                    periodSeconds: 10
+                  startupProbe:
+                    httpGet:
+                        path: /healthz
+                        port: appservice
+                    initialDelaySeconds: 15
+                    failureThreshold: 30
+                    periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: pagerduty_cachet
+    namespace: cachet
+spec:
+    selector:
+        app: pagerduty_cachet
+    ports:
+        - port: 80
+          targetPort: 8080
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: pagerduty_cachet
+    namespace: cachet
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+spec:
+    rules:
+        - host: webhook.status.midnightthoughts.space
+          http:
+            paths: /
+            pathType: Prefix
+            backend:
+                service:
+                    name: pagerduty_cachet
+                    port:
+                        number: 80
