@@ -27,35 +27,35 @@ spec:
                 - secretName: status-midnightthoughts-space-tls
                   hosts:
                     - status.midnightthoughts.space
-            database:
-                host: postgres-cluster.postgres-cluster.svc.cluster.local
-                port: 5432
-                name: cachet
-                username: cachet
-                password: ENC[AES256_GCM,data:fLDnrYVWXthtK6bylaF/pYxGM9EBAvsszoPAghGdRorqPKnyoHMVgvt8ESF85I72Kq20PeV4vk2tKLjuHLiz6w==,iv:GPd4DmclNuQkjRrYCW9qj/jTKUT4lAqYd4jbecMSkSo=,tag:5gDKi7TnfDdHx7Cg78y+Pw==,type:str]
-            env:
-                public:
-                    # Application environments
-                    APP_DEBUG: false
-                    APP_LOG: errorlog
-                    DB_DRIVER: pgsql
-                    DOCKER: true
-                    CACHE_DRIVER: database
-                    SESSION_DRIVER: database
-                    QUEUE_DRIVER: database
-                    CACHET_EMOJI: false
-                    CACHET_BEACON: false
-                    # Email find them here  https://docs.cachethq.io/docs/configuring-mail
-                    MAIL_DRIVER: smtp
-                    MAIL_HOST: smtp.fastmail.com
-                    MAIL_ADDRESS: ops@nordgedanken.dev
-                    MAIL_PORT: 465
-                    MAIL_NAME: Midnightthoughts Status Page
-                    MAIL_ENCRYPTION: tls
-                private:
-                    APP_KEY: ENC[AES256_GCM,data:wR+WxDAWW0zASEdBcbiwCtIAFBcAtdXfgN3YNtAoCIGCADE9+Krx4VN5M2ToTi7aUS2g,iv:MYUOtk/azK3RTGiyVVIEP6Tj68KgtDWBSZcgw9V2lYE=,tag:mARLade78GDi7ptaxFEV6g==,type:str]
-                    MAIL_USERNAME: mtrnord@nordgedanken.dev
-                    MAIL_PASSWORD: ENC[AES256_GCM,data:BnHwIsWueWNaeD6WYpjlng==,iv:l4adS2IXuh8+m35utL6mHkt07EP4lQUvBxCHkmMDNI0=,tag:ozIgs2KkGpVkF0VwiZfssg==,type:str]
+        database:
+            host: postgres-cluster.postgres-cluster.svc.cluster.local
+            port: 5432
+            name: cachet
+            username: cachet
+            password: ENC[AES256_GCM,data:5pm66sz9lwe0h211bsaC6/Uk4U9EQk6d3nK5gYD5O6c7YgVtoaqvOz0UVGbyOKxKtlgD7zHtImQiM0T/zYzlZg==,iv:CDUll0ug9gBw3QN0i8gLaNd5ghk2eOd8aaeolMCEc64=,tag:blhRa7Aeslqnym3pXnXLMA==,type:str]
+        env:
+            public:
+                # Application environments
+                APP_DEBUG: false
+                APP_LOG: errorlog
+                DB_DRIVER: pgsql
+                DOCKER: true
+                CACHE_DRIVER: database
+                SESSION_DRIVER: database
+                QUEUE_DRIVER: database
+                CACHET_EMOJI: false
+                CACHET_BEACON: false
+                # Email find them here  https://docs.cachethq.io/docs/configuring-mail
+                MAIL_DRIVER: smtp
+                MAIL_HOST: smtp.fastmail.com
+                MAIL_ADDRESS: ops@nordgedanken.dev
+                MAIL_PORT: 465
+                MAIL_NAME: Midnightthoughts Status Page
+                MAIL_ENCRYPTION: tls
+            private:
+                APP_KEY: ENC[AES256_GCM,data:ePTdh+VMUN20uSdmIdqeaIZaaUjnaw47oDp8+8dkC8E08Arko/X59F1tRVRyyJ5cSdY9,iv:Vgmjs+fWtX80+sBKrwmqMxg6rV0WX7R+d2RbJ4nDDJ8=,tag:rv3KJMuMHfdv+9ydedqOWQ==,type:str]
+                MAIL_USERNAME: mtrnord@nordgedanken.dev
+                MAIL_PASSWORD: ENC[AES256_GCM,data:U5nD3hY2QX/6sxKEH3LdtQ==,iv:j1R1tr2bmhzaJRa2BSU+ieVXMUvR9q/42/r67z+nOZc=,tag:fb84y3kcLIsPzN5t7VKfSA==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -65,14 +65,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhU3FpVFg0TkovYTZQQmtJ
-            S21CN0R5cDZLOEE2NTgvdnBTNTVxR3RqOVhjCnBKWW9OKzBxMTBuV0ZBYTBVSDZS
-            UUg2MSt1UE1uTk5VRHZTbGdOa2JQYXcKLS0tIHRQL1U0eUtIVnhleU5tL3VxeW93
-            QVRWQ0RNR2ZQOHoxUkFibFBUeEUrNGsKKc8URw+VMSOZd8QRsd/8mHmWPOU3nyyP
-            +SnDpgPs8dqaCNrgHHkxdaJdNqOjkwS4CiqZ3SSPTBO1gEwZArOqJQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5YmJJOHp1R1RLb3VXQ2x2
+            NzU3My83a3I4VlJGK0JBTVlrVkhML3ovaGwwClBBcWVDSkg0TFZHajFtRmc0cHdp
+            N1BZYkx3MWNwYUZuTGEzS0FGQ1Nqa2sKLS0tIDYyNFlHWXgwUUdSaWVWWkY2Q1Ux
+            Q1hyNGtlQS9ZNFdpdFIvOTBFS2wzVzgKUq+G49IkFbq0vk5xSZru5s1lseavsjIH
+            8xAbLHTCgK0XHRVLmD7QDmJQ5L5LzU7QxQdLVEvIjgWBzRla51XIBw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-10-06T16:14:27Z"
-    mac: ENC[AES256_GCM,data:Emn/w1T8UPQ2k9LOaRN4uVC4EobI3A87z5ci/7ow6LBZ9oOzUaifC58qVWQQ+0ja65c41iD7abFHKKExu9fzXzSuve9qCq5HSaFLSTvqkQThWrZgGCfTM6hqc84B4DaqIaW48km/Z6JsIsor7lHT0Fj2S8R7gC6aOyD3Vry+2Ts=,iv:rqUwI+U4xZofVM+HmcCZKhBuDN3ppd1BvWHRWN9VInQ=,tag:ReDFSIuK8lo0/IS/o77vvQ==,type:str]
+    lastmodified: "2024-10-06T16:20:07Z"
+    mac: ENC[AES256_GCM,data:vnMC7b5C+bG08w0YdxrP0fya5K7LTkU6IfUKhqNkT+6DHs/zJ0A60YK7FQL0L+Kq/LRVscwF0289oC1LL+6smiJvaXpvEV8kIlQFDrXyCprwO5VmjdQQhsAM/f9DFSd1Ur5wLsr0lRJr8GOlJ3adLmARZ4Qdp1twHjhSksysQYI=,iv:/YNveOlxuljaZFJe308AnCAzBZJ954QEpRq16iRldhE=,tag:EqqejQYrik2kc749ZdIlTA==,type:str]
     pgp: []
     encrypted_regex: ^(admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.8.1
