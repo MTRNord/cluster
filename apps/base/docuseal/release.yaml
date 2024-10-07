@@ -34,11 +34,18 @@ spec:
                         - docuseal.midnightthoughts.space
         persistence:
             data:
-                enabled: ENC[AES256_GCM,data:c/FIgg==,iv:UPrh3gdto9wuwHQGRSgVGtizfwBlL5+o+0jTKzvw8zM=,tag:mChp4xme7TuN7amxt5/opA==,type:bool]
-                size: ENC[AES256_GCM,data:dP3p,iv:4tVaHdZ2VY4rYwanlzNsTSI1cmpmDxONEn0L/mlAW5g=,tag:XbASE67SO4na4/dRH9M40g==,type:str]
-                accessMode: ENC[AES256_GCM,data:Rf1IwO3aEXtqAlY4+Q==,iv:mBiULHKGo3G8Xa24gbs51AwyWjV79zzzTHmj5d/a6QM=,tag:QdXtpovfcR9e4BJ+KpLUWg==,type:str]
+                enabled: ENC[AES256_GCM,data:dLIbTg==,iv:pF6fCCCMLcTsHGkMC+gE0e1h4yFaPRfqgoC1BY2zamA=,tag:83FUglzxIxERNyOxjKahVg==,type:bool]
+                size: ENC[AES256_GCM,data:CgZ5,iv:v/j8tbcu1Dz7vei5VXaJI26oCMjWQDJDalNRUHTbE2g=,tag:/JC4pYe7XrfknCoCJOTVeA==,type:str]
+                accessMode: ENC[AES256_GCM,data:yebRC0BSp2q3Cx8UFQ==,iv:WJM7utv3IP9xDYQFJaxS4PNv90jNFDmJVUcTi8taQoA=,tag:kNEVBOOEWXwtvr/f+Vv1jg==,type:str]
         env:
-            DATABASE_URL: ENC[AES256_GCM,data:dAmrDWsbVaqjpLTaU4w9+h2xdlakUtVhyFKX1nKmSdq5Gg1TpXehmMhtAkx76i+6GtnkYhJY9X5UHFaaeVHdttZPRSGm6XasOVTkF6rUNp3WMH4ey499aweRjzyFmppZX9Xj9g2/yZi8tHflCKI6rqFMyJjT7MMud6nAFA3NSBB+tGmBarpLKg2/s8t26tHe+EDRhNQbewBi8a0BPjOGoRlfD8Bj/zs=,iv:wQKWyeTWNl+rwV9ySbSDL5K340pnc9MVNf+7Fhu9p8I=,tag:elr7tTOdBO71sThSK+8j+A==,type:str]
+            SECRET_KEY_BASE: ENC[AES256_GCM,data:5ta8QcypJzcpEhn4mpmZecCtuX+XHPp3Pvd/Nh4aojDykZvj/ruwUeYN8XPg4CxaEylP7H3TVoQvpHsQfuompGzO/xYMMgQb5UoAPqrNfLvkIoW2gZBGeFj+07lSy4gfpD8GarvEXi9gsJGn2g2GIaMrKv94Sn9ZK65Lx6ZlsrU=,iv:J6QIo7MNtbTIcVekoRQ/YgNTwP1MfxHcLj4oaq7ZyXE=,tag:/6QALyfN6uY5tMeYqnmyOA==,type:str]
+            SMTP_USERNAME: mtrnord@nordgedanken.dev
+            SMTP_ADDRESS: smtp.fastmail.com
+            SMTP_PORT: 465
+            SMTP_PASSWORD: ENC[AES256_GCM,data:rgbBpCnUvRLMcr5N22ZlJA==,iv:+6Pe4SUS9gdkfT40YZO6iypG0vdddO7cZhBqZ5f/L6M=,tag:8uVPpvxPPF6mgPtyIax5AQ==,type:str]
+            SMTP_FROM: ops@nordgedanken.dev
+            HOST: docuseal.midnightthoughts.space
+            DATABASE_URL: ENC[AES256_GCM,data:QE3Bu0woHMFsb4l/YPyU4V66GdF+gRJNuAJfNNfEQbLmletx8YEUaCthD570N414nyfIbPlD19DxWEKAg/b0/AsPK+Zufl6Tv+h8+lKb+xZf8PldYA4JGjE5Gr8m9cFTQ54Rj4HYl2S2GfjdTZIC/f0uWQHnr0reW/sc2dA8YPEhe3ykpQ7G3Noz1RkzXF2mYSuzA3DldeUQlHpiUYW5yb573oOCM4s=,iv:/5hofs3PU9Komhmvc9/DtFFxw/DDHDdQljR1KXNGo84=,tag:YmnjONYyxTsCEesWJvbkTw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -48,14 +55,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPVXpsazBaME5NdVZXTk0r
-            Rnl3cFptekhMUlNUaEppbDZvZDVKNHE5empnCnNwdlhaRHlla1h1b09KemVsbkE4
-            cWx2WjQ5UVNuN3FTZ2xYMUh5Mm8ybUUKLS0tIGFzbE9lMlVidm04R2VVOTJtR2xV
-            eGNmb0tWUEs4R3VrTUdZNkRraTVXbFkKaT3mDlCfEFLx6V6WfASkOLlWr7TagmGD
-            ofwv3Uba1NW4fjLK3jHyVlAZbn5QpKFurAVdE8teEZkUyX5rCOYZDQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBsbzhJTW9qbUo0TXZaZGlW
+            VGFNenlTYVJrdnZCNnNvVGRncmVIS1RoVWpnCkNUVmxXbW4wbll5WDZpUlM0aXQ4
+            V0V5VWhzZ0VESGpnQ0NxWE5MelBQajAKLS0tIHUrZUQrZ0FTc3ZEWTJqb1Uvb2Vq
+            d1F5djRMYThNK0tzUTVHTUlXRDlLK3cKH25+T2KkAvGFvqo62rVVhRf4iQI2oGI8
+            ZnjhMu68FUkCRfATHfYQSh+LMqjjNQVjxbt5+uDwxFA+51gsVeAbfA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-10-07T08:52:58Z"
-    mac: ENC[AES256_GCM,data:1CCJ8xGemmpHUVEkkn8WlpkYuuDDviuq28/izBsVzZ73UPyYF5x8CTr4i3ansNeCoMnW0jswu24WlDvO8LcnPnpo+25rDrsPzMV9EI1Mn8hgoQ2kZgWwN+o27GbfkMFAxESNrQ9IrIsWcazA1uD7DpkZx8wXiq8JxNVYQthKMDk=,iv:OP+CI/1FZFGYo7+gKQ94/jVmtTVjQ8A9VBLg8ww1vo0=,tag:Y0NeEqWb5Ms/16tJyWHQVg==,type:str]
+    lastmodified: "2024-10-07T09:20:17Z"
+    mac: ENC[AES256_GCM,data:cfdHOqCmw/m4+TtmUpZ9ogxp54oJ2Rzc/gawbaCDzO8lyumZSxVY1pSnhs18QIx74/+zy8HXayySoBgJN8GQ+68CARsX6Oa3GnkBUoRl7FF14rSImesWQWMxg1KdZ7/MbgTSOXB7vIiAYsoq6zwQc1d2aEnZao8F5z+de8KI5C0=,iv:Omi/bkMaUUu3tavrcauU1DRXfcSsJceM/ZVWElahQok=,tag:4v0vBvjLSML6o0dNuDohKw==,type:str]
     pgp: []
-    encrypted_regex: ^(DATABASE_URL|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    encrypted_regex: ^(DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.8.1
