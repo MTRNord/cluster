@@ -44,14 +44,14 @@ spec:
                   livenessProbe:
                     httpGet:
                         path: /healthz
-                        port: appservice
+                        port: http
                         scheme: HTTP
                     initialDelaySeconds: 15
                     periodSeconds: 10
                   startupProbe:
                     httpGet:
                         path: /healthz
-                        port: appservice
+                        port: http
                     initialDelaySeconds: 15
                     failureThreshold: 30
                     periodSeconds: 10
