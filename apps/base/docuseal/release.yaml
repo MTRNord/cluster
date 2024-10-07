@@ -1,0 +1,60 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: docuseal
+    namespace: docuseal
+spec:
+    releaseName: docuseal
+    interval: 60m
+    chart:
+        spec:
+            chart: docuseal
+            sourceRef:
+                kind: HelmRepository
+                name: docuseal
+    values:
+        ingress:
+            main:
+                enabled: true
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-dns
+                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                hosts:
+                    - host: docuseal.midnightthoughts.space
+                      paths:
+                        - path: /
+                          pathType: Prefix
+                          backend:
+                            service:
+                                name: docuseal
+                                port: 3000
+                tls:
+                    - secretName: docuseal-midnightthoughts-space-tls
+                      hosts:
+                        - docuseal.midnightthoughts.space
+        persistence:
+            data:
+                enabled: ENC[AES256_GCM,data:duMU1w==,iv:WSewou/1+bZc/9eHpQWBKDa8CTMrNkOVxzksW4n+x74=,tag:vr9GiYtFKNy7lPFC0sak6w==,type:bool]
+                size: ENC[AES256_GCM,data:cEuw,iv:Iy8HEOVoQ0DcMRUSD/U0i8TQ4cyo7jOwOxP/ceCHSO4=,tag:nf7AmIGHaj4dUJLKcb6apg==,type:str]
+        env:
+            DATABASE_URL: ENC[AES256_GCM,data:C66+a5t31tZa8qG36LLroxJewzJCQCO6HDppQ99Suh3dPWF/z/plGQ1iaXtraREQhhfP2i1KsfdGTUMzzRTvwTmlyeHGeVvs2aRyg8VJJw33N+cJwpS9yetSyB5NhnPu10zIMoIyXhXUu70XF/Bmn4H/+NmQ/pAQw0v0x7mUBvGQVse8VtdROL/vZe9ik/9p8Yvpurq2jPJwsE6L5YWhZa9gQxcQ/tU=,iv:Wl6KvTLbS+HRv+MuWBBFEki1eXXDuEg/Z/cjW9mH5Jc=,tag:d6DG1eVwn2B1ar/qUPtlww==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBEWFlKek54V2NHUG0rSkta
+            bjU0TDRHSkVTcmJPakpkNmZyM2tUL1h5TVRJCldYYlQ0Ym1sS1B1bHd4eEIwWEdT
+            OHlNRzZQYnFwcjI5UXZqS0FIbXFoZG8KLS0tIG1TY3JERXZkc0NDQVpIUlZzV3pn
+            Z1IzNkhtaG5QRU9ELzluOFRRT244VVUKAM6SVHulT7CeQTl2dJQKVNLVviI5Kv92
+            QKchT6nR8DrdBon5CCGL26vNXT0HjT0n4+2MsZNCwY0bHNJAcXR7vA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-10-07T08:49:23Z"
+    mac: ENC[AES256_GCM,data:yWBFeY+zeB1/JKox/UKnmqXYLDo/UvgrdoL74M3Sg7OVgu5JRfCPPCkg9XImi1v3INyjpOuW7Vr0M2YJrBdCDw5TIpoefDSw8MT/s0jYtyadyBp/lPEh0oi7dC+Use0Lg5q44iGmF18SfL+8zEFdAn38lvPoONd5jfu8Tro2r4A=,iv:H5JaP+THbEP48d6spuGT+ece8DHfKFnQtlratyB8P4w=,tag:985Sl1hdG9q7OJpPyTKFVA==,type:str]
+    pgp: []
+    encrypted_regex: ^(DATABASE_URL|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.8.1
