@@ -97,6 +97,7 @@ spec:
         persistence:
             enabled: true
             size: 20Gi
+            existingClaim: matrix-synapse-v2
         volumePermissions:
             enabled: false
         workers:
@@ -109,8 +110,6 @@ spec:
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
                 extraCommands:
                     - ENC[AES256_GCM,data:9DU2STFW9vMDSNSfx52FvE0u1h04MFdzgj8g9AldJL1GeFAzN0evQ7uqRnXQhZ4/1c3MFScHDfASa9N5uhVLe+0F8zq5EQPZ50xGhiF1tGurBRLZOgNoHA1HU/hSUxbCrP/O5ymGBU3R2vbkyh95+FK8YuhKAYfhFbipnpAd1G+xurk3ra5ipuhBbF+UfR+0+LCryMw7Xjj2NtGa4g==,iv:yKLWt8pdiPbnY+3013Cm+vZi6l2aCKIOaZFGs5yXGoA=,tag:twZr2GGSOWD4/gyIqPY8pg==,type:str]
-                strategy:
-                    type: Recreate
                 extraConfig:
                     enable_authenticated_media: true
                     event_cache_size: 30K
@@ -229,8 +228,6 @@ spec:
                 name: federation-sender-1
                 enabled: true
         synapse:
-            strategy:
-                type: Recreate
             ## Liveness probe configuration to use
             ##
             livenessProbe:
