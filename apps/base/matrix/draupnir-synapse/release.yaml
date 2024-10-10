@@ -64,8 +64,6 @@ spec:
             enabled: true
         workers:
             default:
-                strategy:
-                    type: Recreate
                 volumeMounts:
                     - name: configs
                       mountPath: /data
@@ -161,8 +159,6 @@ spec:
                 listeners:
                     - replication
         synapse:
-            strategy:
-                type: Recreate
             extraVolumeMounts:
                 - name: configs
                   mountPath: /data
