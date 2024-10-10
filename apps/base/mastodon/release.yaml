@@ -21,8 +21,8 @@ spec:
         externalAuth:
             oidc:
                 enabled: true
-                client_id: ENC[AES256_GCM,data:uoG/ALOerEcaie3wBrcsqETXpcgY+DvTVU9aGGXafFye5EiO/j+kvA==,iv:6f7FZxlm1u0s+bn6L0vLQ8BZb5FgZoM2TTwvnumH290=,tag:o8SyKknsuQjrvYOiWPL5Dw==,type:str]
-                client_secret: ENC[AES256_GCM,data:h4Y0UHVVhEAFGUvWAl3zvSQaT27aovn/DAPgQ+oNb8EStrfPJloKaCT2vI9StEWUhOhjm6ZKffssKG+I/dkCaPEMp2AJ43xtZC0VD5ZR7KyG0D1c/j/9AMMhXTq8c1IEZsHoEOFy/ZqEs8OshxAAsgEJVizAxTm5HBlYjZld8NI=,iv:Z7jmWhH2xGlYDsflMKmguFLldbtBKKFWS1DuR/fjfp0=,tag:qP3DQCQ7FpBg7/cfMYlTUQ==,type:str]
+                client_id: ENC[AES256_GCM,data:TanqJqu61jVQ9Xj6o2vRsUvVcxCtDc8azEBc/KXrOTOcrMBa58q5cw==,iv:HvkhQmrrz/tbU8egtFJCN2iFOrlbXyiLgvxqn1CjDZE=,tag:+X5sD5X9m0xA4DwI+X7Xgw==,type:str]
+                client_secret: ENC[AES256_GCM,data:0sFBNXjFxY7auq4w/XwgHylbggp8ZQdwd68p0IUwXZFjuf6T/RKkMkqJcY1yuIs97Qp25wS49VGliA7OpHkA34CMda++/eKrncBzmDNqF4BQfYklH0bF1TKuTjtgKnmpWFyh07Yxc+HzqtuXQcvInL63so3UKk9m1Vta5n+lRGw=,iv:6DHgk+XCzlHhSA4gXI7eB2vFXj/jm9AmhczLFNJxa/4=,tag:9wmL91h2N4WysATU/ckoRQ==,type:str]
                 display_name: authentik
                 discovery: true
                 issuer: https://auth.midnightthoughts.space/application/o/mastodon/
@@ -34,13 +34,13 @@ spec:
             requiredDuringSchedulingIgnoredDuringExecution:
                 - labelSelector:
                     matchExpressions:
-                        - key: ENC[AES256_GCM,data:JyUJZKNHx6vhd2vK1Qx7s9PDxCQ+DRRewA==,iv:OxQsKjEwVDw73Qs3Egbxlwc6vXobTG/WD6j51WhOaGw=,tag:o4DaHqIrXCGB7b6POzfk2w==,type:str]
+                        - key: ENC[AES256_GCM,data:2gmXOZg+2pqxt+P06S4x072dUBZdRB23qg==,iv:FuZPXF1gd+3flt01ppDZPAJVKMU2Sq5/YE4P+VV8UXo=,tag:8v6cdTLNkKa1f4xY3ix+zw==,type:str]
                           operator: In
                           values:
                             - rails
                   topologyKey: kubernetes.io/hostname
         elasticsearch:
-            enabled: true
+            enabled: false
             preset: small_cluster
         ingress:
             annotations:
@@ -63,15 +63,15 @@ spec:
                 system:
                     existingClaim: mastodon-system
             secrets:
-                secret_key_base: ENC[AES256_GCM,data:oBXt5wcW01CGePjsCpuk74z+T01YiKxccdRn5ieCU2x+ZzaFxMPeBwRspCt+yKWFk5ugwiGiAtVm4mF00mHMOGGUblwbvbSOEMO/Eg2OBQJKzVMY7/oWxCmX+dP0lafx9vDTvDD/ixUFmfI9hCU987HM6ZLd1xJbCRmHd1KCkF4=,iv:/YhxXuJ+7VqQWG8OvQAbiu7YB8N54JbM3hk0zWujmlA=,tag:8YqFR2cra13lx/0slp8OzQ==,type:str]
-                otp_secret: ENC[AES256_GCM,data:OwaJ8ZbYTOLXYIjjXZWAFjFVUS725G77DQ1XlZkU++VQjp4WyUKNc4Qt8XfSE7WhZtVkUj7R1F6KE3UB7jkirulMqw9P9OS0MZ3E443I30bB1V15SylbjpSGrDZNOyXgYz40sjFwY0KioVjWDLJ7YtPDSaG0M7VwZAxTH2ra1P0=,iv:NOU1pC0akwzwiEgmFnAmbtGDXQ3uDtDlZo9+j3vXQ0c=,tag:NIcmYgFFFz/2O3zug9Y3rQ==,type:str]
+                secret_key_base: ENC[AES256_GCM,data:4U9EumlnXPAQ6hehzgTpzikwtM67OBtUgpO8a+nfsFxhi46ApBDeo3C0q9kyRRnLH5IzjFE3g9PhfwaszFUnGchdzwAlrMmXb7ZR1ZsBkapLbzzjVs9z8OgkxM1bSzPEr62p55KF1/IAtC9uMy52FveXHfolyCHOdaNQJb9QSik=,iv:2uYAu9g1NGFpw/+UXxAYtBhezmqhfj+eouWJSuqmzmM=,tag:WNPsqRoZ0/KUKsFvPhtxjA==,type:str]
+                otp_secret: ENC[AES256_GCM,data:p6dB+S8chRPVNcYQxvhZh71EP8xhzcz9YnzvMJTOqCFvvemxL9T/kgBjIcq77FlnFLArVl+HEjZinnWvfULfOwzQOJebldjXRMsNHahsjt5XE1wBWityui05mlZ6pIcSVaS2XBL663FT7iGlyIRH4oaSQQs6auPoVuRZEA7Qaqg=,iv:L7ZUB3lX8cniSxyzoajNaOwWxk8tTjFwLrmCQpXQhP0=,tag:BSjbokQ0QuwpXsRjoxCQ/A==,type:str]
                 vapid:
-                    private_key: ENC[AES256_GCM,data:zU4sLUdo+kmquIy6Rl2r4o7A2xGC5o9KwHDTTpDoQy8vmrsHeMMxjNZ0NbU=,iv:GNS1eXrJWGwms2Q/DP0UqQ8b3A+90/FLQipg7z6HdQU=,tag:CQCDzDTEgaqYBd77YgLiaw==,type:str]
-                    public_key: ENC[AES256_GCM,data:ZVdjr74ALynw1tj5sJRcRLQaatn1SAcZR5U8ltWp1eY2iW2sZ4uHvB7bK2YqbUJitYBMWwS+q8wgRxPkfWB/hV1eQhDnRWpMVnc1cqQj+oEBjaPbtoxC7A==,iv:N8EUmEq6YTj+gvaPAn+w4Kaq7GN1FO193NR7e0ogtvk=,tag:DZUuhvrw37p+4L5yKOj3Ug==,type:str]
+                    private_key: ENC[AES256_GCM,data:Cys8W35dFiz7SosySOe2TybBm0z8gnNhQfIjYpD4w/ZXfx/qfxh3uJyoYKY=,iv:WO2U8LGctMrhutDIQt4PZ2MetyMzYF/orr0Sya6Rcho=,tag:gl6/5Xig84I/ob+3wCNzOw==,type:str]
+                    public_key: ENC[AES256_GCM,data:RbU2/XhhZwXMSBJOKN2Vi0QjfJ8CBOoNBpj/OP0h2DVKTNEwQs5vMew3M4hJmlOYs/bsReX/pNkku7QNJr1pP3XfPrIYiUB02mlHZm/M8F3aDqA26jUPVA==,iv:1k9tqyBXWbBSapkYLao1G7SVCMlz8NXi6azpBIeGGQk=,tag:fXitfzRRRUwZCWwv5/H74w==,type:str]
                 activeRecordEncryption:
-                    primaryKey: ENC[AES256_GCM,data:MAAqXcFFUUzsFj+ytludUqcnOG/CM69aLe9YYtqBOyzYX7X1CMn/A9uJbEzraeRxo0r6sXCoMMsqSOlNl/CWKg==,iv:dO7RMQIzGOpNpPgUhgIaC79Rrc8GQEhIq0Rdm7TjxU8=,tag:bYHOeElo65P1CZKbrVy4lw==,type:str]
-                    deterministicKey: ENC[AES256_GCM,data:moUnaSls65eo56xhaLH7BusZq/6M+FTCdPUDrd3rpMHrgsjWLSGq0wV4XztM3EcaAfSKIr3ujUO6zNVTstt/Rw==,iv:KUNZlj3zEyF6NW3TElkiqA0sPTqjDyemVT3K9LTN5UU=,tag:Vj6S9ehuyfsEba8yAIdS6Q==,type:str]
-                    keyDerivationSalt: ENC[AES256_GCM,data:3Z8mHy345svHpKeMBKI8onV3WYcir1ahV8x4LWp6FGVI9wiLDss4umuI6xDpmFxtn9n8SX+/j0LIs88vyRZELQ==,iv:A50p2w3nQskMVR1LRy/Q5IsYHnMr0jjJFGuJpVBSrO0=,tag:L0XRKYj/trg/IlVeS6T/ng==,type:str]
+                    primaryKey: ENC[AES256_GCM,data:ekpsNAQG76WlfNloFDLcKHyYa9a4GuJ9v3qad2hmyhdJc69gpxph8mnnJM9MSSM4YN5UOdOA+y3ur7gRnTncLg==,iv:NW74EeToqcew7SpAXKX/UH/KibkWqwefPUANsvyjbWg=,tag:3cIjePKfAZM1G9pnfHs+qA==,type:str]
+                    deterministicKey: ENC[AES256_GCM,data:sDPY05VYLg/BHWUguwdAxffJtbZQVlNZCXFtICKBRHzmqrrKZJm8ysl88TUJMkp1nDeGkd+Dn42YPVPYnFFUoA==,iv:hljUB7ISNYz+6DXTQSWgTAZxmqqbFzCgQo6/zW6MCiM=,tag:PJkxwLl8Qab794nBr3B1nQ==,type:str]
+                    keyDerivationSalt: ENC[AES256_GCM,data:T4GxL47kq150a515fANtyEduj8jnXBjKUjMmBhsihiip41GI137wVUppHPeIBKp/Aa3HQn2w2nGoAhemSp7Iaw==,iv:IY5nEj4IeawugY/xElQNkEx7Q26sjvXuzwI04lXMAnU=,tag:Fv7nOwR7g2K7LFBcyZK9aA==,type:str]
             singleUserMode: true
             smtp:
                 domain: smtp.fastmail.com
@@ -81,7 +81,7 @@ spec:
                 server: smtp.fastmail.com
                 login: mtrnord@nordgedanken.dev
                 tls: true
-                password: ENC[AES256_GCM,data:Rt2/U57fuEk06L2DkWuhQA==,iv:TYAQjL+qX12XHcnueTALhJa3A1EQETzzgjSxk74szwA=,tag:5VS1NcmwnYGDKzbVVETY4A==,type:str]
+                password: ENC[AES256_GCM,data:3ohFIhLdOQry6Q1/h1DMRg==,iv:PX50Av0VUR7Jris6fVevVVFaHvo0G32ZrmSzehWsQHM=,tag:XpKm7G+P19A3oTY213y3tA==,type:str]
             streaming:
                 sslMode: no-verify
             web_domain: mastodon.mtrnord.blog
@@ -91,7 +91,7 @@ spec:
             auth:
                 database: mastodon
                 username: mastodon
-                password: ENC[AES256_GCM,data:7sBiFCqS1iAXAnAeIWwozb9XJWa91L6vD5VZPTlPwqeFRHfG+bndYSNtYoafTg9aOFBoDi0W2WkOihhcsPPUhQ==,iv:xRq2FrdmtYgvtRuQXPGObE1wA/1vAH4KSJ5tJqRmxKo=,tag:b3P/cebS+2cklkTUuXEl7g==,type:str]
+                password: ENC[AES256_GCM,data:IPwfXcQAbs2RlhFvXSX00Bc/etUwLtXAxtDk92ReFwP/K9dODqHVUVHYFIrbbBNriX1F/7q1DV54kRwm8PRiiQ==,iv:g+cthWolI+bFjGEGQJgWdN2di0Sk8y6ISqw2iFjMyqc=,tag:5RI1OxReM5UGKXU4AB2oHg==,type:str]
             enabled: false
             postgresqlHostname: postgres-cluster.postgres-cluster.svc.cluster.local
             #postgresqlReplicaHostname: main-ctrlc-repl.postgres.svc
@@ -99,7 +99,7 @@ spec:
             enabled: true
             #hostname: keydb
             auth:
-                password: ENC[AES256_GCM,data:ynP3bDtIrMtkXqq3/o+MRj0ineob9Y/slsetV39VJxhCCyn2fiED2fW9RbfzyDfNdiMO27EY5pNNh9IxE8bkUA==,iv:dugJiCWovanyuOcipMRaaDFCin8ogjXz3eV/SXZC7yc=,tag:TytA3mLRTepsHBKXi5T3tw==,type:str]
+                password: ENC[AES256_GCM,data:l6GoGPd1TcAQoO//YVjJd2yan96vRImQ6A0P2v10cPBNorCfmLjhH1/NKgDN5AEkXh/kNA/g6qOqBLuq1JJmJg==,iv:rlIU1yychHbf7eGhaoce8BgaOVmrr8Hi7d2YIaAqkE0=,tag:tyj8yTLpQU7iM3QSyb0wrw==,type:str]
         replicaCount: 1
 sops:
     kms: []
@@ -110,14 +110,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBvYS9waVZCYUsveG1FYzNY
-            SEpDRFNYajNlS3AzWXZDZGltaUJkc3V0RnlJCnNaTjhzeHcwSVdqaHp3L2JQZmJj
-            OXNRWnZlTGtIVWtFWkN3dCtvbVd2d28KLS0tIGI3bDFpR20ydkUvUXZ6TldCOXdX
-            M2Ywa0JsbldBWGJxcE1HVzNzR1NjYlUKkZQ9BwPMXDjSQL1nwK5AAS2lZ+BeMFEk
-            qFftjvGJ66Unu2QWXjR4+pB6iM5rIzspsaOb8XD5N6DgkCvCYXq+Ng==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCd2tSdFJnUi9TKzBtM2N6
+            ZytyNDgrWFdIekJEdEY3ZkZDakdZalhneGpBCm53aUdVVU15dW1TelljZU92cFlv
+            Z1k2RmJ5aGFTZDB1RUVrY1dHUm85Y0kKLS0tIDhYWEZxb082YVpLeUVycHcyYTVE
+            blFSRXdZWU5iWVhCSkFzL2VsN25mR1kK5GzrUmq/j9TGjGk5BiOgq1bWm4BxXuFb
+            84rNpP42Gm7tPM+fQwoQSTKyPA3ERSC7o3NpiqZEL9xyGfGMX+j69w==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-09-11T16:56:38Z"
-    mac: ENC[AES256_GCM,data:gicIb5WCx8+B41GyUSbuMMcuXLJYJGBlBko+N9FJ/xt9JpMv6azX2n/pLbbjXf1c5WF62PYuGBwi9P7o3W9kI9tuf6hABt/YGEQPYqti9N2kZ6RwVrPkteVjMIBABebRqH46FkhBdyyVbb6rRfRHCFdfQNn5l25Ok6Fc75wPRsQ=,iv:pe1/jO6fjYSirUIyx5CyxAQLUm48pLRoXjmc1IYa4cQ=,tag:1eQBROmkimV5/2wEEdOAfA==,type:str]
+    lastmodified: "2024-10-10T21:31:09Z"
+    mac: ENC[AES256_GCM,data:E6N1YCqeanR6HEwKGSGp4GwSQ5+xlf4lvIKZ2jduZfzAaU5lhrVdjKzy5/hgzGHF2+hEKq4pQT7UK8uZKFipvnfcsi1yarw0zonPTRJZctGApwVg2709gkOlsrI5ClzG7u/T7VnDknDDVhh6cTDgEliwQptb4P8kxe8BbIRUncQ=,iv:+XDfJ0GO2Up1r62dQTOdWleAZ+Xnea1qU02zITe4tSU=,tag:M+o9IwRKH0sWWR6a5MiRtQ==,type:str]
     pgp: []
-    encrypted_regex: ^(admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    encrypted_regex: ^(DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.8.1
