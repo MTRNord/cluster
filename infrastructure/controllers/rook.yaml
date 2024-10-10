@@ -105,10 +105,16 @@ spec:
                 metadataPool:
                     replicated:
                         size: 2
+                        requireSafeReplicaSize: false
+                    parameters:
+                        compression_mode: force
                 dataPools:
-                    - replicated:
+                    - name: data0
+                      replicated:
                         size: 2
-                      name: data0
+                        requireSafeReplicaSize: false
+                      parameters:
+                        compression_mode: force
                 preserveFilesystemOnDelete: true
               storageClass:
                 enabled: true
