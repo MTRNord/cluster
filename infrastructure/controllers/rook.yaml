@@ -68,8 +68,9 @@ spec:
                 storageClassDeviceSets:
                     - name: "hcloud-volumes"
                       count: 3
-                      portable: false
+                      portable: true
                       encrypted: false
+                      tuneFastDeviceClass: true
                       volumeClaimTemplates:
                         - metadata:
                             name: "data"
