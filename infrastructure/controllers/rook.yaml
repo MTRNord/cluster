@@ -85,10 +85,9 @@ spec:
                 annotations:
                     cert-manager.io/cluster-issuer: letsencrypt-dns
                     external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                    traefik.ingress.kubernetes.io/router.pathmatcher: PathRegexp
                 host:
                     name: rook.midnightthoughts.space
-                    path: "/ceph-dashboard(/|$)(.*)"
+                    path: "/"
                 tls:
                     - secretName: rook-midnightthoughts-space-tls
                       hosts:
