@@ -26,6 +26,12 @@ spec:
             spec:
                 extraArgs:
                     search.maxSeries: "3000000"
+                storage:
+                    accessModes:
+                        - ReadWriteMany
+                    resources:
+                        requests:
+                            storage: 15Gi
         victoria-metrics-operator:
             operator:
                 disable_prometheus_converter: false
