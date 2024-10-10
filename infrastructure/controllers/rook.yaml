@@ -53,6 +53,8 @@ spec:
             enabled: true
             createPrometheusRules: true
         cephClusterSpec:
+            cephVersion:
+                image: quay.io/ceph/ceph:v19.2.0
             mon:
                 count: 2
                 allowMultiplePerNode: false
