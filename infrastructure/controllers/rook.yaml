@@ -56,7 +56,7 @@ spec:
             cephVersion:
                 image: quay.io/ceph/ceph:v19.2.0
             mon:
-                count: 3
+                count: 2
                 allowMultiplePerNode: false
                 volumeClaimTemplate:
                     spec:
@@ -71,7 +71,7 @@ spec:
                 #useAllDevices: false
                 storageClassDeviceSets:
                     - name: "hcloud-volumes"
-                      count: 2
+                      count: 3
                       portable: true
                       encrypted: false
                       tuneFastDeviceClass: true
