@@ -23,7 +23,7 @@ jobs:
                 > ./clusters/2024_cluster/flux-system/gotk-components.yaml\n\nVERSION=\"$(flux -v)\"\necho \"flux_version=$VERSION\"
                 >> $GITHUB_OUTPUT          \n"
             - name: Run yamlfmt
-              uses: yk-lab/yamlfmt-action@v1
+              uses: yk-lab/yamlfmt-action@v1.0.0
             - name: Create Pull Request
               uses: peter-evans/create-pull-request@v4
               with:
