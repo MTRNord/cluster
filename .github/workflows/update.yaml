@@ -22,6 +22,9 @@ jobs:
               run: "flux install --components-extra=image-reflector-controller,image-automation-controller \\\n  --export
                 > ./clusters/2024_cluster/flux-system/gotk-components.yaml\n\nVERSION=\"$(flux -v)\"\necho \"flux_version=$VERSION\"
                 >> $GITHUB_OUTPUT          \n"
+            - name: Format
+              run: |
+                yamlfmt -conf=./.yamlfmt.yml .
             - name: Create Pull Request
               uses: peter-evans/create-pull-request@v4
               with:
