@@ -3,7 +3,12 @@ kind: Deployment
 metadata:
     name: mas
 spec:
-    replicas: 1
+    replicas: 3
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
     selector:
         matchLabels:
             app: mas
