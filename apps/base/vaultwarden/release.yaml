@@ -7,7 +7,7 @@ spec:
     releaseName: vaultwarden
     chart:
         spec:
-            version: 0.22.7
+            version: 0.29.0
             chart: vaultwarden
             sourceRef:
                 kind: HelmRepository
@@ -18,8 +18,8 @@ spec:
             retries: 3
     values:
         pushNotifications:
-            installationId: ENC[AES256_GCM,data:FnBfSpv3K+R2rWmkooHY9aWjD5c3aMAm6xufiu8/Apg3dZc2,iv:3p2wTGW8u10ZNXTOPoPy8OIalRFhGkjVrWta5JQhOxY=,tag:1veQwIkIGlIEou9bGaIVmQ==,type:str]
-            installationKey: ENC[AES256_GCM,data:fsJxLQlRpyaWEQD4BNbchEcSuzA=,iv:MiMY+O2fRNhQ3mW/JhJMsCJ2S+5D8btCy5btFIWLHB8=,tag:OzxZIN25dnNEQgN0NIXnkQ==,type:str]
+            installationId: ENC[AES256_GCM,data:AuBD7JExmj2y7qxqpr6FRAYpcnl8gRnJ2BDuMhkmfMgIRL3/,iv:L+T1/U8Yduce7nyM/A9Zc9yapLEx0uptpaoBwS8vVfc=,tag:cMdpI3scT7HU7kcPLTDn0A==,type:str]
+            installationKey: ENC[AES256_GCM,data:vrpvebpFa+6jcHXCh3y2orOXirU=,iv:U9nsl1L4EgwLN4GaP+nry8+5pPM3BGvgIQLXUxnj3HQ=,tag:hCshkG06GL1FfVmN0iMr4Q==,type:str]
             relayUri: https://push.bitwarden.eu
             identityUri: https://identity.bitwarden.eu
         signupsAllowed: false
@@ -28,7 +28,7 @@ spec:
         timeZone: Europe/Berlin
         database:
             type: postgresql
-            uriOverride: ENC[AES256_GCM,data:e55ev6b5dQKJeIGFU+fnXz0bGeuhqP2MRQHTmU1aA5OgAGN3N5XsWN8/xnbfB4/vURkzX73GMnyfsMNDt0UlLpEs/UCiZSbZsHKorwO+Av+z2xFdwCIOvQFmomAbohAersYQViNvuEIOddjTfOwz9RmR7zYsyCabj4v9ZsThvWsze0bj9pFXzQLNAQdsJ7idAsGWHEG1pF/3JOgDzxo=,iv:m8DzQOYggwHxbqCt4GsHKSoKyI99SE5429iawtY/LBY=,tag:zLFCGOlF8xXiHS6TPYKEFg==,type:str]
+            uriOverride: ENC[AES256_GCM,data:+8FZD8TegolG6JE4KPtwMqaTeTuem9H61lg2QwlGaGeXy8K1ogNdk3qQu2mA+prMsQ2t8WpIgr6I0/Wd78QC7QKEIKGmDfQiyN0NMpHBi0ijzY6CqlLHpLB9+OVRTeoh3+WvrR6LRdj0RFgL+doj1DSDJf6XDm2dQEj5M4CjlydWJdgmVBQ4Wc996+JBvpxTQRscma1gAtAzYNTsUUI=,iv:290GBgNQsKAza00kVTsDYeJmqPlpF2NiUh3x3EE5ec0=,tag:dqRsAuZEnXkPBewqtFAedQ==,type:str]
         ingress:
             enabled: true
             additionalAnnotations:
@@ -47,12 +47,12 @@ spec:
             username:
                 value: mtrnord@nordgedanken.dev
             password:
-                value: ENC[AES256_GCM,data:4FHuk1sZ/e3ectoPM2Zp5w==,iv:K0RlQY8q2dB7+r2iDjJc7J1vtsAkO/8haNOps/OmrQc=,tag:/IFTtNjJEQKkK7a0hb8ntQ==,type:str]
+                value: ENC[AES256_GCM,data:/qVjQKcnItWH9U1h+TxynA==,iv:6ThYljJ8hyEhT3D53ymwtfbNX184sJjW5uYnPYJLsWY=,tag:GtEw0bVAMlQ2ZjrjGFkN3Q==,type:str]
             security: force_tls
             port: 465
         data:
-            name: ENC[AES256_GCM,data:H/c6xvK5/SIgcm1f0AONlQ==,iv:rabTAXdgczRnpFq6SbHh9W998GLGOcKNuz1CvSEjBgo=,tag:B3ek4Gaqq5xDiTBxGCChKA==,type:str]
-            size: ENC[AES256_GCM,data:WOAd,iv:UUfcDBTLgNXziLfqhc3NGoZAunxro3hp+OQ3Uyz5OV8=,tag:yOEAh9sSfEQDGt2HtktH7g==,type:str]
+            name: ENC[AES256_GCM,data:huKhx0XHZj9/c/fL73qirw==,iv:WJWrYgEaQV3XvgSE9OGwawyFfqktYHcrt3+4vBJ2LpE=,tag:bKgXlcrtJe8liztiKxXlcA==,type:str]
+            size: ENC[AES256_GCM,data:gL8s,iv:935ANkQmj0g9klQx+d9byKzg6cFAsNbIhDSdmijLU8I=,tag:GWZsBfk2hVou7UnvwlDDsg==,type:str]
         resources:
             requests:
                 cpu: 50m
@@ -66,14 +66,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoMWJEWHFTS2NPbDUrM3NG
-            d29iTjNhbzYyTVVYOUNMWXZwdE5LMVMrc1hZCmh2Lzg0aThVK0NGYnRmODJ3WmdQ
-            Y3JtaFlXRE1qZXk2TDR0Nkl3aVZlRDQKLS0tIE5uU0dFR3FURWc4NURDNHJqZ3lm
-            SWdZeTZSVVJGZEVBNjViY1ZxTjNtbUkKbZEVIUkaxy9jN7fZOkZNNP2DNSZI4xm1
-            uF3jRXfiX3i1yekY5Y/a7QD+nXSaArzsqyzHrXYGQ5oRbcmbRwy7fw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA1bE1LWEowYWFEcDc5Z1B1
+            Ny9lTUdsZmhDNENxcGdDNjdKZ2FLRE4wd1hZCmc2bzdOOEg4YlBsZ0J5eGxWVXFC
+            dEc1eWJTMWpkbHNSSFlmenkvTHVzRnMKLS0tIHJlSVlSK05ib3F6cCtXK1ozN25D
+            eFpQV2FCaEdVVnpNRU92VzFJeVppYW8KBS4p2L8MWNpQEnTB4yiQfRctc0LUWfTI
+            CdDiYvnOtrN6x8TJVxb123YNHDD2ft0pljD7RCO5o1vdNP3QHuHrBw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-05-03T17:28:56Z"
-    mac: ENC[AES256_GCM,data:7QRsqvXi7jzWfPhoO1t2VD2JNzzIsGkkqm7uxLdf7Ct+hrH3J+LsKA49ybi+tgHXwNzA/pkddi5anMBHeJROktnAiGGK46a2iS0oMOjlkEB2CD81WkIjAtfldwq/NHi0i4y7RXcAZN5r1ObIFN+QkKlQ2a+/vXBdWoKeJWe+1is=,iv:nlimsDUpF8qydb4XgPtGXwNu5p3AJowT4e3wmMtFX2o=,tag:NOD6pIcoNI4HM0mVU3V9Lg==,type:str]
+    lastmodified: "2024-10-11T10:01:56Z"
+    mac: ENC[AES256_GCM,data:9CGReKuC5H9iU/kGa1b9MnGpnAiLMBhKAwe29SdtL+UaZy05iyJwgzum1ohaQ9v+llM/Us1ehvoXFuQDFEVBhrHIYIP4YYn3d9YzJoYikk/+VShO+U6zbsQ1vRHlubegZYYRGIx8CWCRC2ACnU37zfP979WUfRq6swVqJyUYhvc=,iv:3XYiK7lvrIJ99NJbuC7YbPWbUxjjAnXmxvGgnR2INzY=,tag:LV9p9T8ibdFjD8wrokaL7A==,type:str]
     pgp: []
-    encrypted_regex: ^(installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
+    encrypted_regex: ^(DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.8.1
