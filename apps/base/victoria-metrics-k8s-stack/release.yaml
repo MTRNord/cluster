@@ -23,9 +23,9 @@ spec:
     # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
     values:
         alertmanager:
-            route:
-                receiver: pagerduty
             config:
+                route:
+                    receiver: pagerduty
                 receivers:
                     - name: pagerduty
                       pagerduty_configs:
