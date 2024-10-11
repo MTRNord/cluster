@@ -27,6 +27,10 @@ spec:
                 route:
                     receiver: pagerduty
                     group_by: ["..."]
+                    routes:
+                        - matchers:
+                            - severity=~"none"
+                          receiver: "blackhole"
                 receivers:
                     - name: pagerduty
                       pagerduty_configs:
