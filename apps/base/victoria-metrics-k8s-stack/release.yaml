@@ -1197,6 +1197,22 @@ spec:
                         datasource:
                             - name: DS_PROMETHEUS
                               value: Prometheus
+                cluster:
+                    ceph-cluster:
+                        url: https://raw.githubusercontent.com/rook/rook/refs/heads/master/deploy/examples/monitoring/grafana/Ceph%20Cluster%20Dashboard.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
+                    ceph-osd-single:
+                        url: https://raw.githubusercontent.com/rook/rook/refs/heads/master/deploy/examples/monitoring/grafana/Ceph%20OSD%20Single%20Dashboard.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
+                    ceph-pools:
+                        url: https://raw.githubusercontent.com/rook/rook/refs/heads/master/deploy/examples/monitoring/grafana/Ceph%20Pools%20Dashboard.json
+                        datasource:
+                            - name: DS_PROMETHEUS
+                              value: Prometheus
                 matrix:
                     synapse-dashboard:
                         url: https://raw.githubusercontent.com/element-hq/synapse/develop/contrib/grafana/synapse.json
