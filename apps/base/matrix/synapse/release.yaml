@@ -102,6 +102,11 @@ spec:
             enabled: false
         workers:
             default:
+                resources:
+                    requests:
+                        cpu: 100m
+                        memory: 200Mi
+                    limits: {}
                 volumes:
                     - name: matrix-org-blocker
                       emptyDir: {}
@@ -228,6 +233,11 @@ spec:
                 name: federation-sender-1
                 enabled: true
         synapse:
+            resources:
+                requests:
+                    cpu: 30m
+                    memory: 800Mi
+                limits: {}
             ## Liveness probe configuration to use
             ##
             livenessProbe:
