@@ -91,6 +91,11 @@ spec:
                             target_cache_memory_usage: 2048M
                             min_cache_ttl: 5m
             generic_frontend:
+                resources:
+                    requests:
+                        cpu: 101m
+                        memory: 500Mi
+                    limits: {}
                 replicaCount: 1
                 enabled: true
                 generic: true
@@ -123,6 +128,11 @@ spec:
                     - /_matrix/client/(api/v1|r0|v3|unstable)/join/
                     - /_matrix/client/(api/v1|r0|v3|unstable)/profile/
             federation_reader:
+                resources:
+                    requests:
+                        cpu: 17m
+                        memory: 153Mi
+                    limits: {}
                 replicaCount: 1
                 enabled: true
                 generic: true
@@ -131,27 +141,52 @@ spec:
                 paths:
                     - /_matrix/federation/v1/send/
             appservice:
+                resources:
+                    requests:
+                        cpu: 18m
+                        memory: 120Mi
+                    limits: {}
                 enabled: true
                 name: appservices
                 generic: true
             federation_sender_1:
+                resources:
+                    requests:
+                        cpu: 24m
+                        memory: 131Mi
+                    limits: {}
                 labels:
                     synapse-component: federation-sender
                 app: federation_sender
                 name: federation-sender-1
                 enabled: true
             federation_sender_2:
+                resources:
+                    requests:
+                        cpu: 24m
+                        memory: 131Mi
+                    limits: {}
                 labels:
                     synapse-component: federation-sender
                 app: federation_sender
                 name: federation-sender-2
                 enabled: true
             background_worker:
+                resources:
+                    requests:
+                        cpu: 22m
+                        memory: 116Mi
+                    limits: {}
                 name: background_worker
                 replicaCount: 1
                 enabled: true
                 generic: true
             event_persister:
+                resources:
+                    requests:
+                        cpu: 32m
+                        memory: 201Mi
+                    limits: {}
                 name: event_persister
                 replicaCount: 1
                 enabled: true
@@ -159,6 +194,11 @@ spec:
                 listeners:
                     - replication
         synapse:
+            resources:
+                requests:
+                    cpu: 14m
+                    memory: 150Mi
+                limits: {}
             extraVolumeMounts:
                 - name: configs
                   mountPath: /data

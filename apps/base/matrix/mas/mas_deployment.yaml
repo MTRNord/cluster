@@ -19,6 +19,11 @@ spec:
         spec:
             containers:
                 - name: mas
+                  resources:
+                    limits: {}
+                    requests:
+                        memory: "100Mi"
+                        cpu: "28m"
                   image: ghcr.io/element-hq/matrix-authentication-service:latest
                   imagePullPolicy: Always
                   # Normal mode
