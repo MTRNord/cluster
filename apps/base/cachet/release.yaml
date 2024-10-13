@@ -13,6 +13,11 @@ spec:
                 kind: HelmRepository
                 name: cachet
     values:
+        resources:
+            limits: {}
+            requests:
+                cpu: "41m"
+                memory: "100Mi"
         image:
             repository: ghcr.io/mtrnord/cachet_docker
             tag: "2.4"
