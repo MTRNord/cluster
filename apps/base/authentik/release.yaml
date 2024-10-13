@@ -45,7 +45,18 @@ spec:
                 timeout: 30
                 # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
                 from: ops@nordgedanken.dev
+        worker:
+            resources:
+                limits: {}
+                requests:
+                    cpu: "107m"
+                    memory: "578Mi"
         server:
+            resources:
+                limits: {}
+                requests:
+                    cpu: "181m"
+                    memory: "628Mi"
             env:
                 - name: AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS
                   value: 127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fe80::/10,::1/128,10.244.0.0/16,fc00:0::/96,fd00::/7
