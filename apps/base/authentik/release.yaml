@@ -46,12 +46,24 @@ spec:
                 # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
                 from: ops@nordgedanken.dev
         worker:
+            replicas: 2
             resources:
                 limits: {}
                 requests:
                     cpu: "107m"
                     memory: "578Mi"
+            deploymentStrategy:
+                type: RollingUpdate
+                rollingUpdate:
+                    maxSurge: 25%
+                    maxUnavailable: 25%
         server:
+            replicas: 2
+            deploymentStrategy:
+                type: RollingUpdate
+                rollingUpdate:
+                    maxSurge: 25%
+                    maxUnavailable: 25%
             resources:
                 limits: {}
                 requests:
