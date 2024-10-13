@@ -68,18 +68,6 @@ spec:
                     - mailers,2
                     - pull
                     - scheduler # Make sure the scheduler queue only exists once and with a worker that has 1 replica.
-            streaming:
-                resources:
-                    limits: {}
-                    requests:
-                        cpu: "41m"
-                        memory: "100Mi" 
-                replicas: 2
-                workers: 2
-                pdb:
-                    enabled: true
-                    minAvailable: 1
-                    maxUnavailable: 1
             web:
                 replicas: 2
                 resources:
@@ -121,6 +109,17 @@ spec:
                 tls: true
                 password: ENC[AES256_GCM,data:t5b/w9RKalqscEHhllA9hg==,iv:kJ6nrGd5xuSb2vpuVtHOUCqM5NzTi+81L43Pvr5rMIY=,tag:3rEBm0DtbQn6j4pw8iqLUQ==,type:str]
             streaming:
+                resources:
+                    limits: {}
+                    requests:
+                        cpu: "41m"
+                        memory: "100Mi" 
+                replicas: 2
+                workers: 2
+                pdb:
+                    enabled: true
+                    minAvailable: 1
+                    maxUnavailable: 1
                 sslMode: no-verify
                 image:
                     repository: ghcr.io/mastodon/mastodon-streaming
