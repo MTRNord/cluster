@@ -46,6 +46,51 @@ spec:
                     - mastodon.mtrnord.blog
                   secretName: mastodon.mtrnord.blog-tls
         mastodon:
+            sidekiq:
+                resources:
+                    limits: {}
+                    requests:
+                        cpu: "136m"
+                        memory: "542Mi"
+            workers:
+                - name: all-queues
+                  concurrency: 25
+                  replicas: 1
+                  resources:
+                      limits: {}
+                      requests:
+                          cpu: "136m"
+                          memory: "542Mi"
+                  queues:
+                    - default,8
+                    - push,6
+                    - ingress,4
+                    - mailers,2
+                    - pull
+                    - scheduler # Make sure the scheduler queue only exists once and with a worker that has 1 replica.
+            streaming:
+                resources:
+                    limits: {}
+                    requests:
+                        cpu: "41m"
+                        memory: "100Mi" 
+                replicas: 2
+                workers: 2
+                pdb:
+                    enabled: true
+                    minAvailable: 1
+                    maxUnavailable: 1
+            web:
+                replicas: 2
+                resources:
+                    limits: {}
+                    requests:
+                        cpu: "180m"
+                        memory: "875Mi"
+                pdb:
+                    enabled: true
+                    minAvailable: 1
+                    maxUnavailable: 1
             authorizedFetch: true
             local_domain: mtrnord.blog
             persistence:

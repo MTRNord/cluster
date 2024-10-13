@@ -16,6 +16,11 @@ spec:
                 - name: pagerduty-cachet
                   image: ghcr.io/mtrnord/pagerduty_cachet:main
                   imagePullPolicy: Always
+                  resources:
+                    limits: {}
+                    requests:
+                        memory: "100Mi"
+                        cpu: "10m"
                   env:
                     - name: CACHET_URL
                       valueFrom:
