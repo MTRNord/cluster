@@ -24,11 +24,6 @@ spec:
                 app.kubernetes.io/instance: main-process
                 app.kubernetes.io/name: draupnir4all
         spec:
-            tolerations:
-                - key: "arch"
-                  operator: "Equal"
-                  value: "arm64"
-                  effect: "NoSchedule"
             containers:
                 - name: draupnir4all
                   image: ghcr.io/mtrnord/cluster/draupnir:d4all
