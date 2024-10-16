@@ -24,6 +24,16 @@ spec:
                 app.kubernetes.io/instance: main-process
                 app.kubernetes.io/name: draupnir4all
         spec:
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                            matchExpressions:
+                                - key: app
+                                  operator: In
+                                  values:
+                                    - draupnir4all
+                          topologyKey: "kubernetes.io/hostname"
             containers:
                 - name: draupnir4all
                   image: ghcr.io/mtrnord/cluster/draupnir:d4all

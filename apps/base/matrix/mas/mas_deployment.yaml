@@ -17,6 +17,16 @@ spec:
             labels:
                 app: mas
         spec:
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                            matchExpressions:
+                                - key: app
+                                  operator: In
+                                  values:
+                                    - mas
+                          topologyKey: "kubernetes.io/hostname"
             containers:
                 - name: mas
                   resources:

@@ -135,38 +135,6 @@ flux-system     main@sha1:21ebd912      False           True    Applied revision
 infra-controllers       main@sha1:21ebd912      False   True    Applied revision: main@sha1:21ebd912
 ```
 
-## TODOs
+## Kube linter
 
-- [ ] Migrate old deployments here
-  - [ ] ~~Gitea~~
-  - [x] Woodpecker
-  - [ ] ~~Docker repo~~ (Part of gitea now)
-  - [ ] Traefik
-  - [x] Certmanager
-  - [ ] External DNS
-  - [ ] Matrix
-    - [x] Media Repo
-      - [x] Move DB to DB Cluster
-    - [x] Synapse
-      - [x] Prepare DB in DB Cluster
-      - [x] Move DB to DB Cluster
-    - [x] Sliding Proxy
-      - [x] Prepare DB in DB Cluster
-      - [x] Move DB to DB Cluster
-    - [x] Mjolnir (important ones)
-    - [ ] ~~Bridges~~
-      - [x] ~~Prepare DBs in DB Cluster~~
-      - [ ] ~~Move DBs to DB Cluster~~
-  - [ ] Keycloak
-  - [x] Prometheus/grafana
-  - [x] Cosign
-  - [ ] Mailu (<https://just-4.fun/blog/howto/oc-k8s-mailu/> with <https://github.com/fastlorenzo/helm-charts-1/tree/master/mailu>)
-    - [ ] Imapsync from old server to new server
-  - [ ] ...
-- [ ]  Port validate script
-- [x] ~~Setup CI for github and woodpecker~~ (Fluxcd can pull it)
-- [x] Verify sops is working as expected and then publish repo
-
-## Kubeaudit
-
-`find ./  | grep .yaml | xargs -I{} -d'\n' kubeaudit all -k ./kubeaudit-config.yml -f {} > audit.txt`
+`kube-linter lint . > audit.txt`
