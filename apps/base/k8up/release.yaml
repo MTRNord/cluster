@@ -64,6 +64,10 @@ spec:
                 memory: "64Mi"
                 cpu: "250m"
             limits: {}
+        volumes:
+            - name: storagebox-vol
+              persistentVolumeClaim:
+                claimName: storagebox-pvc
     prune:
         schedule: '@daily-random'
         retention:
@@ -71,7 +75,7 @@ spec:
             keepWeekly: 4
             keepMonthly: 3
             keepYearly: 1
-    volumes:
-        - name: storagebox-vol
-          persistentVolumeClaim:
-            claimName: storagebox-pvc
+        volumes:
+            - name: storagebox-vol
+              persistentVolumeClaim:
+                claimName: storagebox-pvc
