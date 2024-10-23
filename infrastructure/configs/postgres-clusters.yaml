@@ -125,6 +125,21 @@ spec:
         synchronous_mode: false
         #synchronous_mode: true
 ---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+    name: storagebox-pvc
+    namespace: k8up
+    annotations:
+        k8up.io/backup: false
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 700Gi
+    storageClassName: smb-storagebox
+---
 apiVersion: k8up.io/v1
 kind: Schedule
 metadata:
