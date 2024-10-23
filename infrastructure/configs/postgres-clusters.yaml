@@ -128,7 +128,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-    name: storagebox-pvc
+    name: pg-storagebox-pvc
     namespace: postgres-cluster
     annotations:
         k8up.io/backup: false
@@ -172,7 +172,7 @@ spec:
         volumes:
             - name: storagebox-vol
               persistentVolumeClaim:
-                claimName: storagebox-pvc
+                claimName: pg-storagebox-pvc
     prune:
         schedule: '@daily-random'
         retention:
@@ -183,4 +183,4 @@ spec:
         volumes:
             - name: storagebox-vol
               persistentVolumeClaim:
-                claimName: storagebox-pvc
+                claimName: pg-storagebox-pvc
