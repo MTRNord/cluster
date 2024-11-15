@@ -5,24 +5,12 @@ metadata:
     namespace: postgres-cluster
 spec:
     instances: 3
-    #imageName: ghcr.io/cloudnative-pg/postgresql:17.1@sha256:97d2ce14655071fa605eece095dcc26dec31b1046386f9939c2538d270e1e7a4
-    imageName: ghcr.io/mtrnord/db_workaround:17.1
-    imagePullPolicy: Always
+    imageName: ghcr.io/cloudnative-pg/postgresql:17.1@sha256:97d2ce14655071fa605eece095dcc26dec31b1046386f9939c2538d270e1e7a4
     enableSuperuserAccess: true
     primaryUpdateMethod: switchover
     ephemeralVolumesSizeLimit:
         shm: 100Mi
         temporaryData: 100Mi
-    postgresql:
-        parameters:
-            pgaudit.log: "all, -misc"
-            pgaudit.log_catalog: "off"
-            pgaudit.log_parameter: "on"
-            pgaudit.log_relation: "on"
-        shared_preload_libraries:
-            - set_user
-            - pg_stat_statements
-            - pg_stat_kcache
     bootstrap:
         initdb:
             import:
