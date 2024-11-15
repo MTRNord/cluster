@@ -55,9 +55,9 @@ spec:
             # Memory settings
             shared_buffers: "1024 MB"
             work_mem: "32 MB"
-            maintenance_work_mem: '320 MB'
+            maintenance_work_mem: "320 MB"
             huge_pages: off
-            effective_cache_size: '3 GB'
+            effective_cache_size: "3 GB"
             effective_io_concurrency: "150"
             random_page_cost: "1.5"
             # Cost of a sequentially-fetched disk page
@@ -77,14 +77,15 @@ spec:
             track_io_timing: on
             track_functions: pl
             # Replication
-            wal_level: replica
+            #wal_level: replica
+            wal_level: logical
             max_wal_senders: "10"
             synchronous_commit: on
             # Checkpointing
             checkpoint_timeout: "15 min"
             checkpoint_completion_target: "0.9"
-            min_wal_size: '512 MB'
-            max_wal_size: '1024 MB'
+            min_wal_size: "512 MB"
+            max_wal_size: "1024 MB"
             # archive_mode: on # having it on enables activating P.I.T.R. at a later time without restart
             # archive_command: "/bin/true" # not doing anything yet with WAL-s
             password_encryption: scram-sha-256
@@ -161,7 +162,7 @@ spec:
             - name: storagebox-vol
               mountPath: /mnt/storagebox
     backup:
-        schedule: '@daily-random'
+        schedule: "@daily-random"
         failedJobsHistoryLimit: 2
         successfulJobsHistoryLimit: 2
         resources:
@@ -172,9 +173,9 @@ spec:
         volumes:
             - name: storagebox-vol
               persistentVolumeClaim:
-                claimName: pg-storagebox-pvc
+                  claimName: pg-storagebox-pvc
     prune:
-        schedule: '@daily-random'
+        schedule: "@daily-random"
         retention:
             keepDaily: 7
             keepWeekly: 4
@@ -183,4 +184,4 @@ spec:
         volumes:
             - name: storagebox-vol
               persistentVolumeClaim:
-                claimName: pg-storagebox-pvc
+                  claimName: pg-storagebox-pvc
