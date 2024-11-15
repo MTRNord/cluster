@@ -1,0 +1,76 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+    name: pg-cluster-v2
+    namespace: postgres-cluster
+spec:
+    instances: 3
+    #imageName: ghcr.io/cloudnative-pg/postgresql:17.1@sha256:97d2ce14655071fa605eece095dcc26dec31b1046386f9939c2538d270e1e7a4
+    imageName: ghcr.io/mtrnord/db_workaround:17.1
+    imagePullPolicy: Always
+    enableSuperuserAccess: true
+    primaryUpdateMethod: switchover
+    ephemeralVolumesSizeLimit:
+        shm: 100Mi
+        temporaryData: 100Mi
+    postgresql:
+        parameters:
+            pgaudit.log: "all, -misc"
+            pgaudit.log_catalog: "off"
+            pgaudit.log_parameter: "on"
+            pgaudit.log_relation: "on"
+        shared_preload_libraries:
+            - set_user
+            - pg_stat_statements
+            - pg_stat_kcache
+    bootstrap:
+        initdb:
+            import:
+                type: monolith
+                schemaOnly: true
+                databases:
+                    - synapse
+                    - draupnir_synapse
+                    - d4all
+                    - authentik
+                    - ejabberd
+                    - vaultwarden
+                    - mastodon
+                    - openproject
+                    - plausible
+                    - coder
+                    - matrix_auth
+                    - cachet
+                    - docuseal
+                roles:
+                    - synapse
+                    - draupnir_synapse
+                    - d4all
+                    - authentik
+                    - ejabberd
+                    - vaultwarden
+                    - mastodon
+                    - openproject
+                    - plausible
+                    - coder
+                    - matrix_auth
+                    - cachet
+                    - docuseal
+                    # Old roles from zalando. TODO: Remove
+                    - admin
+                    - robot_zmon
+                source:
+                    externalCluster: zalando-cluster
+    storage:
+        storageClass: hcloud-volumes
+        size: 100Gi
+    externalClusters:
+        - name: zalando-cluster
+          connectionParameters:
+              host: postgres-cluster.postgres-cluster.svc.cluster.local
+              user: postgres
+              dbname: postgres
+              sslmode: require
+          password:
+              name: postgres.postgres-cluster.credentials.postgresql.acid.zalan.do
+              key: password
