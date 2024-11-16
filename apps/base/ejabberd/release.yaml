@@ -112,9 +112,9 @@ spec:
         api_permissions:
             admin access:
                 what:
-                    - '*'
-                    - '!stop'
-                    - '!start'
+                    - "*"
+                    - "!stop"
+                    - "!start"
                 who:
                     access:
                         allow:
@@ -130,7 +130,7 @@ spec:
                 from:
                     - ejabberd_ctl
                     - mod_http_api
-                what: '*'
+                what: "*"
                 who: all
             public commands:
                 what:
@@ -147,7 +147,7 @@ spec:
             updateSqlSchema: true
             config:
                 sql_type: pgsql
-                sql_server: postgres-cluster.postgres-cluster.svc.cluster.local
+                sql_server: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
                 sql_port: 5432
                 sql_ssl: true
                 sql_database: ejabberd
