@@ -1,3 +1,4 @@
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -139,3 +140,15 @@ spec:
     #      password:
     #          name: postgres.postgres-cluster.credentials.postgresql.acid.zalan.do
     #          key: password
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+    name: pg-cluster-v2
+    namespace: postgres-cluster
+spec:
+    selector:
+        matchLabels:
+            "cnpg.io/cluster": pg-cluster-v2
+    podMetricsEndpoints:
+        - port: metrics
