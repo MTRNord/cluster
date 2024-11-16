@@ -1,3 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: postgres-cluster
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
@@ -22,73 +26,73 @@ spec:
               login: true
               superuser: false
               passwordSecret:
-                  name: synapse
+                name: synapse
             - name: draupnir_synapse
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: draupnir-synapse
+                name: draupnir-synapse
             - name: authentik
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: authentik
+                name: authentik
             - name: ejabberd
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: ejabberd
+                name: ejabberd
             - name: vaultwarden
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: vaultwarden
+                name: vaultwarden
             - name: mastodon
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: mastodon
+                name: mastodon
             - name: openproject
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: openproject
+                name: openproject
             - name: plausible
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: plausible
+                name: plausible
             - name: coder
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: coder
+                name: coder
             - name: matrix_auth
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: matrix-auth
+                name: matrix-auth
             - name: cachet
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: cachet
+                name: cachet
             - name: docuseal
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                  name: docuseal
+                name: docuseal
     #bootstrap:
     #    initdb:
     #        import:
