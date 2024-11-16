@@ -11,6 +11,9 @@ spec:
     ephemeralVolumesSizeLimit:
         shm: 100Mi
         temporaryData: 100Mi
+    postgresql:
+        parameters:
+            max_connections: "340"
     managed:
         roles:
             - name: synapse
