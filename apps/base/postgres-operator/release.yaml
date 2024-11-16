@@ -22,28 +22,28 @@ spec:
         image:
             registry: ghcr.io
             repository: zalando/postgres-operator
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
-kind: HelmRelease
-metadata:
-    name: postgres-operator-ui
-    namespace: postgres-operator
-spec:
-    releaseName: postgres-operator-ui
-    chart:
-        spec:
-            chart: postgres-operator-ui
-            sourceRef:
-                kind: HelmRepository
-                name: postgres-operator-ui
-    interval: 50m
-    install:
-        remediation:
-            retries: 3
-        crds: Create
-    upgrade:
-        crds: CreateReplace
-    values:
-        image:
-            registry: ghcr.io
-            repository: zalando/postgres-operator-ui
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# kind: HelmRelease
+# metadata:
+#     name: postgres-operator-ui
+#     namespace: postgres-operator
+# spec:
+#     releaseName: postgres-operator-ui
+#     chart:
+#         spec:
+#             chart: postgres-operator-ui
+#             sourceRef:
+#                 kind: HelmRepository
+#                 name: postgres-operator-ui
+#     interval: 50m
+#     install:
+#         remediation:
+#             retries: 3
+#         crds: Create
+#     upgrade:
+#         crds: CreateReplace
+#     values:
+#         image:
+#             registry: ghcr.io
+#             repository: zalando/postgres-operator-ui
