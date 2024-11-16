@@ -11,54 +11,140 @@ spec:
     ephemeralVolumesSizeLimit:
         shm: 100Mi
         temporaryData: 100Mi
-    bootstrap:
-        initdb:
-            import:
-                type: monolith
-                databases:
-                    - synapse
-                    - draupnir_synapse
-                    - d4all
-                    - authentik
-                    - ejabberd
-                    - vaultwarden
-                    - mastodon
-                    - openproject
-                    - plausible
-                    - coder
-                    - matrix_auth
-                    - cachet
-                    - docuseal
-                roles:
-                    - synapse
-                    - draupnir_synapse
-                    - d4all
-                    - authentik
-                    - ejabberd
-                    - vaultwarden
-                    - mastodon
-                    - openproject
-                    - plausible
-                    - coder
-                    - matrix_auth
-                    - cachet
-                    - docuseal
-                    # Old roles from zalando. TODO: Remove
-                    - admin
-                    - robot_zmon
-                source:
-                    externalCluster: zalando-cluster
+    maanged:
+        roles:
+            - name: synapse
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: synapse.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: draupnir_synapse
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: draupnir-synapse.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: authentik
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: authentik.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: ejabberd
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: ejabberd.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: vaultwarden
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: vaultwarden.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: mastodon
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: mastodon.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: openproject
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: openproject.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: plausible
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: plausible.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: coder
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: coder.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: matrix_auth
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: matrix_auth.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: cachet
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: cachet.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: docuseal
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: docuseal.postgres-cluster.credentials.postgresql.acid.zalan.do
+                  key: password
+    #bootstrap:
+    #    initdb:
+    #        import:
+    #            type: monolith
+    #            databases:
+    #                - synapse
+    #                - draupnir_synapse
+    #                - d4all
+    #                - authentik
+    #                - ejabberd
+    #                - vaultwarden
+    #                - mastodon
+    #                - openproject
+    #                - plausible
+    #                - coder
+    #                - matrix_auth
+    #                - cachet
+    #                - docuseal
+    #            roles:
+    #                - synapse
+    #                - draupnir_synapse
+    #                - d4all
+    #                - authentik
+    #                - ejabberd
+    #                - vaultwarden
+    #                - mastodon
+    #                - openproject
+    #                - plausible
+    #                - coder
+    #                - matrix_auth
+    #                - cachet
+    #                - docuseal
+    #                # Old roles from zalando. TODO: Remove
+    #                - admin
+    #                - robot_zmon
+    #            source:
+    #                externalCluster: zalando-cluster
     storage:
         storageClass: hcloud-volumes
         size: 100Gi
-        resizeInUseVolumes: false
-    externalClusters:
-        - name: zalando-cluster
-          connectionParameters:
-              host: postgres-cluster.postgres-cluster.svc.cluster.local
-              user: postgres
-              dbname: postgres
-              sslmode: require
-          password:
-              name: postgres.postgres-cluster.credentials.postgresql.acid.zalan.do
-              key: password
+        #resizeInUseVolumes: false
+    #externalClusters:
+    #    - name: zalando-cluster
+    #      connectionParameters:
+    #          host: postgres-cluster.postgres-cluster.svc.cluster.local
+    #          user: postgres
+    #          dbname: postgres
+    #          sslmode: require
+    #      password:
+    #          name: postgres.postgres-cluster.credentials.postgresql.acid.zalan.do
+    #          key: password
