@@ -10,8 +10,8 @@ spec:
             sourceRef:
                 kind: HelmRepository
                 name: ananace-charts
-            version: 1.1.4
-    interval: 50m
+            version: 1.1.5
+    interval: 60m
     install:
         remediation:
             retries: 3
@@ -27,7 +27,7 @@ spec:
             token: ENC[AES256_GCM,data:PvFFL0T9y+xgPLf2VGLbYinkAfq/T0JQeR4/QmaaHNkpWssMtuXeQW6l,iv:Wfp7I1HhgyDRdoOUjcS2CWX6F/+YZct5Vh5CWbCkOIo=,tag:HT8cwqxOboz8a7RNnJPPYg==,type:str]
         extraCommands:
             - 'echo "2 2 * * * /usr/local/bin/autocompressor.sh" >> /conf/synatainer.crontab'
-            - 'cat /conf/synatainer.crontab'
+            - "sed -e 's/cut/cat/' -i /setup-crontab.sh"
 sops:
     kms: []
     gcp_kms: []
@@ -36,13 +36,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0WUx3czdhYUZIWi9NdkNy
-            VnM3dTVQc0M4VmovWEc4MmhYMnk5K1YvS0NVCm84K3d5UkQ4alNya2hYbFZPbjdS
-            WEUyOWczUzFTVElpZnVOdWtCQkJxemMKLS0tIE5ueU13Zml3c1QvRTJMalNVQkRo
-            eTdRaG5LYUdxY1M4eUswRU56Nzd2WGcK9YGs2xEK6nPz5dzWLcoVI4NnfJTKZ7Cg
-            gq2815A03FqvlCACl7VhO7kr87wN7BPSu74PeewFSn3yYusHzoBYCA==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0WUx3czdhYUZIWi9NdkNy
+              VnM3dTVQc0M4VmovWEc4MmhYMnk5K1YvS0NVCm84K3d5UkQ4alNya2hYbFZPbjdS
+              WEUyOWczUzFTVElpZnVOdWtCQkJxemMKLS0tIE5ueU13Zml3c1QvRTJMalNVQkRo
+              eTdRaG5LYUdxY1M4eUswRU56Nzd2WGcK9YGs2xEK6nPz5dzWLcoVI4NnfJTKZ7Cg
+              gq2815A03FqvlCACl7VhO7kr87wN7BPSu74PeewFSn3yYusHzoBYCA==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-05-06T08:58:16Z"
     mac: ENC[AES256_GCM,data:VlE5+hLYuOeKA2oPt6ROaOPieKEuyxwf+QM6h+brJW4nNiETwgEmyYlBTFIifd7JMKrJrqX3vDLh0OfbuWPnueT67ZOL8bk+JRUZcA25lDlDtTn13IR48OBCOXyj58ZOGFLj8khDn+ceESX5MtUUVbwRuephzbAQ4PHQjOpGvUw=,iv:/Amm32bJW4fnoxtp5pvyP8+tgpLP8nMGMGDZm3qd704=,tag:MfAvclkSBi93LjZKsYGzVQ==,type:str]
     pgp: []
