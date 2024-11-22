@@ -53,6 +53,7 @@ spec:
                 service:
                     enabled: true
         service:
+            #enabled: false
             # meow
             annotations:
                 external-dns.alpha.kubernetes.io/access: public
@@ -69,7 +70,7 @@ spec:
                 minVersion: VersionTLS13
         experimental:
             http3:
-                enabled: true
+                enabled: false
         ports:
             traefik:
                 port: 9000
@@ -109,7 +110,7 @@ spec:
                 # Not supported by hetzner
                 http3:
                     enabled: false
-                #  advertisedPort: 443
+                    advertisedPort: 8443
                 middlewares:
                     - traefik-ingress-hsts@kubernetescrd
                     - traefik-ingress-compress@kubernetescrd
@@ -131,32 +132,33 @@ spec:
             kubernetesIngress:
                 publishedService:
                     enabled: true
----
-# NodePort Ingress for traefik ports 80 and 443 with http3 support
-kind: Service
-apiVersion: v1
-metadata:
-    name: traefik-ingress-nodeport
-    namespace: traefik-ingress
-spec:
-    type: NodePort
-    externalTrafficPolicy: Local
-    selector:
-        app.kubernetes.io/name: traefik
-        app.kubernetes.io/instance: traefik
-    ports:
-        - protocol: TCP
-          port: 80
-          targetPort: web
-          nodePort: 80
-          name: http
-        - protocol: TCP
-          port: 443
-          targetPort: websecure
-          nodePort: 443
-          name: https
-        - protocol: UDP
-          port: 443
-          targetPort: websecure
-          nodePort: 443
-          name: http3
+# ---
+# # NodePort Ingress for traefik ports 80 and 443 with http3 support
+# kind: Service
+# apiVersion: v1
+# metadata:
+#     name: traefik-ingress-nodeport
+#     namespace: traefik-ingress
+# spec:
+#     type: NodePort
+#     externalTrafficPolicy: Local
+#     internalTrafficPolicy: Local
+#     selector:
+#         app.kubernetes.io/name: traefik
+#         app.kubernetes.io/instance: traefik
+#     ports:
+#         - protocol: TCP
+#           port: 980
+#           targetPort: web
+#           nodePort: 80
+#           name: http
+#         - protocol: TCP
+#           port: 9443
+#           targetPort: websecure
+#           nodePort: 443
+#           name: https
+#         - protocol: UDP
+#           port: 8443
+#           targetPort: websecure
+#           nodePort: 8443
+#           name: http3
