@@ -39,6 +39,12 @@ spec:
                       runAsUser: 10001
                       runAsGroup: 10001
                       fsGroup: 10001
+                  args:
+                      - while true; do sleep 30; done;
+                  command:
+                      - /bin/bash
+                      - -c
+                      - --
                   env:
                       - name: BMO_urlbase
                         value: https://bugzilla.midnightthoughts.space
@@ -70,14 +76,14 @@ spec:
                       - name: http
                         containerPort: 8000
                         protocol: TCP
-                  livenessProbe:
-                      httpGet:
-                          path: /
-                          port: http
-                  readinessProbe:
-                      httpGet:
-                          path: /
-                          port: http
+                  #livenessProbe:
+                  #  httpGet:
+                  #      path: /
+                  #      port: http
+                  #readinessProbe:
+                  #  httpGet:
+                  #      path: /
+                  #      port: http
                   volumeMounts:
                       - mountPath: /app/data
                         name: bugzilla-data
