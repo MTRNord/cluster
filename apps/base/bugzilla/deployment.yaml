@@ -27,7 +27,7 @@ spec:
             containers:
                 - name: bugzilla
                   image: ghcr.io/mtrnord/bugzilla:latest
-                  imagePullPolicy: IfNotPresent
+                  imagePullPolicy: Always
                   env:
                     - name: BMO_urlbase
                       value: https://bugzilla.midnightthoughts.space
@@ -50,7 +50,11 @@ spec:
                             name: bugzilla
                             key: ENC[AES256_GCM,data:la7MmOUij/bw7XgxMypQDw==,iv:fJLNxMarYyzQg5c7/Ao7v8y80TP/DU45QVTModlXq5E=,tag:TiTu7z9Y7NvA1gXhLHwvfg==,type:str]
                     - name: BMO_inbound_proxies
-                      value: '*'
+                      value: "*"
+                    - name: BMO_memcached_servers
+                      value: "bugzilla"
+                    - name: BMO_memcached_namespace
+                      value: ""
                   ports:
                     - name: http
                       containerPort: 8000
