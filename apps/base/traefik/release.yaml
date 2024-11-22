@@ -142,7 +142,8 @@ spec:
     type: NodePort
     externalTrafficPolicy: Local
     selector:
-        app: traefik
+        app.kubernetes.io/name: traefik
+        app.kubernetes.io/instance: traefik
     ports:
         - protocol: TCP
           port: 80
