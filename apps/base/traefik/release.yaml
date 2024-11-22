@@ -148,11 +148,14 @@ spec:
           port: 80
           targetPort: web
           nodePort: 80
+          name: http
         - protocol: TCP
           port: 443
           targetPort: websecure
           nodePort: 443
+          name: https
         - protocol: UDP
           port: 443
           targetPort: websecure
           nodePort: 443
+          name: http3
