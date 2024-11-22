@@ -32,6 +32,11 @@ spec:
                     runAsUser: 10001
                     runAsGroup: 10001
                     fsGroup: 10001
+                  command:
+                    - /usr/bin/sh
+                  args:
+                    - -c
+                    - chown -R 10001:10001 /app/data && exec /app/scripts/entrypoint.pl httpd
                   env:
                     - name: BMO_urlbase
                       value: https://bugzilla.midnightthoughts.space
