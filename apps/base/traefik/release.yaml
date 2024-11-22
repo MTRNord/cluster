@@ -122,8 +122,8 @@ spec:
         instanceLabelOverride: traefik
         topologySpreadConstraints:
             - labelSelector:
-                matchLabels:
-                    app.kubernetes.io/name: '{{ template "traefik.name" . }}'
+                  matchLabels:
+                      app.kubernetes.io/name: '{{ template "traefik.name" . }}'
               maxSkew: 1
               topologyKey: kubernetes.io/hostname
               whenUnsatisfiable: ScheduleAnyway
@@ -131,3 +131,28 @@ spec:
             kubernetesIngress:
                 publishedService:
                     enabled: true
+---
+# NodePort Ingress for traefik ports 80 and 443 with http3 support
+kind: Service
+apiVersion: v1
+metadata:
+    name: traefik-ingress-nodeport
+    namespace: traefik-ingress
+spec:
+    type: NodePort
+    externalTrafficPolicy: Local
+    selector:
+        app: traefik
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: web
+          nodePort: 80
+        - protocol: TCP
+          port: 443
+          targetPort: websecure
+          nodePort: 443
+        - protocol: UDP
+          port: 443
+          targetPort: websecure
+          nodePort: 443
