@@ -26,7 +26,7 @@ spec:
                   command:
                     - chown
                     - -R
-                    - "10001:10001"
+                    - 10001:10001
                     - /app/data
                   volumeMounts:
                     - mountPath: /app/data
@@ -60,16 +60,16 @@ spec:
                       valueFrom:
                         secretKeyRef:
                             name: bugzilla
-                            key: ENC[AES256_GCM,data:vDXiZnGSFrU=,iv:wi6QxY/4KerM0C/MlHT0DylS51xqyUfxnTeHwCbNbzk=,tag:X3wwFwTIaHt2jgANcn9rXA==,type:str]
+                            key: ENC[AES256_GCM,data:6rSmmYzXb0g=,iv:CD66d0jaIUQNW4pUHtOtn7nGv/TADkE5hJyqVam3Q7I=,tag:tb0sL3SVZO8A6z0JUhbboQ==,type:str]
                     - name: BMO_site_wide_secret
                       valueFrom:
                         secretKeyRef:
                             name: bugzilla
-                            key: ENC[AES256_GCM,data:la7MmOUij/bw7XgxMypQDw==,iv:fJLNxMarYyzQg5c7/Ao7v8y80TP/DU45QVTModlXq5E=,tag:TiTu7z9Y7NvA1gXhLHwvfg==,type:str]
+                            key: ENC[AES256_GCM,data:xqkSw73eciMwjoEhr7D87w==,iv:Sr5kcDdVJ6WVOAsbdmVQFs1I00tYjSQYyQ9kS/pCm8M=,tag:S1B9kajAuKOoPpzn643mrQ==,type:str]
                     - name: BMO_inbound_proxies
-                      value: "*"
+                      value: '*'
                     - name: BMO_memcached_servers
-                      value: "bugzilla"
+                      value: bugzilla
                     - name: BMO_memcached_namespace
                       value: ""
                   ports:
@@ -100,14 +100,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGUDFZalJ5V2M4M3dFSFIr
+            b0tQdlpFNzFzUld0Q3dkTWtoeUUzcE5IMm13CklhcnVUV1VDTURyYUNTR2FsQkMr
+            VC9YVWhYWjF6cjVpSVpSYjh2TDlBUG8KLS0tIHhwbmQ1TG51QU5NMUREMFNRUG9E
+            S1dmTGc0LzMzM2x2bFE3VDZ0YmsrMTAKT8l9nDJSQgEd+0xJHnDBmhUYHFjGz+1N
+            mNvVD6cN6VDApslkmACFKl4Kb+f0+gKzUfny5GKMxCjc/BH0oYF0YA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-11-22T17:47:56Z"
-    mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
+    lastmodified: "2024-11-23T00:40:19Z"
+    mac: ENC[AES256_GCM,data:dIO5BTxj2d8wB9r9cjcSaIz28noyt19EWjzkgUYj0h/J3HIjscw95PLcDFdZ6/XFoIeN/I4hP9OeGBV+nWmCOJf6Yk0Y/VT1Zw6XKIPeAxzhPOcc0fXM4dyXegO1gUQDA3bzWZTVlKbB9InrDJNkJziHFZOLGvcYLTQ6iJrE4j8=,iv:P+NZJ4f7f+4fTEFFAykgYO58UCaD8DcVERqXADrUeoQ=,tag:jwz60APs0YflMtGfrSb32w==,type:str]
     pgp: []
     encrypted_regex: ^(routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
@@ -136,14 +136,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGUDFZalJ5V2M4M3dFSFIr
+            b0tQdlpFNzFzUld0Q3dkTWtoeUUzcE5IMm13CklhcnVUV1VDTURyYUNTR2FsQkMr
+            VC9YVWhYWjF6cjVpSVpSYjh2TDlBUG8KLS0tIHhwbmQ1TG51QU5NMUREMFNRUG9E
+            S1dmTGc0LzMzM2x2bFE3VDZ0YmsrMTAKT8l9nDJSQgEd+0xJHnDBmhUYHFjGz+1N
+            mNvVD6cN6VDApslkmACFKl4Kb+f0+gKzUfny5GKMxCjc/BH0oYF0YA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-11-22T17:47:56Z"
-    mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
+    lastmodified: "2024-11-23T00:40:19Z"
+    mac: ENC[AES256_GCM,data:dIO5BTxj2d8wB9r9cjcSaIz28noyt19EWjzkgUYj0h/J3HIjscw95PLcDFdZ6/XFoIeN/I4hP9OeGBV+nWmCOJf6Yk0Y/VT1Zw6XKIPeAxzhPOcc0fXM4dyXegO1gUQDA3bzWZTVlKbB9InrDJNkJziHFZOLGvcYLTQ6iJrE4j8=,iv:P+NZJ4f7f+4fTEFFAykgYO58UCaD8DcVERqXADrUeoQ=,tag:jwz60APs0YflMtGfrSb32w==,type:str]
     pgp: []
     encrypted_regex: ^(routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
@@ -167,14 +167,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGUDFZalJ5V2M4M3dFSFIr
+            b0tQdlpFNzFzUld0Q3dkTWtoeUUzcE5IMm13CklhcnVUV1VDTURyYUNTR2FsQkMr
+            VC9YVWhYWjF6cjVpSVpSYjh2TDlBUG8KLS0tIHhwbmQ1TG51QU5NMUREMFNRUG9E
+            S1dmTGc0LzMzM2x2bFE3VDZ0YmsrMTAKT8l9nDJSQgEd+0xJHnDBmhUYHFjGz+1N
+            mNvVD6cN6VDApslkmACFKl4Kb+f0+gKzUfny5GKMxCjc/BH0oYF0YA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-11-22T17:47:56Z"
-    mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
+    lastmodified: "2024-11-23T00:40:19Z"
+    mac: ENC[AES256_GCM,data:dIO5BTxj2d8wB9r9cjcSaIz28noyt19EWjzkgUYj0h/J3HIjscw95PLcDFdZ6/XFoIeN/I4hP9OeGBV+nWmCOJf6Yk0Y/VT1Zw6XKIPeAxzhPOcc0fXM4dyXegO1gUQDA3bzWZTVlKbB9InrDJNkJziHFZOLGvcYLTQ6iJrE4j8=,iv:P+NZJ4f7f+4fTEFFAykgYO58UCaD8DcVERqXADrUeoQ=,tag:jwz60APs0YflMtGfrSb32w==,type:str]
     pgp: []
     encrypted_regex: ^(routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
@@ -184,9 +184,9 @@ kind: Secret
 metadata:
     name: bugzilla
 type: Opaque
-data:
-    password: ENC[AES256_GCM,data:cxu8VRePc8LK2l0VVfpyRzI5M3q5ti2v8FqT+2Covf28D93bzgOl2B/wXjTlQNB5KWiNVGikVJZc2f8zvjlSsA==,iv:1dbrl+X+yDckQxk9YvLwiKe1/bScIzSTZo2KmyqhlAA=,tag:BWYkhs2iFmWfKQdDduFGOQ==,type:str]
-    site_wide_secret: ENC[AES256_GCM,data:tTFYIKSP+xbOYN44pAOLy0GhV1IBBISdweGPdeBM2FDDrahsK09uCemqHYY4/vVHnKlSCVYXBlT2cPdoJBkFgQ==,iv:vMJ+m8/MW0wEFEJyDgZNN7Bg0IyGlSY347GxQ1pS/k0=,tag:trhVBvRuHGnmvmWplZdstg==,type:str]
+stringData:
+    password: ENC[AES256_GCM,data:ucni3BvTIIbPPInt6E728iiQsrOnPZOXUXlS6Al0nLWKhdzgqvTGVQKj4PbtGkd7kDidgj82h1aI9BNcgnY0AQ==,iv:GPZ5l3f7Yw7KAeyX0HciL6esVKiLsSYl3hJDg0vGBds=,tag:17ZJ8grrVGPgznTwD3OtGA==,type:str]
+    site_wide_secret: ENC[AES256_GCM,data:nk37Mg2ZMyj4rFZJRabj4wC0Hppff1eCNznxTNymSVUT303Xoar205ndtHdQgboaVjyPWZh5kUtgJlhFJ9lHvg==,iv:fFVtXlPFw3m72JWNiX66lU2vOX+pvdmDr45GZ6ssdIY=,tag:PKQqSwldxWJHhPkdx/K+PQ==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -196,14 +196,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGUDFZalJ5V2M4M3dFSFIr
+            b0tQdlpFNzFzUld0Q3dkTWtoeUUzcE5IMm13CklhcnVUV1VDTURyYUNTR2FsQkMr
+            VC9YVWhYWjF6cjVpSVpSYjh2TDlBUG8KLS0tIHhwbmQ1TG51QU5NMUREMFNRUG9E
+            S1dmTGc0LzMzM2x2bFE3VDZ0YmsrMTAKT8l9nDJSQgEd+0xJHnDBmhUYHFjGz+1N
+            mNvVD6cN6VDApslkmACFKl4Kb+f0+gKzUfny5GKMxCjc/BH0oYF0YA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-11-22T17:47:56Z"
-    mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
+    lastmodified: "2024-11-23T00:40:19Z"
+    mac: ENC[AES256_GCM,data:dIO5BTxj2d8wB9r9cjcSaIz28noyt19EWjzkgUYj0h/J3HIjscw95PLcDFdZ6/XFoIeN/I4hP9OeGBV+nWmCOJf6Yk0Y/VT1Zw6XKIPeAxzhPOcc0fXM4dyXegO1gUQDA3bzWZTVlKbB9InrDJNkJziHFZOLGvcYLTQ6iJrE4j8=,iv:P+NZJ4f7f+4fTEFFAykgYO58UCaD8DcVERqXADrUeoQ=,tag:jwz60APs0YflMtGfrSb32w==,type:str]
     pgp: []
     encrypted_regex: ^(routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
@@ -243,14 +243,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGUDFZalJ5V2M4M3dFSFIr
+            b0tQdlpFNzFzUld0Q3dkTWtoeUUzcE5IMm13CklhcnVUV1VDTURyYUNTR2FsQkMr
+            VC9YVWhYWjF6cjVpSVpSYjh2TDlBUG8KLS0tIHhwbmQ1TG51QU5NMUREMFNRUG9E
+            S1dmTGc0LzMzM2x2bFE3VDZ0YmsrMTAKT8l9nDJSQgEd+0xJHnDBmhUYHFjGz+1N
+            mNvVD6cN6VDApslkmACFKl4Kb+f0+gKzUfny5GKMxCjc/BH0oYF0YA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-11-22T17:47:56Z"
-    mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
+    lastmodified: "2024-11-23T00:40:19Z"
+    mac: ENC[AES256_GCM,data:dIO5BTxj2d8wB9r9cjcSaIz28noyt19EWjzkgUYj0h/J3HIjscw95PLcDFdZ6/XFoIeN/I4hP9OeGBV+nWmCOJf6Yk0Y/VT1Zw6XKIPeAxzhPOcc0fXM4dyXegO1gUQDA3bzWZTVlKbB9InrDJNkJziHFZOLGvcYLTQ6iJrE4j8=,iv:P+NZJ4f7f+4fTEFFAykgYO58UCaD8DcVERqXADrUeoQ=,tag:jwz60APs0YflMtGfrSb32w==,type:str]
     pgp: []
     encrypted_regex: ^(routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
