@@ -49,25 +49,26 @@ spec:
                     - name: BMO_urlbase
                       value: https://bugzilla.midnightthoughts.space/
                     - name: BMO_db_driver
-                      value: pg
-                    - name: BMO_db_host
-                      value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+                      value: sqlite
+                    #  value: pg
+                    #- name: BMO_db_host
+                    #  value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
                     - name: BMO_db_name
                       value: bugzilla
-                    - name: BMO_db_user
-                      value: bugzilla
-                    - name: BMO_db_pass
-                      valueFrom:
-                        secretKeyRef:
-                            name: bugzilla
-                            key: ENC[AES256_GCM,data:6rSmmYzXb0g=,iv:CD66d0jaIUQNW4pUHtOtn7nGv/TADkE5hJyqVam3Q7I=,tag:tb0sL3SVZO8A6z0JUhbboQ==,type:str]
+                    #- name: BMO_db_user
+                    #  value: bugzilla
+                    #- name: BMO_db_pass
+                    #  valueFrom:
+                    #    secretKeyRef:
+                    #        name: bugzilla
+                    #        key: ENC[AES256_GCM,data:6rSmmYzXb0g=,iv:CD66d0jaIUQNW4pUHtOtn7nGv/TADkE5hJyqVam3Q7I=,tag:tb0sL3SVZO8A6z0JUhbboQ==,type:str]
                     - name: BMO_site_wide_secret
                       valueFrom:
                         secretKeyRef:
                             name: bugzilla
                             key: ENC[AES256_GCM,data:xqkSw73eciMwjoEhr7D87w==,iv:Sr5kcDdVJ6WVOAsbdmVQFs1I00tYjSQYyQ9kS/pCm8M=,tag:S1B9kajAuKOoPpzn643mrQ==,type:str]
                     - name: BMO_inbound_proxies
-                      value: '*'
+                      value: "*"
                     - name: BMO_memcached_servers
                       value: bugzilla
                     - name: BMO_memcached_namespace
