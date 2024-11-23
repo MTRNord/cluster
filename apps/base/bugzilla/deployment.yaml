@@ -58,8 +58,8 @@ spec:
                       value: bugzilla
                     - name: PORT
                       value: "8000"
-                    - name: MOJO_REVERSE_PROXY
-                      value: "1"
+                    #- name: MOJO_REVERSE_PROXY
+                    #  value: "1"
                     #  value: pg
                     #- name: BMO_db_host
                     #  value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
@@ -77,8 +77,8 @@ spec:
                         secretKeyRef:
                             name: bugzilla
                             key: ENC[AES256_GCM,data:xqkSw73eciMwjoEhr7D87w==,iv:Sr5kcDdVJ6WVOAsbdmVQFs1I00tYjSQYyQ9kS/pCm8M=,tag:S1B9kajAuKOoPpzn643mrQ==,type:str]
-                    - name: BMO_inbound_proxies
-                      value: "*"
+                    #- name: BMO_inbound_proxies
+                    #  value: "*"
                     - name: BMO_memcached_servers
                       value: bugzilla
                     - name: BMO_memcached_namespace
