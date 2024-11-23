@@ -39,17 +39,23 @@ spec:
                     runAsUser: 10001
                     runAsGroup: 10001
                     fsGroup: 10001
-                  args:
-                    - while true; do sleep 30; done;
-                  command:
-                    - /bin/bash
-                    - -c
-                    - --
+                  #args:
+                  #    - while true; do sleep 30; done;
+                  #command:
+                  #    - /bin/bash
+                  #    - -c
+                  #    - --
                   env:
                     - name: BMO_urlbase
                       value: https://bugzilla.midnightthoughts.space/
                     - name: BMO_db_driver
                       value: sqlite
+                    - name: BMO_db_host
+                      value: ""
+                    - name: BMO_db_user
+                      value: ""
+                    - name: BMO_db_pass
+                      value: ""
                     #  value: pg
                     #- name: BMO_db_host
                     #  value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
@@ -77,14 +83,14 @@ spec:
                     - name: http
                       containerPort: 8000
                       protocol: TCP
-                  #livenessProbe:
-                  #  httpGet:
-                  #      path: /
-                  #      port: http
-                  #readinessProbe:
-                  #  httpGet:
-                  #      path: /
-                  #      port: http
+                  livenessProbe:
+                    httpGet:
+                        path: /
+                        port: http
+                  readinessProbe:
+                    httpGet:
+                        path: /
+                        port: http
                   volumeMounts:
                     - mountPath: /app/data
                       name: bugzilla-data
