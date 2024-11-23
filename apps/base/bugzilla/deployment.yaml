@@ -24,58 +24,58 @@ spec:
                 - name: init-bugzilla-vol
                   image: alpine:3.20
                   command:
-                      - chown
-                      - -R
-                      - "10001:10001"
-                      - /app/data
+                    - chown
+                    - -R
+                    - "10001:10001"
+                    - /app/data
                   volumeMounts:
-                      - mountPath: /app/data
-                        name: bugzilla-data
+                    - mountPath: /app/data
+                      name: bugzilla-data
             containers:
                 - name: bugzilla
                   image: ghcr.io/mtrnord/bugzilla:latest
                   imagePullPolicy: Always
                   securityContext:
-                      runAsUser: 10001
-                      runAsGroup: 10001
-                      fsGroup: 10001
+                    runAsUser: 10001
+                    runAsGroup: 10001
+                    fsGroup: 10001
                   args:
-                      - while true; do sleep 30; done;
+                    - while true; do sleep 30; done;
                   command:
-                      - /bin/bash
-                      - -c
-                      - --
+                    - /bin/bash
+                    - -c
+                    - --
                   env:
-                      - name: BMO_urlbase
-                        value: https://bugzilla.midnightthoughts.space/
-                      - name: BMO_db_driver
-                        value: pg
-                      - name: BMO_db_host
-                        value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
-                      - name: BMO_db_name
-                        value: bugzilla
-                      - name: BMO_db_user
-                        value: bugzilla
-                      - name: BMO_db_pass
-                        valueFrom:
-                            secretKeyRef:
-                                name: bugzilla
-                                key: ENC[AES256_GCM,data:vDXiZnGSFrU=,iv:wi6QxY/4KerM0C/MlHT0DylS51xqyUfxnTeHwCbNbzk=,tag:X3wwFwTIaHt2jgANcn9rXA==,type:str]
-                      - name: BMO_site_wide_secret
-                        valueFrom:
-                            secretKeyRef:
-                                name: bugzilla
-                                key: ENC[AES256_GCM,data:la7MmOUij/bw7XgxMypQDw==,iv:fJLNxMarYyzQg5c7/Ao7v8y80TP/DU45QVTModlXq5E=,tag:TiTu7z9Y7NvA1gXhLHwvfg==,type:str]
-                      - name: BMO_inbound_proxies
-                        value: "*"
-                      - name: BMO_memcached_servers
-                        value: "bugzilla"
-                      - name: BMO_memcached_namespace
-                        value: ""
+                    - name: BMO_urlbase
+                      value: https://bugzilla.midnightthoughts.space/
+                    - name: BMO_db_driver
+                      value: pg
+                    - name: BMO_db_host
+                      value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+                    - name: BMO_db_name
+                      value: bugzilla
+                    - name: BMO_db_user
+                      value: bugzilla
+                    - name: BMO_db_pass
+                      valueFrom:
+                        secretKeyRef:
+                            name: bugzilla
+                            key: ENC[AES256_GCM,data:vDXiZnGSFrU=,iv:wi6QxY/4KerM0C/MlHT0DylS51xqyUfxnTeHwCbNbzk=,tag:X3wwFwTIaHt2jgANcn9rXA==,type:str]
+                    - name: BMO_site_wide_secret
+                      valueFrom:
+                        secretKeyRef:
+                            name: bugzilla
+                            key: ENC[AES256_GCM,data:la7MmOUij/bw7XgxMypQDw==,iv:fJLNxMarYyzQg5c7/Ao7v8y80TP/DU45QVTModlXq5E=,tag:TiTu7z9Y7NvA1gXhLHwvfg==,type:str]
+                    - name: BMO_inbound_proxies
+                      value: "*"
+                    - name: BMO_memcached_servers
+                      value: "bugzilla"
+                    - name: BMO_memcached_namespace
+                      value: ""
                   ports:
-                      - name: http
-                        containerPort: 8000
-                        protocol: TCP
+                    - name: http
+                      containerPort: 8000
+                      protocol: TCP
                   #livenessProbe:
                   #  httpGet:
                   #      path: /
@@ -85,12 +85,12 @@ spec:
                   #      path: /
                   #      port: http
                   volumeMounts:
-                      - mountPath: /app/data
-                        name: bugzilla-data
+                    - mountPath: /app/data
+                      name: bugzilla-data
             volumes:
                 - name: bugzilla-data
                   persistentVolumeClaim:
-                      claimName: bugzilla-data
+                    claimName: bugzilla-data
 sops:
     kms: []
     gcp_kms: []
@@ -99,13 +99,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-              cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-              OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-              b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-              OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
+            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
+            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
+            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
+            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-11-22T17:47:56Z"
     mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
     pgp: []
@@ -135,13 +135,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-              cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-              OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-              b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-              OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
+            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
+            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
+            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
+            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-11-22T17:47:56Z"
     mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
     pgp: []
@@ -166,13 +166,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-              cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-              OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-              b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-              OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
+            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
+            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
+            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
+            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-11-22T17:47:56Z"
     mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
     pgp: []
@@ -195,13 +195,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-              cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-              OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-              b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-              OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
+            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
+            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
+            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
+            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-11-22T17:47:56Z"
     mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
     pgp: []
@@ -222,17 +222,17 @@ spec:
     rules:
         - host: bugzilla.midnightthoughts.space
           http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: bugzilla
-                            port:
-                                number: 8000
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: bugzilla
+                        port:
+                            number: 8000
     tls:
         - hosts:
-              - bugzilla.midnightthoughts.space
+            - bugzilla.midnightthoughts.space
           secretName: bugzilla
 sops:
     kms: []
@@ -242,13 +242,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
-              cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
-              OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
-              b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
-              OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxR2VpR3NzYUROZHVRdS8z
+            cFJDbDVnaUtCQldQN2d1MG1Ya096ZkxuZEdFClBlMU9ramhXdXVjSFE1RXZjdzhG
+            OVRzdWl2dWJkTDROUC9aQWJxd0lDQVEKLS0tIHFhQTV4OU1PWDJKVWtiNmpGUDNh
+            b1FRVThhT3BLZWR5VGs1dE1IQisyZUkKX5TnxQlAVWRMZcc9ENRAvA6+tBgPQN3s
+            OsF9LwNwlm4Pu0l1qSBsQCxB9G/QwIaAxOFOMUd3mNylGavv32q3XQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-11-22T17:47:56Z"
     mac: ENC[AES256_GCM,data:f8VnFzvVZVKGwFdr9AcNs0O0ru5N5NO+qrX1yORCvdE4A3QyymsXH+Oa+hKje/zrA5APfR3U1uJFD1JkwMT7ppA2j25bNJzWgDEHPT7fo98wVMOEC7JXej2GRpJxmS7eV/dvS3aPOSAhCT5693fGJHcudbZ6IMqS+2L9PqfU7TU=,iv:rGYc/8Zi2N4yX35GibZR/0ACEkjDjwbgkKWY/KqG6ds=,tag:KFyDEzzN9sLklqLZUZp7kA==,type:str]
     pgp: []

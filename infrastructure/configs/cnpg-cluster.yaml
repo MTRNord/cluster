@@ -19,6 +19,8 @@ spec:
     postgresql:
         parameters:
             max_connections: "340"
+        pg_hba:
+            - host all bugzilla all md5
     managed:
         roles:
             - name: synapse
