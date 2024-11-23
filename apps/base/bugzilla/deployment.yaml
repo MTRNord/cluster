@@ -229,6 +229,7 @@ metadata:
         app.kubernetes.io/instance: bugzilla
     annotations:
         cert-manager.io/cluster-issuer: letsencrypt-prod
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
 spec:
     rules:
         - host: bugzilla.midnightthoughts.space
@@ -244,7 +245,7 @@ spec:
     tls:
         - hosts:
             - bugzilla.midnightthoughts.space
-          secretName: bugzilla
+          secretName: bugzilla-tls
 sops:
     kms: []
     gcp_kms: []
