@@ -21,49 +21,54 @@ spec:
                 - name: init-twitch-vod-vol
                   image: alpine:3.20
                   command:
-                      - chown
-                      - -R
-                      - 10001:10001
-                      - /usr/local/share/twitchautomator/data
+                    - chown
+                    - -R
+                    - 10001:10001
+                    - /usr/local/share/twitchautomator/data
                   volumeMounts:
-                      - mountPath: /usr/local/share/twitchautomator/data
-                        name: twitch-vod-data
+                    - mountPath: /usr/local/share/twitchautomator/data
+                      name: twitch-vod-data
             containers:
                 - name: twitch-vod
                   image: mrbrax/twitchautomator:master
                   imagePullPolicy: Always
                   securityContext:
-                      runAsUser: 10001
-                      runAsGroup: 10001
-                      fsGroup: 10001
+                    runAsUser: 10001
+                    runAsGroup: 10001
+                    fsGroup: 10001
                   env:
-                      - name: NODE_ENV
-                        value: production
-                      - name: TCD_ENABLE_FILES_API
-                        value: "0"
-                      - name: TCD_EXPOSE_LOGS_TO_PUBLIC
-                        value: "0"
-                      - name: TCD_MIGRATE_OLD_VOD_JSON
-                        value: "0"
+                    - name: NODE_ENV
+                      value: production
+                    - name: TCD_ENABLE_FILES_API
+                      value: "0"
+                    - name: TCD_EXPOSE_LOGS_TO_PUBLIC
+                      value: "0"
+                    - name: TCD_MIGRATE_OLD_VOD_JSON
+                      value: "0"
                   ports:
-                      - name: http
-                        containerPort: 8080
-                        protocol: TCP
+                    - name: http
+                      containerPort: 8080
+                      protocol: TCP
                   livenessProbe:
-                      httpGet:
-                          path: /
-                          port: http
+                    httpGet:
+                        path: /
+                        port: http
                   readinessProbe:
-                      httpGet:
-                          path: /
-                          port: http
+                    httpGet:
+                        path: /
+                        port: http
                   volumeMounts:
-                      - mountPath: /usr/local/share/twitchautomator/data
-                        name: twitch-vod-data
+                    - mountPath: /usr/local/share/twitchautomator/data
+                      name: twitch-vod-data
+                    - mountPath: /usr/local/share/twitchautomator/public
+                      name: builddir
             volumes:
                 - name: twitch-vod-data
                   persistentVolumeClaim:
-                      claimName: twitch-vod-data
+                    claimName: twitch-vod-data
+                # Emptydir for build
+                - name: builddir
+                  emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -107,15 +112,15 @@ spec:
     rules:
         - host: twitch-vod.midnightthoughts.space
           http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: twitch-vod
-                            port:
-                                number: 8080
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: twitch-vod
+                        port:
+                            number: 8080
     tls:
         - hosts:
-              - twitch-vod.midnightthoughts.space
+            - twitch-vod.midnightthoughts.space
           secretName: twitch-vod-tls
