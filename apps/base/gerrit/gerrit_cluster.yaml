@@ -75,12 +75,16 @@ spec:
                 # This way plugins are installed from the Gerrit-war file
                 - name: download-commands
                 - name: delete-project
+                - name: replication
                 - name: oauth
                   url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
                   sha1: 005ff9ae2f724c3bd4cd6f4259ee9c03b4ce88a5
                 - name: checks
                   url: https://gerrit-ci.gerritforge.com/job/plugin-checks-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/checks/checks.jar
                   sha1: aa2d4c6cae157f9e7f26f33c4149bc254f6ed983
+                - name: github
+                  url: https://archive-ci.gerritforge.com/view/Plugins-stable-3.7/job/plugin-github-mvn-stable-3.7/lastSuccessfulBuild/archive/github-plugin/target/github-plugin-3.7.3.jar
+                  sha1: 6e1956cc4e51deee1028f3e534bc5cbeb98603bd
             configFiles:
                 # Some configuration options are specific to the k8sgerrit setup. These
                 # will be set by the Gerrit Operator.
