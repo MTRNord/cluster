@@ -34,7 +34,7 @@ spec:
                             port:
                                 name: http
                     path: /.*/git-upload-pack
-                    pathType: Prefix
+                    pathType: ImplementationSpecific
                   - backend:
                         service:
                             name: gerrit-service
@@ -66,5 +66,5 @@ spec:
                             name: gerrit-replica-service
                             port:
                                 name: http
-                    path: ^(/a)?/plugins/high-availability/.*$
-                    pathType: Prefix
+                    path: "^(/a)?/plugins/high-availability/.*$"
+                    pathType: ImplementationSpecific
