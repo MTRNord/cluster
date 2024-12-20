@@ -44,6 +44,10 @@ spec:
                                 name: http
                     path: /
                     pathType: Prefix
+    tls:
+        - hosts:
+              - gerrit.midnightthoughts.space
+          secretName: gerrit.midnightthoughts.space-tls
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -70,3 +74,7 @@ spec:
                                 name: http
                     path: /(a)?/plugins/high-availability/.*
                     pathType: ImplementationSpecific
+    tls:
+        - hosts:
+              - gerrit.midnightthoughts.space
+          secretName: gerrit.midnightthoughts.space-tls
