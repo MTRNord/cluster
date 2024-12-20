@@ -129,8 +129,8 @@ spec:
         instanceLabelOverride: traefik
         topologySpreadConstraints:
             - labelSelector:
-                  matchLabels:
-                      app.kubernetes.io/name: '{{ template "traefik.name" . }}'
+                matchLabels:
+                    app.kubernetes.io/name: '{{ template "traefik.name" . }}'
               maxSkew: 1
               topologyKey: kubernetes.io/hostname
               whenUnsatisfiable: ScheduleAnyway
