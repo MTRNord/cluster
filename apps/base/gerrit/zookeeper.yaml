@@ -1,0 +1,16 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: gerrit-zookeeper
+    namespace: gerrit
+spec:
+    interval: 1h
+    releaseName: gerrit-zookeeper
+    chart:
+        spec:
+            chart: zookeeper
+            sourceRef:
+                kind: OCIRepository
+                name: gerrit-zookeeper
+                namespace: gerrit
+    values: {}

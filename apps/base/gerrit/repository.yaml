@@ -10,3 +10,12 @@ spec:
         branch: master
     ignore: |
         /helm-charts/gerrit-operator/templates/rbac.yaml
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+    name: gerrit-zookeeper
+    namespace: gerrit
+spec:
+    interval: 10m
+    url: oci://registry-1.docker.io/bitnamicharts/zookeeper
