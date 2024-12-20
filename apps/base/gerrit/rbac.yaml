@@ -23,56 +23,56 @@ metadata:
     name: gerrit-operator
 rules:
     - apiGroups:
-          - "batch"
+        - "batch"
       resources:
-          - cronjobs
-          - jobs
+        - cronjobs
+        - jobs
       verbs:
-          - "*"
+        - "*"
     - apiGroups:
-          - "apps"
+        - "apps"
       resources:
-          - statefulsets
-          - deployments
+        - statefulsets
+        - deployments
       verbs:
-          - "*"
+        - "*"
     - apiGroups:
-          - ""
+        - ""
       resources:
-          - configmaps
-          - persistentvolumeclaims
-          - secrets
-          - services
+        - configmaps
+        - persistentvolumeclaims
+        - secrets
+        - services
       verbs:
-          - "*"
+        - "*"
     - apiGroups:
-          - "storage.k8s.io"
+        - "storage.k8s.io"
       resources:
-          - storageclasses
+        - storageclasses
       verbs:
-          - "get"
-          - "list"
+        - "get"
+        - "list"
     - apiGroups:
-          - "apiextensions.k8s.io"
+        - "apiextensions.k8s.io"
       resources:
-          - customresourcedefinitions
+        - customresourcedefinitions
       verbs:
-          - "*"
+        - "*"
     - apiGroups:
-          - "gerritoperator.google.com"
+        - "gerritoperator.google.com"
       resources:
-          - "*"
+        - "*"
       verbs:
-          - "*"
+        - "*"
     - apiGroups:
-          - "admissionregistration.k8s.io"
+        - "admissionregistration.k8s.io"
       resources:
-          - "validatingwebhookconfigurations"
+        - "validatingwebhookconfigurations"
       verbs:
-          - "*"
+        - "*"
     - apiGroups:
-          - "networking.k8s.io"
+        - "networking.k8s.io"
       resources:
-          - ingresses
+        - ingresses
       verbs:
-          - "*"
+        - "*"
