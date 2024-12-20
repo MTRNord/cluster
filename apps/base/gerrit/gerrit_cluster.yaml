@@ -20,7 +20,7 @@ spec:
         sharedStorage:
             size: 1Gi
     ingress:
-        enabled: true
+        enabled: false
         host: gerrit.midnightthoughts.space
         annotations:
             external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
@@ -34,106 +34,106 @@ spec:
     gerrits:
         # A primary Gerrit
         - metadata:
-            name: gerrit
-            labels:
-                app: gerrit
+              name: gerrit
+              labels:
+                  app: gerrit
           spec:
-            mode: PRIMARY
-            replicas: 1
-            resources:
-                requests:
-                    cpu: 1
-                    memory: 5Gi
-                limits:
-                    cpu: 1
-                    memory: 6Gi
-            service:
-                type: NodePort
-                httpPort: 80
-                sshPort: 29418
-            site:
-                size: 1Gi
-            startupProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            readinessProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            livenessProbe:
-                initialDelaySeconds: 120
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
-            plugins:
-                # This way plugins are installed from the Gerrit-war file
-                - name: download-commands
-                - name: delete-project
-                - name: oauth
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
-                  sha1: 005ff9ae2f724c3bd4cd6f4259ee9c03b4ce88a5
-            configFiles:
-                # Some configuration options are specific to the k8sgerrit setup. These
-                # will be set by the Gerrit Operator.
-                gerrit.config: ENC[AES256_GCM,data:OyAK1y3wY9DEXmKVBxOcs4hnS0uEcQr+vs6lq2vrkMU+cqqQRNb6zJK/Q1BcvtFp5EfLUff2Pzm62L6tDT84PaoFzo4FvQ0BKpg4RlLHFWEP5YB8KsbJ9+wh7RU12pHg+0lNNDazxEBUfAI8/ucbff5C69u7sFKueHsKWtmsQ4/S7fK6PY34lfTOAe4gwl4fc9ecA5XwQE0N/TQczcqINVmVLHUVg4Ylw7JS98QQV44664ZMPq3fN8SQbivYy0Myk+ImzZNq1u3vrkDsSlxQxUuJdK7yyGZDETN3JbGB6Ppoz8ir+KE5pYOW2DSt2EVLt/30Swsvx7p+mZTdrezHnLMgtnwaSL+zbY2kmc5wySJviwBHPr0ODj9lcZyKsAm+YlKPWCLBrBVzxz2NiPCobF/S8zN6Ej8wlQAotcumxTrK03I9rTFzjd6VfcFh/LeRDUKYHjmOTN7R8DrH4Fmb/vV5TxiXGFw5yYuMdfiXTVajZacfQRxzi0E2R4kSYic5gKO2I9H+L1DkTNOEFqLI17zi8Glf/agpOHLClUVJCp23cC3opxhNZCltw2HhjN4KyMfNvhbSLwTbRlxz/KJJWAcJz/7ccyfsSPwQ+N0rDbX2WCJArvg7QtQtZy/iT0HsjP5PaxQsz8ekT6QMCwIphBI8xOVtaR4/vh3FPRbML7v/4e+YHLsAYZ9JkikejvaG8sgkPStJJSJkxUyhij9S4t5LbgijWkz5qJCCjRWwfGvbZeAatNcp9/qrZ3f7yZU2p7Z1fLIZZlEq6Xjr+pVjSoBte2kUfwu6q6zjSNZPzsg5q/BMz8YFNFOMIqP0fCSuRa/XJx3AyMJcZJSL1MIm7vCspCwwhmRFJscfmGJQJglgyOLDEFwdCEV4aeaWF2QxbEjnjKbx+AlbXIVMLEUIVGoX9Nl1HZhBzexit5miWWYhUUtS1NTtI9zdOW+BbE7gx8MT4iqMc4MrNOmx+rbaEGXby5V7hphnZ8g/2gMLvhZiIj7TXvcubXgjYih8gSsdOrrkfyUJ9jAyObaN1uSRPrTVwuwpjsKzQH4e+iAPtno0leGCq2m9iiVgSTY0kDKN76Y4CbqqCLUt58EuscQ6xQ99dj0qX5MN3iugxTkyv+oHQQX5sv8BF5kYwLY1cLFKwTjBeQGD+eui5oI0iMy9noa9wCudIJ574Mv6fZaUwqzarodtxb6el/OpnUNau9k3m+y5EtZb9jLVgpIXH+BPm5rfz4UcK2tqo8VbHwH7jXtZ5GmQaO8OAuYM2TlFhyFUMzq4gO9MG3njnWTfpeI2RR/9j4bcMGfvUU71FHR3j+AZcPr11or/Ci/OQud+sRPicZ7SwOALJaEPsPMzLNEM5JwMXPFjFCPAvJg/TU7FsPNVhmI2vqrqsnu2JhdCEKMM+2PxHwF9rTMICJNDU0glJWZZ/dup2aAFu6zKONbM+0ipP1s4niqMPPsOwwZHjeXVBJKSPzCRQkE22qr1ZO5RxF3SR5UxYZINOQFCYV4H7vMMHg==,iv:AZkDuXRWAaehk4aDjXCiZQfODGw2OChxBwEohKY8oC0=,tag:6UVDyvmEwXJFSKSipiY/bA==,type:str]
-            # Reference by name to the Secret containing secret files to be mounted to
-            # $SITE/etc
-            secretRef: gerrit-secure-config
+              mode: PRIMARY
+              replicas: 1
+              resources:
+                  requests:
+                      cpu: 1
+                      memory: 5Gi
+                  limits:
+                      cpu: 1
+                      memory: 6Gi
+              service:
+                  type: NodePort
+                  httpPort: 80
+                  sshPort: 29418
+              site:
+                  size: 1Gi
+              startupProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              readinessProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              livenessProbe:
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 3
+              plugins:
+                  # This way plugins are installed from the Gerrit-war file
+                  - name: download-commands
+                  - name: delete-project
+                  - name: oauth
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
+                    sha1: 005ff9ae2f724c3bd4cd6f4259ee9c03b4ce88a5
+              configFiles:
+                  # Some configuration options are specific to the k8sgerrit setup. These
+                  # will be set by the Gerrit Operator.
+                  gerrit.config: ENC[AES256_GCM,data:OyAK1y3wY9DEXmKVBxOcs4hnS0uEcQr+vs6lq2vrkMU+cqqQRNb6zJK/Q1BcvtFp5EfLUff2Pzm62L6tDT84PaoFzo4FvQ0BKpg4RlLHFWEP5YB8KsbJ9+wh7RU12pHg+0lNNDazxEBUfAI8/ucbff5C69u7sFKueHsKWtmsQ4/S7fK6PY34lfTOAe4gwl4fc9ecA5XwQE0N/TQczcqINVmVLHUVg4Ylw7JS98QQV44664ZMPq3fN8SQbivYy0Myk+ImzZNq1u3vrkDsSlxQxUuJdK7yyGZDETN3JbGB6Ppoz8ir+KE5pYOW2DSt2EVLt/30Swsvx7p+mZTdrezHnLMgtnwaSL+zbY2kmc5wySJviwBHPr0ODj9lcZyKsAm+YlKPWCLBrBVzxz2NiPCobF/S8zN6Ej8wlQAotcumxTrK03I9rTFzjd6VfcFh/LeRDUKYHjmOTN7R8DrH4Fmb/vV5TxiXGFw5yYuMdfiXTVajZacfQRxzi0E2R4kSYic5gKO2I9H+L1DkTNOEFqLI17zi8Glf/agpOHLClUVJCp23cC3opxhNZCltw2HhjN4KyMfNvhbSLwTbRlxz/KJJWAcJz/7ccyfsSPwQ+N0rDbX2WCJArvg7QtQtZy/iT0HsjP5PaxQsz8ekT6QMCwIphBI8xOVtaR4/vh3FPRbML7v/4e+YHLsAYZ9JkikejvaG8sgkPStJJSJkxUyhij9S4t5LbgijWkz5qJCCjRWwfGvbZeAatNcp9/qrZ3f7yZU2p7Z1fLIZZlEq6Xjr+pVjSoBte2kUfwu6q6zjSNZPzsg5q/BMz8YFNFOMIqP0fCSuRa/XJx3AyMJcZJSL1MIm7vCspCwwhmRFJscfmGJQJglgyOLDEFwdCEV4aeaWF2QxbEjnjKbx+AlbXIVMLEUIVGoX9Nl1HZhBzexit5miWWYhUUtS1NTtI9zdOW+BbE7gx8MT4iqMc4MrNOmx+rbaEGXby5V7hphnZ8g/2gMLvhZiIj7TXvcubXgjYih8gSsdOrrkfyUJ9jAyObaN1uSRPrTVwuwpjsKzQH4e+iAPtno0leGCq2m9iiVgSTY0kDKN76Y4CbqqCLUt58EuscQ6xQ99dj0qX5MN3iugxTkyv+oHQQX5sv8BF5kYwLY1cLFKwTjBeQGD+eui5oI0iMy9noa9wCudIJ574Mv6fZaUwqzarodtxb6el/OpnUNau9k3m+y5EtZb9jLVgpIXH+BPm5rfz4UcK2tqo8VbHwH7jXtZ5GmQaO8OAuYM2TlFhyFUMzq4gO9MG3njnWTfpeI2RR/9j4bcMGfvUU71FHR3j+AZcPr11or/Ci/OQud+sRPicZ7SwOALJaEPsPMzLNEM5JwMXPFjFCPAvJg/TU7FsPNVhmI2vqrqsnu2JhdCEKMM+2PxHwF9rTMICJNDU0glJWZZ/dup2aAFu6zKONbM+0ipP1s4niqMPPsOwwZHjeXVBJKSPzCRQkE22qr1ZO5RxF3SR5UxYZINOQFCYV4H7vMMHg==,iv:AZkDuXRWAaehk4aDjXCiZQfODGw2OChxBwEohKY8oC0=,tag:6UVDyvmEwXJFSKSipiY/bA==,type:str]
+              # Reference by name to the Secret containing secret files to be mounted to
+              # $SITE/etc
+              secretRef: gerrit-secure-config
         # Gerrit Replica
         - metadata:
-            name: gerrit-replica
-            labels:
-                app: gerrit-replica
+              name: gerrit-replica
+              labels:
+                  app: gerrit-replica
           spec:
-            mode: REPLICA
-            replicas: 1
-            resources:
-                requests:
-                    cpu: 1
-                    memory: 5Gi
-                limits:
-                    cpu: 1
-                    memory: 6Gi
-            service:
-                type: NodePort
-                httpPort: 80
-                sshPort: 29418
-            site:
-                size: 1Gi
-            plugins:
-                - name: oauth
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
-                  sha1: 005ff9ae2f724c3bd4cd6f4259ee9c03b4ce88a5
-            startupProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            readinessProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            livenessProbe:
-                initialDelaySeconds: 120
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
-            configFiles:
-                gerrit.config: ENC[AES256_GCM,data:NtLg4e3KzaAzItQ94Ui5+h2y2tJaIpd5npOuySXhjW0kavNBAoHWhFyLv5NcfmnZgYX3NDb62GdaZaImUE24FUOnoiMHz6I19LR15cy1Inhkc5xdeedaBjgbNurrbouK1wMA7GpoySeWejqCqU1GbgGKhEk91DodHfiKBk+EUhocDv/2u2AS67yc2RIxnf31nQT8E1sNIcOXMGGyGcPkpAo1S7JXplVVR+pFO7uZdmsGe6d0oOn+Zz1Fg2EC/2SrXsfxysz+e/rkFHlXax4C9TUZKojzdp3GwtIOw2cal0x3JQcpr3xibtoQWrHFiXjP1IwwzPUQqRZrMB+du8oWobp90S/OpHsOuAuhRhvx9M0l7FcKgIMad8LF8bhqcXYiLG/74EJNRicMKyRo8LgzShwQOxuuu22zfKzWsZDDWvwwCRqlZfhaByG8o36800HOlDVjQ8ZkgEZ5h3IpF/tddEc9nrPaFEPHQOt9yXojPCz0FBpz9J7omCWM4mj2kHpUP4RnQMIJ9jYMpmuidQW+qbcLhKyNcS4ipmNz2JrBgpTXK8cLD/yIEe5qsXOseo5JndCHpsptNCNZcfQdXy0eXKOljNMVEJoFx9hTUYtuGsv0CjKxEJ40fpEdIkHQmmTujDvIm2Vm09lQ3xVTfDzm+3JX96EWA4KHJKpEeoF3lA+6nmUXSHAsM4J9mCcW2gUAwvwNI28MVLGxB9se6fKL3lggGyb8ngPR8HZViGED9FxfEVz7nsE+S1cf1xgFuTINl8c/X0z3hDDNFDiDsEtQxwgFJYjcMTyshfHVmvgJjQ2UvbglTygtvFOFNsj2+boV1UKWDyOMwryoeyx7AGF+ILy4czpLLQJ84BX2n+xi94IZ1ztiIq+J490zWiffnDJX2rlQVCTVX/50gqUq7g8DTdUTyklmk/+PFuv6nfHlnLx6fnShjZxzdjUFs+99rDpgCn7aUKBgtf4Izpw0iyQFxboYi6pg8FPHguenXFubx37L27YIrlXa7Cf4oOSkZxjHWCDgFNOHVBAMaVVfCh+aWKttJoLj7chSuFZco9JuosR3I1oKt3DXOPB4GNgJpT4fbnqPOnVFSQhunDlNMY3hAxfCioFTlU/0RpLvOxb9G9kJqGH5Miw9VLPeub8jlszUD8/+HDNHI7kpJuot0ypZZiyqHZiHw204tLgAhosPXS5ukhYbIWmscEMkoOFNubTOm7Se6G9jJAaqTeerJcrnqiKsyBAuOZD/4rja+zPRBeBuckf1LDPjtvXKc4IcN4zwhrx2vLm6nv2dR+3a7gmbwllMQCWP56Th1oxtdPbMMSi9Ix+yReHDir1LpGliyqSVO756fy5Z0PNEx7zkT/GQ9DQMZEGxqkTPxPEeRVWMUlel6PkAjFVr6J+bMHKl/qpMy9bp4YnzzKPAUhj22tPJkH5dlUYkqsWeGamz3z8Fuw73uyAkxIWhg0UQOdXTKULL5gl+j/TmrBrmxqzG1i13GfVckXsRapzeJ85DxBY51ockhg==,iv:+ALQ2yUQmRkoTlq72h2tlZEcy0RpsZD7QWF883PBV/M=,tag:O7UZQQezQQ8QJ8u0ZxDilQ==,type:str]
-                healthcheck.config: |-
-                    [healthcheck "auth"]
-                      enabled = false
-            secretRef: gerrit-secure-config
+              mode: REPLICA
+              replicas: 1
+              resources:
+                  requests:
+                      cpu: 1
+                      memory: 5Gi
+                  limits:
+                      cpu: 1
+                      memory: 6Gi
+              service:
+                  type: NodePort
+                  httpPort: 80
+                  sshPort: 29418
+              site:
+                  size: 1Gi
+              plugins:
+                  - name: oauth
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
+                    sha1: 005ff9ae2f724c3bd4cd6f4259ee9c03b4ce88a5
+              startupProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              readinessProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              livenessProbe:
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 3
+              configFiles:
+                  gerrit.config: ENC[AES256_GCM,data:NtLg4e3KzaAzItQ94Ui5+h2y2tJaIpd5npOuySXhjW0kavNBAoHWhFyLv5NcfmnZgYX3NDb62GdaZaImUE24FUOnoiMHz6I19LR15cy1Inhkc5xdeedaBjgbNurrbouK1wMA7GpoySeWejqCqU1GbgGKhEk91DodHfiKBk+EUhocDv/2u2AS67yc2RIxnf31nQT8E1sNIcOXMGGyGcPkpAo1S7JXplVVR+pFO7uZdmsGe6d0oOn+Zz1Fg2EC/2SrXsfxysz+e/rkFHlXax4C9TUZKojzdp3GwtIOw2cal0x3JQcpr3xibtoQWrHFiXjP1IwwzPUQqRZrMB+du8oWobp90S/OpHsOuAuhRhvx9M0l7FcKgIMad8LF8bhqcXYiLG/74EJNRicMKyRo8LgzShwQOxuuu22zfKzWsZDDWvwwCRqlZfhaByG8o36800HOlDVjQ8ZkgEZ5h3IpF/tddEc9nrPaFEPHQOt9yXojPCz0FBpz9J7omCWM4mj2kHpUP4RnQMIJ9jYMpmuidQW+qbcLhKyNcS4ipmNz2JrBgpTXK8cLD/yIEe5qsXOseo5JndCHpsptNCNZcfQdXy0eXKOljNMVEJoFx9hTUYtuGsv0CjKxEJ40fpEdIkHQmmTujDvIm2Vm09lQ3xVTfDzm+3JX96EWA4KHJKpEeoF3lA+6nmUXSHAsM4J9mCcW2gUAwvwNI28MVLGxB9se6fKL3lggGyb8ngPR8HZViGED9FxfEVz7nsE+S1cf1xgFuTINl8c/X0z3hDDNFDiDsEtQxwgFJYjcMTyshfHVmvgJjQ2UvbglTygtvFOFNsj2+boV1UKWDyOMwryoeyx7AGF+ILy4czpLLQJ84BX2n+xi94IZ1ztiIq+J490zWiffnDJX2rlQVCTVX/50gqUq7g8DTdUTyklmk/+PFuv6nfHlnLx6fnShjZxzdjUFs+99rDpgCn7aUKBgtf4Izpw0iyQFxboYi6pg8FPHguenXFubx37L27YIrlXa7Cf4oOSkZxjHWCDgFNOHVBAMaVVfCh+aWKttJoLj7chSuFZco9JuosR3I1oKt3DXOPB4GNgJpT4fbnqPOnVFSQhunDlNMY3hAxfCioFTlU/0RpLvOxb9G9kJqGH5Miw9VLPeub8jlszUD8/+HDNHI7kpJuot0ypZZiyqHZiHw204tLgAhosPXS5ukhYbIWmscEMkoOFNubTOm7Se6G9jJAaqTeerJcrnqiKsyBAuOZD/4rja+zPRBeBuckf1LDPjtvXKc4IcN4zwhrx2vLm6nv2dR+3a7gmbwllMQCWP56Th1oxtdPbMMSi9Ix+yReHDir1LpGliyqSVO756fy5Z0PNEx7zkT/GQ9DQMZEGxqkTPxPEeRVWMUlel6PkAjFVr6J+bMHKl/qpMy9bp4YnzzKPAUhj22tPJkH5dlUYkqsWeGamz3z8Fuw73uyAkxIWhg0UQOdXTKULL5gl+j/TmrBrmxqzG1i13GfVckXsRapzeJ85DxBY51ockhg==,iv:+ALQ2yUQmRkoTlq72h2tlZEcy0RpsZD7QWF883PBV/M=,tag:O7UZQQezQQ8QJ8u0ZxDilQ==,type:str]
+                  healthcheck.config: |-
+                      [healthcheck "auth"]
+                        enabled = false
+              secretRef: gerrit-secure-config
 sops:
     kms: []
     gcp_kms: []
@@ -142,13 +142,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTT01ka3FacXprU3pUUEw1
-            VUpSUnVXL2xiRTY5aUFNNUQzY3FLU1h6TDE0Ck5QdVRsNkE3ZWNieWlBZ2JXRHpy
-            MCsrdW5FeXA1bkpUMnc3ejZXRlBNT3cKLS0tIFYwWEVtQnB4OG1TQmVSTFZNbmJ5
-            NjNaSzJWYk9xRmV5SWZDdDdMVnRSN1EKPu0DOAxCbQSzWVox0X/zN0hnjoaFArkt
-            JeiDPLdnDcjoJv5WijSJMN7TgtDq8EDc1c7NEx0gHiKarZSumAyjGg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTT01ka3FacXprU3pUUEw1
+              VUpSUnVXL2xiRTY5aUFNNUQzY3FLU1h6TDE0Ck5QdVRsNkE3ZWNieWlBZ2JXRHpy
+              MCsrdW5FeXA1bkpUMnc3ejZXRlBNT3cKLS0tIFYwWEVtQnB4OG1TQmVSTFZNbmJ5
+              NjNaSzJWYk9xRmV5SWZDdDdMVnRSN1EKPu0DOAxCbQSzWVox0X/zN0hnjoaFArkt
+              JeiDPLdnDcjoJv5WijSJMN7TgtDq8EDc1c7NEx0gHiKarZSumAyjGg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-12-20T01:38:31Z"
     mac: ENC[AES256_GCM,data:4AxwZuCvW5eiodMXqQwU8kklFEpmbfc70rM7kXtq5XWnTTY84m60n1KzeNp1hHQxIAvGEa9PAQO5zabO7cRcIOtUqrudJYVTIaZNvKU6YYtBZd9gmrRZaJzNP8xc1vB+3Q86SOp1qzsPw89/y2KqPVMDhnzezCVRZ1qmSOeMJK4=,iv:ugg22VKUPXiOWFBVISqSHZmqAi119osEm0gLJvqIyks=,tag:qXBUUXdz4nfotMjP1gVOlg==,type:str]
     pgp: []
