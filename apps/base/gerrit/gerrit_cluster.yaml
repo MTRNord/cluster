@@ -22,6 +22,11 @@ spec:
     ingress:
         enabled: true
         host: gerrit.midnightthoughts.space
+        annotations:
+            external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+        tls:
+            enabled: true
+            secret: gerrit.midnightthoughts.space-tls
     # All Gerrit instances in the GerritCluster serve the same repositories and
     # thus have to use the same serverId, which has to be set centrally here.
     serverId: midnightthoughts-gerrit
