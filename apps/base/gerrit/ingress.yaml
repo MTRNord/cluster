@@ -17,6 +17,7 @@ metadata:
         nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
         nginx.ingress.kubernetes.io/session-cookie-name: Gerrit_Session
         nginx.ingress.kubernetes.io/session-cookie-path: /
+        traefik.ingress.kubernetes.io/router.pathmatcher: PathRegexp
     labels:
         app.kubernetes.io/component: gerrit-ingress
         app.kubernetes.io/instance: gerrit-gerrit-network
