@@ -1,0 +1,66 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: jenkins
+    namespace: jenkins
+spec:
+    interval: 1h
+    releaseName: jenkins
+    chart:
+        spec:
+            chart: jenkinsci
+            sourceRef:
+                kind: HelmRepository
+                name: jenkins
+    values:
+        admin:
+            username: MTRNord
+            password: ENC[AES256_GCM,data:c2y/yLldictU,iv:j6hwsXdAvBNfkhwXh3lLX+QHCcQwsExM+xAkzKEMrSI=,tag:70msWjyfzW/vSlGTn6WhXw==,type:str]
+        jenkinsAdminEmail: ENC[AES256_GCM,data:zAjS61Wji3cpjlGqnNG1BnW7Rrk0pAWn,iv:V/C8wYCsxyLUeX3xLUwRqaFgbX0doM0gAKoPyAfhPaA=,tag:wixdOQ95feAw2Ypye43UJg==,type:str]
+        installPlugins:
+            - kubernetes:4306.vc91e951ea_eb_d
+            - workflow-aggregator:600.vb_57cdd26fdd7
+            - git:5.6.0
+            - configuration-as-code:1903.v004d55388f30
+            - oic-auth:4.438.v6e62f6782770
+            - gerrit-trigger:2.42.0
+        JCasC:
+            securityRealm: ENC[AES256_GCM,data:U6UJQAKszCr9hyy+vcwjeFgbs5G28a7UbrAmZI5vdVOrPaZreQ0pXdttU+vGHbBLcCqx+zeVNtYAGrgZ3pY1++uy2gxb+obhX7NOpC8JhRquiZmRjOOUuStMzoADtIvtuUXs+5NaoTz59ZWm9K/fhjeGHA200L7psCz+IucuQ8KqplojnGewn48kTNSLI+okatgt/kz5uS2P1HKElzvd5eKSq8+t7JP8P+Uooq/0zRgpg1vXzq8p454Sdt3juje8oO07pw/XLDHwD+qvZGWH3dS7VjsDbvJRp+QvrJ6xD8YEP1KyKkvTqE9krxBvpLRDt5T6Zl6ckjlFhyzymc5W/ZsCBXFXnnrBKz27ZGNqqceeBuZrIyUoK2QOh/crrzJWO/vnWdCeo4RVJy3vLZnTm9QNP1YB1x0V0xF3XhNd6+ecalnsdq/N2xpVqC1yHHONt+rfleLqsmA/KhRvoyFX41B1VWOpnSHWrHI+m20GTyJTn0CWXt2OYKrMBWitkJbvDaqLkCWYlZ3NKRFjqdBqXwnmCzv/O/JcUxZhAu+q0x0WmPRZG7rbnQ4R/yRJ+KZc+3JghdO7RzdP7INWuSdb6sWXqCZjMNWoKOTHOzwZMBP8klNEks+7cgSrTRuNY3o3ihITDJW1NH9ktyivWEH+wb3Cnzx8cFMS9azFn6cglw9CguAB2CiM11zhRXYQzVRF6c3XKcrS1piGWjXjaI412P+7yDFxY0SfdFgxlfjYWiAZdEDO5jLqR9ZCVwZ9idG5+g88pB39MKL38Ybx57xIcutBvGsOWRFp2g==,iv:n3M+0+2+FliBnRlkSf8oJ4nnvYXFHF2fnslejMzph/c=,tag:YIGqJsRdSnFuYFy8jyJ5wA==,type:str]
+            authorizationStrategy: |-
+                loggedInUsersCanDoAnything:
+                    allowAnonymousRead: true
+        ingress:
+            enabled: true
+            apiVersion: extensions/v1
+            annotations:
+                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hostName: jenkins.midnightthoughts.space
+            tls:
+                - secretName: jenkins.midnightthoughts.space-tls
+                  hosts:
+                    - jenkins.midnightthoughts.space
+        persistence:
+            enabled: true
+            size: 8Gi
+            accessMode: ReadWriteMany
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBYS3hhMWowNmlIWUFiSGw1
+            Y3UxeGdLdCtodXBPdnJMTnJXRUpZaVovV1dBCjZObHU1WUFDbHpBRkw3SGZDbHNo
+            Y2I4K3Vyem9UVTM2TVpQcUo0RDZrYnMKLS0tIGpZdWNBSi9hUk9HVktzTnM4L1Zq
+            RSsrc2VzMVM0cVFLaFlFN00wK05VdHMK4qlWELWIryFOUgFsaBKCBaOeHOKKO2ye
+            rH77vhy0+4DpoRrgojGk8MZPa4s8m/HRLjpq9bAHrK5D7rQ2K8cwdA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-21T23:25:59Z"
+    mac: ENC[AES256_GCM,data:9xnyCp/3+4EMJafArncpI/bLmQ5v6De3MWtkdRxVnz5GSpxRojllX11wq6tDmiD5JCVSBT1iEzvopP/tWQ6Iq91Mwqxg2sFnkUUfMJFK2ZJrxMDSspy4ae/+Lwk9KUgt3772YodA4NOa9Y0KX3GAX10/hBRdvwi85Us/b97QsS8=,iv:MwYw2QqpE77kcsc85gedwePmvrt6Y3zbKm0xaYK5DrU=,tag:bI4pCwl9sLdGckX21MhOyA==,type:str]
+    pgp: []
+    encrypted_regex: ^(jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
