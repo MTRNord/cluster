@@ -29,17 +29,18 @@ spec:
             authorizationStrategy: |-
                 loggedInUsersCanDoAnything:
                     allowAnonymousRead: true
-        ingress:
-            enabled: true
-            apiVersion: extensions/v1
-            annotations:
-                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                cert-manager.io/cluster-issuer: letsencrypt-dns
-            hostName: jenkins.midnightthoughts.space
-            tls:
-                - secretName: jenkins.midnightthoughts.space-tls
-                  hosts:
-                    - jenkins.midnightthoughts.space
+        controller:
+            ingress:
+                enabled: true
+                apiVersion: extensions/v1
+                annotations:
+                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                    cert-manager.io/cluster-issuer: letsencrypt-dns
+                hostName: jenkins.midnightthoughts.space
+                tls:
+                    - secretName: jenkins.midnightthoughts.space-tls
+                      hosts:
+                          - jenkins.midnightthoughts.space
         persistence:
             enabled: true
             size: 8Gi
@@ -52,13 +53,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBYS3hhMWowNmlIWUFiSGw1
-            Y3UxeGdLdCtodXBPdnJMTnJXRUpZaVovV1dBCjZObHU1WUFDbHpBRkw3SGZDbHNo
-            Y2I4K3Vyem9UVTM2TVpQcUo0RDZrYnMKLS0tIGpZdWNBSi9hUk9HVktzTnM4L1Zq
-            RSsrc2VzMVM0cVFLaFlFN00wK05VdHMK4qlWELWIryFOUgFsaBKCBaOeHOKKO2ye
-            rH77vhy0+4DpoRrgojGk8MZPa4s8m/HRLjpq9bAHrK5D7rQ2K8cwdA==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBYS3hhMWowNmlIWUFiSGw1
+              Y3UxeGdLdCtodXBPdnJMTnJXRUpZaVovV1dBCjZObHU1WUFDbHpBRkw3SGZDbHNo
+              Y2I4K3Vyem9UVTM2TVpQcUo0RDZrYnMKLS0tIGpZdWNBSi9hUk9HVktzTnM4L1Zq
+              RSsrc2VzMVM0cVFLaFlFN00wK05VdHMK4qlWELWIryFOUgFsaBKCBaOeHOKKO2ye
+              rH77vhy0+4DpoRrgojGk8MZPa4s8m/HRLjpq9bAHrK5D7rQ2K8cwdA==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-12-21T23:25:59Z"
     mac: ENC[AES256_GCM,data:9xnyCp/3+4EMJafArncpI/bLmQ5v6De3MWtkdRxVnz5GSpxRojllX11wq6tDmiD5JCVSBT1iEzvopP/tWQ6Iq91Mwqxg2sFnkUUfMJFK2ZJrxMDSspy4ae/+Lwk9KUgt3772YodA4NOa9Y0KX3GAX10/hBRdvwi85Us/b97QsS8=,iv:MwYw2QqpE77kcsc85gedwePmvrt6Y3zbKm0xaYK5DrU=,tag:bI4pCwl9sLdGckX21MhOyA==,type:str]
     pgp: []
