@@ -25,22 +25,22 @@ spec:
             additionalContainers:
                 - sideContainerName: nodejs
                   image:
-                      repository: node
-                      tag: 23
+                    repository: node
+                    tag: 23
                   command: sleep
                   args: "99999999"
                   resources:
-                      requests:
-                          cpu: 512m
-                          memory: 512Mi
-                      limits:
-                          cpu: 512m
-                          memory: 1024Mi
+                    requests:
+                        cpu: 512m
+                        memory: 512Mi
+                    limits:
+                        cpu: 512m
+                        memory: 1024Mi
         controller:
             admin:
                 username: admin
-                password: ENC[AES256_GCM,data:3jrYcPqabivj9z0cI9p5aGYcrPAC/A==,iv:lR8ETPBqsv8RbQZuLCA/H5/5N5ALTO6kETzaVH5zdaI=,tag:WInyV0Ha7FctCQKS7iGl9A==,type:str]
-            jenkinsAdminEmail: ENC[AES256_GCM,data:p1pdhtObjwz6NYkNBgsr756KNdhMjyt0,iv:tQkxzqlkGqt05ZBc/W6eeTqjDDPv82Aj2GYwx0A/NHg=,tag:GIZdpMKkPGea9Afb7HMgQw==,type:str]
+                password: ENC[AES256_GCM,data:vPET46urbqer50IXBuyEq2kZpr2iyg==,iv:TfmHxzaRmwrg3xbwVTTzIs65ycQ/QJgxryXG4GXVnzY=,tag:8pPXFMk0GkszaX3V825d/Q==,type:str]
+            jenkinsAdminEmail: ENC[AES256_GCM,data:oPWp3+itOuhKkrjMLA5CoxGJhwPjUz1b,iv:QcnXO1CZhhWIIL06pMDOKllYB4mr2tiajMCGPWJ3aMc=,tag:Qhn70iupjXHRdvvKkLn4BA==,type:str]
             installPlugins:
                 - kubernetes:4306.vc91e951ea_eb_d
                 - workflow-aggregator:600.vb_57cdd26fdd7
@@ -52,7 +52,7 @@ spec:
                 - gerrit-checks-api:66.v3ef8b_f08f1f3
                 - coverage:1.16.1
             JCasC:
-                securityRealm: ENC[AES256_GCM,data:RCffiLX2CfOMWUPLyUH6h2r57S8KxGmWMabmF3GM/qBw/oMa43ipmdPuXb1vf1sEub6uQdH1BQIUodVTLDlMy/KCvAotI3cPMSDDgFEm0U2jJ0KY3sF3pX7EfjP74q4m27hPfJZSTYB2mb125WlqhP9C1xx06S0VTqxi9Hvqp0WKFGEASK7AHEVo67uIgkJ/5KZz6TUD4ohLTIQQX6nPPXh22HvtPT121khOru2VuTENt8Rs3Lqlow3jHDtXgrfp8Byl3w93Mz4h7QChnFD2ApVjQHC4ubFTZheRoAwB5oifkebPjKOQNemMCMW78mUPxjY0vq83w57ZCOInEW/TRxH7OUxgV76dqPrPpMvp8bI12OqVqrPFr9/R7HsT7Vy/9YB+0Yrnlu6J6bGH7wNjcowuxGLBTuqecl1qv0cz8pDzjVJQPJUaitn02utcTIi2t52tN7v1vflqkC7eVqCOIvuDuQo+XwIQ6OIpS0B1/sBZt/SVihxZHEukHIprIuBt2Mv7IFzKwNc1jC5P6U2QzEmcITMGmrPv4HeXLR/MoLVryoSdGfEgx97+lPWhc/qRkftSMz7zGhq/PbdsmhbhfR2EPybDnd4G/HlrZgyXzOzuCClRO7XKKfrxquVkBYP+6DWOUJ47dEO8Ut3sgxon88vE9qhsw85fRgEgs7f08g/nnF1KrOFqbPLVOzI4YLyPePB6aSFwD4/S8SqK5PFUVMxU/RxwwJ4ikSibHHoPxXYlc9Uw15kEUPpJLcmA1Oc3vTSAFcY9fxEAyFjvxdmswrSf3TD72NfMOezIOySuzb533WiWLPbaNfoBA2+EFcNAuZ94CFA0p+/04+oZQfAs5LkHOs3PrHySIFlMKbLwbQ==,iv:yIB28feLDkVGdnvOQAzdmnwAmYx4QKES8m7qlIvaa8Y=,tag:17jEflIIc/arvo4i5L5qFQ==,type:str]
+                securityRealm: ENC[AES256_GCM,data:zsOz1lLPIm4DavDKlhQDS0tKllIepGwpWuxUy6BiNB5CDBgspPfQWibtP6/4tAe7pURLKm5P2PjdxzzPu0EE3HA5Vp7ALB0fHavwuaald514vG7JPFPUfrnFfIWPeOEJWigV/p0rJ1iHHOOl2JQlOhHq/lbMuDbTnGU/ZOmZF8Ngexvd0LBTzfvtw+gWAxWppLaiPeGvbeTQwGfj3B+NPgrjsgl1qv8PCuY51veYJt0IaeO4xANlk8wf4cBd0SecZYETPo+cy36cLkut5U4j7jJUVcasPB0oT3B5pStLLEkvhhrBSsKByT7RmgJKvGEztPAANdFaalvk9bW16l2OybYTE76zi9riwmymRrIsyLggnxlcskkuPMpjSOxm8i9uSv9SgD9fzJvUoPMdM0q8lWhFINKYJYF90ZyVqeCtiJS/CzHLXK2Rr8jPQE0pefO6WZJSEWA8gjXnt8fuP9zt2B7ZKV8vagbRzozYAxTcYbdg+WZTEYvfdKOTi6GVE27yk2HYRlCVBUmRFkdDqa1SmIbTLd+S+pyuyulwENk3g2HOAxquNwQSdPVu9HX6ArpQdIaa7d6tcs5MGzYmFw7rlx7G8Oj3uk9t2IV40wInKhE8UG+h3wOZOPubuQf8MP0YnScN/3WsBLpXsQZ/jubKrUo+9pfxYN3sCiDXH35Qw1G1e+DEeBlFLWbrGB7Le1VLmoXb10zUxHPDXDKRLSgpjOrDvLwMnejLbn5MtYqKtZaSh3vDyDHnGdNTyyzwRIeybH+MIUmlozLezuvrdhhycWWQgTSE0kmRRbPtXFNl+RuHbl3paOZw3c0JIhRabH7reqN4nL8JordlAk5nvM1FtzI8tvMzbxaMIeoo8euH,iv:Oe0J4ScZ7UoXX/ZDE3dR02CcmGxF/DJnntO/w4vnNVg=,tag:3ufKztAIehVBkiV0dO5hkg==,type:str]
                 authorizationStrategy: |-
                     loggedInUsersCanDoAnything:
                         allowAnonymousRead: true
@@ -67,7 +67,7 @@ spec:
                 tls:
                     - secretName: jenkins.midnightthoughts.space-tls
                       hosts:
-                          - jenkins.midnightthoughts.space
+                        - jenkins.midnightthoughts.space
         persistence:
             enabled: true
             size: 8Gi
@@ -80,15 +80,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6bE1paUsvV3VkZVVVSWFt
-              b3doSkRKOThQMm1Db0lEalFUSkRFUy9zTWhrClh0Z01GU1ZTWk5qQ1dqZkU0UnhQ
-              bnNkaDVzWkFrcTY2Q2gvVlp1ejZ5KzQKLS0tIHBQSHp5V0xDTi80blNRS1VJRU9S
-              aVdkQjYrSFM5M0ZkdEhESFJaOWJ4bEkKU2Aw1Jxqj4GB+TSKMfKld7X0T85HuYqD
-              Aixp480TFHtbPUh65fKW4Am4XrIQrQPJvBoupOiFBnXTvdOXqpeapw==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-12-22T02:53:32Z"
-    mac: ENC[AES256_GCM,data:MJ6HEhX4nb9im3DbCRF60ePrnGo85rygFAAFEmBV2peLg8WKA7oeMFCGLHNSMDhS+kpr9/4t4z3nfDms9rZL1CilETS17+4ZRVHDKmv6oCGSYaiVAbYaG7uX/kFCButjLuPVb3C5JtJXrtyJ7Ye0fFk2MW/KHAiIuC7xabTgN5M=,iv:3LdRzm1K8A6VGnol5A8qTlnm6U+2aSUZcr1ZqPthKwg=,tag:GbWZCZ/N9Jgs2+tpRS7Whw==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3L25sUzlCejVNM3BLM3ZD
+            enVDQXhLK2lnb0hTOE5CNEN0Y0Q5eThpVXhBCmZDczU4VzM2R1F1cmpPWm5iQk5v
+            WXdXMXM3Y3VOazlxZUttdE9RVThrMEkKLS0tIGdyMHl3dzdPV0hDeUsxTnNGL1BK
+            aW5QQ2V1LzhuMys0N01PdVJsMnpUcEUK1VYKGY8eIe1LixY1hCw2MGb8gFxerXCI
+            W3m+QgsoKukbu5v9xd3PbsU2qfGncsOb/7q1hX4H6tKUAFnTRMWC/g==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-22T14:57:36Z"
+    mac: ENC[AES256_GCM,data:rej/F7igPPMx3P13rlHKjVk6yPZzHwsDbMAoXMjKuU5J5N3q45kZU3eBdifMAKjYtRuNdpM7d8rqcurQH08L6bIOCCrb8p5/ynFNYDl99F9480Lq2jvvRE9oTc6COaWlCadnpu+Qz/BBNN3Fp9JrovuUXDO5xfqkMLK23a0N3X4=,iv:Cs6ALE154TBSmx/iGaAPLFzFn0TxgdTtcL/Jalp4p4I=,tag:697cRQkyMBbIJBKXXHNVNQ==,type:str]
     pgp: []
     encrypted_regex: ^(jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
