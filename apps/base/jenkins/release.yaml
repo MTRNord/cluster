@@ -14,6 +14,14 @@ spec:
                 name: jenkins
     values:
         agent:
+            # -- Resources allocation (Requests and Limits)
+            resources:
+                requests:
+                    cpu: "512m"
+                    memory: "512Mi"
+                limits:
+                    cpu: "512m"
+                    memory: "1024Mi"
             additionalContainers:
                 - sideContainerName: nodejs
                   image:
@@ -21,6 +29,13 @@ spec:
                       tag: 23
                   command: sleep
                   args: "99999999"
+                  resources:
+                      requests:
+                          cpu: "512m"
+                          memory: "512Mi"
+                      limits:
+                          cpu: "512m"
+                          memory: "1024Mi"
         controller:
             admin:
                 username: admin
