@@ -25,17 +25,17 @@ spec:
             additionalContainers:
                 - sideContainerName: nodejs
                   image:
-                    repository: node
-                    tag: 23
+                      repository: node
+                      tag: 23
                   command: sleep
                   args: "99999999"
                   resources:
-                    requests:
-                        cpu: 512m
-                        memory: 512Mi
-                    limits:
-                        cpu: 512m
-                        memory: 1024Mi
+                      requests:
+                          cpu: 512m
+                          memory: 512Mi
+                      limits:
+                          cpu: 512m
+                          memory: 1024Mi
         controller:
             admin:
                 username: admin
@@ -52,6 +52,10 @@ spec:
                 - gerrit-checks-api:66.v3ef8b_f08f1f3
                 - coverage:1.16.1
                 - git-forensics:2.2.1
+                - cloudbees-folder:6.975.v4161e479479f
+                - pipeline-graph-view:382.vb_9a_27b_7b_ea_71
+                - git-changelog:3.41
+                - dependency-track:5.2.0
             JCasC:
                 securityRealm: ENC[AES256_GCM,data:zsOz1lLPIm4DavDKlhQDS0tKllIepGwpWuxUy6BiNB5CDBgspPfQWibtP6/4tAe7pURLKm5P2PjdxzzPu0EE3HA5Vp7ALB0fHavwuaald514vG7JPFPUfrnFfIWPeOEJWigV/p0rJ1iHHOOl2JQlOhHq/lbMuDbTnGU/ZOmZF8Ngexvd0LBTzfvtw+gWAxWppLaiPeGvbeTQwGfj3B+NPgrjsgl1qv8PCuY51veYJt0IaeO4xANlk8wf4cBd0SecZYETPo+cy36cLkut5U4j7jJUVcasPB0oT3B5pStLLEkvhhrBSsKByT7RmgJKvGEztPAANdFaalvk9bW16l2OybYTE76zi9riwmymRrIsyLggnxlcskkuPMpjSOxm8i9uSv9SgD9fzJvUoPMdM0q8lWhFINKYJYF90ZyVqeCtiJS/CzHLXK2Rr8jPQE0pefO6WZJSEWA8gjXnt8fuP9zt2B7ZKV8vagbRzozYAxTcYbdg+WZTEYvfdKOTi6GVE27yk2HYRlCVBUmRFkdDqa1SmIbTLd+S+pyuyulwENk3g2HOAxquNwQSdPVu9HX6ArpQdIaa7d6tcs5MGzYmFw7rlx7G8Oj3uk9t2IV40wInKhE8UG+h3wOZOPubuQf8MP0YnScN/3WsBLpXsQZ/jubKrUo+9pfxYN3sCiDXH35Qw1G1e+DEeBlFLWbrGB7Le1VLmoXb10zUxHPDXDKRLSgpjOrDvLwMnejLbn5MtYqKtZaSh3vDyDHnGdNTyyzwRIeybH+MIUmlozLezuvrdhhycWWQgTSE0kmRRbPtXFNl+RuHbl3paOZw3c0JIhRabH7reqN4nL8JordlAk5nvM1FtzI8tvMzbxaMIeoo8euH,iv:Oe0J4ScZ7UoXX/ZDE3dR02CcmGxF/DJnntO/w4vnNVg=,tag:3ufKztAIehVBkiV0dO5hkg==,type:str]
                 authorizationStrategy: |-
@@ -68,7 +72,7 @@ spec:
                 tls:
                     - secretName: jenkins.midnightthoughts.space-tls
                       hosts:
-                        - jenkins.midnightthoughts.space
+                          - jenkins.midnightthoughts.space
         persistence:
             enabled: true
             size: 8Gi
@@ -81,13 +85,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3L25sUzlCejVNM3BLM3ZD
-            enVDQXhLK2lnb0hTOE5CNEN0Y0Q5eThpVXhBCmZDczU4VzM2R1F1cmpPWm5iQk5v
-            WXdXMXM3Y3VOazlxZUttdE9RVThrMEkKLS0tIGdyMHl3dzdPV0hDeUsxTnNGL1BK
-            aW5QQ2V1LzhuMys0N01PdVJsMnpUcEUK1VYKGY8eIe1LixY1hCw2MGb8gFxerXCI
-            W3m+QgsoKukbu5v9xd3PbsU2qfGncsOb/7q1hX4H6tKUAFnTRMWC/g==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3L25sUzlCejVNM3BLM3ZD
+              enVDQXhLK2lnb0hTOE5CNEN0Y0Q5eThpVXhBCmZDczU4VzM2R1F1cmpPWm5iQk5v
+              WXdXMXM3Y3VOazlxZUttdE9RVThrMEkKLS0tIGdyMHl3dzdPV0hDeUsxTnNGL1BK
+              aW5QQ2V1LzhuMys0N01PdVJsMnpUcEUK1VYKGY8eIe1LixY1hCw2MGb8gFxerXCI
+              W3m+QgsoKukbu5v9xd3PbsU2qfGncsOb/7q1hX4H6tKUAFnTRMWC/g==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-12-22T14:57:36Z"
     mac: ENC[AES256_GCM,data:rej/F7igPPMx3P13rlHKjVk6yPZzHwsDbMAoXMjKuU5J5N3q45kZU3eBdifMAKjYtRuNdpM7d8rqcurQH08L6bIOCCrb8p5/ynFNYDl99F9480Lq2jvvRE9oTc6COaWlCadnpu+Qz/BBNN3Fp9JrovuUXDO5xfqkMLK23a0N3X4=,iv:Cs6ALE154TBSmx/iGaAPLFzFn0TxgdTtcL/Jalp4p4I=,tag:697cRQkyMBbIJBKXXHNVNQ==,type:str]
     pgp: []
