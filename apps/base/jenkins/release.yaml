@@ -17,30 +17,30 @@ spec:
             # -- Resources allocation (Requests and Limits)
             resources:
                 requests:
-                    cpu: "512m"
-                    memory: "512Mi"
+                    cpu: 512m
+                    memory: 512Mi
                 limits:
-                    cpu: "512m"
-                    memory: "1024Mi"
+                    cpu: 512m
+                    memory: 1024Mi
             additionalContainers:
                 - sideContainerName: nodejs
                   image:
-                      repository: node
-                      tag: 23
+                    repository: node
+                    tag: 23
                   command: sleep
                   args: "99999999"
                   resources:
-                      requests:
-                          cpu: "512m"
-                          memory: "512Mi"
-                      limits:
-                          cpu: "512m"
-                          memory: "1024Mi"
+                    requests:
+                        cpu: 512m
+                        memory: 512Mi
+                    limits:
+                        cpu: 512m
+                        memory: 1024Mi
         controller:
             admin:
                 username: admin
-                password: ENC[AES256_GCM,data:GQU2HhAxnOM2c/LTm3bgQ5AY4HKw9Q==,iv:Gv/wDu2eU8qM0+KN07p43NvC/nmaWuFWKchHb9InsFM=,tag:C8r1v6l9qxsWZp670Hn8Vw==,type:str]
-            jenkinsAdminEmail: ENC[AES256_GCM,data:2wiGDKQMTjuBfd8gcafOqf4Xp67fIdHs,iv:Ku9CjPPZlJsFyuxcS2iXXIqIRHsaVPNSgb1mIqQEUcE=,tag:Rd99k4e45OGTyKvIc5sgrA==,type:str]
+                password: ENC[AES256_GCM,data:3jrYcPqabivj9z0cI9p5aGYcrPAC/A==,iv:lR8ETPBqsv8RbQZuLCA/H5/5N5ALTO6kETzaVH5zdaI=,tag:WInyV0Ha7FctCQKS7iGl9A==,type:str]
+            jenkinsAdminEmail: ENC[AES256_GCM,data:p1pdhtObjwz6NYkNBgsr756KNdhMjyt0,iv:tQkxzqlkGqt05ZBc/W6eeTqjDDPv82Aj2GYwx0A/NHg=,tag:GIZdpMKkPGea9Afb7HMgQw==,type:str]
             installPlugins:
                 - kubernetes:4306.vc91e951ea_eb_d
                 - workflow-aggregator:600.vb_57cdd26fdd7
@@ -51,7 +51,7 @@ spec:
                 - matrix-auth:3.2.3
                 - gerrit-checks-api:66.v3ef8b_f08f1f3
             JCasC:
-                securityRealm: ENC[AES256_GCM,data:ACtQd8XQbMIseWvyvOGekS2saz4ffEe80IvdI+veyoF9TcTGoMTulvY05Px9ge6qQq7bb5YNXO70BBW2toeKrbMUrgCHNj+0bt9mJeFlu7UguCz3HSFbKCInNqlW21PqMK3RCUhF+X/g/VoK51kjAWNBHK4hw2QuxQ0dmWZy2AWrxkwgnOGUNsE4JwdxQq7H57FKu5i/SPn9nG7t6/Y1j90Xkc79sJ2CfkEIZw9YVDQ3n5QsfyGmNbF0KPxIW51wxJKtNEyUP3nnwaz9JYpYCCbcYV7kkVt/c6e6LQplYZV/WPkI3WrQqH0y9P86lnUGlFqSK0/qIVCtRfC7o85GtO/iPcOEzevOWqZF5eMK4mdbGv3xUApJZo6W/6ubylCyZzfQFq5+rCmn1/EYsZixdu+msbm8IHSLDO+b3AlpFdaR65T7zOWPqxKwz+jo5vwG8e98p1MO6QUpcww7Ht53KNghZxLlk4G9EoG826TldVFC9VZ6ZzvC3/gPdFHh7TFYTx1+0WFktQh498P3uhivzKtV8oK3d77gZSWv7735VrBrmfGYV/TdcmgW0A5DK+S6CBsc98VBGyL9Ytd6Fas9C5eKqTqWd5gIkVdsobOcnfN7NoblU7u9KzctuEAYGGP3MpTwYfBnmpIjXJT22tAFqyZ816s6XWl6VqPj/QO7IKO1Eru4FN5mV1w4/GZpE+8QYDKFCIOMrEkP0ZinMQ3jb6dULhM4HtUgMGgWVmu5vYOp/jrFCcEE62zXtrFgsXgbrjq0Zk04+8Eg71IHQiVJtSm3abFhLpzISIbXmH5VyivFJzeGe5w+sMN8IZub1G+/CiJFvTzFg6pkXEfdVeFS3U5h2dJn1AkA1KKLp4Z2dA==,iv:h1QuA0HkL28DYVD95nBQRurepNAQWAxBNxRki4JbC7Y=,tag:6w20Wxo1qCdXQhWPrtZmlQ==,type:str]
+                securityRealm: ENC[AES256_GCM,data:RCffiLX2CfOMWUPLyUH6h2r57S8KxGmWMabmF3GM/qBw/oMa43ipmdPuXb1vf1sEub6uQdH1BQIUodVTLDlMy/KCvAotI3cPMSDDgFEm0U2jJ0KY3sF3pX7EfjP74q4m27hPfJZSTYB2mb125WlqhP9C1xx06S0VTqxi9Hvqp0WKFGEASK7AHEVo67uIgkJ/5KZz6TUD4ohLTIQQX6nPPXh22HvtPT121khOru2VuTENt8Rs3Lqlow3jHDtXgrfp8Byl3w93Mz4h7QChnFD2ApVjQHC4ubFTZheRoAwB5oifkebPjKOQNemMCMW78mUPxjY0vq83w57ZCOInEW/TRxH7OUxgV76dqPrPpMvp8bI12OqVqrPFr9/R7HsT7Vy/9YB+0Yrnlu6J6bGH7wNjcowuxGLBTuqecl1qv0cz8pDzjVJQPJUaitn02utcTIi2t52tN7v1vflqkC7eVqCOIvuDuQo+XwIQ6OIpS0B1/sBZt/SVihxZHEukHIprIuBt2Mv7IFzKwNc1jC5P6U2QzEmcITMGmrPv4HeXLR/MoLVryoSdGfEgx97+lPWhc/qRkftSMz7zGhq/PbdsmhbhfR2EPybDnd4G/HlrZgyXzOzuCClRO7XKKfrxquVkBYP+6DWOUJ47dEO8Ut3sgxon88vE9qhsw85fRgEgs7f08g/nnF1KrOFqbPLVOzI4YLyPePB6aSFwD4/S8SqK5PFUVMxU/RxwwJ4ikSibHHoPxXYlc9Uw15kEUPpJLcmA1Oc3vTSAFcY9fxEAyFjvxdmswrSf3TD72NfMOezIOySuzb533WiWLPbaNfoBA2+EFcNAuZ94CFA0p+/04+oZQfAs5LkHOs3PrHySIFlMKbLwbQ==,iv:yIB28feLDkVGdnvOQAzdmnwAmYx4QKES8m7qlIvaa8Y=,tag:17jEflIIc/arvo4i5L5qFQ==,type:str]
                 authorizationStrategy: |-
                     loggedInUsersCanDoAnything:
                         allowAnonymousRead: true
@@ -65,7 +65,7 @@ spec:
                 tls:
                     - secretName: jenkins.midnightthoughts.space-tls
                       hosts:
-                          - jenkins.midnightthoughts.space
+                        - jenkins.midnightthoughts.space
         persistence:
             enabled: true
             size: 8Gi
@@ -78,15 +78,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaTlB6b2JhTkt4bzdadDhJ
-              N3hZZW5Rbmhod2tNOXExL2xpUFVoSWI0QUhRCi9YRTl2TWYvQjBidE1iOEdvS3JL
-              dUtDWU1XQ0kxaDJYazVpU1lWaUtQU28KLS0tIHhVUXpuNEV3TzZySFFJbWEwSGZl
-              TERtMGJJVW1xbmE3RVowMXR3QTdOaU0KDK8H/eGgd+o66Im5+ixnHvP/1AONdVqu
-              TaV43Q09ntGJ8ZSgsp1A1j7G43MJTbe2CbvPcqKXODnhtnsQuPB9Sg==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-12-22T01:53:23Z"
-    mac: ENC[AES256_GCM,data:/4YAUVjHSc460O69B1ERwTKP+W7pWe6DqP4wGlPtFYAzLHIis2HgUzEZAGOiA7lNx57gY01JfnJ+4WOScwResDGDIPK/bnRAdK65euELQycwQ4Us40okkTxhkBvxHSeJr7ACit8Y4fHnqjMt2IsaaeooHbjTacxinKZUvHuxMpk=,iv:EN10na2zjwmR112okzxfkSAPwnr3N1r8u+/RjCHaCEY=,tag:d0qhtdNR6mkCUWLIXHbhlQ==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6bE1paUsvV3VkZVVVSWFt
+            b3doSkRKOThQMm1Db0lEalFUSkRFUy9zTWhrClh0Z01GU1ZTWk5qQ1dqZkU0UnhQ
+            bnNkaDVzWkFrcTY2Q2gvVlp1ejZ5KzQKLS0tIHBQSHp5V0xDTi80blNRS1VJRU9S
+            aVdkQjYrSFM5M0ZkdEhESFJaOWJ4bEkKU2Aw1Jxqj4GB+TSKMfKld7X0T85HuYqD
+            Aixp480TFHtbPUh65fKW4Am4XrIQrQPJvBoupOiFBnXTvdOXqpeapw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-22T02:53:32Z"
+    mac: ENC[AES256_GCM,data:MJ6HEhX4nb9im3DbCRF60ePrnGo85rygFAAFEmBV2peLg8WKA7oeMFCGLHNSMDhS+kpr9/4t4z3nfDms9rZL1CilETS17+4ZRVHDKmv6oCGSYaiVAbYaG7uX/kFCButjLuPVb3C5JtJXrtyJ7Ye0fFk2MW/KHAiIuC7xabTgN5M=,iv:3LdRzm1K8A6VGnol5A8qTlnm6U+2aSUZcr1ZqPthKwg=,tag:GbWZCZ/N9Jgs2+tpRS7Whw==,type:str]
     pgp: []
     encrypted_regex: ^(jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
