@@ -45,7 +45,7 @@ spec:
                 - kubernetes:4306.vc91e951ea_eb_d
                 - workflow-aggregator:600.vb_57cdd26fdd7
                 - git:5.6.0
-                - configuration-as-code:1903.v004d55388f30
+                - configuration-as-code:1909.vb_b_f59a_27d013
                 - oic-auth:4.438.v6e62f6782770
                 - gerrit-trigger:2.42.0
                 - matrix-auth:3.2.3
@@ -61,6 +61,7 @@ spec:
                 annotations:
                     external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
                     cert-manager.io/cluster-issuer: letsencrypt-dns
+                    traefik.ingress.kubernetes.io/router.middlewares: jenkins-jenkins-headers@kubernetescrd
                 hostName: jenkins.midnightthoughts.space
                 tls:
                     - secretName: jenkins.midnightthoughts.space-tls
