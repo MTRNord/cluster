@@ -13,6 +13,14 @@ spec:
                 kind: HelmRepository
                 name: jenkins
     values:
+        agent:
+            additionalContainers:
+                - sideContainerName: nodejs
+                  image:
+                      repository: node
+                      tag: 23
+                  command: sleep
+                  args: ["99999999"]
         controller:
             admin:
                 username: admin
