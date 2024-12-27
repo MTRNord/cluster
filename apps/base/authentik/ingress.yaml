@@ -4,11 +4,13 @@ kind: IngressRouteTCP
 metadata:
     name: authentik-ldap
     namespace: authentik
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
 spec:
     entryPoints:
         - ldaps
     routes:
         - match: HostSNI(`*`)
           services:
-            - name: ak-outpost-ldap
-              port: 389
+              - name: ak-outpost-ldap
+                port: 389

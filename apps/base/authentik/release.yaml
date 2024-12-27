@@ -97,12 +97,14 @@ spec:
                 enabled: true
                 hosts:
                     - auth.midnightthoughts.space
+                    - ldap.midnightthoughts.space
                 paths:
                     - /
                 pathType: Prefix
                 tls:
                     - hosts:
                         - auth.midnightthoughts.space
+                        - ldap.midnightthoughts.space
                       secretName: auth-midnightthoughts-tls-secret
         postgresql:
             enabled: false
