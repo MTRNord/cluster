@@ -1,0 +1,14 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+    name: authentik-ldap
+    namespace: authentik
+spec:
+    entryPoints:
+        - ldaps
+    routes:
+        - match: HostSNI(`*`)
+          services:
+            - name: ak-outpost-ldap
+              port: 389

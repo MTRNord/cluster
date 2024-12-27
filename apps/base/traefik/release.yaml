@@ -90,6 +90,12 @@ spec:
                     default: true
                 exposedPort: 29418
                 protocol: TCP
+            ldaps:
+                port: 636
+                expose:
+                    default: true
+                exposedPort: 636
+                protocol: TCP
             # minecraft:
             #   port: 25566
             #   expose:
@@ -129,8 +135,8 @@ spec:
         instanceLabelOverride: traefik
         topologySpreadConstraints:
             - labelSelector:
-                matchLabels:
-                    app.kubernetes.io/name: '{{ template "traefik.name" . }}'
+                  matchLabels:
+                      app.kubernetes.io/name: '{{ template "traefik.name" . }}'
               maxSkew: 1
               topologyKey: kubernetes.io/hostname
               whenUnsatisfiable: ScheduleAnyway
