@@ -22,9 +22,9 @@ spec:
         ostEmail: support@midnightthoughts.space
         adminFirstName: MTR
         adminLastName: Nord
-        adminEmail: ENC[AES256_GCM,data:PsSwlZwtddGd4YpVJAJr6TM/290RKrOr,iv:CcaEhVlArN9kGoMoczHFXIQ6te2jDR5AXAVSwh47ZAQ=,tag:WeXK4SKSvAG0JNBTGJUwEw==,type:str]
+        adminEmail: ENC[AES256_GCM,data:MX9duBX6QYrQbEztinxMZV3XBZmQwzSa,iv:/dswS+w70In4c/k0qemEQLW1t7YXHfwDcESOlKVb3Ig=,tag:I+z7MZ089tOJnE9iUWsuIQ==,type:str]
         adminUserName: mtrnord
-        adminPassword: ENC[AES256_GCM,data:HoT4JJ3Dn11r,iv:PL8wJZCYMXAcDeqlNHmxCsVDIHtmYty+9SaDUTN+DK8=,tag:x0TtK9EkxGa/8HeTqkCafQ==,type:str]
+        adminPassword: ENC[AES256_GCM,data:+VuZMvIVdoa2,iv:s9cz6pyLcBX/OmOXPh9y3pwo7wIjy8dGjBUm7ZTMbzI=,tag:V/1s8Ah6bn3jZouPcs/KRQ==,type:str]
         timezone: Europe/Berlin
         service:
             type: ClusterIP
@@ -45,7 +45,7 @@ spec:
                     - osticket.midnightthoughts.space
         mysql:
             enabled: false
-            externalAddress: mariadb-maxscale.mariadb-operator.svc.cluster.local
+            externalAddress: mariadb-primary.mariadb-operator.svc.cluster.local
             primary:
                 service:
                     ports:
@@ -53,7 +53,7 @@ spec:
             auth:
                 database: osticket
                 username: osticket
-                password: ENC[AES256_GCM,data:P9nr60VD2bDh/5FzPQPf1/70bd/yJjeI8tZZdAiUp6UHCjfTVhx02DD6JjIqtFrvZLqAx30DjTRsDXBxvY5KyQ==,iv:dBj43ab4A3fW3m7h4MY8xSLAuKAOTBouFgAJp5rH25g=,tag:vDtyLMMGqHAUu7c3e0RthQ==,type:str]
+                password: ENC[AES256_GCM,data:VH6YaTELGJQUtZlmPyW0LTG5ZcNyl3+RmlYiHfaSe9JiBlNBlHYLnZcXbwiAHJDEb7UkgA0Twd3N8yENEq/TNg==,iv:JREAhE4O2dy0hM88gmbjvI7ofb9f3SXyH8Ubye+R4YY=,tag:gtPvzeGr53pdwGHykth/7Q==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -63,14 +63,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNM09ZdjlNYUdpQXlUUDlS
-            WjF4SjVzNFdQTG5iMGcxUGtHdmV6ZmU5eFVjClQ1b1NlSkZlQ0ZjblFXaGdXaFhJ
-            ZWNidk5Wa1paOFYvdmZxdmpNYVYvMWcKLS0tIG9yU2VlTU1wbW44S1g1Y3l1YUF0
-            eGFLZkd5OG8rUWlxdjZhUU5TOXdhMmMKsA9WAluYt3SOsVAi8hqpDPsIfcdRBd6v
-            XjcHiPG0l6gGhMHsIXrbuE02J9NPe9QFte5C//FNetFBZAmKWGHiVw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpL0NjWDVObUhBN2FON2ta
+            SlIxK0cwUjFqYmd0UUFTTzlpYU1TdUtMaW53Ck16d3dLdVo0M1ZlL3lHN05XWnY2
+            YnE3bzdIVS9XMEJJMlFTYzJIcXV4QWcKLS0tIE4ycHNwM2xVUFFmaE1MSHlWUy9x
+            a09WajNWUW4rSndma2FxSUZqMHNnRlUKfdJj6+nB6iZBDTTxBlqqcmT1bNIbRcUc
+            PRirIbqW0liYauNBckpmoVRMqxK+EYzVPIOFc1DMDdBiIRw4LADdbg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-01-07T22:01:35Z"
-    mac: ENC[AES256_GCM,data:0+irWwOBQgbP+dci/TdPzZHZh86fg0AEKAM9ewFlwntbOtuzKXJkpb9hGeHcjTxNgoWLaKwpx0KZtw11DE/oTyLeLL2n20lVtbD4BcZGirkVUZ0NeHlUg+826evzkKmMI5ONv4JBdOWiAvF237//Gnu6/tFML50HBoaPUFHTdOQ=,iv:JkqgGBRT8C4TOl4oYRVcgVsJZ42AGVQOcJmqN0oU5P8=,tag:Vz8G9l4wccrAJ1Yz9EKmFg==,type:str]
+    lastmodified: "2025-01-07T23:10:27Z"
+    mac: ENC[AES256_GCM,data:kJg8xSUDB6aSnluR2qfKGiMppfhRpHQLdLKluCLo2W0+uaQnnDbocNi7OEXEtvop2r6iV2thKbnIZuipMd/PTiXiDb8228Mg0dZb0Ah0dHrjLddiP68MZez+8i6KGNtshMHxekQCjd/vBuC0Yugl5H4P3ES8jyUw2tqN6D5S/3Q=,iv:DRN4thn02U/W8VmSqcHHO7DF9b7X5k3TesBqZtCgl4A=,tag:33VhtNJzr6SEpsTf/oNnsA==,type:str]
     pgp: []
     encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
