@@ -152,8 +152,22 @@ spec:
         - "SELECT"
         - "INSERT"
         - "UPDATE"
-        - "SHOW DATABASES"
     database: "osticket"
+    table: "*"
+    username: osticket
+    grantOption: true
+    host: "%"
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+    name: grant-osticket-show-db
+spec:
+    mariaDbRef:
+        name: mariadb
+    privileges:
+        - "SHOW DATABASES"
+    database: "*"
     table: "*"
     username: osticket
     grantOption: true
