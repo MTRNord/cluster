@@ -1,4 +1,3 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
@@ -37,16 +36,16 @@ spec:
             podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
                     - labelSelector:
-                          matchExpressions:
-                              - key: app.kubernetes.io/name
-                                operator: In
-                                values:
-                                    - mariadb-operator
-                              - key: app.kubernetes.io/instance
-                                operator: In
-                                values:
-                                    - mariadb-operator
-                topologyKey: kubernetes.io/hostname
+                        matchExpressions:
+                            - key: app.kubernetes.io/name
+                              operator: In
+                              values:
+                                - mariadb-operator
+                            - key: app.kubernetes.io/instance
+                              operator: In
+                              values:
+                                - mariadb-operator
+                      topologyKey: kubernetes.io/hostname
         pdb:
             enabled: true
             maxUnavailable: 1

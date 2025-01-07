@@ -1,4 +1,3 @@
----
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
@@ -25,26 +24,19 @@ spec:
             interval: 12h
     values:
         agent: false
-
         operator:
             enabled: false
-
         cni:
             install: false
-
         hubble:
             enabled: false
             ui:
                 # enable Hubble UI
                 enabled: true
-
                 standalone:
                     # enable Hubble UI standalone deployment
                     enabled: true
-
         relay:
             enabled: false
-
         envoy:
             enabled: false
-
