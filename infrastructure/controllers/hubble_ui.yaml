@@ -1,0 +1,47 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+    name: cilium
+    namespace: kube-system
+spec:
+    interval: 24h
+    url: https://helm.cilium.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: cilium
+    namespace: kube-system
+spec:
+    interval: 30m
+    chart:
+        spec:
+            chart: cilium
+            sourceRef:
+                kind: HelmRepository
+                name: cilium
+                namespace: kube-system
+            interval: 12h
+    values:
+        agent: false
+
+        operator:
+            enabled: false
+
+        cni:
+            install: false
+
+        hubble:
+            enabled: false
+
+        relay:
+            enabled: false
+
+        ui:
+            # enable Hubble UI
+            enabled: true
+
+            standalone:
+                # enable Hubble UI standalone deployment
+                enabled: true
