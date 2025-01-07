@@ -46,6 +46,10 @@ spec:
         mysql:
             enabled: false
             externalAddress: mariadb-maxscale.mariadb-operator.svc.cluster.local
+            primary:
+                service:
+                    ports:
+                        mysql: 3306
             auth:
                 database: osticket
                 username: osticket
