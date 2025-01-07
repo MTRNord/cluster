@@ -1,0 +1,58 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: mariadb-operator-crds
+    namespace: mariadb-operator
+spec:
+    releaseName: mariadb-operator-crds
+    interval: 60m
+    chart:
+        spec:
+            chart: mariadb-operator-crds
+            sourceRef:
+                kind: HelmRepository
+                name: mariadb-operator
+    values: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: mariadb-operator
+    namespace: mariadb-operator
+spec:
+    releaseName: mariadb-operator
+    interval: 60m
+    chart:
+        spec:
+            chart: mariadb-operator
+            sourceRef:
+                kind: HelmRepository
+                name: mariadb-operator
+    values:
+        ha:
+            enabled: true
+            replicas: 3
+        affinity:
+            podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                    - labelSelector:
+                          matchExpressions:
+                              - key: app.kubernetes.io/name
+                                operator: In
+                                values:
+                                    - mariadb-operator
+                              - key: app.kubernetes.io/instance
+                                operator: In
+                                values:
+                                    - mariadb-operator
+                topologyKey: kubernetes.io/hostname
+        pdb:
+            enabled: true
+            maxUnavailable: 1
+        metrics:
+            enabled: true
+        webhook:
+            cert:
+                certManager:
+                    enabled: true
