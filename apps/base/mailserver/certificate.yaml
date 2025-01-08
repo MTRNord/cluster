@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+    name: mail.midnightthoughts.space
+    namespace: mailserver
+spec:
+    secretName: mail.midnightthoughts.space-tls
+    dnsNames:
+        - mail.midnightthoughts.space
+    issuerRef:
+        name: letsencrypt-dns
+        kind: ClusterIssuer

@@ -7,11 +7,9 @@ spec:
         name: mariadb-root
         key: root-password
         generate: true
-
     storage:
         size: 5Gi
         storageClassName: hcloud-volumes
-
     # Recreate the MariaDB resource and bootstrap from a backup in S3.
     # bootstrapFrom:
     #   s3:
@@ -44,24 +42,19 @@ spec:
     #         memory: 128Mi
     #       limits:
     #         memory: 1Gi
-
     replicas: 3
-
     galera:
         enabled: true
         config:
             reuseStorageVolume: true
-
     metrics:
         enabled: true
-
     updateStrategy:
         type: ReplicasFirstPrimaryLast
         # Pause updates.
         # type: Never
         # Update the data-plane after an operator upgrade.
         autoUpdateDataPlane: true
-
     # Configure enough compute resources. This is just an example, take a look at your historic compute metrics to estimate.
     resources:
         requests:
@@ -69,19 +62,16 @@ spec:
             memory: 250Mi
         limits:
             memory: 4Gi
-
     # Tune your liveness probe accordingly to avoid Pod restarts.
     livenessProbe:
         initialDelaySeconds: 20
         periodSeconds: 5
         timeoutSeconds: 5
-
     # Tune your readiness probe accordingly to prevent disruptions in network traffic.
     readinessProbe:
         initialDelaySeconds: 20
         periodSeconds: 5
         timeoutSeconds: 5
-
     # innodb_buffer_pool_size: 80% of memory limits.
     myCnf: |
         [mariadb]
@@ -91,15 +81,12 @@ spec:
         innodb_autoinc_lock_mode=2
         innodb_buffer_pool_size=3200MB
         max_allowed_packet=1GB
-
     # Schedule Pods in different Nodes to achieve real HA.
     affinity:
         antiAffinityEnabled: true
-
     # When draining Nodes, make sure that you have at least 2 Pods available.
     podDisruptionBudget:
         maxUnavailable: 66%
-
     maxScale:
         enabled: true
         kubernetesService:
