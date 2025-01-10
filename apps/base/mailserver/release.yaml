@@ -218,60 +218,17 @@ spec:
             dovecot.cf:
                 create: true
                 path: dovecot.cf
-                data: |
-                    {{- if .Values.proxyProtocol.enabled }}
-                      haproxy_trusted_networks = {{ .Values.proxyProtocol.trustedNetworks }}
-
-                      {{- if and (.Values.deployment.env.ENABLE_IMAP) (not .Values.deployment.env.SMTP_ONLY) }}
-                      service imap-login {
-                          inet_listener imap {
-                              port = 143
-                          }
-
-                          inet_listener imaps {
-                              port = 993
-                              ssl = yes
-                          }
-
-                          inet_listener imap_proxy {
-                              haproxy = yes
-                              port = 10143
-                              ssl = no
-                          }
-
-                          inet_listener imaps_proxy {
-                              haproxy = yes
-                              port = 10993
-                              ssl = yes
-                          }
-                      }    
-                      {{- end -}}
-
-                      {{- if and (.Values.deployment.env.ENABLE_POP3) (not .Values.deployment.env.SMTP_ONLY) }}
-                      service pop3-login {
-                          inet_listener pop3 {
-                              port = 110
-                          }
-
-                          inet_listener pop3s {
-                              port = 995
-                              ssl = yes
-                          }
-
-                         inet_listener pop3_proxy {
-                              haproxy = yes
-                              port = 10110
-                              ssl = no
-                         }
-
-                         inet_listener pop3s_proxy {
-                              haproxy = yes
-                              port = 10995
-                              ssl = yes
-                         }                        
-                      }
-                      {{- end -}}
-                    {{- end -}}
+                data: "{{- if .Values.proxyProtocol.enabled }}\n  haproxy_trusted_networks = {{ .Values.proxyProtocol.trustedNetworks
+                    }}\n\n  {{- if and (.Values.deployment.env.ENABLE_IMAP) (not .Values.deployment.env.SMTP_ONLY) }}\n  service
+                    imap-login {\n      inet_listener imap {\n          port = 143\n      }\n\n      inet_listener imaps {\n
+                    \         port = 993\n          ssl = yes\n      }\n\n      inet_listener imap_proxy {\n          haproxy
+                    = yes\n          port = 10143\n          ssl = no\n      }\n\n      inet_listener imaps_proxy {\n          haproxy
+                    = yes\n          port = 10993\n          ssl = yes\n      }\n  }    \n  {{- end -}}\n\n  {{- if and (.Values.deployment.env.ENABLE_POP3)
+                    (not .Values.deployment.env.SMTP_ONLY) }}\n  service pop3-login {\n      inet_listener pop3 {\n          port
+                    = 110\n      }\n\n      inet_listener pop3s {\n          port = 995\n          ssl = yes\n      }\n\n
+                    \    inet_listener pop3_proxy {\n          haproxy = yes\n          port = 10110\n          ssl = no\n
+                    \    }\n\n     inet_listener pop3s_proxy {\n          haproxy = yes\n          port = 10995\n          ssl
+                    = yes\n     }                        \n  }\n  {{- end -}}\n{{- end -}}\n"
             fts-xapian-plugin.conf:
                 create: true
                 path: /etc/dovecot/conf.d/10-plugin.conf
@@ -310,49 +267,19 @@ spec:
             user-patches.sh:
                 create: true
                 path: user-patches.sh
-                data: |
-                    #!/bin/bash
-
-                    {{- if .Values.proxyProtocol.enabled }}
-                    # Make sure to keep this file in sync with https://github.com/docker-mailserver/docker-mailserver/blob/master/target/postfix/master.cf!
-                    cat <<EOS >> /etc/postfix/master.cf
-
-                    # Submission with proxy
-                    10587     inet  n       -       n       -       -       smtpd
-                      -o syslog_name=postfix/submission
-                      -o smtpd_tls_security_level=encrypt
-                      -o smtpd_sasl_auth_enable=yes
-                      -o smtpd_sasl_type=dovecot
-                      -o smtpd_reject_unlisted_recipient=no
-                      -o smtpd_sasl_authenticated_header=yes
-                      -o smtpd_client_restrictions=permit_sasl_authenticated,reject
-                      -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
-                      -o smtpd_sender_restrictions=\$mua_sender_restrictions
-                      -o smtpd_discard_ehlo_keywords=
-                      -o milter_macro_daemon_name=ORIGINATING
-                      -o cleanup_service_name=sender-cleanup
-                      -o smtpd_upstream_proxy_protocol=haproxy  
-
-                    # Submissions with proxy
-                    10465     inet  n       -       n       -       -       smtpd
-                      -o syslog_name=postfix/submissions
-                      -o smtpd_tls_wrappermode=yes
-                      -o smtpd_sasl_auth_enable=yes
-                      -o smtpd_sasl_type=dovecot
-                      -o smtpd_reject_unlisted_recipient=no
-                      -o smtpd_sasl_authenticated_header=yes
-                      -o smtpd_client_restrictions=permit_sasl_authenticated,reject
-                      -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
-                      -o smtpd_sender_restrictions=\$mua_sender_restrictions
-                      -o smtpd_discard_ehlo_keywords=
-                      -o milter_macro_daemon_name=ORIGINATING
-                      -o cleanup_service_name=sender-cleanup
-                      -o smtpd_upstream_proxy_protocol=haproxy
-
-                    # Smtp with proxy
-                    12525     inet  n       -       n       -       1       postscreen
-                      -o syslog_name=postfix/smtp-proxy
-                      -o postscreen_upstream_proxy_protocol=haproxy
-                      -o postscreen_cache_map=btree:$data_directory/postscreen_10025_cache
-                    EOS
-                    {{- end }}
+                data: "#!/bin/bash\n\n{{- if .Values.proxyProtocol.enabled }}\n# Make sure to keep this file in sync with
+                    https://github.com/docker-mailserver/docker-mailserver/blob/master/target/postfix/master.cf!\ncat <<EOS
+                    >> /etc/postfix/master.cf\n\n# Submission with proxy\n10587     inet  n       -       n       -       -
+                    \      smtpd\n  -o syslog_name=postfix/submission\n  -o smtpd_tls_security_level=encrypt\n  -o smtpd_sasl_auth_enable=yes\n
+                    \ -o smtpd_sasl_type=dovecot\n  -o smtpd_reject_unlisted_recipient=no\n  -o smtpd_sasl_authenticated_header=yes\n
+                    \ -o smtpd_client_restrictions=permit_sasl_authenticated,reject\n  -o smtpd_relay_restrictions=permit_sasl_authenticated,reject\n
+                    \ -o smtpd_sender_restrictions=\\$mua_sender_restrictions\n  -o smtpd_discard_ehlo_keywords=\n  -o milter_macro_daemon_name=ORIGINATING\n
+                    \ -o cleanup_service_name=sender-cleanup\n  -o smtpd_upstream_proxy_protocol=haproxy  \n\n# Submissions
+                    with proxy\n10465     inet  n       -       n       -       -       smtpd\n  -o syslog_name=postfix/submissions\n
+                    \ -o smtpd_tls_wrappermode=yes\n  -o smtpd_sasl_auth_enable=yes\n  -o smtpd_sasl_type=dovecot\n  -o smtpd_reject_unlisted_recipient=no\n
+                    \ -o smtpd_sasl_authenticated_header=yes\n  -o smtpd_client_restrictions=permit_sasl_authenticated,reject\n
+                    \ -o smtpd_relay_restrictions=permit_sasl_authenticated,reject\n  -o smtpd_sender_restrictions=\\$mua_sender_restrictions\n
+                    \ -o smtpd_discard_ehlo_keywords=\n  -o milter_macro_daemon_name=ORIGINATING\n  -o cleanup_service_name=sender-cleanup\n
+                    \ -o smtpd_upstream_proxy_protocol=haproxy\n\n# Smtp with proxy\n12525     inet  n       -       n       -
+                    \      1       postscreen\n  -o syslog_name=postfix/smtp-proxy\n  -o postscreen_upstream_proxy_protocol=haproxy\n
+                    \ -o postscreen_cache_map=btree:$data_directory/postscreen_10025_cache\nEOS\n{{- end }}\n"
