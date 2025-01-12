@@ -19,6 +19,13 @@ spec:
             access:
                 enabled: true
                 filePath: "/tmp/log/traefik/access.log"
+                fields:
+                    headers:
+                        defaultMode: keep
+                        names:
+                            User-Agent: keep
+                            Content-Type: keep
+                            Authorization: drop
         ingressRoute:
             dashboard:
                 enabled: false
