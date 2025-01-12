@@ -31,8 +31,8 @@ spec:
             enabled: false
         additionalArguments:
             - "--api.dashboard=true"
-            #- "--entryPoints.web.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
-            #- "--entryPoints.websecure.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
+            - "--entryPoints.web.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
+            - "--entryPoints.websecure.proxyProtocol.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
             - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
             - "--entryPoints.websecure.forwardedHeaders.trustedIPs=127.0.0.1/32,10.10.0.0/16,100.64.0.0/10"
         priorityClassName: "system-cluster-critical"
@@ -63,7 +63,7 @@ spec:
                 load-balancer.hetzner.cloud/location: hel1
                 load-balancer.hetzner.cloud/name: traefik
                 load-balancer.hetzner.cloud/use-private-ip: "true"
-                load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
+                load-balancer.hetzner.cloud/uses-proxyprotocol: "true"
             spec:
                 externalTrafficPolicy: Local
         deployment:
