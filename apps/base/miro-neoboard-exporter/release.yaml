@@ -1,0 +1,165 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: miro-neoboard-exporter-secret
+    namespace: neoboard
+type: Opaque
+stringData:
+    MIRO_CLIENT_ID: ENC[AES256_GCM,data:+olX0T1JgHzoHANWv38M8uhs5w==,iv:3jQyUTMhsVIS+/Fxw4wifovgKuG9CO5FpYs4r0kiX9E=,tag:x6sLUcNUstwCwcjwFSPtFg==,type:str]
+    MIRO_CLIENT_SECRET: ENC[AES256_GCM,data:+wHWAZGctYockW0iKxGe5xGUyuPerRX7GsILKGElggI=,iv:yNzZHdlrKAxFEnu7m7+YSfokeyVbBNGZ8MzHDOBxZh8=,tag:t0hTqLP+7+8L0k3nv59J3Q==,type:str]
+    MIRO_REDIRECT_URL: ENC[AES256_GCM,data:d+8rtqINLUtuRFngun2zVGGvVhuYXC0nyfBDTQA5Nb8uR/BwLPIKByNurXYH/RJZqkKzCZzXdJ9H+uhCkOP4Yw==,iv:mWfgAtmACyRkezxI+TvZmDSUh6LvskIqj7aWc3u4hmY=,tag:KA0rNGlHyYM3V1Mwj9lUyg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3TXJ1WGZ1dEZhSXkvdWFR
+            UUtFUXV5bnZpMUVxS1hhbVhOM1h3LzlnS2xvCjJJVmd1eW41UWVGMDljWUpRSzk4
+            a0ZSSGlRaHhTU3pPZGdzYk9WMkNCZGcKLS0tIEJBMDd3VGJOVGdmVE9qNWFTdmZW
+            VkJGbXg2RzdhcXhhUWxWdG9tSFV3OTAKG3NE0vHeZXYAAGMAhcX7lsxKX0da6fcy
+            WICgsiu8BF7YLIziFwmseBdkAcfj2+bp/x5H+pm/4KiqLWIoLkHZJg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-13T14:04:42Z"
+    mac: ENC[AES256_GCM,data:DH6yBuMHNfC5JBTN77w5sgWxEMroe6N6pn6I7UDGYfPuxSfWw2xb6KW/Afp6lSXSHa4uM/CheZmUIqRMtev1HL8wnBMi+cOaaqGdnkitPwR9l6yXgJKz0EVj301VvjToBbNpZ/V8V+IIXKyOTDwcJr6Ohe2vkZ+hVAfQgzgvE9o=,iv:7mg1zK2plJoceSoOd0VLcjgoWtPkkJhwEgy3BYB21ss=,tag:x5yvP6o3IjCOtiD7J78fHg==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: miro-neoboard-exporter
+    namespace: neoboard
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: miro-neoboard-exporter
+    template:
+        metadata:
+            labels:
+                app: miro-neoboard-exporter
+        spec:
+            containers:
+                - name: miro-neoboard-exporter
+                  image: ghcr.io/mtrnord/neoboard-exporter:latest
+                  ports:
+                    - containerPort: 3000
+                  envFrom:
+                    - secretRef:
+                        name: miro-neoboard-exporter-secret
+                  volumeMounts:
+                    - name: env-file
+                      mountPath: /app/.env
+                      subPath: .env
+            volumes:
+                - name: env-file
+                  secret:
+                    secretName: ENC[AES256_GCM,data:gkOW+eVOQ0RP480GxcBehStJj3DIqVkE/sSsL8U=,iv:/vcg1rMyustSGjB4/s8ln818bOO9Y+73xKbuh7en1G4=,tag:8plrOyrCFxx8S7cc2/6FxQ==,type:str]
+                    items:
+                        - key: ENC[AES256_GCM,data:en2eP+KOOwwUmbqBuMU=,iv:nzaEk/R9lridlEd5YC5+Qh/K1ChEs3xSev+8JWlQr14=,tag:mU2PbTbV+Bej78wpngPFig==,type:str]
+                          path: ENC[AES256_GCM,data:t7e1TQ==,iv:WY82R4ZmatY3IeD0h73GlyLLEbwK7x5h/fdvA6EhF8c=,tag:ooVbd39aBUMjByQ818jX7g==,type:str]
+                        - key: ENC[AES256_GCM,data:u/APbVYIMxdFKbhbYHQd0QiL,iv:AGJX3rCbGVKoq7blHFFzn0SVvtIOpXvN28WUTpjMCSw=,tag:HXWMfDT+8DiwT4ie07pNBg==,type:str]
+                          path: ENC[AES256_GCM,data:raNPRQ==,iv:QKodxVq8p56yXlmi38kveTnZ5HCR79c7FPQjTA8V7VE=,tag:mt8sWgQI/eAHaZskbrmrNw==,type:str]
+                        - key: ENC[AES256_GCM,data:e3Qb7D2lRP17QX9wyTDdr4M=,iv:J0wbv3RAvrj2cZrwwFOhSoZv5h7sCS9OAkc179f5Pjc=,tag:W6taxOXV0zzCHNq0MHlY1w==,type:str]
+                          path: ENC[AES256_GCM,data:eEHJ8w==,iv:5A1D/H6J0J0+psJB/spH28yX7yfzE/rN8J+0jF8QLqg=,tag:OHnQ8fgo2H1s9wlRch44Gg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3TXJ1WGZ1dEZhSXkvdWFR
+            UUtFUXV5bnZpMUVxS1hhbVhOM1h3LzlnS2xvCjJJVmd1eW41UWVGMDljWUpRSzk4
+            a0ZSSGlRaHhTU3pPZGdzYk9WMkNCZGcKLS0tIEJBMDd3VGJOVGdmVE9qNWFTdmZW
+            VkJGbXg2RzdhcXhhUWxWdG9tSFV3OTAKG3NE0vHeZXYAAGMAhcX7lsxKX0da6fcy
+            WICgsiu8BF7YLIziFwmseBdkAcfj2+bp/x5H+pm/4KiqLWIoLkHZJg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-13T14:04:42Z"
+    mac: ENC[AES256_GCM,data:DH6yBuMHNfC5JBTN77w5sgWxEMroe6N6pn6I7UDGYfPuxSfWw2xb6KW/Afp6lSXSHa4uM/CheZmUIqRMtev1HL8wnBMi+cOaaqGdnkitPwR9l6yXgJKz0EVj301VvjToBbNpZ/V8V+IIXKyOTDwcJr6Ohe2vkZ+hVAfQgzgvE9o=,iv:7mg1zK2plJoceSoOd0VLcjgoWtPkkJhwEgy3BYB21ss=,tag:x5yvP6o3IjCOtiD7J78fHg==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: miro-neoboard-exporter-service
+spec:
+    selector:
+        app: miro-neoboard-exporter
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 3000
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3TXJ1WGZ1dEZhSXkvdWFR
+            UUtFUXV5bnZpMUVxS1hhbVhOM1h3LzlnS2xvCjJJVmd1eW41UWVGMDljWUpRSzk4
+            a0ZSSGlRaHhTU3pPZGdzYk9WMkNCZGcKLS0tIEJBMDd3VGJOVGdmVE9qNWFTdmZW
+            VkJGbXg2RzdhcXhhUWxWdG9tSFV3OTAKG3NE0vHeZXYAAGMAhcX7lsxKX0da6fcy
+            WICgsiu8BF7YLIziFwmseBdkAcfj2+bp/x5H+pm/4KiqLWIoLkHZJg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-13T14:04:42Z"
+    mac: ENC[AES256_GCM,data:DH6yBuMHNfC5JBTN77w5sgWxEMroe6N6pn6I7UDGYfPuxSfWw2xb6KW/Afp6lSXSHa4uM/CheZmUIqRMtev1HL8wnBMi+cOaaqGdnkitPwR9l6yXgJKz0EVj301VvjToBbNpZ/V8V+IIXKyOTDwcJr6Ohe2vkZ+hVAfQgzgvE9o=,iv:7mg1zK2plJoceSoOd0VLcjgoWtPkkJhwEgy3BYB21ss=,tag:x5yvP6o3IjCOtiD7J78fHg==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: miro-neoboard-exporter-ingress
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+spec:
+    rules:
+        - host: miro-export.neoboard.midnightthoughts.space
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: miro-neoboard-exporter-service
+                        port:
+                            number: 80
+    tls:
+        - hosts:
+            - miro-export.neoboard.midnightthoughts.space
+          secretName: miro-export-neoboard-ingress-tls
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3TXJ1WGZ1dEZhSXkvdWFR
+            UUtFUXV5bnZpMUVxS1hhbVhOM1h3LzlnS2xvCjJJVmd1eW41UWVGMDljWUpRSzk4
+            a0ZSSGlRaHhTU3pPZGdzYk9WMkNCZGcKLS0tIEJBMDd3VGJOVGdmVE9qNWFTdmZW
+            VkJGbXg2RzdhcXhhUWxWdG9tSFV3OTAKG3NE0vHeZXYAAGMAhcX7lsxKX0da6fcy
+            WICgsiu8BF7YLIziFwmseBdkAcfj2+bp/x5H+pm/4KiqLWIoLkHZJg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-13T14:04:42Z"
+    mac: ENC[AES256_GCM,data:DH6yBuMHNfC5JBTN77w5sgWxEMroe6N6pn6I7UDGYfPuxSfWw2xb6KW/Afp6lSXSHa4uM/CheZmUIqRMtev1HL8wnBMi+cOaaqGdnkitPwR9l6yXgJKz0EVj301VvjToBbNpZ/V8V+IIXKyOTDwcJr6Ohe2vkZ+hVAfQgzgvE9o=,iv:7mg1zK2plJoceSoOd0VLcjgoWtPkkJhwEgy3BYB21ss=,tag:x5yvP6o3IjCOtiD7J78fHg==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
