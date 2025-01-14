@@ -88,11 +88,11 @@ spec:
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
                   config:
-                    broken_servers:
-                        #- matrix.org
-                        - matrix.im
-                        - funami.tech
-                        - suicideserver.net
+                      broken_servers:
+                          #- matrix.org
+                          - matrix.im
+                          - funami.tech
+                          - suicideserver.net
         persistence:
             enabled: true
             size: 20Gi
@@ -129,12 +129,17 @@ spec:
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
                           config:
-                            broken_servers:
-                                #- matrix.org
-                                - matrix.im
-                                - funami.tech
-                                - suicideserver.net
+                              broken_servers:
+                                  #- matrix.org
+                                  - matrix.im
+                                  - funami.tech
+                                  - suicideserver.net
             federation_reader:
+                resources:
+                    requests:
+                        cpu: 100m
+                        memory: 1026Mi
+                    limits: {}
                 replicaCount: 1
                 enabled: true
                 generic: true
@@ -155,6 +160,11 @@ spec:
                 enabled: true
                 generic: true
             generic_frontend:
+                resources:
+                    requests:
+                        cpu: 232m
+                        memory: 1008Mi
+                    limits: {}
                 replicaCount: 1
                 enabled: true
                 generic: true
@@ -298,8 +308,8 @@ spec:
                 - matrix.midnightthoughts.space
             tls:
                 - hosts:
-                    - midnightthoughts.space
-                    - matrix.midnightthoughts.space
+                      - midnightthoughts.space
+                      - matrix.midnightthoughts.space
                   secretName: midnightthoughts-synapse-tls-secret
             annotations:
                 cert-manager.io/cluster-issuer: letsencrypt-dns
@@ -309,10 +319,10 @@ spec:
                 - path: /_matrix/client/.*/(login|logout|refresh)
                   pathType: ImplementationSpecific
                   backend:
-                    service:
-                        name: mas
-                        port:
-                            number: 8080
+                      service:
+                          name: mas
+                          port:
+                              number: 8080
 sops:
     kms: []
     gcp_kms: []
@@ -321,13 +331,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGRWlOWnhXaXlBRzZsQkNE
-            Mnp0SldiWE5rN3YrVldLdlJYeEpkcExHdUdFCkEvbE56dmcvKzU2V0FmOU45Um14
-            cXJXSWdyMFVNVEpDTU4wVTNSUnh4dEkKLS0tIDM5VTRHdlNFRGc0dTdZOHAvaHZh
-            aXAvZzFmbmtKWnRla01YdU12YlhjdFEKhKpqgLU6uM8XqJ0rpe9g0cY5KtD0n0t+
-            dTsMGEhbTY2fBJXw+JQkKJFl9EFloYtp0fx/1jcF6pa/BUYmNICtiQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGRWlOWnhXaXlBRzZsQkNE
+              Mnp0SldiWE5rN3YrVldLdlJYeEpkcExHdUdFCkEvbE56dmcvKzU2V0FmOU45Um14
+              cXJXSWdyMFVNVEpDTU4wVTNSUnh4dEkKLS0tIDM5VTRHdlNFRGc0dTdZOHAvaHZh
+              aXAvZzFmbmtKWnRla01YdU12YlhjdFEKhKpqgLU6uM8XqJ0rpe9g0cY5KtD0n0t+
+              dTsMGEhbTY2fBJXw+JQkKJFl9EFloYtp0fx/1jcF6pa/BUYmNICtiQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-09-25T16:01:47Z"
     mac: ENC[AES256_GCM,data:A70zcY2uBFZqrJgEY7hefYSdd2n8JTEoozqjlrSb/hGE1A2a89DpWF193GG+E2iDaD92HRG8ZEPU+5m+SMLfVVa+mW47KCb1Ush8rfkW94qmu/5jSuwJ/NHDW5xErx6Mobv3wrJEXl3m2LMsZu455t1hldzBtGDKCKZtSwJAP1c=,iv:GCIogDOgp/QI44f5SB9TM1X9yE4Z8V2CUTBt5173LDs=,tag:HxNrcAVgGMu9MoDKvhtnUQ==,type:str]
     pgp: []
