@@ -309,6 +309,9 @@ spec:
             database: synapse
             password: ENC[AES256_GCM,data:/PvmfX0zvJcvqZqZco5rKSS+S0PD16v73zhwYta7CVaqeQcRW0zXNznDAC4Y4pJSVOb/ybmB1yxWi3O8knx4eA==,iv:ZVbd44808IntM18J/P9fUMu+WGgz2IuxstlhfAZ62KI=,tag:+oxPYI0r0YVoLksDv8F/8A==,type:str]
         gateway:
+            parentRefs:
+                - name: envoy-gateway
+                  namespace: envoy-gateway
             enabled: true
             hosts:
                 - midnightthoughts.space
