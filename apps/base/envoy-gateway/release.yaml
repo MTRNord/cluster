@@ -147,4 +147,9 @@ spec:
         kind: Gateway
         name: envoy-gateway
     # WARNING: False as cilium routes the gateway locally if used internally with the public domain. HOWEVER then proxy proto cant be used...
-    enableProxyProtocol: true
+    enableProxyProtocol: false
+    # Alternative to enableProxyProtocol: true
+    clientIPDetection:
+        xForwardedFor:
+            # Check if this is correct or if 1 is correct
+            numTrustedHops: 2
