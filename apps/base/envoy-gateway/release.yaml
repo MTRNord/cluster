@@ -42,5 +42,6 @@ spec:
           port: 443
           tls:
               mode: Terminate
-              certificateRef:
-                  name: envoy-gateway-tls
+              certificateRefs:
+                  - kind: Secret
+                    name: envoy-gateway-tls
