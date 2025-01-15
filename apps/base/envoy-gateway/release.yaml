@@ -99,6 +99,42 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: mtrnord.blog-tls
+        - name: https-midnightthoughts-root
+          protocol: HTTPS
+          hostname: "midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: midnightthoughts.space-tls
+        - name: https-nordgedanken-root
+          protocol: HTTPS
+          hostname: "nordgedanken.dev"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: nordgedanken.dev-tls
+        - name: https-mtrnord-blog-root
+          protocol: HTTPS
+          hostname: "mtrnord.blog"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: mtrnord.blog-tls
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
