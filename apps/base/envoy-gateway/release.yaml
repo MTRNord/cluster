@@ -63,8 +63,9 @@ spec:
           allowedRoutes:
               namespaces:
                   from: "All"
-        - name: https
+        - name: https-midnightthoughts
           protocol: HTTPS
+          hostname: "*.midnightthoughts.space"
           port: 443
           allowedRoutes:
               namespaces:
@@ -73,7 +74,19 @@ spec:
               mode: Terminate
               certificateRefs:
                   - kind: Secret
-                    name: envoy-gateway-tls
+                    name: midnightthoughts.space-tls
+        - name: https-nordgedanken
+          protocol: HTTPS
+          hostname: "*.nordgedanken.dev"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: nordgedanken.dev-tls
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
