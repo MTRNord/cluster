@@ -19,5 +19,28 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: GatewayClass
 metadata:
     name: envoy-gateway-class
+    namespace: envoy-gateway
 spec:
     controllerName: gateway.envoyproxy.io/controller
+# TODO: Set up https://gateway.envoyproxy.io/docs/tasks/security/tls-cert-manager/#creating-a-tls-gateway-listener with https://github.com/hetznercloud/hcloud-cloud-controller-manager/issues/814
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+    name: envoy-gateway
+    namespace: envoy-gateway
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+    gatewayClassName: envoy-gateway
+    listeners:
+        - name: http
+          protocol: HTTP
+          port: 80
+        - name: https
+          protocol: HTTPS
+          port: 443
+          tls:
+              mode: Terminate
+              certificateRef:
+                  name: envoy-gateway-tls
