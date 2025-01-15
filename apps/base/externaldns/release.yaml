@@ -22,12 +22,28 @@ spec:
         env:
             - name: CF_API_TOKEN
               valueFrom:
-                secretKeyRef:
-                    name: cloudflare-api-token-secret
-                    key: api-token
+                  secretKeyRef:
+                      name: cloudflare-api-token-secret
+                      key: api-token
         sources:
             - gateway-httproute
             - gateway-grpcroute
             - gateway-tcproute
             - gateway-tlsroute
             - gateway-udproute
+        rbac:
+            additionalPermissions:
+                - apiGroups: [""]
+                  resources: ["namespaces"]
+                  verbs: ["get", "watch", "list"]
+                - apiGroups: ["gateway.networking.k8s.io"]
+                  resources:
+                      [
+                          "gateways",
+                          "httproutes",
+                          "grpcroutes",
+                          "tlsroutes",
+                          "tcproutes",
+                          "udproutes",
+                      ]
+                  verbs: ["get", "watch", "list"]
