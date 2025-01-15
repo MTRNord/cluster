@@ -28,7 +28,7 @@ spec:
         ingress:
             main:
                 annotations:
-                    cert-manager.io/cluster-issuer: letsencrypt-http
+                    cert-manager.io/cluster-issuer: letsencrypt-dns
                     traefik.ingress.kubernetes.io/router.middlewares: calendar-subpath@kubernetescrd,calendar-stripprefix@kubernetescrd
                 enabled: true
                 hosts:
