@@ -61,44 +61,44 @@ spec:
           protocol: HTTP
           port: 80
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
         - name: https-midnightthoughts
           protocol: HTTPS
           hostname: "*.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: midnightthoughts.space-tls
         - name: https-nordgedanken
           protocol: HTTPS
           hostname: "*.nordgedanken.dev"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: nordgedanken.dev-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: nordgedanken.dev-tls
         - name: https-mtrnord-blog
           protocol: HTTPS
           hostname: "*.mtrnord.blog"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: mtrnord.blog-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: mtrnord.blog-tls
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
