@@ -15,3 +15,14 @@ metadata:
 spec:
     image: ghcr.io/matrix-org/sliding-sync
     interval: 15m
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+    name: matrix-gateway-api
+    namespace: matrix
+spec:
+    interval: 1h
+    url: https://gitlab.com/MTRNord/ananace-personal-charts.git
+    ref:
+        branch: MTRNord/gateway-api

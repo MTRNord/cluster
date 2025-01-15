@@ -4,13 +4,20 @@ metadata:
     name: matrix-synapse
     namespace: matrix
 spec:
+    # chart:
+    #     spec:
+    #         chart: matrix-synapse
+    #         sourceRef:
+    #             kind: HelmRepository
+    #             name: ananace-charts
+    #         version: 3.11.x
     chart:
         spec:
-            chart: matrix-synapse
+            chart: ./charts/matrix-synapse/
             sourceRef:
-                kind: HelmRepository
-                name: ananace-charts
-            version: 3.11.x
+                kind: GitRepository
+                name: matrix-gateway-api
+                namespace: matrix
     interval: 50m
     install:
         remediation:

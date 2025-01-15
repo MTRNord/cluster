@@ -197,7 +197,8 @@ spec:
                               execErrState: Error
                               for: 5m
                               annotations:
-                                description: Depending on the rate limit, cert-manager may be unable to generate certificates for up to a week.
+                                description: Depending on the rate limit, cert-manager may be unable to generate certificates
+                                    for up to a week.
                                 summary: Cert manager hitting LetsEncrypt rate limits.
                               labels: {}
                               isPaused: false
@@ -1399,7 +1400,8 @@ spec:
                     auth_url: https://auth.midnightthoughts.space/application/o/authorize/
                     token_url: https://auth.midnightthoughts.space/application/o/token/
                     api_url: https://auth.midnightthoughts.space/application/o/userinfo/
-                    role_attribute_path: contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'
+                    role_attribute_path: contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors')
+                        && 'Editor' || 'Viewer'
             imageRenderer:
                 enabled: true
         kubeProxy:
