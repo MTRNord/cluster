@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: envoy-gateway
+    namespace: envoy-gateway
+spec:
+    releaseName: envoy-gateway
+    interval: 60m
+    chartRef:
+        kind: OCIRepository
+        name: envoy-gateway
+    values:
+        podDisruptionBudget:
+            minAvailable: 1
+        deployment:
+            replicas: 3
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: GatewayClass
+metadata:
+    name: envoy-gateway-class
+spec:
+    controllerName: gateway.envoyproxy.io/controller
