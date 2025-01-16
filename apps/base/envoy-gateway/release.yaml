@@ -61,80 +61,80 @@ spec:
           protocol: HTTP
           port: 80
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
         - name: https-midnightthoughts
           protocol: HTTPS
           hostname: "*.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: midnightthoughts.space-tls
         - name: https-nordgedanken
           protocol: HTTPS
           hostname: "*.nordgedanken.dev"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: nordgedanken.dev-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: nordgedanken.dev-tls
         - name: https-mtrnord-blog
           protocol: HTTPS
           hostname: "*.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mtrnord.blog-tls
         - name: https-midnightthoughts-root
           protocol: HTTPS
           hostname: "midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: nordgedanken.dev-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: nordgedanken.dev-tls
         - name: https-mtrnord-blog-root
           protocol: HTTPS
           hostname: "mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mtrnord.blog-tls
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
@@ -153,3 +153,34 @@ spec:
         xForwardedFor:
             # Check if this is correct or if 1 is correct
             numTrustedHops: 2
+---
+# Monitors the above gateway using a servicemonitor
+# First we do a service matching on the labels "gateway.envoyproxy.io/owning-gateway-name: envoy-gateway" and "gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway"
+kind: Service
+apiVersion: v1
+metadata:
+    name: envoy-gateway-monitor
+    namespace: envoy-gateway
+    labels:
+        proxy: envoy
+spec:
+    selector:
+        gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
+        gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
+    ports:
+        - name: metrics
+          port: 19001
+          targetPort: 19001
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: envoy-gateway-monitor
+    namespace: envoy-gateway
+spec:
+    selector:
+        matchLabels:
+            proxy: envoy
+    endpoints:
+        - port: metrics
+          path: /stats/prometheus
