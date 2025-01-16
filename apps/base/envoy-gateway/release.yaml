@@ -185,3 +185,16 @@ spec:
         - port: metrics
           path: /stats/prometheus
           interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: envoy-gateway-controlplane-monitor
+    namespace: envoy-gateway
+spec:
+    selector:
+        matchLabels:
+            control-plane: envoy-gateway
+    endpoints:
+        - port: metrics
+          interval: 10s
