@@ -20,7 +20,7 @@ spec:
             retries: 3
     values:
         image:
-            tag: v4.3.2
+            tag: v4.3.3
         imagePullSecrets:
             - name: ghcr-pull
         externalAuth:
@@ -45,10 +45,10 @@ spec:
             hosts:
                 - host: mastodon.mtrnord.blog
                   paths:
-                    - path: /
+                      - path: /
             tls:
                 - hosts:
-                    - mastodon.mtrnord.blog
+                      - mastodon.mtrnord.blog
                   secretName: mastodon.mtrnord.blog-tls
         mastodon:
             sidekiq:
@@ -67,17 +67,17 @@ spec:
                   concurrency: 25
                   replicas: 1
                   resources:
-                    limits: {}
-                    requests:
-                        cpu: "136m"
-                        memory: "542Mi"
+                      limits: {}
+                      requests:
+                          cpu: "136m"
+                          memory: "542Mi"
                   queues:
-                    - default,8
-                    - push,6
-                    - ingress,4
-                    - mailers,2
-                    - pull
-                    - scheduler # Make sure the scheduler queue only exists once and with a worker that has 1 replica.
+                      - default,8
+                      - push,6
+                      - ingress,4
+                      - mailers,2
+                      - pull
+                      - scheduler # Make sure the scheduler queue only exists once and with a worker that has 1 replica.
             web:
                 updateStrategy:
                     type: RollingUpdate
@@ -163,13 +163,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBJYWcxUVcxK210WjBKU1pt
-            aWFGM0dzQlFtTWN3RkxSbGNCZVQ1alp5OWlFClhhMWlrUFV3YUFNOTlxZTZPMm1C
-            a0Q2TmZBNTJhc2VNS1VsdkFGVVFTTkkKLS0tIEpiQ05jTXlpVUtPb0F2bHFTQzZn
-            ZmcybjlPTmM0QU1mU25RN29scUNWQjQKn4caT12+T3u1SIDgxDD0JZZZc7Tecdvc
-            Xnv1X/X7SlcycE+ZxrCnAh5PbKU3eLNFRmZ0070H9Yqh+OMokXf6Qg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBJYWcxUVcxK210WjBKU1pt
+              aWFGM0dzQlFtTWN3RkxSbGNCZVQ1alp5OWlFClhhMWlrUFV3YUFNOTlxZTZPMm1C
+              a0Q2TmZBNTJhc2VNS1VsdkFGVVFTTkkKLS0tIEpiQ05jTXlpVUtPb0F2bHFTQzZn
+              ZmcybjlPTmM0QU1mU25RN29scUNWQjQKn4caT12+T3u1SIDgxDD0JZZZc7Tecdvc
+              Xnv1X/X7SlcycE+ZxrCnAh5PbKU3eLNFRmZ0070H9Yqh+OMokXf6Qg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-10-10T22:33:31Z"
     mac: ENC[AES256_GCM,data:DwZmqHx5kkLbXfmtw/D2gnIX/WF4RB/rVodtFRoWvaW+S+KK4F9pEOMPxHgtyau56OEWzOfceBQXEidEqKe/SfuvQ5FfktejmTikj7/pgyXEhykCZq++UnPdeidKsuZAXDqEbqdPImXpHlvyD7EqcWqc9AhySdraw5+740iRAVE=,iv:lhd7o9o700+HFUiB9g6vX9C7P+VqUoEuRgdJjwqHnDE=,tag:ToWev6Ak25/Ug7Mg5eCD5Q==,type:str]
     pgp: []
