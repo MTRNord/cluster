@@ -19,7 +19,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 6,
+    "id": 37,
     "links": [],
     "panels": [
         {
@@ -38,114 +38,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
-            },
-            "description": "The fraction of this program's available CPU time used by the GC since the program started.",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "palette-classic"
-                    },
-                    "custom": {
-                        "axisBorderShow": false,
-                        "axisCenteredZero": false,
-                        "axisColorMode": "series",
-                        "axisGridShow": false,
-                        "axisLabel": "",
-                        "axisPlacement": "auto",
-                        "barAlignment": 0,
-                        "drawStyle": "line",
-                        "fillOpacity": 25,
-                        "gradientMode": "none",
-                        "hideFrom": {
-                            "legend": false,
-                            "tooltip": false,
-                            "viz": false
-                        },
-                        "insertNulls": false,
-                        "lineInterpolation": "linear",
-                        "lineWidth": 1,
-                        "pointSize": 5,
-                        "scaleDistribution": {
-                            "type": "linear"
-                        },
-                        "showPoints": "auto",
-                        "spanNulls": false,
-                        "stacking": {
-                            "group": "A",
-                            "mode": "none"
-                        },
-                        "thresholdsStyle": {
-                            "mode": "off"
-                        }
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "miu"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 7,
-                "w": 8,
-                "x": 0,
-                "y": 1
-            },
-            "id": 274,
-            "options": {
-                "legend": {
-                    "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "right",
-                    "showLegend": false
-                },
-                "tooltip": {
-                    "maxHeight": 600,
-                    "mode": "single",
-                    "sort": "none"
-                }
-            },
-            "pluginVersion": "11.0.0",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
-                    },
-                    "disableTextWrap": false,
-                    "editorMode": "code",
-                    "exemplar": false,
-                    "expr": "(go_memstats_gc_cpu_fraction)*1000000",
-                    "format": "time_series",
-                    "fullMetaSearch": false,
-                    "includeNullMetadata": true,
-                    "instant": false,
-                    "legendFormat": "__auto",
-                    "range": true,
-                    "refId": "A",
-                    "useBackend": false
-                }
-            ],
-            "title": "CPU Fraction",
-            "transparent": true,
-            "type": "timeseries"
-        },
-        {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "description": "Resident memory size",
             "fieldConfig": {
@@ -189,12 +82,12 @@
                 "showThresholdMarkers": false,
                 "sizing": "auto"
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.3.1",
             "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
@@ -216,7 +109,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "description": "Virtual memory size",
             "fieldConfig": {
@@ -261,12 +154,12 @@
                 "showThresholdMarkers": false,
                 "sizing": "auto"
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.3.1",
             "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
@@ -288,7 +181,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "description": "Number of ratelimit rule hits in total",
             "fieldConfig": {
@@ -325,6 +218,7 @@
                 "graphMode": "none",
                 "justifyMode": "center",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -336,12 +230,12 @@
                 "textMode": "value",
                 "wideLayout": false
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.3.1",
             "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
@@ -363,7 +257,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "description": "Number of rule hits over the NearLimit ratio threshold (currently 80%) but under the threshold rate.",
             "fieldConfig": {
@@ -400,6 +294,7 @@
                 "graphMode": "none",
                 "justifyMode": "center",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -411,12 +306,12 @@
                 "textMode": "value",
                 "wideLayout": false
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.3.1",
             "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
@@ -438,7 +333,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "description": "Number of rule hits exceeding the threshold rate",
             "fieldConfig": {
@@ -475,6 +370,7 @@
                 "graphMode": "none",
                 "justifyMode": "center",
                 "orientation": "auto",
+                "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
                         "lastNotNull"
@@ -486,12 +382,12 @@
                 "textMode": "value",
                 "wideLayout": false
             },
-            "pluginVersion": "11.0.0",
+            "pluginVersion": "11.3.1",
             "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
@@ -511,8 +407,9 @@
             "type": "stat"
         }
     ],
+    "preload": false,
     "refresh": "",
-    "schemaVersion": 39,
+    "schemaVersion": 40,
     "tags": [
         "Control Plane"
     ],
@@ -520,25 +417,20 @@
         "list": [
             {
                 "current": {
-                    "selected": false,
                     "text": "Prometheus",
                     "value": "PBFA97CFB590B2093"
                 },
-                "hide": 0,
                 "includeAll": false,
-                "multi": false,
                 "name": "datasource",
                 "options": [],
                 "query": "prometheus",
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
                 "type": "datasource"
             },
             {
                 "allValue": ".*",
                 "current": {
-                    "selected": false,
                     "text": "envoy-gateway-system",
                     "value": "envoy-gateway-system"
                 },
@@ -547,9 +439,7 @@
                     "uid": "$datasource"
                 },
                 "definition": "label_values(watchable_depth,namespace)",
-                "hide": 0,
                 "includeAll": false,
-                "multi": false,
                 "name": "Namespace",
                 "options": [],
                 "query": {
@@ -559,14 +449,11 @@
                 },
                 "refresh": 1,
                 "regex": "",
-                "skipUrlSync": false,
-                "sort": 0,
                 "type": "query"
             },
             {
                 "allValue": ".*",
                 "current": {
-                    "selected": true,
                     "text": [
                         "All"
                     ],
@@ -579,7 +466,6 @@
                     "uid": "$datasource"
                 },
                 "definition": "label_values(watchable_depth,runner)",
-                "hide": 0,
                 "includeAll": true,
                 "multi": true,
                 "name": "Runner",
@@ -591,20 +477,15 @@
                 },
                 "refresh": 2,
                 "regex": "",
-                "skipUrlSync": false,
-                "sort": 0,
                 "type": "query"
             },
             {
                 "current": {
-                    "selected": false,
                     "text": "default/eg/http",
                     "value": "default/eg/http"
                 },
                 "description": "DefaultDomain is set to default/eg/http",
-                "hide": 0,
                 "includeAll": false,
-                "multi": false,
                 "name": "DefaultDomain",
                 "options": [
                     {
@@ -614,7 +495,6 @@
                     }
                 ],
                 "query": "default/eg/http",
-                "skipUrlSync": false,
                 "type": "custom"
             }
         ]
@@ -623,11 +503,10 @@
         "from": "now-6h",
         "to": "now"
     },
-    "timeRangeUpdatedDuringEditOrView": false,
     "timepicker": {},
     "timezone": "browser",
     "title": "Global Ratelimit",
     "uid": "R2xvYmFsIFJhdGVsaW1pdAo",
-    "version": 4,
+    "version": 1,
     "weekStart": ""
 }
