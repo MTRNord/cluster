@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: mjolnir-fluffy-persistent-storage
+    namespace: matrix
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 512Mi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -55,5 +67,5 @@ spec:
                     name: mjolnir-fluffy-config
                   name: config-volume
                 - name: storage
-                  emptyDir:
-                    sizeLimit: 2048Mi
+                  persistentVolumeClaim:
+                    claimName: mjolnir-fluffy-persistent-storage
