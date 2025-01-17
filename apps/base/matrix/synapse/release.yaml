@@ -60,6 +60,8 @@ spec:
             run_background_tasks_on: background_worker
             federation_sender_instances:
                 - federation-sender-1
+            pusher_instances:
+                - pusher-1
             mau_stats_only: true
             presence:
                 enabled: false
@@ -95,11 +97,11 @@ spec:
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
                   config:
-                    broken_servers:
-                        #- matrix.org
-                        - matrix.im
-                        - funami.tech
-                        - suicideserver.net
+                      broken_servers:
+                          #- matrix.org
+                          - matrix.im
+                          - funami.tech
+                          - suicideserver.net
         persistence:
             enabled: true
             size: 20Gi
@@ -136,11 +138,11 @@ spec:
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
                           config:
-                            broken_servers:
-                                #- matrix.org
-                                - matrix.im
-                                - funami.tech
-                                - suicideserver.net
+                              broken_servers:
+                                  #- matrix.org
+                                  - matrix.im
+                                  - funami.tech
+                                  - suicideserver.net
             federation_reader:
                 resources:
                     requests:
@@ -154,6 +156,26 @@ spec:
                     - federation
                 paths:
                     - /_matrix/federation/v1/send/
+                    - /_matrix/federation/v1/event/
+                    - /_matrix/federation/v1/state/
+                    - /_matrix/federation/v1/state_ids/
+                    - /_matrix/federation/v1/backfill/
+                    - /_matrix/federation/v1/get_missing_events/
+                    - /_matrix/federation/v1/publicRooms
+                    - /_matrix/federation/v1/query/
+                    - /_matrix/federation/v1/make_join/
+                    - /_matrix/federation/v1/make_leave/
+                    - /_matrix/federation/(v1|v2)/send_join/
+                    - /_matrix/federation/(v1|v2)/send_leave/
+                    - /_matrix/federation/v1/make_knock/
+                    - /_matrix/federation/v1/send_knock/
+                    - /_matrix/federation/(v1|v2)/invite/
+                    - /_matrix/federation/v1/event_auth/
+                    - /_matrix/federation/v1/timestamp_to_event/
+                    - /_matrix/federation/v1/exchange_third_party_invite/
+                    - /_matrix/federation/v1/user/devices/
+                    - /_matrix/key/v2/query
+                    - /_matrix/federation/v1/hierarchy/
             event_persister:
                 name: event_persister
                 replicaCount: 1
@@ -182,7 +204,7 @@ spec:
                     - /_matrix/client/(r0|v3)/sync$
                     - /_matrix/client/(api/v1|r0|v3)/events$
                     - /_matrix/client/(api/v1|r0|v3)/initialSync$
-                    - /_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$
+                    - /_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$
                     # Client API requests
                     - /_matrix/client/(api/v1|r0|v3|unstable)/createRoom$
                     - /_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$
@@ -193,8 +215,7 @@ spec:
                     - /_matrix/client/v1/rooms/.*/hierarchy$
                     - /_matrix/client/(v1|unstable)/rooms/.*/relations/
                     - /_matrix/client/v1/rooms/.*/threads$
-                    - /_matrix/client/unstable/org.matrix.msc2716/rooms/.*/batch_send$
-                    - /_matrix/client/unstable/im.nheko.summary/rooms/.*/summary$
+                    - /_matrix/client/unstable/im.nheko.summary/summary/.*$
                     - /_matrix/client/(r0|v3|unstable)/account/3pid$
                     - /_matrix/client/(r0|v3|unstable)/account/whoami$
                     - /_matrix/client/(r0|v3|unstable)/devices$
@@ -206,29 +227,33 @@ spec:
                     - /_matrix/client/(api/v1|r0|v3|unstable/.*)/rooms/.*/aliases
                     - /_matrix/client/(api/v1|r0|v3|unstable)/search$
                     - /_matrix/client/(r0|v3|unstable)/user/.*/filter(/|$)
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/directory/room/.*$
+                    - /_matrix/client/(r0|v3|unstable)/capabilities$
+                    - /_matrix/client/(r0|v3|unstable)/notifications$
                     # Encryption requests
                     - /_matrix/client/(r0|v3|unstable)/keys/query$
                     - /_matrix/client/(r0|v3|unstable)/keys/changes$
                     - /_matrix/client/(r0|v3|unstable)/keys/claim$
                     - /_matrix/client/(r0|v3|unstable)/room_keys/
                     - /_matrix/client/(r0|v3|unstable)/keys/upload/
-                    # Registration/login requests
-                    - /_matrix/client/(r0|v3|unstable)/register$
-                    - /_matrix/client/(r0|v3|unstable)/register/available$
-                    - /_matrix/client/v1/register/m.login.registration_token/validity$
+                    # Registration/login requests are done by MAS.
                     # Event sending requests
                     - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact
                     - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send
                     - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/
-                    # - "/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$"
-                    # - "/_matrix/client/(api/v1|r0|v3|unstable)/join/"
-                    # - "/_matrix/client/(api/v1|r0|v3|unstable)/knock/"
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/join/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/knock/
                     - /_matrix/client/(api/v1|r0|v3|unstable)/profile/
                     # # User directory search requests
-                    # - /_matrix/client/(r0|v3|unstable)/user_directory/search$
+                    - /_matrix/client/(r0|v3|unstable)/user_directory/search$
                     # Worker event streams
                     # See https://matrix-org.github.io/synapse/latest/workers.html#stream-writers
-                    #
+
+                    # hopefully no stream
+                    - ^/_matrix/client/unstable/org.matrix.msc4140/delayed_events
+                    # The pushrules event stream
+                    # - ^/_matrix/client/(api/v1|r0|v3|unstable)/pushrules/
                     # The account_data event stream
                     # - /_matrix/client/(r0|v3|unstable)/.*/tags
                     # - /_matrix/client/(r0|v3|unstable)/.*/account_data
@@ -238,7 +263,11 @@ spec:
                     # The presence event stream
                     # - /_matrix/client/(api/v1|r0|v3|unstable)/presence/
             pusher:
+                labels:
+                    synapse-component: pusher
+                name: pusher-1
                 enabled: true
+                generic: true
             appservice:
                 enabled: false
                 name: appservices
@@ -246,9 +275,9 @@ spec:
             federation_sender_1:
                 labels:
                     synapse-component: federation-sender
-                app: federation_sender
                 name: federation-sender-1
                 enabled: true
+                generic: true
                 resources:
                     requests:
                         cpu: 300m
@@ -318,13 +347,13 @@ spec:
                 - matrix.midnightthoughts.space
             csPaths:
                 - backendRefs:
-                    - kind: Service
-                      name: mas
-                      port: 8080
+                      - kind: Service
+                        name: mas
+                        port: 8080
                   matches:
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/.*/(login|logout|refresh)
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/.*/(login|logout|refresh)
         ingress:
             enabled: false
             traefikPaths: false
@@ -333,8 +362,8 @@ spec:
                 - matrix.midnightthoughts.space
             tls:
                 - hosts:
-                    - midnightthoughts.space
-                    - matrix.midnightthoughts.space
+                      - midnightthoughts.space
+                      - matrix.midnightthoughts.space
                   secretName: midnightthoughts-synapse-tls-secret
             annotations:
                 cert-manager.io/cluster-issuer: letsencrypt-dns
@@ -344,10 +373,10 @@ spec:
                 - path: /_matrix/client/.*/(login|logout|refresh)
                   pathType: ImplementationSpecific
                   backend:
-                    service:
-                        name: mas
-                        port:
-                            number: 8080
+                      service:
+                          name: mas
+                          port:
+                              number: 8080
 sops:
     kms: []
     gcp_kms: []
@@ -356,13 +385,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArVXNpTmNtMTVaVVY0RzJD
-            ckpOeEI2d2U2L3kyVnBMNE5qQTRDSXMzNUg0CnZXSVgyV2lNb0UvMVFCdktYYUpK
-            MEpZSG9SOVRBc2oveGlnTTEyUWhnTDAKLS0tIGxqeitKOFgrekpia095ZUwzc0Y4
-            d084WTlITnI3alhocVBvTEVYcWtkRDgKu4N3tFQ8xxrJ9rUruJDetTy2q/sIM4hR
-            ZcaRvHJALFP0c/Uml5RTUbGUfuXh33f7R3/PpNFnZI8mko5TJbAxLg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArVXNpTmNtMTVaVVY0RzJD
+              ckpOeEI2d2U2L3kyVnBMNE5qQTRDSXMzNUg0CnZXSVgyV2lNb0UvMVFCdktYYUpK
+              MEpZSG9SOVRBc2oveGlnTTEyUWhnTDAKLS0tIGxqeitKOFgrekpia095ZUwzc0Y4
+              d084WTlITnI3alhocVBvTEVYcWtkRDgKu4N3tFQ8xxrJ9rUruJDetTy2q/sIM4hR
+              ZcaRvHJALFP0c/Uml5RTUbGUfuXh33f7R3/PpNFnZI8mko5TJbAxLg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-01-15T17:53:51Z"
     mac: ENC[AES256_GCM,data:RLxo+4Q8Nps/MQeCq0+pzUmdiEzO7j/ONatWKNVrilvv3+SvbfgoQtRsB/yYxL7GwdVH1iX9JDc0mSQFahzVeOWEU8NH+AXuft0vYBTYHNP5ZO3JgDqO3xM6LT+dV+30yhfHvJD1uOU8hhFvZF+zy7afOUtlwZ1igUOwyjjn2lM=,iv:UU6VOBopuDrC1aBLrcW33QeJsd/L0NW7XP85bCppA0E=,tag:BZAJfYfBgE/wuTWYazZnyw==,type:str]
     pgp: []
