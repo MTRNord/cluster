@@ -58,7 +58,7 @@ spec:
             load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
     # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
     listeners:
-        - name: https-midnightthoughts
+        - name: https-mas-midnightthoughts
           protocol: HTTPS
           hostname: "mas.midnightthoughts.space"
           port: 443
@@ -70,7 +70,7 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: midnightthoughts.space-tls
-        - name: https-midnightthoughts
+        - name: https-matrix-midnightthoughts
           protocol: HTTPS
           hostname: "matrix.midnightthoughts.space"
           port: 443
@@ -82,7 +82,7 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: midnightthoughts.space-tls
-        - name: https-midnightthoughts
+        - name: https-docuseal-midnightthoughts
           protocol: HTTPS
           hostname: "docuseal.midnightthoughts.space"
           port: 443
