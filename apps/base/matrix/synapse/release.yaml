@@ -97,11 +97,11 @@ spec:
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
                   config:
-                      broken_servers:
-                          #- matrix.org
-                          - matrix.im
-                          - funami.tech
-                          - suicideserver.net
+                    broken_servers:
+                        #- matrix.org
+                        - matrix.im
+                        - funami.tech
+                        - suicideserver.net
         persistence:
             enabled: true
             size: 20Gi
@@ -138,11 +138,11 @@ spec:
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
                           config:
-                              broken_servers:
-                                  #- matrix.org
-                                  - matrix.im
-                                  - funami.tech
-                                  - suicideserver.net
+                            broken_servers:
+                                #- matrix.org
+                                - matrix.im
+                                - funami.tech
+                                - suicideserver.net
             federation_reader:
                 resources:
                     requests:
@@ -349,16 +349,16 @@ spec:
                 - matrix.midnightthoughts.space
             csPaths:
                 - backendRefs:
-                      - kind: Service
-                        name: mas
-                        port: 8080
+                    - kind: Service
+                      name: mas
+                      port: 8080
                   matches:
-                      - path:
-                            type: RegularExpression
-                            value: /_matrix/client/.*/(login|logout|refresh).*
-                      - path:
-                            type: RegularExpression
-                            value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
+                    - path:
+                        type: RegularExpression
+                        value: /_matrix/client/.*/(login|logout|refresh).*
+                    - path:
+                        type: RegularExpression
+                        value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
         ingress:
             enabled: false
 sops:
@@ -369,13 +369,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzNnU2QzQxaDRUSzZweitZ
-              cGRqZ2tVbzcyaDgxK25YR3VBd05vdjErTzBzCnhoUUtLQjJNUFcvS3gwZWFHQTRX
-              SlRYbktmZHB3NUZVTGkraVpGbDFuRGsKLS0tIEhzUVp0eGFpS0x3b0Iwa0wyblha
-              aVpTQ3NvSmNTaUlkRGRBZyt3NTFIOVUKfMOuzBi39ih3KEp1e8AYxMyBFs/lfoAT
-              tBfnztH7yg4wKeey33TVfutV9fOOBsh8jH3qxPHbByqRZJUFJPWkQw==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzNnU2QzQxaDRUSzZweitZ
+            cGRqZ2tVbzcyaDgxK25YR3VBd05vdjErTzBzCnhoUUtLQjJNUFcvS3gwZWFHQTRX
+            SlRYbktmZHB3NUZVTGkraVpGbDFuRGsKLS0tIEhzUVp0eGFpS0x3b0Iwa0wyblha
+            aVpTQ3NvSmNTaUlkRGRBZyt3NTFIOVUKfMOuzBi39ih3KEp1e8AYxMyBFs/lfoAT
+            tBfnztH7yg4wKeey33TVfutV9fOOBsh8jH3qxPHbByqRZJUFJPWkQw==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-01-18T14:02:39Z"
     mac: ENC[AES256_GCM,data:cqQ7aC03mgh+oBcOYywJo+gqAY+SybgqRmgbCgbZ1mDs0boNfLEAVV4PjuaEutA5Wcq2046rE4gedcUDqxZJpznJquQ0Pcf1oH2pQ/qWSIiOKPf7deeWF5QjClKsg6s+LObdpHpg2QTuOzzwm45guvf40kqlwQQCSi5WVTRlu5g=,iv:lnT8jDGhm1UfrwHp11s5y1W5zkNEoddRn+j/xSq38Io=,tag:K7NfHNUev8C2KjY81QOE4g==,type:str]
     pgp: []

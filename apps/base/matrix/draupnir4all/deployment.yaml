@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: d4all-persistent-storage
+    namespace: matrix
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 512Mi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,8 +48,10 @@ spec:
                           topologyKey: "kubernetes.io/hostname"
             containers:
                 - name: draupnir4all
-                  image: ghcr.io/mtrnord/cluster/draupnir:d4all
-                  imagePullPolicy: Always
+                  image: gnuxie/draupnir:v2.0.1
+                  imagePullPolicy: IfNotPresent
+                  #image: ghcr.io/mtrnord/cluster/draupnir:d4all
+                  #imagePullPolicy: Always
                   #   env:
                   #     - name: TRACING_ENABLED
                   #       value: "true"
@@ -68,6 +82,10 @@ spec:
                     - name: configs
                       mountPath: "/data/config"
                       readOnly: true
+                    - mountPath: /data/storage
+                      name: storage
+                    - mountPath: /tmp
+                      name: tmp
                   livenessProbe:
                     httpGet:
                         path: /healthz
@@ -86,3 +104,9 @@ spec:
                 - name: configs
                   secret:
                     secretName: draupnir-appservice
+                - name: storage
+                  persistentVolumeClaim:
+                    claimName: d4all-persistent-storage
+                - name: tmp
+                  emptyDir:
+                    sizeLimit: 2048Mi
