@@ -4,14 +4,21 @@ metadata:
     name: draupnir-synapse
     namespace: matrix
 spec:
+    # chart:
+    #     spec:
+    #         chart: matrix-synapse
+    #         sourceRef:
+    #             kind: HelmRepository
+    #             name: ananace-charts
+    #         version: 3.11.x
     chart:
         spec:
-            chart: matrix-synapse
+            chart: ./charts/matrix-synapse/
             sourceRef:
-                kind: HelmRepository
-                name: ananace-charts
-            version: 3.11.x
-    interval: 50m
+                kind: GitRepository
+                name: matrix-gateway-api
+                namespace: matrix
+    interval: 60m
     install:
         remediation:
             retries: 3
@@ -71,7 +78,7 @@ spec:
                 volumes:
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:OdQxzt9pNqEeQWrWxxU+NWdXkw==,iv:9oyTMkdyKkWheSommQSnPwWlIEJJAIQnQSUX6xqNI24=,tag:tG0RlbAD4BFmLjuVuMpimQ==,type:str]
+                        secretName: ENC[AES256_GCM,data:m7x2Z3oCmA6xIRqbkrccx91eNA==,iv:TsKqYTJLDiFtnH0TmLOsFLlwEdNg1r8hJYZdkhtWOGo=,tag:0SXGKKpLh0yUSHcqQ+aKcg==,type:str]
                 extraConfig:
                     opentracing:
                         enabled: false
@@ -109,24 +116,24 @@ spec:
                     - /_matrix/client/(r0|v3|unstable)/account/whoami$
                     - /_matrix/client/(r0|v3|unstable)/devices$
                     - /_matrix/client/versions$
-                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/.*
                     - /_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$
                     # Encryption requests
                     - /_matrix/client/(r0|v3|unstable)/keys/query$
                     - /_matrix/client/(r0|v3|unstable)/keys/changes$
                     - /_matrix/client/(r0|v3|unstable)/keys/claim$
-                    - /_matrix/client/(r0|v3|unstable)/room_keys/
-                    - /_matrix/client/(r0|v3|unstable)/keys/upload/
+                    - /_matrix/client/(r0|v3|unstable)/room_keys/.*
+                    - /_matrix/client/(r0|v3|unstable)/keys/upload/.*
                     # Registration/login requests
                     - /_matrix/client/(r0|v3|unstable)/register$
                     - /_matrix/client/(r0|v3|unstable)/register/available$
                     # Event sending requests
-                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact
-                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send.*
                     - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/
                     - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$
-                    - /_matrix/client/(api/v1|r0|v3|unstable)/join/
-                    - /_matrix/client/(api/v1|r0|v3|unstable)/profile/
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/join/.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/profile/.*
             federation_reader:
                 resources:
                     requests:
@@ -157,9 +164,9 @@ spec:
                     limits: {}
                 labels:
                     synapse-component: federation-sender
-                app: federation_sender
                 name: federation-sender-1
                 enabled: true
+                generic: true
             federation_sender_2:
                 resources:
                     requests:
@@ -168,9 +175,9 @@ spec:
                     limits: {}
                 labels:
                     synapse-component: federation-sender
-                app: federation_sender
                 name: federation-sender-2
                 enabled: true
+                generic: true
             background_worker:
                 resources:
                     requests:
@@ -206,7 +213,7 @@ spec:
             extraVolumes:
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:08iJNCC69IlJoZefkdjotWfpwQ==,iv:pmsnJmtBZB9pJG4ThlbWNRkYu0pvmcr4vxMTJblEmBg=,tag:V8N0ePPec5eFhXnylbjkKw==,type:str]
+                    secretName: ENC[AES256_GCM,data:aVOK2h6KTIKNX8Ypa+AF2UOITA==,iv:PIyZ94Tfr84QUqut2oFu09bYRGwJiKpEpfBmWtQZNXE=,tag:QZflZ3hovkN5a1Bs5S4oMg==,type:str]
             ## Liveness probe configuration to use
             ##
             livenessProbe:
@@ -247,7 +254,7 @@ spec:
             sslmode: require
             database: draupnir_synapse
             username: draupnir_synapse
-            password: ENC[AES256_GCM,data:fGW6F1wvWSURZqr7TAwFUedBxAwJOThemHVtu+qY2q9ewnY6OTVxLn51Fg4i8g2QjNe8xaP4/vaz4cF+u1NYWA==,iv:TE83gVchbBMWbKlk+TWK7LHOgf/s48JnqPbRkgOzcTQ=,tag:V71MlOITWC1dX3jcmtIlQg==,type:str]
+            password: ENC[AES256_GCM,data:AKyUY8U2Yv4P9eGE35GeinMk2mutkhmqJtD2LbyNXY1FczzC82m4oguktEouOsrdCmPTugokdzQuDB/VODsAwQ==,iv:An2J8dC74tnGFq1zrTho0SeSjrIJxsF2wZjIJiiAnAs=,tag:WaWLRBU8xzsmOgcm4g8kYA==,type:str]
         signingkey:
             job:
                 enabled: false
@@ -256,22 +263,19 @@ spec:
         config:
             reportStats: true
             enableRegistration: false
-        ingress:
-            traefikPaths: false
+        gateway:
+            parentRefs:
+                - name: envoy-gateway
+                  namespace: envoy-gateway
+            enabled: true
+            timeouts:
+                request: 60s
+                backendRequest: 60s
             hosts:
                 - draupnir.midnightthoughts.space
                 - matrix.draupnir.midnightthoughts.space
-            tls:
-                - hosts:
-                    - draupnir.midnightthoughts.space
-                    - matrix.draupnir.midnightthoughts.space
-                  secretName: draupnir-midnightthoughts-synapse-tls-secret
-            annotations:
-                cert-manager.io/cluster-issuer: letsencrypt-dns
-                traefik.ingress.kubernetes.io/router.tls: "true"
-                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                traefik.ingress.kubernetes.io/router.pathmatcher: PathRegexp
-                #traefik.ingress.kubernetes.io/router.middlewares: default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd
+        ingress:
+            enabled: false
 sops:
     kms: []
     gcp_kms: []
@@ -281,14 +285,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBFcFZQeHV2bFdibDFHZkJW
-            VHpvRGNSK2dCR1dhbmkza3hXR2IzVk1IRXlvCkhGYURmRGY1U2o2eU85UGtsZnpR
-            S0pCNW45WllWeDhmSk9ETDk4cG9Hb3cKLS0tIGF6Umg1ajFPNVJRUDByNVRyak9s
-            S3dQc2Iwa1EyOHROOStsWUFpSGo3VW8K9QYE2CMS7SHdmjCsAIy3WnhZeyidsuaU
-            klt6O9fM61n/x3+EsJ8vk+4nScog7rcaZ8EzUJzgbQ8nQ1dDqhvkdw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2dFpjM1lmcllpR0RKdXdv
+            bTAydDBWbVRoRXhDUjRwc0FxcjdNU1VNalNJCjcwWE9mQnUydU9QdGZNVWRvSk5k
+            NWRiY1diZy9XRkgxaEgycVp5ZHgyQlkKLS0tIFNtbFJRdm5lMklZUS9FL0xrMW5F
+            RUwrQmhKTlRLVjk3QlRxQ3pUb3pEMHcKRT/WEzTcOmlzlvMT5ddT82d8inRAgvyQ
+            qom+xJO9SM2jcej4kl+0cMJ8zqsrXmw7PukTLjKXOh6egmw+p6qMpQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-05-03T20:03:45Z"
-    mac: ENC[AES256_GCM,data:V9sH8Cme7WXl88O8D7YGWBota6hxk2aGrdbdd26hfsv6LfwIxIriF7c1SPB3uYTrNGkSdFMH7PIx2FZyJppgrCFjPD8JuO3k4DUl3H+2Q9A8ISs8OmF7uZpkt9uUcslAaN7G06FKQ3l+D7EhlBKEokwoJ+vcNvDtV7Y2/6I2+wU=,iv:dBYwnhosNZhSgjt99fOc5iwzgcxWbmmLnvntpmuf5v8=,tag:CRI9SpSijN0g9y8Unz7qaw==,type:str]
+    lastmodified: "2025-01-18T16:41:05Z"
+    mac: ENC[AES256_GCM,data:bejkU903B5B+O8+zzTa0Rypwfq29N94yWBw9/kOf/XByJZYdsCtC6kYX6G/QLwPRRvKuONYEozAxqFbiTqkR1NVyzqDf8Oj+KEXtQBf3P0SY334yCmaeajHLlKm6kanD5NnpVSmX3BcuVfTGwQK3jZ+Kab+cDNu4/AGqw+6Vnxg=,iv:vg1mrpIUNny4WqqS666kM4yvZpI0TuL7ViSP+ib7HVM=,tag:JF0OdVZino0cP0+Bmx+slw==,type:str]
     pgp: []
-    encrypted_regex: ^(clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|PASSWD|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.8.1
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
