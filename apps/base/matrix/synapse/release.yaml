@@ -355,7 +355,10 @@ spec:
                   matches:
                     - path:
                         type: RegularExpression
-                        value: /_matrix/client/(r0|v3|unstable)/(login|logout|refresh)
+                        value: /_matrix/client/.*/(login|logout|refresh)
+                    - path:
+                        type: RegularExpression
+                        value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
         ingress:
             enabled: false
 sops:
