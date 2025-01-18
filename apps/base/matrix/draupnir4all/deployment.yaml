@@ -63,7 +63,7 @@ spec:
                   #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
                   #     - name: TRACING_METRIC_URL
                   #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/metrics
-                  command: ["./mjolnir-entrypoint.sh"]
+                  command: ["./draupnir-entrypoint.sh"]
                   args: ["appservice", "-c", "/data/config/config.appservice.yaml", "-f", "/data/config/draupnir-registration.yaml",
                     "--draupnir-config", "/data/config/draupnir-config.yaml", "-p", "9000"]
                   resources:
