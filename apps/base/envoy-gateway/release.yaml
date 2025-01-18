@@ -63,115 +63,115 @@ spec:
           hostname: "mas.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: midnightthoughts.space-tls
         - name: https-matrix-midnightthoughts
           protocol: HTTPS
           hostname: "matrix.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: matrix.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: matrix.midnightthoughts.space-tls
         - name: https-docuseal-midnightthoughts
           protocol: HTTPS
           hostname: "docuseal.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: docuseal.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: docuseal.midnightthoughts.space-tls
         - name: https-midnightthoughts-neoboard
           protocol: HTTPS
           hostname: "miro-export.neoboard.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: miro-export.neoboard.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: miro-export.neoboard.midnightthoughts.space-tls
         - name: https-midnightthoughts-root
           protocol: HTTPS
           hostname: "midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: nordgedanken.dev-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: nordgedanken.dev-tls
         - name: https-nordgedanken
           protocol: HTTPS
           hostname: "*.nordgedanken.dev"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: nordgedanken.dev-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: nordgedanken.dev-tls
         - name: https-mtrnord-blog-root
           protocol: HTTPS
           hostname: "mtrnord.blog"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: mtrnord.blog-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: mtrnord.blog-tls
         - name: https-mtrnord-blog
           protocol: HTTPS
           hostname: "*.mtrnord.blog"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: mtrnord.blog-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: mtrnord.blog-tls
         - name: http
           protocol: HTTP
           port: 80
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
