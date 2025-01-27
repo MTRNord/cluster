@@ -130,9 +130,9 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: miro-export.neoboard.midnightthoughts.space-tls
-        - name: https-midnightthoughts-vault
+        - name: https-midnightthoughts-certs
           protocol: HTTPS
-          hostname: "vault.midnightthoughts.space"
+          hostname: "certs.midnightthoughts.space"
           port: 443
           allowedRoutes:
             namespaces:
@@ -141,7 +141,7 @@ spec:
             mode: Terminate
             certificateRefs:
                 - kind: Secret
-                  name: vault.midnightthoughts.space-tls
+                  name: certs.midnightthoughts.space-tls
         - name: https-midnightthoughts-root
           protocol: HTTPS
           hostname: "midnightthoughts.space"
