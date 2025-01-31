@@ -89,6 +89,9 @@ spec:
         maxUnavailable: 66%
     maxScale:
         enabled: true
+        replicas: 3
+        updateStrategy:
+            type: RollingUpdate
         kubernetesService:
             type: ClusterIP
 ---
