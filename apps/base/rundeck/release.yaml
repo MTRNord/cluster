@@ -46,7 +46,6 @@ spec:
                 size: 1G
         nginx:
             enabled: false
-
         ingress:
             enabled: true
             className: traefik
@@ -55,12 +54,12 @@ spec:
             hosts:
                 - host: rundeck.midnightthoughts.space
                   paths:
-                      - path: /
-                        pathType: ImplementationSpecific
+                    - path: /
+                      pathType: ImplementationSpecific
             tls:
                 - secretName: rundeck.midnightthoughts.space-tls
                   hosts:
-                      - rundeck.midnightthoughts.space
+                    - rundeck.midnightthoughts.space
         persistence:
             enabled: true
             claim:
