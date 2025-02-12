@@ -1,0 +1,104 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: matrix
+  namespace: matrix
+spec:
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/component: proxy
+            k8s:app.kubernetes.io/managed-by: envoy-gateway
+            k8s:app.kubernetes.io/name: envoy
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
+            k8s:gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: envoy-gateway
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: apps-namespaces
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: envoy-gateway
+      toPorts:
+        - ports:
+            - port: "10443"
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/component: synapse
+            k8s:app.kubernetes.io/instance: matrix-synapse
+            k8s:app.kubernetes.io/name: matrix-synapse
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: matrix
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: apps-namespaces
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: matrix
+      toPorts:
+        - ports:
+            - port: "9093"
+    - toEndpoints:
+        - matchLabels:
+            k8s:app: draupnir-synapse-keydb
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: matrix
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: apps-namespaces
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: matrix
+      toPorts:
+        - ports:
+            - port: "6379"
+    - toEndpoints:
+        - matchLabels:
+            k8s:app: matrix-synapse-keydb
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: matrix
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: apps-namespaces
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: matrix
+      toPorts:
+        - ports:
+            - port: "6379"
+    - toEndpoints:
+        - matchLabels:
+            k8s:app: pantalaimon-freifunk
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: matrix
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: apps-namespaces
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: matrix
+      toPorts:
+        - ports:
+            - port: "8008"
+    - toEndpoints:
+        - matchLabels:
+            k8s:cnpg.io/cluster: pg-cluster-v2
+            k8s:cnpg.io/instanceName: pg-cluster-v2-6
+            k8s:cnpg.io/instanceRole: primary
+            k8s:cnpg.io/podRole: instance
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: postgres-cluster
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: infra-configs
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: postgres-cluster
+            k8s:role: primary
+      toPorts:
+        - ports:
+            - port: "5432"
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/instance: traefik
+            k8s:app.kubernetes.io/managed-by: Helm
+            k8s:app.kubernetes.io/name: traefik
+            k8s:helm.sh/chart: traefik-34.3.0
+            k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name: traefik-ingress
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/name: apps-namespaces
+            k8s:io.cilium.k8s.namespace.labels.kustomize.toolkit.fluxcd.io/namespace: flux-system
+            k8s:io.kubernetes.pod.namespace: traefik-ingress
+      toPorts:
+        - ports:
+            - port: "8443"
+    - toEntities:
+        - world
