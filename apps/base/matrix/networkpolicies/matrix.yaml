@@ -32,6 +32,13 @@ spec:
             - port: "10443"
     - toEndpoints:
         - matchLabels:
+            k8s:app.kubernetes.io/name: draupnir4all
+            io.kubernetes.pod.namespace: matrix
+      toPorts:
+        - ports:
+            - port: "9000"
+    - toEndpoints:
+        - matchLabels:
             k8s:app: draupnir-synapse-keydb
             io.kubernetes.pod.namespace: matrix
       toPorts:
