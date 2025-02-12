@@ -71,6 +71,11 @@ spec:
                     requests:
                         memory: "344Mi"
                         cpu: "252m"
+                  securityContext:
+                    runAsUser: 1000
+                    runAsGroup: 1000
+                    fsGroup: 1000
+                    readOnlyRootFilesystem: true
                   ports:
                     - containerPort: 9001
                       name: widgets

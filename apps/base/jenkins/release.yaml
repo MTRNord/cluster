@@ -25,17 +25,17 @@ spec:
             additionalContainers:
                 - sideContainerName: nodejs
                   image:
-                      repository: node
-                      tag: 23
+                    repository: node
+                    tag: 23
                   command: sleep
                   args: "99999999"
                   resources:
-                      requests:
-                          cpu: 512m
-                          memory: 512Mi
-                      limits:
-                          cpu: 512m
-                          memory: 1024Mi
+                    requests:
+                        cpu: 512m
+                        memory: 512Mi
+                    limits:
+                        cpu: 512m
+                        memory: 1024Mi
         controller:
             admin:
                 username: admin
@@ -76,7 +76,7 @@ spec:
                 tls:
                     - secretName: jenkins.midnightthoughts.space-tls
                       hosts:
-                          - jenkins.midnightthoughts.space
+                        - jenkins.midnightthoughts.space
         persistence:
             enabled: true
             size: 8Gi
@@ -89,13 +89,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3L25sUzlCejVNM3BLM3ZD
-              enVDQXhLK2lnb0hTOE5CNEN0Y0Q5eThpVXhBCmZDczU4VzM2R1F1cmpPWm5iQk5v
-              WXdXMXM3Y3VOazlxZUttdE9RVThrMEkKLS0tIGdyMHl3dzdPV0hDeUsxTnNGL1BK
-              aW5QQ2V1LzhuMys0N01PdVJsMnpUcEUK1VYKGY8eIe1LixY1hCw2MGb8gFxerXCI
-              W3m+QgsoKukbu5v9xd3PbsU2qfGncsOb/7q1hX4H6tKUAFnTRMWC/g==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3L25sUzlCejVNM3BLM3ZD
+            enVDQXhLK2lnb0hTOE5CNEN0Y0Q5eThpVXhBCmZDczU4VzM2R1F1cmpPWm5iQk5v
+            WXdXMXM3Y3VOazlxZUttdE9RVThrMEkKLS0tIGdyMHl3dzdPV0hDeUsxTnNGL1BK
+            aW5QQ2V1LzhuMys0N01PdVJsMnpUcEUK1VYKGY8eIe1LixY1hCw2MGb8gFxerXCI
+            W3m+QgsoKukbu5v9xd3PbsU2qfGncsOb/7q1hX4H6tKUAFnTRMWC/g==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-12-22T14:57:36Z"
     mac: ENC[AES256_GCM,data:rej/F7igPPMx3P13rlHKjVk6yPZzHwsDbMAoXMjKuU5J5N3q45kZU3eBdifMAKjYtRuNdpM7d8rqcurQH08L6bIOCCrb8p5/ynFNYDl99F9480Lq2jvvRE9oTc6COaWlCadnpu+Qz/BBNN3Fp9JrovuUXDO5xfqkMLK23a0N3X4=,iv:Cs6ALE154TBSmx/iGaAPLFzFn0TxgdTtcL/Jalp4p4I=,tag:697cRQkyMBbIJBKXXHNVNQ==,type:str]
     pgp: []
