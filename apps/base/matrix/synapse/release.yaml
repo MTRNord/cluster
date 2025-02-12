@@ -131,11 +131,15 @@ spec:
                       emptyDir: {}
                     - name: pip-cache
                       emptyDir: {}
+                    - name: tmp
+                      emptyDir: {}
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
                     - name: pip-cache
                       mountPath: /.cache/pip
+                    - name: tmp
+                      mountPath: /tmp
                 extraCommands:
                     - ENC[AES256_GCM,data:XfRCK/sZLuScFZq7LjzlxqN306u2GKp93nt2RyZ83YBc0Mi3aK3U3zjHRJMQI7/Dj5SthCSCzie64br8Xxn2TOKWoxt4NaxPH0rMGugNJhclCwrP7zbImcYqvcfodEzQX3FlOxo2DstvuQ723Y6FJyJSqIeiGEZSFJE0cjkMXXkcIMgTVYtwNOj70K1Ntp0xJ7qyjry23Tr933KyKA==,iv:f+rPAI+6mQiIwRpb4U8f79rPnWmJeYEMWewCgNmba14=,tag:LVEBca2gHZfL4opZfmZ9qQ==,type:str]
                 extraConfig:
@@ -335,11 +339,15 @@ spec:
                   emptyDir: {}
                 - name: pip-cache
                   emptyDir: {}
+                - name: tmp
+                  emptyDir: {}
             volumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
                 - name: pip-cache
                   mountPath: /.cache/pip
+                - name: tmp
+                  mountPath: /tmp
             extraCommands:
                 - ENC[AES256_GCM,data:5ZAWuJzqERnMIJvCPZoCDdpKCm8+vCpgGBTQFEQHw7UcvMBn3odAoHCohUorP0iDiiGV0cVDKVYKPGVSaoLxo0wremFW8ndqSElh90peVhjTUIwvObN/ZMJN61tGUw7mdO80vjgS9D7Y15Kp2FEEkZdRkC1/dmUIr2XBn/AosgHUb6/j6q06r9qAmP6+DQWcwx+uNTR4Hol75WX1Gw==,iv:JYFsq0tGDyMEjNSxq0hAE5jLhAGaD2Yr3PuC5x/Q7DU=,tag:yQqbMkPR30ql/vXELSHWyQ==,type:str]
             annotations:
