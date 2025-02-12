@@ -135,6 +135,8 @@ spec:
                       emptyDir: {}
                     - name: local
                       emptyDir: {}
+                    - name: media-nonesense
+                      emptyDir: {}
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -144,6 +146,8 @@ spec:
                       mountPath: /tmp
                     - name: local
                       mountPath: /.local
+                    - name: media-nonesense
+                      mountPath: /synapse/data
                 extraCommands:
                     - ENC[AES256_GCM,data:XfRCK/sZLuScFZq7LjzlxqN306u2GKp93nt2RyZ83YBc0Mi3aK3U3zjHRJMQI7/Dj5SthCSCzie64br8Xxn2TOKWoxt4NaxPH0rMGugNJhclCwrP7zbImcYqvcfodEzQX3FlOxo2DstvuQ723Y6FJyJSqIeiGEZSFJE0cjkMXXkcIMgTVYtwNOj70K1Ntp0xJ7qyjry23Tr933KyKA==,iv:f+rPAI+6mQiIwRpb4U8f79rPnWmJeYEMWewCgNmba14=,tag:LVEBca2gHZfL4opZfmZ9qQ==,type:str]
                 extraConfig:
