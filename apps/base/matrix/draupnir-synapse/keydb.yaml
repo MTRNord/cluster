@@ -19,13 +19,26 @@ spec:
                   command: ["keydb-server"]
                   args: ["/etc/keydb/keydb.conf", "--protected-mode", "no"]
                   ports:
-                    - containerPort: 6379
+                      - containerPort: 6379
+                  resources:
+                      requests:
+                          memory: "128Mi"
+                          cpu: "100m"
+                      limits: {}
             tolerations:
                 - key: arch
                   operator: Equal
                   value: arm64
                   effect: NoSchedule
             livenessProbe:
+                exec:
+                    command:
+                        - sh
+                        - -c
+                        - keydb-cli ping
+                initialDelaySeconds: 10
+                timeoutSeconds: 5
+            readinessProbe:
                 exec:
                     command:
                         - sh
