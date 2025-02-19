@@ -17,17 +17,17 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrZktYSXB6dDgxV2d0TTdj
-            Qm0zSzgxcStTa2ZyL0N2aG1MVEFBM0ozWDFVCnhFWS9iWUJyalpwSlJsWTVocUsw
-            aEtxL280ZTh6TmNUaWI2WlQwc2tuQWcKLS0tIEUzK29HV0x3M0h2ajY5QlV1TERy
-            V0E1R3ZETlBEWVFuWFBtSW5FQmtGSDQKuc9oZDqCLw4fW/BnvyJHyA4XfW/tfxRU
-            Vi8Auuzda6DYcpChudMDQu4EIP86SfggX0qL8KepwLt37zRVqQzS4g==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNaHFjQmYzbnAyNTNJRm1z
+            aW42NEd0MXR6SWpoYVRmUnVDLzF6MXUxNDA4CkV5bjVFWSszd2FWVE8rdUxiUCtl
+            eEpEc2g5VldabXV3Q2loSDllZkJUbVUKLS0tIE0xTUQ0M0VPK3JVNFVVQ2kyZzJw
+            bU5qazdMRUNFZmtHUjU3YUtSZDFsTWcKUEIEVe42J9ofyFHP9/qXcQQtRleDCWv5
+            DFUx9Ql7vIrlfu3ZBcaGV0jNt40fYjUQ7R0Y8ouUQZCYzHRXmWceBQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-20T10:39:31Z"
-    mac: ENC[AES256_GCM,data:LgClZ5tSKRgeYjNL7NJ6CHSOF4T3m8yr4tOCm+HWIIRi8BRY5VQLOHHyLFqX6CQt4AvSgiyMv/AMnHRMSqG5gRtPfrDq9tKWpTqe50OGi7h6I5DiWoDtpfYkN7YJXTYeT3OChv+AyYGzEyJN8v5slv+bMkLLZtNrmKSQKAjmhEg=,iv:g7Vm8y+31Wwwf1NFWkqqvPTWUAsXCmjAAY74hg4iQqM=,tag:ISGptzHAjoqF7r1MxoxUkw==,type:str]
+    lastmodified: "2025-02-19T10:32:11Z"
+    mac: ENC[AES256_GCM,data:HUYLsUlq2ODnEJGoo7QnbELUfJiS3H2EZ+yWWnyOjG/ofMkCU7waHGnY8QiRhBBXM2tK6bWJHPLBFZM4Gfp5VV1kMljf5j+U1dtHYNqR8cTF4XUVDKGxi3v1paOulQWF6l9P5yIKHblf752QDFbeXd/eduuUwt1ljjedNRU/H2A=,iv:L1bluXr3pVDPyjK7Ir9L8oWPqctwUeLEFNRCLda7svs=,tag:11Ae35qiZLZqGMhTJk6gLw==,type:str]
     pgp: []
-    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.8.1
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -54,27 +54,26 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrZktYSXB6dDgxV2d0TTdj
-            Qm0zSzgxcStTa2ZyL0N2aG1MVEFBM0ozWDFVCnhFWS9iWUJyalpwSlJsWTVocUsw
-            aEtxL280ZTh6TmNUaWI2WlQwc2tuQWcKLS0tIEUzK29HV0x3M0h2ajY5QlV1TERy
-            V0E1R3ZETlBEWVFuWFBtSW5FQmtGSDQKuc9oZDqCLw4fW/BnvyJHyA4XfW/tfxRU
-            Vi8Auuzda6DYcpChudMDQu4EIP86SfggX0qL8KepwLt37zRVqQzS4g==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNaHFjQmYzbnAyNTNJRm1z
+            aW42NEd0MXR6SWpoYVRmUnVDLzF6MXUxNDA4CkV5bjVFWSszd2FWVE8rdUxiUCtl
+            eEpEc2g5VldabXV3Q2loSDllZkJUbVUKLS0tIE0xTUQ0M0VPK3JVNFVVQ2kyZzJw
+            bU5qazdMRUNFZmtHUjU3YUtSZDFsTWcKUEIEVe42J9ofyFHP9/qXcQQtRleDCWv5
+            DFUx9Ql7vIrlfu3ZBcaGV0jNt40fYjUQ7R0Y8ouUQZCYzHRXmWceBQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-20T10:39:31Z"
-    mac: ENC[AES256_GCM,data:LgClZ5tSKRgeYjNL7NJ6CHSOF4T3m8yr4tOCm+HWIIRi8BRY5VQLOHHyLFqX6CQt4AvSgiyMv/AMnHRMSqG5gRtPfrDq9tKWpTqe50OGi7h6I5DiWoDtpfYkN7YJXTYeT3OChv+AyYGzEyJN8v5slv+bMkLLZtNrmKSQKAjmhEg=,iv:g7Vm8y+31Wwwf1NFWkqqvPTWUAsXCmjAAY74hg4iQqM=,tag:ISGptzHAjoqF7r1MxoxUkw==,type:str]
+    lastmodified: "2025-02-19T10:32:11Z"
+    mac: ENC[AES256_GCM,data:HUYLsUlq2ODnEJGoo7QnbELUfJiS3H2EZ+yWWnyOjG/ofMkCU7waHGnY8QiRhBBXM2tK6bWJHPLBFZM4Gfp5VV1kMljf5j+U1dtHYNqR8cTF4XUVDKGxi3v1paOulQWF6l9P5yIKHblf752QDFbeXd/eduuUwt1ljjedNRU/H2A=,iv:L1bluXr3pVDPyjK7Ir9L8oWPqctwUeLEFNRCLda7svs=,tag:11Ae35qiZLZqGMhTJk6gLw==,type:str]
     pgp: []
-    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.8.1
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-    name: authsecret-capacitor
+    name: capacitor-oidc-config
     namespace: flux-system
 type: kubernetes.io/basic-auth
 stringData:
-    username: ENC[AES256_GCM,data:UXJgfJ3ZPQ==,iv:TWH++dcamk5d+ZDR6Vwxk7SF8J+Ciw0Ue7a9ANzDYcU=,tag:XFPb2OFK7GZ5w6t2g2jU6A==,type:str]
-    password: ENC[AES256_GCM,data:r8xTZJ6oNaSs,iv:F6ur7klHQQwycKGXzYtIxEi49X+xzX/VXIsElgclGhE=,tag:iSzl0NWfuhthWeq1J3qwdw==,type:str]
+    client-secret: ENC[AES256_GCM,data:ysWaxNB5FdInFFnKMjbe1yIYMo+V4BYpoPOC390T2mxPVZUnO3U2kFDCM/M99cG3Rs+P4e5oB/suFUXhwzYFCjB+E78oift3dca3PO1xe+Y83snj0UJjXdqu1hTX1+IjUpgFeS68E3hgHJU35w6vBeM1+h5qhlEYKuaFtMUxMjc=,iv:Z6GAthFGk6Irn7J8Fs+eEStpaDJgIeRu6gbODhO//j0=,tag:IJebuXxWN8Suu9YdCshvNw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -84,71 +83,36 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrZktYSXB6dDgxV2d0TTdj
-            Qm0zSzgxcStTa2ZyL0N2aG1MVEFBM0ozWDFVCnhFWS9iWUJyalpwSlJsWTVocUsw
-            aEtxL280ZTh6TmNUaWI2WlQwc2tuQWcKLS0tIEUzK29HV0x3M0h2ajY5QlV1TERy
-            V0E1R3ZETlBEWVFuWFBtSW5FQmtGSDQKuc9oZDqCLw4fW/BnvyJHyA4XfW/tfxRU
-            Vi8Auuzda6DYcpChudMDQu4EIP86SfggX0qL8KepwLt37zRVqQzS4g==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNaHFjQmYzbnAyNTNJRm1z
+            aW42NEd0MXR6SWpoYVRmUnVDLzF6MXUxNDA4CkV5bjVFWSszd2FWVE8rdUxiUCtl
+            eEpEc2g5VldabXV3Q2loSDllZkJUbVUKLS0tIE0xTUQ0M0VPK3JVNFVVQ2kyZzJw
+            bU5qazdMRUNFZmtHUjU3YUtSZDFsTWcKUEIEVe42J9ofyFHP9/qXcQQtRleDCWv5
+            DFUx9Ql7vIrlfu3ZBcaGV0jNt40fYjUQ7R0Y8ouUQZCYzHRXmWceBQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-20T10:39:31Z"
-    mac: ENC[AES256_GCM,data:LgClZ5tSKRgeYjNL7NJ6CHSOF4T3m8yr4tOCm+HWIIRi8BRY5VQLOHHyLFqX6CQt4AvSgiyMv/AMnHRMSqG5gRtPfrDq9tKWpTqe50OGi7h6I5DiWoDtpfYkN7YJXTYeT3OChv+AyYGzEyJN8v5slv+bMkLLZtNrmKSQKAjmhEg=,iv:g7Vm8y+31Wwwf1NFWkqqvPTWUAsXCmjAAY74hg4iQqM=,tag:ISGptzHAjoqF7r1MxoxUkw==,type:str]
+    lastmodified: "2025-02-19T10:32:11Z"
+    mac: ENC[AES256_GCM,data:HUYLsUlq2ODnEJGoo7QnbELUfJiS3H2EZ+yWWnyOjG/ofMkCU7waHGnY8QiRhBBXM2tK6bWJHPLBFZM4Gfp5VV1kMljf5j+U1dtHYNqR8cTF4XUVDKGxi3v1paOulQWF6l9P5yIKHblf752QDFbeXd/eduuUwt1ljjedNRU/H2A=,iv:L1bluXr3pVDPyjK7Ir9L8oWPqctwUeLEFNRCLda7svs=,tag:11Ae35qiZLZqGMhTJk6gLw==,type:str]
     pgp: []
-    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.8.1
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
 ---
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
-    name: capacitor-auth
-    namespace: flux-system
-spec:
-    basicAuth:
-        secret: ENC[AES256_GCM,data:JSbclJt+aYOr8x/9sfHZjn+FQ4w=,iv:nLtD9Oixdec81dNEGW+z8a86/tn/Q6rJLrfrzUMdeFE=,tag:aqAqedpaGEEw7ranGfY3PA==,type:str]
-sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrZktYSXB6dDgxV2d0TTdj
-            Qm0zSzgxcStTa2ZyL0N2aG1MVEFBM0ozWDFVCnhFWS9iWUJyalpwSlJsWTVocUsw
-            aEtxL280ZTh6TmNUaWI2WlQwc2tuQWcKLS0tIEUzK29HV0x3M0h2ajY5QlV1TERy
-            V0E1R3ZETlBEWVFuWFBtSW5FQmtGSDQKuc9oZDqCLw4fW/BnvyJHyA4XfW/tfxRU
-            Vi8Auuzda6DYcpChudMDQu4EIP86SfggX0qL8KepwLt37zRVqQzS4g==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-20T10:39:31Z"
-    mac: ENC[AES256_GCM,data:LgClZ5tSKRgeYjNL7NJ6CHSOF4T3m8yr4tOCm+HWIIRi8BRY5VQLOHHyLFqX6CQt4AvSgiyMv/AMnHRMSqG5gRtPfrDq9tKWpTqe50OGi7h6I5DiWoDtpfYkN7YJXTYeT3OChv+AyYGzEyJN8v5slv+bMkLLZtNrmKSQKAjmhEg=,iv:g7Vm8y+31Wwwf1NFWkqqvPTWUAsXCmjAAY74hg4iQqM=,tag:ISGptzHAjoqF7r1MxoxUkw==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.8.1
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-    annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-        traefik.ingress.kubernetes.io/router.middlewares: flux-system-capacitor-auth@kubernetescrd
     name: capacitor
     namespace: flux-system
 spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - ui.k8s.midnightthoughts.space
     rules:
-        - host: ui.k8s.midnightthoughts.space
-          http:
-            paths:
-                - backend:
-                    service:
-                        name: capacitor
-                        port:
-                            name: http
-                  path: /
-                  pathType: ImplementationSpecific
-    tls:
-        - hosts:
-            - ui.k8s.midnightthoughts.space
-          secretName: ui.k8s.midnightthoughts.space-tls
+        - backendRefs:
+            - name: capacitor
+              port: 9000
+          timeouts:
+            request: 240s
+            backendRequest: 0s
 sops:
     kms: []
     gcp_kms: []
@@ -158,17 +122,56 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrZktYSXB6dDgxV2d0TTdj
-            Qm0zSzgxcStTa2ZyL0N2aG1MVEFBM0ozWDFVCnhFWS9iWUJyalpwSlJsWTVocUsw
-            aEtxL280ZTh6TmNUaWI2WlQwc2tuQWcKLS0tIEUzK29HV0x3M0h2ajY5QlV1TERy
-            V0E1R3ZETlBEWVFuWFBtSW5FQmtGSDQKuc9oZDqCLw4fW/BnvyJHyA4XfW/tfxRU
-            Vi8Auuzda6DYcpChudMDQu4EIP86SfggX0qL8KepwLt37zRVqQzS4g==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNaHFjQmYzbnAyNTNJRm1z
+            aW42NEd0MXR6SWpoYVRmUnVDLzF6MXUxNDA4CkV5bjVFWSszd2FWVE8rdUxiUCtl
+            eEpEc2g5VldabXV3Q2loSDllZkJUbVUKLS0tIE0xTUQ0M0VPK3JVNFVVQ2kyZzJw
+            bU5qazdMRUNFZmtHUjU3YUtSZDFsTWcKUEIEVe42J9ofyFHP9/qXcQQtRleDCWv5
+            DFUx9Ql7vIrlfu3ZBcaGV0jNt40fYjUQ7R0Y8ouUQZCYzHRXmWceBQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-20T10:39:31Z"
-    mac: ENC[AES256_GCM,data:LgClZ5tSKRgeYjNL7NJ6CHSOF4T3m8yr4tOCm+HWIIRi8BRY5VQLOHHyLFqX6CQt4AvSgiyMv/AMnHRMSqG5gRtPfrDq9tKWpTqe50OGi7h6I5DiWoDtpfYkN7YJXTYeT3OChv+AyYGzEyJN8v5slv+bMkLLZtNrmKSQKAjmhEg=,iv:g7Vm8y+31Wwwf1NFWkqqvPTWUAsXCmjAAY74hg4iQqM=,tag:ISGptzHAjoqF7r1MxoxUkw==,type:str]
+    lastmodified: "2025-02-19T10:32:11Z"
+    mac: ENC[AES256_GCM,data:HUYLsUlq2ODnEJGoo7QnbELUfJiS3H2EZ+yWWnyOjG/ofMkCU7waHGnY8QiRhBBXM2tK6bWJHPLBFZM4Gfp5VV1kMljf5j+U1dtHYNqR8cTF4XUVDKGxi3v1paOulQWF6l9P5yIKHblf752QDFbeXd/eduuUwt1ljjedNRU/H2A=,iv:L1bluXr3pVDPyjK7Ir9L8oWPqctwUeLEFNRCLda7svs=,tag:11Ae35qiZLZqGMhTJk6gLw==,type:str]
     pgp: []
-    encrypted_regex: ^(adminPassword|configPassword|adminUser|configUser|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|adminPassword|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret)$
-    version: 3.8.1
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+    name: oidc-capacitor
+    namespace: flux-system
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: capacitor
+    oidc:
+        provider:
+            issuer: https://accounts.google.com
+        clientID: LKNnKYcm816EEnnFTmEdfo91kmWyJnc3lrh98NWW
+        clientSecret: #gitleaks:allow
+            name: capacitor-oidc-config
+        redirectURL: https://ui.k8s.midnightthoughts.space/oauth2/callback
+        logoutPath: /logout
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNaHFjQmYzbnAyNTNJRm1z
+            aW42NEd0MXR6SWpoYVRmUnVDLzF6MXUxNDA4CkV5bjVFWSszd2FWVE8rdUxiUCtl
+            eEpEc2g5VldabXV3Q2loSDllZkJUbVUKLS0tIE0xTUQ0M0VPK3JVNFVVQ2kyZzJw
+            bU5qazdMRUNFZmtHUjU3YUtSZDFsTWcKUEIEVe42J9ofyFHP9/qXcQQtRleDCWv5
+            DFUx9Ql7vIrlfu3ZBcaGV0jNt40fYjUQ7R0Y8ouUQZCYzHRXmWceBQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-02-19T10:32:11Z"
+    mac: ENC[AES256_GCM,data:HUYLsUlq2ODnEJGoo7QnbELUfJiS3H2EZ+yWWnyOjG/ofMkCU7waHGnY8QiRhBBXM2tK6bWJHPLBFZM4Gfp5VV1kMljf5j+U1dtHYNqR8cTF4XUVDKGxi3v1paOulQWF6l9P5yIKHblf752QDFbeXd/eduuUwt1ljjedNRU/H2A=,iv:L1bluXr3pVDPyjK7Ir9L8oWPqctwUeLEFNRCLda7svs=,tag:11Ae35qiZLZqGMhTJk6gLw==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -178,10 +181,30 @@ metadata:
 spec:
     podSelector:
         matchLabels:
-            app.kubernetes.io/instance: "capacitor"
+            app.kubernetes.io/instance: capacitor
     ingress:
         - ports:
             - protocol: TCP
               port: 9000
     policyTypes:
         - Ingress
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNaHFjQmYzbnAyNTNJRm1z
+            aW42NEd0MXR6SWpoYVRmUnVDLzF6MXUxNDA4CkV5bjVFWSszd2FWVE8rdUxiUCtl
+            eEpEc2g5VldabXV3Q2loSDllZkJUbVUKLS0tIE0xTUQ0M0VPK3JVNFVVQ2kyZzJw
+            bU5qazdMRUNFZmtHUjU3YUtSZDFsTWcKUEIEVe42J9ofyFHP9/qXcQQtRleDCWv5
+            DFUx9Ql7vIrlfu3ZBcaGV0jNt40fYjUQ7R0Y8ouUQZCYzHRXmWceBQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-02-19T10:32:11Z"
+    mac: ENC[AES256_GCM,data:HUYLsUlq2ODnEJGoo7QnbELUfJiS3H2EZ+yWWnyOjG/ofMkCU7waHGnY8QiRhBBXM2tK6bWJHPLBFZM4Gfp5VV1kMljf5j+U1dtHYNqR8cTF4XUVDKGxi3v1paOulQWF6l9P5yIKHblf752QDFbeXd/eduuUwt1ljjedNRU/H2A=,iv:L1bluXr3pVDPyjK7Ir9L8oWPqctwUeLEFNRCLda7svs=,tag:11Ae35qiZLZqGMhTJk6gLw==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1

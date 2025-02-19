@@ -201,6 +201,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: certs.midnightthoughts.space-tls
+        - name: https-midnightthoughts-capacitor
+          protocol: HTTPS
+          hostname: "ui.k8s.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: ui.k8s.midnightthoughts.space-tls
         - name: https-midnightthoughts-root
           protocol: HTTPS
           hostname: "midnightthoughts.space"
