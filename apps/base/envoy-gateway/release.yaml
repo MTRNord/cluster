@@ -24,7 +24,7 @@ spec:
                     type: Kubernetes
                 logging:
                     level:
-                        default: debug
+                        default: info
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
@@ -39,7 +39,7 @@ spec:
                 replicas: 3
     logging:
         level:
-            default: debug
+            default: info
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: GatewayClass
