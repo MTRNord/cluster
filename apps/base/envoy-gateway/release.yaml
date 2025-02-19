@@ -324,10 +324,10 @@ metadata:
     name: enable-proxy-protocol-policy
     namespace: envoy-gateway
 spec:
-    targetRef:
-        group: gateway.networking.k8s.io
-        kind: Gateway
-        name: envoy-gateway
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: envoy-gateway
     # WARNING: False as cilium routes the gateway locally if used internally with the public domain. HOWEVER then proxy proto cant be used...
     enableProxyProtocol: false
     # Alternative to enableProxyProtocol: true
@@ -335,6 +335,10 @@ spec:
         xForwardedFor:
             # Check if this is correct or if 1 is correct
             numTrustedHops: 2
+    tcpKeepalive:
+        idleTime: 1h
+        interval: 75s
+        probes: 9
 ---
 # Monitors the above gateway using a servicemonitor
 # First we do a service matching on the labels "gateway.envoyproxy.io/owning-gateway-name: envoy-gateway" and "gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway"
