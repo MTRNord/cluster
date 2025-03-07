@@ -20,11 +20,11 @@ spec:
             retries: 3
     values:
         #global:
-            #image:
-                #pullPolicy: Always
-                # https://github.com/goauthentik/authentik/issues/12464
-                #repository: ghcr.io/goauthentik/dev-server
-                #tag: gh-version-2024.12-arm64
+        #image:
+        #pullPolicy: Always
+        # https://github.com/goauthentik/authentik/issues/12464
+        #repository: ghcr.io/goauthentik/dev-server
+        #tag: gh-version-2024.12-arm64
         authentik:
             secret_key: ENC[AES256_GCM,data:Qq1S+Kk6yb//WVc1sTmoIu1DO4ejWlVpg4mqYCA8+kNuc/KloUUQP33tXRGYQIlePE6ykyeqctje9h1CHND9QQ==,iv:KjCWOBFelR08Bm4n8f7FsicFNBw7gzZ1MQ9yLwh6j0s=,tag:93XCTQjxJu28uhpSayM1EQ==,type:str]
             # This sends anonymous usage-data, stack traces on errors and
@@ -68,7 +68,7 @@ spec:
             volumes:
                 - name: ldap-cert
                   secret:
-                      secretName: ENC[AES256_GCM,data:gkdJ6ufGzmE8UIrtR/Y=,iv:ajE/NG7B17OqHu5PVtI+STkiJQA2ZTv14yfWe9TZlNw=,tag:Pyz5nG4skc/vgMl5gg+83g==,type:str]
+                    secretName: ENC[AES256_GCM,data:gkdJ6ufGzmE8UIrtR/Y=,iv:ajE/NG7B17OqHu5PVtI+STkiJQA2ZTv14yfWe9TZlNw=,tag:Pyz5nG4skc/vgMl5gg+83g==,type:str]
             # Mount the ldap certificate to /certs
             volumeMounts:
                 - name: ldap-cert
@@ -78,7 +78,7 @@ spec:
             volumes:
                 - name: ldap-cert
                   secret:
-                      secretName: ENC[AES256_GCM,data:UU2WJB3n7WzQRX5OEIk=,iv:YjPGIgu7UWhMEdAH/LJSHdDkin4tMMY2ZzBOguT9VQU=,tag:ryzrMsKoaViRmpx7URHhVw==,type:str]
+                    secretName: ENC[AES256_GCM,data:UU2WJB3n7WzQRX5OEIk=,iv:YjPGIgu7UWhMEdAH/LJSHdDkin4tMMY2ZzBOguT9VQU=,tag:ryzrMsKoaViRmpx7URHhVw==,type:str]
             # Mount the ldap certificate to /certs
             volumeMounts:
                 - name: ldap-cert
@@ -110,8 +110,8 @@ spec:
                 pathType: Prefix
                 tls:
                     - hosts:
-                          - auth.midnightthoughts.space
-                          - ldap.midnightthoughts.space
+                        - auth.midnightthoughts.space
+                        - ldap.midnightthoughts.space
                       secretName: auth-midnightthoughts-tls-secret
         postgresql:
             enabled: false
@@ -125,13 +125,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
-              TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
-              VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
-              L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
-              LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
+            TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
+            VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
+            L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
+            LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-02-19T14:22:13Z"
     mac: ENC[AES256_GCM,data:cVtB9Yn3DtLT7DHh6r4y+Kooap4o3Vllx/nnNc8Zd2S2nQ5gmVSG/RBv88pNwCnybsUyK/Yd+1I1jwTzxIz9ZI1gosL23fLhJ9LK/Yzk3d56Z7krqXGp5IIw7I/lZyzyGlSp8R50KpGhZ8BObUU2C7mU7D+/W7ctnMj1mJLP+xg=,iv:4bdFaUt6lBYog6kpsZiixm6kYkzKRj8hwA335th9GVo=,tag:HorsmiQJ9ttuYC5rkzevCA==,type:str]
     pgp: []
@@ -152,11 +152,11 @@ spec:
         - ldap.midnightthoughts.space
     rules:
         - backendRefs:
-              - name: authentik-server
-                port: 80
+            - name: authentik-server
+              port: 80
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s
 sops:
     kms: []
     gcp_kms: []
@@ -165,13 +165,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
-              TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
-              VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
-              L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
-              LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
+            TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
+            VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
+            L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
+            LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-02-19T14:22:13Z"
     mac: ENC[AES256_GCM,data:cVtB9Yn3DtLT7DHh6r4y+Kooap4o3Vllx/nnNc8Zd2S2nQ5gmVSG/RBv88pNwCnybsUyK/Yd+1I1jwTzxIz9ZI1gosL23fLhJ9LK/Yzk3d56Z7krqXGp5IIw7I/lZyzyGlSp8R50KpGhZ8BObUU2C7mU7D+/W7ctnMj1mJLP+xg=,iv:4bdFaUt6lBYog6kpsZiixm6kYkzKRj8hwA335th9GVo=,tag:HorsmiQJ9ttuYC5rkzevCA==,type:str]
     pgp: []

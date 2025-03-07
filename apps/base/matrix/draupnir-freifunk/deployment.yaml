@@ -34,43 +34,43 @@ spec:
                 - image: gnuxie/draupnir:v2.2.0
                   imagePullPolicy: IfNotPresent
                   livenessProbe:
-                      failureThreshold: 3
-                      httpGet:
-                          path: /healthz
-                          port: 8080
-                      initialDelaySeconds: 60
-                      periodSeconds: 30
-                      successThreshold: 1
-                      timeoutSeconds: 1
+                    failureThreshold: 3
+                    httpGet:
+                        path: /healthz
+                        port: 8080
+                    initialDelaySeconds: 60
+                    periodSeconds: 30
+                    successThreshold: 1
+                    timeoutSeconds: 1
                   name: mjolnir-freifunk-container
                   readinessProbe:
-                      httpGet:
-                          path: /health
-                          port: 8080
-                      initialDelaySeconds: 60
-                      periodSeconds: 30
+                    httpGet:
+                        path: /health
+                        port: 8080
+                    initialDelaySeconds: 60
+                    periodSeconds: 30
                   securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                          drop:
-                              - ALL
-                      readOnlyRootFilesystem: true
-                      #runAsNonRoot: true
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                        drop:
+                            - ALL
+                    readOnlyRootFilesystem: true
+                    #runAsNonRoot: true
                   volumeMounts:
-                      - mountPath: /data/config/production.yaml
-                        name: config-volume
-                        subPath: production.yaml
-                      - mountPath: /data/storage
-                        name: storage
-                      - mountPath: /tmp
-                        name: tmp
+                    - mountPath: /data/config/production.yaml
+                      name: config-volume
+                      subPath: production.yaml
+                    - mountPath: /data/storage
+                      name: storage
+                    - mountPath: /tmp
+                      name: tmp
             volumes:
                 - configMap:
-                      name: mjolnir-freifunk-config
+                    name: mjolnir-freifunk-config
                   name: config-volume
                 - name: storage
                   persistentVolumeClaim:
-                      claimName: mjolnir-freifunk-persistent-storage
+                    claimName: mjolnir-freifunk-persistent-storage
                 - name: tmp
                   emptyDir:
-                      sizeLimit: 2048Mi
+                    sizeLimit: 2048Mi
