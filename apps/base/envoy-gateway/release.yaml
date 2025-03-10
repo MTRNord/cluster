@@ -298,9 +298,9 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: mtrnord.blog-tls
-        - name: https-mtrnord-blog
+        - name: https-mtrnord-blog-hubzilla
           protocol: HTTPS
-          hostname: "*.mtrnord.blog"
+          hostname: "hub.mtrnord.blog"
           port: 443
           allowedRoutes:
             namespaces:
@@ -309,7 +309,7 @@ spec:
             mode: Terminate
             certificateRefs:
                 - kind: Secret
-                  name: mtrnord.blog-tls
+                  name: hub.mtrnord.blog-tls
         - name: http
           protocol: HTTP
           port: 80
