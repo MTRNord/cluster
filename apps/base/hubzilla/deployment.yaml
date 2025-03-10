@@ -96,8 +96,10 @@ spec:
                           drop:
                               - ALL
                           add:
-                              - "NET_BIND_SERVICE"
+                              - NET_BIND_SERVICE
                               - CHOWN
+                              - SETGID
+                              - SETUID
                       readOnlyRootFilesystem: false
                       #runAsNonRoot: true
                   volumeMounts:
