@@ -32,7 +32,7 @@ spec:
                 app: hubzilla
         spec:
             containers:
-                - image: ghcr.io/saiwal/hubzilla-docker:latest
+                - image: ghcr.io/mtrnord/hubzilla-docker:latest
                   imagePullPolicy: Always
                   name: hubzilla
                   env:
@@ -61,7 +61,7 @@ spec:
                       - name: SSMTP_USESTARTTLS
                         value: "Yes"
                       - name: SSMTP_FROMLINEOVERRIDE
-                        value: "No"
+                        value: "Yes"
                       - name: REVALIASES_ROOT
                         value: support@midnightthoughts.space:mail.midnightthoughts.space:587
                       - name: REVALIASES_WWWDATA
