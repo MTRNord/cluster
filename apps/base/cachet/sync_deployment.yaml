@@ -70,7 +70,7 @@ spec:
     selector:
         app: pagerduty-cachet
     ports:
-        - port: 80
+        - port: 8080
           targetPort: 8080
           protocol: TCP
 ---
@@ -88,7 +88,7 @@ spec:
     rules:
         - backendRefs:
             - name: pagerduty-cachet
-              port: 80
+              port: 8080
           timeouts:
             request: 240s
             backendRequest: 0s
