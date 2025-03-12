@@ -74,27 +74,21 @@ spec:
           targetPort: 8080
           protocol: TCP
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
     name: pagerduty-cachet
     namespace: cachet
-    annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-dns
-        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
 spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - webhook.status.midnightthoughts.space
     rules:
-        - host: webhook.status.midnightthoughts.space
-          http:
-            paths:
-                - path: /
-                  pathType: Prefix
-                  backend:
-                    service:
-                        name: pagerduty-cachet
-                        port:
-                            number: 80
-    tls:
-        - secretName: pagerduty-cachet-midnightthoughts-space-tls
-          hosts:
-            - webhook.status.midnightthoughts.space
+        - backendRefs:
+            - name: pagerduty-cachet
+              port: 80
+          timeouts:
+            request: 240s
+            backendRequest: 0s

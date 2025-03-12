@@ -36,78 +36,78 @@ spec:
                   imagePullPolicy: Always
                   name: hubzilla
                   env:
-                      - name: HUBZILLA_DB_HOST
-                        value: mariadb-maxscale.mariadb-operator.svc.cluster.local
-                      - name: HUBZILLA_DB_USER
-                        value: hubzilla
-                      - name: HUBZILLA_DB_PASS
-                        valueFrom:
-                            secretKeyRef:
-                                name: hubzilla-env
-                                key: mariadb-password
-                      - name: HUBZILLA_DB_NAME
-                        value: hubzilla
-                      - name: SSMTP_ROOT
-                        value: support@midnightthoughts.space
-                      - name: SSMTP_MAILHUB
-                        value: mail.midnightthoughts.space:587
-                      - name: SSMTP_AUTHUSER
-                        value: support@midnightthoughts.space
-                      - name: SSMTP_AUTHPASS
-                        valueFrom:
-                            secretKeyRef:
-                                name: hubzilla-env
-                                key: email-password
-                      - name: SSMTP_USESTARTTLS
-                        value: "Yes"
-                      - name: SSMTP_FROMLINEOVERRIDE
-                        value: "Yes"
-                      - name: REVALIASES_ROOT
-                        value: support@midnightthoughts.space:mail.midnightthoughts.space:587
-                      - name: REVALIASES_WWWDATA
-                        value: support@midnightthoughts.space:mail.midnightthoughts.space:587
+                    - name: HUBZILLA_DB_HOST
+                      value: mariadb-maxscale.mariadb-operator.svc.cluster.local
+                    - name: HUBZILLA_DB_USER
+                      value: hubzilla
+                    - name: HUBZILLA_DB_PASS
+                      valueFrom:
+                        secretKeyRef:
+                            name: hubzilla-env
+                            key: mariadb-password
+                    - name: HUBZILLA_DB_NAME
+                      value: hubzilla
+                    - name: SSMTP_ROOT
+                      value: support@midnightthoughts.space
+                    - name: SSMTP_MAILHUB
+                      value: mail.midnightthoughts.space:587
+                    - name: SSMTP_AUTHUSER
+                      value: support@midnightthoughts.space
+                    - name: SSMTP_AUTHPASS
+                      valueFrom:
+                        secretKeyRef:
+                            name: hubzilla-env
+                            key: email-password
+                    - name: SSMTP_USESTARTTLS
+                      value: "Yes"
+                    - name: SSMTP_FROMLINEOVERRIDE
+                      value: "Yes"
+                    - name: REVALIASES_ROOT
+                      value: support@midnightthoughts.space:mail.midnightthoughts.space:587
+                    - name: REVALIASES_WWWDATA
+                      value: support@midnightthoughts.space:mail.midnightthoughts.space:587
                   livenessProbe:
-                      failureThreshold: 3
-                      httpGet:
-                          path: /
-                          port: 80
+                    failureThreshold: 3
+                    httpGet:
+                        path: /
+                        port: 80
                   readinessProbe:
-                      httpGet:
-                          path: /
-                          port: 80
+                    httpGet:
+                        path: /
+                        port: 80
                   resources:
-                      requests:
-                          ephemeral-storage: 1024Mi
-                          cpu: 100m
-                          memory: 200Mi
-                      limits:
-                          ephemeral-storage: 2048Mi
-                          cpu: 2000m
-                          memory: 2000Mi
+                    requests:
+                        ephemeral-storage: 1024Mi
+                        cpu: 100m
+                        memory: 200Mi
+                    limits:
+                        ephemeral-storage: 2048Mi
+                        cpu: 2000m
+                        memory: 2000Mi
                   securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                          drop:
-                              - ALL
-                          add:
-                              - NET_BIND_SERVICE
-                              - CHOWN
-                              - SETGID
-                              - SETUID
-                      readOnlyRootFilesystem: false
-                      #runAsNonRoot: true
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                        drop:
+                            - ALL
+                        add:
+                            - NET_BIND_SERVICE
+                            - CHOWN
+                            - SETGID
+                            - SETUID
+                    readOnlyRootFilesystem: false
+                    #runAsNonRoot: true
                   volumeMounts:
-                      - mountPath: /var/www/html
-                        name: hubzilla-data
-                      - mountPath: /tmp
-                        name: tmp
+                    - mountPath: /var/www/html
+                      name: hubzilla-data
+                    - mountPath: /tmp
+                      name: tmp
             volumes:
                 - name: hubzilla-data
                   persistentVolumeClaim:
-                      claimName: hubzilla-data
+                    claimName: hubzilla-data
                 - name: tmp
                   emptyDir:
-                      sizeLimit: 2048Mi
+                    sizeLimit: 2048Mi
 ---
 apiVersion: v1
 kind: Service
@@ -138,5 +138,5 @@ spec:
         - "hub.mtrnord.blog"
     rules:
         - backendRefs:
-              - name: hubzilla-srv
-                port: 80
+            - name: hubzilla-srv
+              port: 80
