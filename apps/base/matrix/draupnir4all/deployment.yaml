@@ -8,7 +8,7 @@ spec:
         - ReadWriteMany
     resources:
         requests:
-            storage: 512Mi
+            storage: 5Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -48,8 +48,8 @@ spec:
                           topologyKey: "kubernetes.io/hostname"
             containers:
                 - name: draupnir4all
-                  image: gnuxie/draupnir:v2.2.0
-                  imagePullPolicy: IfNotPresent
+                  image: gnuxie/draupnir:develop
+                  imagePullPolicy: Always
                   #image: ghcr.io/mtrnord/cluster/draupnir:d4all
                   #imagePullPolicy: Always
                   #   env:
@@ -77,7 +77,6 @@ spec:
                   securityContext:
                     runAsUser: 1000
                     runAsGroup: 1000
-                    fsGroup: 1000
                     readOnlyRootFilesystem: true
                   ports:
                     - containerPort: 9001
