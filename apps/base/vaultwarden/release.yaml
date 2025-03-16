@@ -7,7 +7,7 @@ spec:
     releaseName: vaultwarden
     chart:
         spec:
-            version: 0.31.1
+            version: 0.31.8
             chart: vaultwarden
             sourceRef:
                 kind: HelmRepository
@@ -19,18 +19,18 @@ spec:
     values:
         pushNotifications:
             installationId:
-                value: ENC[AES256_GCM,data:gAK3AoDItiJxl4/eGJpaMg+DLE/QbtP0728gBsmC5O3qaV9v,iv:+znZL6ZQx4FZtowgcLK+RByEbfxBdPSQhaBPNG67M14=,tag:4r7M8D2ywTx8COwFhBor6g==,type:str]
+                value: ENC[AES256_GCM,data:90q0/rq9oNjhnrfC46dkE1s0dm4fC8ytzVk7dJ2NvZOIB+Yp,iv:M2jKwha1LsNejXV+wV23mxjRnC78+iZxqrUzQEBvZqU=,tag:tuwMAAFJygjjP9Pv9UBBPA==,type:str]
             installationKey:
-                value: ENC[AES256_GCM,data:QTdYfGv97bzLF1TE62M37xpkXKk=,iv:ssD3OwvtM22vD1YxuNlK9cFw4C0o7oVK86yUQXWisiM=,tag:li9/r1gRvndh9XJ7Bq9h6A==,type:str]
+                value: ENC[AES256_GCM,data:XkRoSWns4V24JuJ2hp32/H+/C9A=,iv:djW85nhw1pZIPsBUwSj3iLTjHFt3oHCu1wdsGSa7xVM=,tag:zsrWvcuR6uvB6NlyaeB+cA==,type:str]
             relayUri: https://push.bitwarden.eu
             identityUri: https://identity.bitwarden.eu
         signupsAllowed: false
         domain: https://vault.midnightthoughts.space
-        signupDomains: nordgedanken.dev
+        signupDomains: nordgedanken.dev,gmail.com
         timeZone: Europe/Berlin
         database:
             type: postgresql
-            uriOverride: ENC[AES256_GCM,data:j/Rv9DCHX/rdg4pq1Z459mf7H8gS+cUCH5QNUu5CVkOGoqJbx9Xgklzg1jVA3OXA556Er7iuwfzJ3yg/bN2/18/hcpa611z1kSEowgTJTBXjnZ6N/EFoFZ9tYiFmn3Fq7ZRe/cWehLQACUShHID4rGSXQNJkMzinF9EUrvnRzQRkR7Ay6/+k8T4EFf13+tegZeNHIyAaKfxqaFky1R4=,iv:MtAMjso11YWtoKU3CNKRf+ZwPH7HEQWrzlgwJgpSyC8=,tag:2MJCLuX0RY2bBuGiVul1cw==,type:str]
+            uriOverride: ENC[AES256_GCM,data:KsSph5QMyibBEDrKh/KLL2e9fZrAIbeRGRzOQ4Ejv5cn9TJqSAlqo+XBdfkW2tP9hDlZ9no45N1FU0dew+U0C8YtXdvYK7OECFUsd7ur/moPFNq5R4qxM6JRv1ftjJ5kl+jeT4THWxCFCfdahSpQrM6WIfwv3kXG+iWAcndXls4b5eY1/ldNBm0/h9R72AcqBtuK43EMTmulHafWoME=,iv:5PT1Uw3g0IDXn/SEiaEkV/Zgx3q/J/jhhXBk36wuVfk=,tag:zWQMxqZgblFVQKrZqTlcPw==,type:str]
         ingress:
             enabled: true
             additionalAnnotations:
@@ -49,14 +49,14 @@ spec:
             username:
                 value: mtrnord@nordgedanken.dev
             password:
-                value: ENC[AES256_GCM,data:Hisn/SNMzVrf7qPO3V8R3g==,iv:MCy+RMM0iWefJtXXbNJMaWcL+n1yUUFfIO1FTkIW3BY=,tag:5lnxTUmRve0EX9oId3Bd7A==,type:str]
+                value: ENC[AES256_GCM,data:LnAnbwKLoQIydlbCfqE5aA==,iv:kny1c6HHze2MMX9IoHQQqlIy83Nqtu9Mtm/vxQ/Nry4=,tag:18uCfkzaZ8T0e1Xf5T/xOA==,type:str]
             security: force_tls
             port: 465
         data:
-            name: ENC[AES256_GCM,data:JMHTqcRy2tfalCrsK9eNWg==,iv:WIB/umBJTumVVxletHgCGXMQFet09UrOEFa/H5483PM=,tag:PLoSZQmJWxrGhUvQ/srGyg==,type:str]
-            size: ENC[AES256_GCM,data:gEv+,iv:tQfAOKQaL3qiciahcxvqj90KyCbkqcnzV6ufhaHpZ5M=,tag:1MmuYfc2jLvceetBhrFXMA==,type:str]
-            accessMode: ENC[AES256_GCM,data:GgsXjAshgvhqhSvf6Q==,iv:nGtzqGcyzzaFX8M+nE6SUrf0Ba0TruPBK/A9HMXpxFs=,tag:JTglc2Gd26d6HzjRAO/4Yw==,type:str]
-            keepPvc: ENC[AES256_GCM,data:2kAYhw==,iv:2UIEkINY5xATsc6MT1ekxffUwWB4coTa9blMvBKBhJI=,tag:wmUH790gIsEZZCc1DYooOw==,type:bool]
+            name: ENC[AES256_GCM,data:2LFgzVRBOBPtDbtW0mAwCg==,iv:3rGjETWrO3WyxBl7KWxyTWpTbh76p/Thed7Nsjr1UKs=,tag:K1TXv+SRhhYdvYensIwLDg==,type:str]
+            size: ENC[AES256_GCM,data:LVtE,iv:8HP4cDF3uq/cVrI42qjYw1n8UQOouNo3jVDjG2a1bxQ=,tag:CiK6R4NLwoOb847XW8Hr1Q==,type:str]
+            accessMode: ENC[AES256_GCM,data:C5Oz5DRNFp9jL2RI/Q==,iv:yaR4C6gVCsg1aasKgza/5w+h3Q7LbGNsmC5W1KJBVjg=,tag:AVKpWmfLw8yhKuTfUdDdlA==,type:str]
+            keepPvc: ENC[AES256_GCM,data:9c9E0g==,iv:JpZclPNMkcN9AvQZJvLQ/NebZfuDpNTx4OmNYPl/Pec=,tag:Za1Q60umVOdcK4LRgNmPdg==,type:bool]
         resources:
             requests:
                 cpu: 50m
@@ -70,14 +70,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKOEdWd0ZZK0llUzgzOFpw
-            cXZ1T1ZzS3RBdkd5YkQ5Sy93RnVxOXBleEhvCnltNFhscUhLUjFaUnFhYTRoaWo0
-            NW53Ri9rMzVXd1VrOVIzdlV2Njlrdm8KLS0tIE13SlpWZS9aUm44bzVwZXV6WkpB
-            VWxwcElkT2FYNEVWZGpJTFp1b0ZxZGMKFlAXnSlnxX+b9Y8zFgE8TLhb0VXvfJ5H
-            VCarsW2KkftZ9/4Y5tev8TNS9MQCz06+FV8PXaRlw2eBBxbQEIjiug==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6WURTRzk5WTdYTk1xSzFP
+            VFBsZUZNcWtRTk10MnloZkFpb1F0ODkrTkhjCmRMNjNqa0lpV3dzeEJSd3pOdUth
+            SzBucWEzSTkybDJaZXB6ZFNBYlJKTXcKLS0tIDByajI3ajRySVpHK3RzajQ4QkNt
+            SDJHZEkvRlFmYjVlWE1LWXdsblNRSm8K2Q8x98IadrNo/J7nsckKl1+AOUAVbLDl
+            +6M8Qru1jmDxdeIgh0Sl449hd+t2+IHgd0m5U7Cy+PfX5FRlv1syUA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-11-16T16:06:38Z"
-    mac: ENC[AES256_GCM,data:pqIKS+5MONYzPHn6+LAuQvcGSqeG9ZwNVdLQ8RSTbJMttQwE/01E35dsZbJ4IBbxoqWReXkOo5EEegYDefNVoBvgYlgbTqoSq69l/Ht+oJ/oNfUb6ny5gEoffNhwbtngNqLgm1nFyJLHElsgJjD+YybDaJxwiZfp7IvVhi0j0X8=,iv:KXK8kZAMoj4BJonycSDLf2VOYBgGpHYf+T4gKE9EmXc=,tag:loyvN8K1k30+RFbZIkY6Zw==,type:str]
+    lastmodified: "2025-03-16T12:06:07Z"
+    mac: ENC[AES256_GCM,data:ftobFwWPQqQ/7p+cBBmFJAJFTnAXQUJZ8M/03qKWxdRkgumBHgvIFT3j3QuEGCmro8PqyKM/hEzYja93zWdiLvEu6LjULoazwHZgl4B9bezkrMh7lHmi+85JcHMYwTDzozR2EYjZRtPmwk5U8cshFNZZ51y2noqRGJo8Q0eftRc=,iv:P5K0PWZRhowidPOTe2VRqKfENwdMVTUS3xcz8lfdZo4=,tag:mNyTrFBOReGNuCW+dwPL0Q==,type:str]
     pgp: []
-    encrypted_regex: ^(routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
