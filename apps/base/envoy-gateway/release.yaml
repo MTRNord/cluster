@@ -262,6 +262,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: webhook.status.midnightthoughts.space-tls
+        - name: https-midnightthoughts-budget
+          protocol: HTTPS
+          hostname: "budget.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: budget.midnightthoughts.space-tls
         - name: https-midnightthoughts-root
           protocol: HTTPS
           hostname: "midnightthoughts.space"
