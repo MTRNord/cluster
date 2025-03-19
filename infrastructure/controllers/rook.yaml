@@ -48,7 +48,7 @@ spec:
             sourceRef:
                 kind: HelmRepository
                 name: rook-ceph
-            version: v1.15.3
+            version: v1.16.5
     interval: 60m
     values:
         toolbox:
@@ -58,7 +58,7 @@ spec:
             createPrometheusRules: true
         cephClusterSpec:
             cephVersion:
-                image: quay.io/ceph/ceph:v19.2.0
+                image: quay.io/ceph/ceph:v19.2.1
             mon:
                 count: 2
                 allowMultiplePerNode: false
