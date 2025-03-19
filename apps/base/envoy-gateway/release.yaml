@@ -298,6 +298,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: midnightthoughts.space-tls
+        - name: https-midnightthoughts-status
+          protocol: HTTPS
+          hostname: "status.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: status.midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
