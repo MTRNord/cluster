@@ -91,20 +91,10 @@ spec:
                             accessModes:
                                 - ReadWriteOnce
             dashboard:
+                enabled: true
                 ssl: false
         ingress:
-            dashboard:
-                enabled: false
-                annotations:
-                    cert-manager.io/cluster-issuer: letsencrypt-dns
-                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                host:
-                    name: rook.midnightthoughts.space
-                    path: "/"
-                tls:
-                    - secretName: rook-midnightthoughts-space-tls
-                      hosts:
-                        - rook.midnightthoughts.space
+            dashboard: {}
         cephBlockPools: []
         cephObjectStores: []
         cephFilesystems:
