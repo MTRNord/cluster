@@ -334,18 +334,6 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: rspamd.midnightthoughts.space-tls
-        - name: https-midnightthoughts-mas
-          protocol: HTTPS
-          hostname: "mas.midnightthoughts.space"
-          port: 443
-          allowedRoutes:
-            namespaces:
-                from: "All"
-          tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: mas.midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
