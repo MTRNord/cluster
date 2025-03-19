@@ -39,9 +39,11 @@ spec:
                       requests:
                           cpu: 100m
                           memory: 128Mi
-                  #env:
-                  #    - name: ACTUAL_HOSTNAME
-                  #      value: "budget.midnightthoughts.space"
+                  env:
+                      - name: NODE_ENV
+                        value: "production"
+                      - name: Debug
+                        value: "*"
                   ports:
                       - containerPort: 5006
                   livenessProbe:
