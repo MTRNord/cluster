@@ -370,6 +370,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: vault.midnightthoughts.space-tls
+        - name: https-midnightthoughts-rook
+          protocol: HTTPS
+          hostname: "rook.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: rook.midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"

@@ -94,7 +94,7 @@ spec:
                 ssl: false
         ingress:
             dashboard:
-                enabled: true
+                enabled: false
                 annotations:
                     cert-manager.io/cluster-issuer: letsencrypt-dns
                     external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
@@ -132,3 +132,22 @@ spec:
                 reclaimPolicy: Delete
                 allowVolumeExpansion: true
                 volumeBindingMode: Immediate
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: rook-ceph-dashboard
+    namespace: rook-ceph
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - rook.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: rook-ceph-mgr-dashboard
+              port: 7000
+          timeouts:
+            request: 240s
+            backendRequest: 0s
