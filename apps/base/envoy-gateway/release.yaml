@@ -460,6 +460,22 @@ spec:
           allowedRoutes:
             namespaces:
                 from: "All"
+        - name: ldap
+          protocol: TCP
+          port: 389
+          allowedRoutes:
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
+        - name: ssh
+          protocol: TCP
+          port: 29418
+          allowedRoutes:
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
