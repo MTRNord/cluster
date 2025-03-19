@@ -394,6 +394,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: hub.mtrnord.blog-tls
+        - name: https-mtrnord-blog-mastodon
+          protocol: HTTPS
+          hostname: "mastodon.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: mastodon.mtrnord.blog-tls
         - name: http
           protocol: HTTP
           port: 80
