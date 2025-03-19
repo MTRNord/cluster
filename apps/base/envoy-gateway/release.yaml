@@ -322,6 +322,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: webhook.kubernetes.midnightthoughts.space-tls
+        - name: https-midnightthoughts-rspamd
+          protocol: HTTPS
+          hostname: "rspamd.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: rspamd.midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
