@@ -394,6 +394,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: jenkins.midnightthoughts.space-tls
+        - name: https-midnightthoughts-gerrit
+          protocol: HTTPS
+          hostname: "gerrit.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: gerrit.midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
@@ -468,7 +480,7 @@ spec:
                 - kind: TCPRoute
             namespaces:
                 from: All
-        - name: ssh
+        - name: gerrit-ssh
           protocol: TCP
           port: 29418
           allowedRoutes:
