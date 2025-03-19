@@ -274,6 +274,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: budget.midnightthoughts.space-tls
+        - name: https-midnightthoughts-bugzilla
+          protocol: HTTPS
+          hostname: "bugzilla.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: bugzilla.midnightthoughts.space-tls
         - name: https-midnightthoughts-root
           protocol: HTTPS
           hostname: "midnightthoughts.space"
