@@ -346,6 +346,30 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: grafana.midnightthoughts.space-tls
+        - name: https-midnightthoughts-osticket
+          protocol: HTTPS
+          hostname: "osticket.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: osticket.midnightthoughts.space-tls
+        - name: https-midnightthoughts-vault
+          protocol: HTTPS
+          hostname: "vault.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: vault.midnightthoughts.space-tls
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
