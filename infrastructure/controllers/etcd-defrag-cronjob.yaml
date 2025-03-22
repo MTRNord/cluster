@@ -33,15 +33,15 @@ spec:
                     volumes:
                         - name: ca-crt
                           hostPath:
-                              path: /etc/kubernetes/pki/etcd/ca.crt
+                              path: /srv/kubernetes/kube-apiserver/etcd-ca.crt
                               type: File
                         - name: client-crt
                           hostPath:
-                              path: /etc/kubernetes/pki/apiserver-etcd-client.crt
+                              path: /srv/kubernetes/kube-apiserver/etcd-client.crt
                               type: File
                         - name: client-key
                           hostPath:
-                              path: /etc/kubernetes/pki/apiserver-etcd-client.key
+                              path: /srv/kubernetes/kube-apiserver/etcd-client.key
                               type: File
                     restartPolicy: OnFailure
                     hostNetwork: true # needed in order to reach the etcd server with 127.0.0.1:2379
