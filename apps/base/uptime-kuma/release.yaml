@@ -24,13 +24,23 @@ spec:
                   ports:
                       - containerPort: 3001
                   livenessProbe:
-                      httpGet:
-                          path: /
-                          port: 3001
+                      exec:
+                          command:
+                              - "extra/healthcheck"
+                      initialDelaySeconds: 180
+                      periodSeconds: 10
+                      timeoutSeconds: 2
+                      successThreshold: 1
+                      failureThreshold: 3
                   readinessProbe:
                       httpGet:
                           path: /
                           port: 3001
+                      initialDelaySeconds: 10
+                      periodSeconds: 10
+                      timeoutSeconds: 5
+                      successThreshold: 1
+                      failureThreshold: 3
                   volumeMounts:
                       - name: uptime-kuma
                         mountPath: /app/data
@@ -49,7 +59,7 @@ spec:
         requests:
             storage: 50Mi
     volumeMode: Filesystem
-    storageClassName: ceph-filesystem    
+    storageClassName: ceph-filesystem
     accessModes:
         - ReadWriteMany
 ---
