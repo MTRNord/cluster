@@ -15,11 +15,11 @@ spec:
         spec:
             containers:
                 - name: uptime-kuma
-                  image: louislam/uptime-kuma:1.23.16
+                  image: louislam/uptime-kuma:1.23.16-debian
                   imagePullPolicy: IfNotPresent
                   resources:
                       limits:
-                          memory: "128Mi"
+                          memory: "700Mi"
                           cpu: "500m"
                   ports:
                       - containerPort: 3001
@@ -36,6 +36,8 @@ spec:
                       httpGet:
                           path: /
                           port: 3001
+                          scheme: HTTP
+                          httpHeaders: []
                       initialDelaySeconds: 10
                       periodSeconds: 10
                       timeoutSeconds: 5
