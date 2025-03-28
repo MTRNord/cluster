@@ -29,6 +29,9 @@ spec:
         clusterName: midnightthoughts.k8s.local
         capabilities:
             continuousScan: enable
+            runtimeDetection: enable
         persistence:
             storageClass: ceph-filesystem
             accessMode: ReadWriteMany
+        alertCRD:
+            installDefault: true
