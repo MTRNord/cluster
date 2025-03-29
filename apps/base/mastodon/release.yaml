@@ -46,10 +46,10 @@ spec:
             hosts:
                 - host: mastodon.mtrnord.blog
                   paths:
-                    - path: /
+                      - path: /
             tls:
                 - hosts:
-                    - mastodon.mtrnord.blog
+                      - mastodon.mtrnord.blog
                   secretName: mastodon.mtrnord.blog-tls
         mastodon:
             sidekiq:
@@ -68,18 +68,18 @@ spec:
                   concurrency: 25
                   replicas: 1
                   resources:
-                    limits: {}
-                    requests:
-                        cpu: 136m
-                        memory: 542Mi
+                      limits: {}
+                      requests:
+                          cpu: 136m
+                          memory: 542Mi
                   queues:
-                    - default,8
-                    - push,6
-                    - ingress,4
-                    - mailers,2
-                    - pull
-                    # Make sure the scheduler queue only exists once and with a worker that has 1 replica.
-                    - scheduler
+                      - default,8
+                      - push,6
+                      - ingress,4
+                      - mailers,2
+                      - pull
+                      # Make sure the scheduler queue only exists once and with a worker that has 1 replica.
+                      - scheduler
             web:
                 updateStrategy:
                     type: RollingUpdate
@@ -165,13 +165,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqTlZFSW5NTmlsSnRlR1pN
-            blM2RWN3SGhBWnRIT1lNcVQ2SnpHZEVOMGg4CkZocUh3eDB4dzdXSVJyZlYvKzFt
-            N0VSUFpIQ21zWCtya0JYamo4a09KS28KLS0tIHNndnJSNVljaHlnTERnbVVxSC9C
-            aHhKamtXT1Vpb2V5VTN5ZDByVTlHdzgKZFwoWZiMA8m4/EsROS5Czpd2sqqFx/+E
-            aOHqzS6D0j2jhz6mPyQ9jnjUXqy2WJsjgINxgST9y1jk5IkJmxjcCA==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqTlZFSW5NTmlsSnRlR1pN
+              blM2RWN3SGhBWnRIT1lNcVQ2SnpHZEVOMGg4CkZocUh3eDB4dzdXSVJyZlYvKzFt
+              N0VSUFpIQ21zWCtya0JYamo4a09KS28KLS0tIHNndnJSNVljaHlnTERnbVVxSC9C
+              aHhKamtXT1Vpb2V5VTN5ZDByVTlHdzgKZFwoWZiMA8m4/EsROS5Czpd2sqqFx/+E
+              aOHqzS6D0j2jhz6mPyQ9jnjUXqy2WJsjgINxgST9y1jk5IkJmxjcCA==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-03-19T13:13:05Z"
     mac: ENC[AES256_GCM,data:M/NesUN1qH4vfk86zEaZKqixDZcAlcBmuwkw9gg1XZoDGkX+xf5f/nDhMeyolrpZZcCT8h/LzdiYqQjjNsVx3CZpzcG50opnZA27xLy0JvnwelT/bAyF1JN9lorO5p+XIV3mml/ChfMzkaTYs4V1DuuMeWboKihNobC9NRUdn2U=,iv:+4dLDS4EB5ZKYezlYuUbSrVD4DOdHKBOJivVPtXxkQg=,tag:p8YVLETlYyBC6PzRY28pfg==,type:str]
     pgp: []
@@ -191,11 +191,25 @@ spec:
         - mastodon.mtrnord.blog
     rules:
         - backendRefs:
-            - name: mastodon-web
-              port: 3000
+              - name: mastodon-streaming
+                port: 4000
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
+          matches:
+              - path:
+                    type: PathPrefix
+                    value: /api/v1/streaming
+        - backendRefs:
+              - name: mastodon-web
+                port: 3000
+          timeouts:
+              request: 240s
+              backendRequest: 0s
+          matches:
+              - path:
+                    type: PathPrefix
+                    value: /
 sops:
     kms: []
     gcp_kms: []
@@ -204,13 +218,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqTlZFSW5NTmlsSnRlR1pN
-            blM2RWN3SGhBWnRIT1lNcVQ2SnpHZEVOMGg4CkZocUh3eDB4dzdXSVJyZlYvKzFt
-            N0VSUFpIQ21zWCtya0JYamo4a09KS28KLS0tIHNndnJSNVljaHlnTERnbVVxSC9C
-            aHhKamtXT1Vpb2V5VTN5ZDByVTlHdzgKZFwoWZiMA8m4/EsROS5Czpd2sqqFx/+E
-            aOHqzS6D0j2jhz6mPyQ9jnjUXqy2WJsjgINxgST9y1jk5IkJmxjcCA==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqTlZFSW5NTmlsSnRlR1pN
+              blM2RWN3SGhBWnRIT1lNcVQ2SnpHZEVOMGg4CkZocUh3eDB4dzdXSVJyZlYvKzFt
+              N0VSUFpIQ21zWCtya0JYamo4a09KS28KLS0tIHNndnJSNVljaHlnTERnbVVxSC9C
+              aHhKamtXT1Vpb2V5VTN5ZDByVTlHdzgKZFwoWZiMA8m4/EsROS5Czpd2sqqFx/+E
+              aOHqzS6D0j2jhz6mPyQ9jnjUXqy2WJsjgINxgST9y1jk5IkJmxjcCA==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-03-19T13:13:05Z"
     mac: ENC[AES256_GCM,data:M/NesUN1qH4vfk86zEaZKqixDZcAlcBmuwkw9gg1XZoDGkX+xf5f/nDhMeyolrpZZcCT8h/LzdiYqQjjNsVx3CZpzcG50opnZA27xLy0JvnwelT/bAyF1JN9lorO5p+XIV3mml/ChfMzkaTYs4V1DuuMeWboKihNobC9NRUdn2U=,iv:+4dLDS4EB5ZKYezlYuUbSrVD4DOdHKBOJivVPtXxkQg=,tag:p8YVLETlYyBC6PzRY28pfg==,type:str]
     pgp: []
