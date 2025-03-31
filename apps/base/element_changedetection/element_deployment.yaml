@@ -31,6 +31,10 @@ spec:
             labels:
                 app: element-changedetection
         spec:
+            securityContext:
+                fsGroup: 911
+                runAsUser: 911
+                runAsGroup: 911
             containers:
                 - image: archivebox/sonic:latest
                   imagePullPolicy: Always
@@ -57,8 +61,8 @@ spec:
                               - ALL
                           #add:
                           #    - SYS_ADMIN
-                      readOnlyRootFilesystem: false
-                      runAsNonRoot: false
+                      readOnlyRootFilesystem: true
+                      runAsNonRoot: true
                   volumeMounts:
                       - mountPath: /var/lib/sonic/store
                         name: element-changedetection-data
@@ -101,8 +105,8 @@ spec:
                               - ALL
                           add:
                               - CHOWN
-                      readOnlyRootFilesystem: false
-                      runAsNonRoot: false
+                      readOnlyRootFilesystem: true
+                      runAsNonRoot: true
                   volumeMounts:
                       - mountPath: /data
                         name: element-changedetection-data
@@ -158,8 +162,8 @@ spec:
                               - ALL
                           add:
                               - CHOWN
-                      readOnlyRootFilesystem: false
-                      runAsNonRoot: false
+                      readOnlyRootFilesystem: true
+                      runAsNonRoot: true
                   volumeMounts:
                       - mountPath: /data
                         name: element-changedetection-data
