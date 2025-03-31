@@ -123,17 +123,19 @@ spec:
                       - /app/bin/docker_entrypoint.sh
                   args:
                       - schedule
-                      - --tag="element-blog"
-                      - --every=minute
+                      - --tag
+                      - element-blog
+                      - --every
+                      - 15 * * * *
                       - --foreground
                       - --update
                       - --depth=1
-                      #- https://element.io/blog/
+                      - https://element.io/blog/
                   resources:
                       requests:
                           ephemeral-storage: 1024Mi
-                          cpu: 100m
-                          memory: 200Mi
+                          cpu: 1000m
+                          memory: 1000Mi
                       limits:
                           ephemeral-storage: 2048Mi
                           cpu: 2000m
