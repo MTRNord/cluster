@@ -32,6 +32,36 @@ spec:
                 app: element-changedetection
         spec:
             containers:
+                - image: dgtlmoon/sockpuppetbrowser:latest
+                  imagePullPolicy: Always
+                  name: element-changedetection-chromium
+                  env:
+                      - name: SCREEN_WIDTH
+                        value: "1920"
+                      - name: SCREEN_HEIGHT
+                        value: "1080"
+                      - name: SCREEN_DEPTH
+                        value: "16"
+                      - name: MAX_CONCURRENT_CHROME_PROCESSES
+                        value: "10"
+                  resources:
+                      requests:
+                          ephemeral-storage: 1024Mi
+                          cpu: 100m
+                          memory: 200Mi
+                      limits:
+                          ephemeral-storage: 2048Mi
+                          cpu: 2000m
+                          memory: 2000Mi
+                  securityContext:
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                          drop:
+                              - ALL
+                          add:
+                              - SYS_ADMIN
+                      readOnlyRootFilesystem: false
+                      runAsNonRoot: false
                 - image: ghcr.io/dgtlmoon/changedetection.io
                   imagePullPolicy: Always
                   name: element-changedetection
@@ -42,6 +72,8 @@ spec:
                         value: "https://element-changes.midnightthoughts.space"
                       - name: TZ
                         value: "Europe/Berlin"
+                      - name: PLAYWRIGHT_DRIVER_URL
+                        value: "ws://localhost:3000"
                   livenessProbe:
                       failureThreshold: 3
                       httpGet:
