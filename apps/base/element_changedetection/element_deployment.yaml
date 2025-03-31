@@ -84,11 +84,11 @@ spec:
                             secretKeyRef:
                                 name: element-changedetection
                                 key: search_backend_password
-                  arguments:
+                  args:
                       - scheduler
                       - --foreground
                       - --update
-                      - '--every="15 * * * *"'
+                      - --every="15 * * * *"
                   resources:
                       requests:
                           ephemeral-storage: 1024Mi
