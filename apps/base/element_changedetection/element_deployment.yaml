@@ -100,7 +100,7 @@ spec:
                           drop:
                               - ALL
                           add:
-                              - SYS_ADMIN
+                              - CHOWN
                       readOnlyRootFilesystem: false
                       runAsNonRoot: false
                   volumeMounts:
@@ -156,8 +156,8 @@ spec:
                       capabilities:
                           drop:
                               - ALL
-                              #add:
-                              #    - SYS_ADMIN
+                          add:
+                              - CHOWN
                       readOnlyRootFilesystem: false
                       runAsNonRoot: false
                   volumeMounts:
