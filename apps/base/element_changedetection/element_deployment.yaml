@@ -41,6 +41,7 @@ spec:
                       #- init
                       #- --setup
                       - server
+                      - --reload
                       - 0.0.0.0:8000
                   env:
                       - name: ADMIN_USERNAME
@@ -91,10 +92,7 @@ spec:
                           ephemeral-storage: 1024Mi
                           cpu: 100m
                           memory: 200Mi
-                      limits:
-                          ephemeral-storage: 2048Mi
-                          cpu: 2000m
-                          memory: 2000Mi
+                      limits: {}
                   volumeMounts:
                       - mountPath: /data
                         name: element-changedetection-data
@@ -136,10 +134,7 @@ spec:
                           ephemeral-storage: 1024Mi
                           cpu: 1000m
                           memory: 1000Mi
-                      limits:
-                          ephemeral-storage: 2048Mi
-                          cpu: 2000m
-                          memory: 3000Mi
+                      limits: {}
                   volumeMounts:
                       - mountPath: /data
                         name: element-changedetection-data
@@ -159,10 +154,7 @@ spec:
                           ephemeral-storage: 1024Mi
                           cpu: 100m
                           memory: 200Mi
-                      limits:
-                          ephemeral-storage: 2048Mi
-                          cpu: 2000m
-                          memory: 3000Mi
+                      limits: {}
                   securityContext:
                       allowPrivilegeEscalation: false
                       capabilities:
