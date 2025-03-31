@@ -51,7 +51,7 @@ spec:
                                 name: element-changedetection
                                 key: admin_password
                       - name: ALLOWED_HOSTS
-                        value: "https://element-changes.midnightthoughts.space"
+                        value: "element-changes.midnightthoughts.space"
                       - name: CSRF_TRUSTED_ORIGINS
                         value: "https://element-changes.midnightthoughts.space"
                       - name: TZ
@@ -76,10 +76,16 @@ spec:
                       httpGet:
                           path: /
                           port: 8000
+                          httpHeaders:
+                              - name: Host
+                                value: "element-changes.midnightthoughts.space"
                   readinessProbe:
                       httpGet:
                           path: /
                           port: 8000
+                          httpHeaders:
+                              - name: Host
+                                value: "element-changes.midnightthoughts.space"
                   resources:
                       requests:
                           ephemeral-storage: 1024Mi
@@ -119,7 +125,7 @@ spec:
                       - schedule
                       - --foreground
                       - --update
-                      - --every="15 * * * *"
+                      - --every="0/5 * * * *"
                   resources:
                       requests:
                           ephemeral-storage: 1024Mi
