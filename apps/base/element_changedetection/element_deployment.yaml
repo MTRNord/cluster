@@ -32,18 +32,59 @@ spec:
                 app: element-changedetection
         spec:
             containers:
-                - image: dgtlmoon/sockpuppetbrowser:latest
+                - image: archivebox/sonic:latest
                   imagePullPolicy: Always
-                  name: element-changedetection-chromium
+                  name: element-changedetection-sonic
                   env:
-                      - name: SCREEN_WIDTH
-                        value: "1920"
-                      - name: SCREEN_HEIGHT
-                        value: "1080"
-                      - name: SCREEN_DEPTH
-                        value: "24"
-                      - name: MAX_CONCURRENT_CHROME_PROCESSES
-                        value: "10"
+                      - name: SEARCH_BACKEND_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: element-changedetection
+                                key: search_backend_password
+                  resources:
+                      requests:
+                          ephemeral-storage: 1024Mi
+                          cpu: 100m
+                          memory: 200Mi
+                      limits:
+                          ephemeral-storage: 2048Mi
+                          cpu: 2000m
+                          memory: 3000Mi
+                  securityContext:
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                          drop:
+                              - ALL
+                          #add:
+                          #    - SYS_ADMIN
+                      readOnlyRootFilesystem: false
+                      runAsNonRoot: false
+                  volumeMounts:
+                      - mountPath: /var/lib/sonic/store
+                        name: element-changedetection-data
+                        subPath: sonic
+                      - mountPath: /tmp
+                        name: tmp
+                - image: archivebox/archivebox:latest
+                  imagePullPolicy: Always
+                  name: element-changedetection-scheduler
+                  env:
+                      - name: TIMEOUT
+                        value: "120"
+                      - name: SEARCH_BACKEND_ENGINE
+                        value: "sonic"
+                      - name: SEARCH_BACKEND_HOST
+                        value: "localhost"
+                      - name: SEARCH_BACKEND_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: element-changedetection
+                                key: search_backend_password
+                  arguments:
+                      - scheduler
+                      - --foreground
+                      - --update
+                      - '--every="15 * * * *"'
                   resources:
                       requests:
                           ephemeral-storage: 1024Mi
@@ -62,27 +103,45 @@ spec:
                               - SYS_ADMIN
                       readOnlyRootFilesystem: false
                       runAsNonRoot: false
-                - image: ghcr.io/dgtlmoon/changedetection.io
+                  volumeMounts:
+                      - mountPath: /data
+                        name: element-changedetection-data
+                      - mountPath: /tmp
+                        name: tmp
+                - image: archivebox/archivebox:latest
                   imagePullPolicy: Always
                   name: element-changedetection
                   env:
-                      - name: PORT
-                        value: "5000"
-                      - name: BASE_URL
+                      - name: ALLOWED_HOSTS
+                        value: "https://element-changes.midnightthoughts.space"
+                      - name: CSRF_TRUSTED_ORIGINS
                         value: "https://element-changes.midnightthoughts.space"
                       - name: TZ
                         value: "Europe/Berlin"
-                      - name: PLAYWRIGHT_DRIVER_URL
-                        value: "ws://localhost:3000"
+                      - name: PUBLIC_INDEX
+                        value: "True"
+                      - name: PUBLIC_SNAPSHOTS
+                        value: "False"
+                      - name: PUBLIC_ADD_VIEW
+                        value: "False"
+                      - name: SEARCH_BACKEND_ENGINE
+                        value: "sonic"
+                      - name: SEARCH_BACKEND_HOST
+                        value: "localhost"
+                      - name: SEARCH_BACKEND_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: element-changedetection
+                                key: search_backend_password
                   livenessProbe:
                       failureThreshold: 3
                       httpGet:
                           path: /
-                          port: 5000
+                          port: 8000
                   readinessProbe:
                       httpGet:
                           path: /
-                          port: 5000
+                          port: 8000
                   resources:
                       requests:
                           ephemeral-storage: 1024Mi
@@ -97,12 +156,12 @@ spec:
                       capabilities:
                           drop:
                               - ALL
-                          #add:
-                          #    - SYS_ADMIN
+                              #add:
+                              #    - SYS_ADMIN
                       readOnlyRootFilesystem: false
                       runAsNonRoot: false
                   volumeMounts:
-                      - mountPath: /datastore
+                      - mountPath: /data
                         name: element-changedetection-data
                       - mountPath: /tmp
                         name: tmp
@@ -123,9 +182,9 @@ metadata:
     namespace: changedetection
 spec:
     ports:
-        - port: 5000
+        - port: 8000
           protocol: TCP
-          targetPort: 5000
+          targetPort: 8000
     selector:
         app: element-changedetection
     type: ClusterIP
@@ -144,4 +203,4 @@ spec:
     rules:
         - backendRefs:
               - name: element-changedetection-srv
-                port: 5000
+                port: 8000
