@@ -31,91 +31,25 @@ spec:
             labels:
                 app: element-changedetection
         spec:
-            securityContext:
-                fsGroup: 911
-                runAsUser: 911
-                runAsGroup: 911
             containers:
-                - image: archivebox/sonic:latest
-                  imagePullPolicy: Always
-                  name: element-changedetection-sonic
-                  env:
-                      - name: SEARCH_BACKEND_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: element-changedetection
-                                key: search_backend_password
-                  resources:
-                      requests:
-                          ephemeral-storage: 1024Mi
-                          cpu: 100m
-                          memory: 200Mi
-                      limits:
-                          ephemeral-storage: 2048Mi
-                          cpu: 2000m
-                          memory: 3000Mi
-                  securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                          drop:
-                              - ALL
-                          #add:
-                          #    - SYS_ADMIN
-                      readOnlyRootFilesystem: true
-                      runAsNonRoot: true
-                  volumeMounts:
-                      - mountPath: /var/lib/sonic/store
-                        name: element-changedetection-data
-                        subPath: sonic
-                      - mountPath: /tmp
-                        name: tmp
-                - image: archivebox/archivebox:latest
-                  imagePullPolicy: Always
-                  name: element-changedetection-scheduler
-                  env:
-                      - name: TIMEOUT
-                        value: "120"
-                      - name: SEARCH_BACKEND_ENGINE
-                        value: "sonic"
-                      - name: SEARCH_BACKEND_HOST
-                        value: "localhost"
-                      - name: SEARCH_BACKEND_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: element-changedetection
-                                key: search_backend_password
-                  args:
-                      - scheduler
-                      - --foreground
-                      - --update
-                      - --every="15 * * * *"
-                  resources:
-                      requests:
-                          ephemeral-storage: 1024Mi
-                          cpu: 100m
-                          memory: 200Mi
-                      limits:
-                          ephemeral-storage: 2048Mi
-                          cpu: 2000m
-                          memory: 3000Mi
-                  securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                          drop:
-                              - ALL
-                          add:
-                              - CHOWN
-                      readOnlyRootFilesystem: true
-                      runAsNonRoot: true
-                  volumeMounts:
-                      - mountPath: /data
-                        name: element-changedetection-data
-                      - mountPath: /tmp
-                        name: tmp
                 - image: archivebox/archivebox:latest
                   imagePullPolicy: Always
                   name: element-changedetection
+                  command:
+                      - /app/bin/docker_entrypoint.sh
+                  args:
+                      #- init
+                      #- --setup
+                      - server
+                      - 0.0.0.0:8000
                   env:
+                      - name: ADMIN_USERNAME
+                        value: "MTRNord"
+                      - name: ADMIN_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: element-changedetection
+                                key: admin_password
                       - name: ALLOWED_HOSTS
                         value: "https://element-changes.midnightthoughts.space"
                       - name: CSRF_TRUSTED_ORIGINS
@@ -155,16 +89,82 @@ spec:
                           ephemeral-storage: 2048Mi
                           cpu: 2000m
                           memory: 2000Mi
+                  volumeMounts:
+                      - mountPath: /data
+                        name: element-changedetection-data
+                      - mountPath: /tmp
+                        name: tmp
+                - image: archivebox/archivebox:latest
+                  imagePullPolicy: Always
+                  name: element-changedetection-scheduler
+                  env:
+                      - name: PUID
+                        value: "911"
+                      - name: PGID
+                        value: "911"
+                      - name: TIMEOUT
+                        value: "120"
+                      - name: SEARCH_BACKEND_ENGINE
+                        value: "sonic"
+                      - name: SEARCH_BACKEND_HOST
+                        value: "localhost"
+                      - name: SEARCH_BACKEND_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: element-changedetection
+                                key: search_backend_password
+                  command:
+                      - /app/bin/docker_entrypoint.sh
+                  args:
+                      - schedule
+                      - --foreground
+                      - --update
+                      - --every="15 * * * *"
+                  resources:
+                      requests:
+                          ephemeral-storage: 1024Mi
+                          cpu: 100m
+                          memory: 200Mi
+                      limits:
+                          ephemeral-storage: 2048Mi
+                          cpu: 2000m
+                          memory: 3000Mi
+                  volumeMounts:
+                      - mountPath: /data
+                        name: element-changedetection-data
+                      - mountPath: /tmp
+                        name: tmp
+                - image: archivebox/sonic:latest
+                  imagePullPolicy: Always
+                  name: element-changedetection-sonic
+                  env:
+                      - name: SEARCH_BACKEND_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: element-changedetection
+                                key: search_backend_password
+                  resources:
+                      requests:
+                          ephemeral-storage: 1024Mi
+                          cpu: 100m
+                          memory: 200Mi
+                      limits:
+                          ephemeral-storage: 2048Mi
+                          cpu: 2000m
+                          memory: 3000Mi
                   securityContext:
                       allowPrivilegeEscalation: false
                       capabilities:
                           drop:
                               - ALL
-                          add:
-                              - CHOWN
+                          #add:
+                          #    - SYS_ADMIN
                       readOnlyRootFilesystem: true
-                      runAsNonRoot: true
+                      runAsNonRoot: false
                   volumeMounts:
+                      - mountPath: /var/lib/sonic/store
+                        name: element-changedetection-data
+                        subPath: sonic
                       - mountPath: /data
                         name: element-changedetection-data
                       - mountPath: /tmp
