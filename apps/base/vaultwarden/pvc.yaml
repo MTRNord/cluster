@@ -16,14 +16,14 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: vaultwarden-data-vaultwarden-0
-  namespace: vaultwarden
+    name: vaultwarden-data-vaultwarden-0
+    namespace: vaultwarden
 spec:
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: 512Mi
-  storageClassName: ceph-filesystem
-  volumeMode: Filesystem
-  volumeName: pvc-ec794040-ad06-4ac1-b3bd-ecbf57c276bf
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 512Mi
+    storageClassName: ceph-filesystem
+    volumeMode: Filesystem
+    volumeName: pvc-ec794040-ad06-4ac1-b3bd-ecbf57c276bf
