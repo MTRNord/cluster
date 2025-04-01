@@ -36,151 +36,151 @@ spec:
                   imagePullPolicy: Always
                   name: element-changedetection
                   command:
-                      - /app/bin/docker_entrypoint.sh
+                    - /app/bin/docker_entrypoint.sh
                   args:
-                      #- init
-                      #- --setup
-                      - server
-                      - --reload
-                      - 0.0.0.0:8000
+                    #- init
+                    #- --setup
+                    - server
+                    - --reload
+                    - 0.0.0.0:8000
                   env:
-                      - name: ADMIN_USERNAME
-                        value: "MTRNord"
-                      - name: ADMIN_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: element-changedetection
-                                key: admin_password
-                      - name: ALLOWED_HOSTS
-                        value: "element-changes.midnightthoughts.space"
-                      - name: CSRF_TRUSTED_ORIGINS
-                        value: "https://element-changes.midnightthoughts.space"
-                      - name: TZ
-                        value: "Europe/Berlin"
-                      - name: PUBLIC_INDEX
-                        value: "True"
-                      - name: PUBLIC_SNAPSHOTS
-                        value: "False"
-                      - name: PUBLIC_ADD_VIEW
-                        value: "False"
-                      - name: SEARCH_BACKEND_ENGINE
-                        value: "sonic"
-                      - name: SEARCH_BACKEND_HOST
-                        value: "localhost"
-                      - name: TIMEOUT
-                        value: "360"
-                      - name: SEARCH_BACKEND_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: element-changedetection
-                                key: search_backend_password
+                    - name: ADMIN_USERNAME
+                      value: "MTRNord"
+                    - name: ADMIN_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: element-changedetection
+                            key: admin_password
+                    - name: ALLOWED_HOSTS
+                      value: "element-changes.midnightthoughts.space"
+                    - name: CSRF_TRUSTED_ORIGINS
+                      value: "https://element-changes.midnightthoughts.space"
+                    - name: TZ
+                      value: "Europe/Berlin"
+                    - name: PUBLIC_INDEX
+                      value: "True"
+                    - name: PUBLIC_SNAPSHOTS
+                      value: "False"
+                    - name: PUBLIC_ADD_VIEW
+                      value: "False"
+                    - name: SEARCH_BACKEND_ENGINE
+                      value: "sonic"
+                    - name: SEARCH_BACKEND_HOST
+                      value: "localhost"
+                    - name: TIMEOUT
+                      value: "720"
+                    - name: SEARCH_BACKEND_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: element-changedetection
+                            key: search_backend_password
                   livenessProbe:
-                      failureThreshold: 3
-                      httpGet:
-                          path: /
-                          port: 8000
-                          httpHeaders:
-                              - name: Host
-                                value: "element-changes.midnightthoughts.space"
+                    failureThreshold: 3
+                    httpGet:
+                        path: /
+                        port: 8000
+                        httpHeaders:
+                            - name: Host
+                              value: "element-changes.midnightthoughts.space"
                   readinessProbe:
-                      httpGet:
-                          path: /
-                          port: 8000
-                          httpHeaders:
-                              - name: Host
-                                value: "element-changes.midnightthoughts.space"
+                    httpGet:
+                        path: /
+                        port: 8000
+                        httpHeaders:
+                            - name: Host
+                              value: "element-changes.midnightthoughts.space"
                   resources:
-                      requests:
-                          ephemeral-storage: 1024Mi
-                          cpu: 100m
-                          memory: 200Mi
-                      limits: {}
+                    requests:
+                        ephemeral-storage: 1024Mi
+                        cpu: 100m
+                        memory: 200Mi
+                    limits: {}
                   volumeMounts:
-                      - mountPath: /data
-                        name: element-changedetection-data
-                      - mountPath: /tmp
-                        name: tmp
+                    - mountPath: /data
+                      name: element-changedetection-data
+                    - mountPath: /tmp
+                      name: tmp
                 - image: archivebox/archivebox:latest
                   imagePullPolicy: Always
                   name: element-changedetection-scheduler
                   env:
-                      - name: PUID
-                        value: "911"
-                      - name: PGID
-                        value: "911"
-                      - name: TIMEOUT
-                        value: "360"
-                      - name: SEARCH_BACKEND_ENGINE
-                        value: "sonic"
-                      - name: SEARCH_BACKEND_HOST
-                        value: "localhost"
-                      - name: SEARCH_BACKEND_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: element-changedetection
-                                key: search_backend_password
+                    - name: PUID
+                      value: "911"
+                    - name: PGID
+                      value: "911"
+                    - name: TIMEOUT
+                      value: "720"
+                    - name: SEARCH_BACKEND_ENGINE
+                      value: "sonic"
+                    - name: SEARCH_BACKEND_HOST
+                      value: "localhost"
+                    - name: SEARCH_BACKEND_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: element-changedetection
+                            key: search_backend_password
                   command:
-                      - /app/bin/docker_entrypoint.sh
+                    - /app/bin/docker_entrypoint.sh
                   args:
-                      - schedule
-                      - --tag
-                      - element-blog
-                      - --every
-                      - "*/15 * * * *"
-                      - --foreground
-                      - --update
-                      - --depth=1
-                      - https://element.io/blog/rss/
+                    - schedule
+                    - --tag
+                    - element-blog
+                    - --every
+                    - "*/15 * * * *"
+                    - --foreground
+                    - --update
+                    - --depth=1
+                    - https://element.io/blog/rss/
                   resources:
-                      requests:
-                          ephemeral-storage: 1024Mi
-                          cpu: 1000m
-                          memory: 1000Mi
-                      limits: {}
+                    requests:
+                        ephemeral-storage: 1024Mi
+                        cpu: 1000m
+                        memory: 1000Mi
+                    limits: {}
                   volumeMounts:
-                      - mountPath: /data
-                        name: element-changedetection-data
-                      - mountPath: /tmp
-                        name: tmp
+                    - mountPath: /data
+                      name: element-changedetection-data
+                    - mountPath: /tmp
+                      name: tmp
                 - image: archivebox/sonic:latest
                   imagePullPolicy: Always
                   name: element-changedetection-sonic
                   env:
-                      - name: SEARCH_BACKEND_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: element-changedetection
-                                key: search_backend_password
+                    - name: SEARCH_BACKEND_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: element-changedetection
+                            key: search_backend_password
                   resources:
-                      requests:
-                          ephemeral-storage: 1024Mi
-                          cpu: 100m
-                          memory: 200Mi
-                      limits: {}
+                    requests:
+                        ephemeral-storage: 1024Mi
+                        cpu: 100m
+                        memory: 200Mi
+                    limits: {}
                   securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                          drop:
-                              - ALL
-                          #add:
-                          #    - SYS_ADMIN
-                      readOnlyRootFilesystem: true
-                      runAsNonRoot: false
+                    allowPrivilegeEscalation: false
+                    capabilities:
+                        drop:
+                            - ALL
+                            #add:
+                            #    - SYS_ADMIN
+                    readOnlyRootFilesystem: true
+                    runAsNonRoot: false
                   volumeMounts:
-                      - mountPath: /var/lib/sonic/store
-                        name: element-changedetection-data
-                        subPath: sonic
-                      - mountPath: /data
-                        name: element-changedetection-data
-                      - mountPath: /tmp
-                        name: tmp
+                    - mountPath: /var/lib/sonic/store
+                      name: element-changedetection-data
+                      subPath: sonic
+                    - mountPath: /data
+                      name: element-changedetection-data
+                    - mountPath: /tmp
+                      name: tmp
             volumes:
                 - name: element-changedetection-data
                   persistentVolumeClaim:
-                      claimName: element-changedetection-data
+                    claimName: element-changedetection-data
                 - name: tmp
                   emptyDir:
-                      sizeLimit: 2048Mi
+                    sizeLimit: 2048Mi
 ---
 apiVersion: v1
 kind: Service
@@ -211,5 +211,5 @@ spec:
         - "element-changes.midnightthoughts.space"
     rules:
         - backendRefs:
-              - name: element-changedetection-srv
-                port: 8000
+            - name: element-changedetection-srv
+              port: 8000
