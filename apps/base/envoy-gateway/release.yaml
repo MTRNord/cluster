@@ -430,6 +430,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: element-changes.midnightthoughts.space
+        - name: https-midnightthoughts-dav
+          protocol: HTTPS
+          hostname: "dav.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: dav.midnightthoughts.space
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"

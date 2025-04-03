@@ -1,0 +1,301 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: xandikos
+    namespace: xandikos
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 100Mi
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: xandikos
+    namespace: xandikos
+spec:
+    strategy:
+        rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+        type: RollingUpdate
+    replicas: 1
+    selector:
+        matchLabels:
+            app: xandikos
+    template:
+        metadata:
+            labels:
+                app: xandikos
+        spec:
+            containers:
+                - name: xandikos
+                  image: ghcr.io/jelmer/xandikos
+                  imagePullPolicy: Always
+                  command:
+                    - python3
+                    - -m
+                    - xandikos.web
+                    - --port=8080
+                    - -d/data
+                    - --defaults
+                    - --listen-address=0.0.0.0
+                    - --current-user-principal=/jelmer
+                    - --route-prefix=/dav
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 2Gi
+                    requests:
+                        cpu: "0.1"
+                        memory: 10M
+                  livenessProbe:
+                    httpGet:
+                        path: /health
+                        port: 8081
+                    initialDelaySeconds: 30
+                    periodSeconds: 3
+                    timeoutSeconds: 90
+                  ports:
+                    - containerPort: 8081
+                  volumeMounts:
+                    - name: xandikos-volume
+                      mountPath: /data
+            securityContext:
+                fsGroup: 1000
+            volumes:
+                - name: xandikos-volume
+                  persistentVolumeClaim:
+                    claimName: xandikos
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: xandikos
+    namespace: xandikos
+    labels:
+        app: xandikos
+spec:
+    ports:
+        - port: 8080
+          name: web
+    selector:
+        app: xandikos
+    type: ClusterIP
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: basic-auth-credentials
+    namespace: xandikos
+data:
+    .htpasswd: ENC[AES256_GCM,data:Agc55rRWqvR4eFwKUXYrLoT0oRYES6D5bCJn/QHaeQQjpHn4XIOrNYZHSvjDRcpA+tMwoh9qUbU=,iv:rovP1QyzIuCstp1DX65foEJw9alcE5mCleA9XI59K/s=,tag:g8Mumi0E3YZGvVE4d9U4vA==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: xandikos-wellknown
+    namespace: xandikos
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - midnightthoughts.space
+    rules:
+        - matches:
+            - path:
+                value: /.well-known/caldav
+          filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /user/calendars
+          backendRefs:
+            - name: xandikos
+              port: 8080
+        - matches:
+            - path:
+                value: /.well-known/carddav
+          filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /user/contacts
+          backendRefs:
+            - name: xandikos
+              port: 8080
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: xandikos
+    namespace: xandikos
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - dav.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: xandikos
+              port: 8080
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+    name: basic-auth
+    namespace: xandikos
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: xandikos
+    basicAuth:
+        users:
+            name: basic-auth-credentials
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5b2dpdzIveERjM2FOV3Uz
+            MTZsVEhaV2pHVmFtT2E0OURCa3BoUUdSZFdjCm5DWmprdzYzTjJSNDA0OStTL3pY
+            amsvc21mTjdndXZsMzRYM3JSOW5UREkKLS0tIHkrNmdOakFQREVBcm9KQTY0dVVY
+            WlB4SXViYkcvLy9kMlNHd3NWeTR2THcKH2u+ehSawhRtHoWlnLCbrYvLspOJpG/r
+            0UIYAhI95ofk8upsTs0Yt9sI3VTssVbmqIZ5nGWwuEG2Wygtvu7VzQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-03T09:11:21Z"
+    mac: ENC[AES256_GCM,data:kdSiawd4mAyYlRxAEy4JPbmjdyQlnYUsokojaykAbX9Lv7ww+evMHZ8i4SDVD9bc0rB5ufp29uSIDZmeFRuhUATtP5lGbjbva7QQRgCncIkWVcNj9LmfDYhIx3TLb+6/JlAi/miD10M3L4ZJ8Ln/j3lMcfw3N5gIvXDJCXwH+YA=,iv:gdquXNPE5xHpzapS4tNTjkhFb0R0Jjj1c3U94HCcwnc=,tag:cnOkjLIjRuOVqOJHbso9/Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
