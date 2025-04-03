@@ -185,6 +185,9 @@ spec:
                     - mountPath: /tmp
                       name: tmp
             volumes:
+                - name: element-changedetection-data
+                  persistentVolumeClaim:
+                    claimName: element-changedetection-data
                 - name: element-changedetection-sonic-data
                   persistentVolumeClaim:
                     claimName: element-changedetection-sonic-data
