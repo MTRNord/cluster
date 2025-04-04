@@ -1,0 +1,135 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: plane
+    namespace: plane
+spec:
+    releaseName: plane
+    chart:
+        spec:
+            chart: plane-ce
+            version: 1.1.0
+            sourceRef:
+                kind: HelmRepository
+                name: plane
+    interval: 60m
+    values:
+        ingress:
+            enabled: false
+        rabbitmq:
+            storageClass: ceph-filesystem
+        minio:
+            storageClass: ceph-filesystem
+            root_password: ENC[AES256_GCM,data:1G8VnLQNA4DCTsSjAGMR0fBDF3xuU97QEwfBPoNq+ih5hVy1QsdBttQyBipJJ7DccsBwe0bXAMRgu5qrLUOfxQ==,iv:vvkg6LyQh6IapCiX7rDCCL/MuqWxV2UviZf6oE+W9/4=,tag:c3ojEJ+m5hR9IaLXUJp8wA==,type:str]
+        redis:
+            storageClass: ceph-filesystem
+        postgres:
+            local_setup: false
+        env:
+            pgdb_username: plane
+            pgdb_password: ENC[AES256_GCM,data:u0E/TSP6lI5NrsBt6qif9ZfkqhkZ2EMIQ7fjYbtTrqgykDPIMFYSg4iWfTAchKFyIyszlR+2zGhsqNAXtEoZ5A==,iv:qJJMQwwwgOXaMMUCrqlFSmKEORjuYBVXkPu1WbWrSkY=,tag:seSh38tUf0tXMBRM3BxZIQ==,type:str]
+            pgdb_name: plane
+            pgdb_remote_url: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+            secret_key: ENC[AES256_GCM,data:6+XNDXzmelRJOzUUI07l+/AyznihVI4ZqxBdZ06Jo5IfzDKW09vpgCQhhwbBWKVg4YDuxKL2w8vZ4xnFb5+Kxw==,iv:cB8EiE15wMJVhFpIBWGXoz5G77XLaCIsJ+Lrv3MmXnI=,tag:roz3D+U1gP1+5wLs5ndInQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2TnZrRnlrb2RqeHlLN00x
+            VU1JbFIrR01YenlFazZGWWVxdk1XRUJPWDJFClcxZWt3SFEzSkQ5WklrUU9qanpV
+            NW5PT2dkZkNzMGd0Y290M3AvKytiOW8KLS0tIDJFS25PWjVGMFdLWnRzMVc3a0Fy
+            WWQ5MEpTTDBGRWtlYzR2SXlQdHVkckEKU17q5eGjyXugzRTau+nMP8X9QL+1IxIz
+            JjhpF2hKVaY3+eVUM3xzmpRC559KCC5kbM7lBBAwUy5Nmk6hbUmM6g==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-04T13:29:28Z"
+    mac: ENC[AES256_GCM,data:KZSxf6FvGRxJcfoWzX/2MyYmFyZCa53B2jTQ0Druvf/3TOp3/q9FlY9MISIuULd12Xf3pyF8u7OnxzhadeW0MY79FJWlZdhFDWFxo2d4/aj/GDZ8GYb0Gnj/4lOqQGAfIBd+vEr+W71nNIutgKqxsws/ZG1y2X35wX/N6aYN2z0=,iv:Hc8wkPGvrkkFqkUM0Fuu7zWHIODBPyshjskdiHKyAhg=,tag:l4+fUW02RPENkBJ5qJ1PIA==,type:str]
+    pgp: []
+    encrypted_regex: ^(root_password|pgdb_password|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: plane
+    namespace: plane
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - plane.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: plane-web
+              port: 3000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /
+        - backendRefs:
+            - name: plane-api
+              port: 8000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /api
+        - backendRefs:
+            - name: plane-api
+              port: 8000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /auth
+        - backendRefs:
+            - name: plane-live
+              port: 3000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /live
+        - backendRefs:
+            - name: plane-space
+              port: 3000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /spaces
+        - backendRefs:
+            - name: plane-admin
+              port: 3000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /god-mode
+        - backendRefs:
+            - name: plane-minio
+              port: 9000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /uploads
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2TnZrRnlrb2RqeHlLN00x
+            VU1JbFIrR01YenlFazZGWWVxdk1XRUJPWDJFClcxZWt3SFEzSkQ5WklrUU9qanpV
+            NW5PT2dkZkNzMGd0Y290M3AvKytiOW8KLS0tIDJFS25PWjVGMFdLWnRzMVc3a0Fy
+            WWQ5MEpTTDBGRWtlYzR2SXlQdHVkckEKU17q5eGjyXugzRTau+nMP8X9QL+1IxIz
+            JjhpF2hKVaY3+eVUM3xzmpRC559KCC5kbM7lBBAwUy5Nmk6hbUmM6g==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-04T13:29:28Z"
+    mac: ENC[AES256_GCM,data:KZSxf6FvGRxJcfoWzX/2MyYmFyZCa53B2jTQ0Druvf/3TOp3/q9FlY9MISIuULd12Xf3pyF8u7OnxzhadeW0MY79FJWlZdhFDWFxo2d4/aj/GDZ8GYb0Gnj/4lOqQGAfIBd+vEr+W71nNIutgKqxsws/ZG1y2X35wX/N6aYN2z0=,iv:Hc8wkPGvrkkFqkUM0Fuu7zWHIODBPyshjskdiHKyAhg=,tag:l4+fUW02RPENkBJ5qJ1PIA==,type:str]
+    pgp: []
+    encrypted_regex: ^(root_password|pgdb_password|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
