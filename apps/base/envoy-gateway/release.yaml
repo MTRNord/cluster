@@ -127,7 +127,7 @@ spec:
             load-balancer.hetzner.cloud/location: hel1
             load-balancer.hetzner.cloud/name: envoy
             load-balancer.hetzner.cloud/use-private-ip: "true"
-            load-balancer.hetzner.cloud/uses-proxyprotocol: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "false"
     # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
     listeners:
         - name: https-mas-midnightthoughts
@@ -567,8 +567,8 @@ spec:
         - group: gateway.networking.k8s.io
           kind: Gateway
           name: envoy-gateway
-    # WARNING: False as cilium routes the gateway locally if used internally with the public domain. HOWEVER then proxy proto cant be used...
-    enableProxyProtocol: true
+    # WARNING: Cilium 1.17+ only supports the correct ipMode magic for this to work. Hence it currently fails
+    enableProxyProtocol: false
     # Alternative to enableProxyProtocol: true
     clientIPDetection:
         xForwardedFor:
