@@ -100,7 +100,7 @@ metadata:
 spec:
     type: ClusterIP
     ports:
-        - name: irc
+        - name: ircs
           port: 6697
           targetPort: 6697
         - name: websockets
@@ -139,7 +139,7 @@ spec:
           sectionName: irc
     rules:
         - backendRefs:
-              - name: ircs
+              - name: irc
                 port: 6697
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
