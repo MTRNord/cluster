@@ -247,6 +247,46 @@ accounts:
         bcrypt-cost: 9
         # length of time a user has to verify their account before it can be re-registered
         verify-timeout: "32h"
+
+        # options for email verification of account registrations
+        email-verification:
+            enabled: true
+            sender: "support@midnightthoughts.space"
+            require-tls: true
+            helo-domain: "irc.midnightthoughts.space" # defaults to server name if unset
+            # set to `tcp4` to force sending over IPv4, `tcp6` to force IPv6:
+            # protocol: "tcp4"
+            # set to force a specific source/local IPv4 or IPv6 address:
+            # local-address: "1.2.3.4"
+            # options to enable DKIM signing of outgoing emails (recommended, but
+            # requires creating a DNS entry for the public key):
+            # dkim:
+            #     domain: "my.network"
+            #     selector: "20200229"
+            #     key-file: "dkim.pem"
+            # to use an MTA/smarthost instead of sending email directly:
+            mta:
+                server: mail.midnightthoughts.space
+                port: 465
+                #username: "admin"
+                #password: "hunter2"
+                implicit-tls: true # TLS from the first byte, typically on port 465
+            # addresses that are not accepted for registration:
+            address-blacklist:
+            #    - "*@mailinator.com"
+            address-blacklist-syntax: "glob" # change to "regex" for regular expressions
+            # file of newline-delimited address blacklist entries (no enclosing quotes)
+            # in the above syntax (i.e. either globs or regexes). supersedes
+            # address-blacklist if set:
+            # address-blacklist-file: "/path/to/address-blacklist-file"
+            timeout: 60s
+            # email-based password reset:
+            password-reset:
+                enabled: true
+                # time before we allow resending the email
+                cooldown: 1h
+                # time for which a password reset code is valid
+                timeout: 1d
     # throttle account login attempts (to prevent either password guessing, or DoS
     # attacks on the server aimed at forcing repeated expensive bcrypt computations)
     login-throttling:

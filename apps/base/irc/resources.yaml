@@ -59,6 +59,16 @@ spec:
                             secretKeyRef:
                                 name: irc-db
                                 key: password
+                      - name: ERGO__ACCOUNTS__REGISTRATION__EMAIL_VERIFICATION__MTA__USERNAME
+                        valueFrom:
+                            secretKeyRef:
+                                name: irc-db
+                                key: emailUser
+                      - name: ERGO__ACCOUNTS__REGISTRATION__EMAIL_VERIFICATION__MTA__PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: irc-db
+                                key: emailPassword
                 - name: config-reloader
                   # image is based on busybox which includes inotifyd + pkill
                   image: ghcr.io/ergochat/ergo
