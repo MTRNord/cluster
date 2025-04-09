@@ -25,11 +25,6 @@ server:
 
         # The standard SSL/TLS port for IRC is 6697. This will listen on all interfaces:
         ":6697":
-            proxy: true
-        # No tls here as we have a reverse proxy
-
-        # Add another SSL/TLS port for internal traffic on port 16697.
-        ":16697":
             tls:
                 key: /ircd/tls/tls.key
                 cert: /ircd/tls/tls.crt
