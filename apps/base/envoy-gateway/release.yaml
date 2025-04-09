@@ -454,6 +454,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: plane.midnightthoughts.space
+        - name: https-midnightthoughts-irc
+          protocol: HTTPS
+          hostname: "irc.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: irc.midnightthoughts.space
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"
@@ -531,6 +543,14 @@ spec:
         - name: gerrit-ssh
           protocol: TCP
           port: 29418
+          allowedRoutes:
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
+        - name: ircs
+          protocol: TCP
+          port: 6697
           allowedRoutes:
             kinds:
                 - kind: TCPRoute
