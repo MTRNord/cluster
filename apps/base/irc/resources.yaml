@@ -18,9 +18,9 @@ metadata:
     labels:
         app: irc
 spec:
-    replicas: 1
+    replicas: 2
     strategy:
-        type: Recreate
+        type: RollingUpdate
     selector:
         matchLabels:
             app: irc
@@ -34,62 +34,62 @@ spec:
                 - name: irc
                   image: ghcr.io/ergochat/ergo:v2.15.0
                   ports:
-                    - containerPort: 6697
-                      name: ircs
-                    - containerPort: 443
-                      name: websocket
+                      - containerPort: 6697
+                        name: ircs
+                      - containerPort: 443
+                        name: websocket
                   readinessProbe:
-                    tcpSocket:
-                        port: 6697
+                      tcpSocket:
+                          port: 6697
                   livenessProbe:
-                    tcpSocket:
-                        port: 6697
+                      tcpSocket:
+                          port: 6697
                   volumeMounts:
-                    - mountPath: /ircd/
-                      name: irc-config
-                      readOnly: true
-                    - mountPath: /ircd/tls
-                      name: irc-certs
-                      readOnly: true
-                    - mountPath: /ircd/db
-                      name: irc-db
+                      - mountPath: /ircd/
+                        name: irc-config
+                        readOnly: true
+                      - mountPath: /ircd/tls
+                        name: irc-certs
+                        readOnly: true
+                      - mountPath: /ircd/db
+                        name: irc-db
                   env:
-                    - name: ERGO__DATASTORE__MYSQL__PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: irc-db
-                            key: password
+                      - name: ERGO__DATASTORE__MYSQL__PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: irc-db
+                                key: password
                 - name: config-reloader
                   # image is based on busybox which includes inotifyd + pkill
                   image: ghcr.io/ergochat/ergo
                   command: ["/bin/sh"]
                   args:
-                    - "-c"
-                    - |
-                      echo "Watching /ircd/";
-                      inotifyd - /ircd/:wMymndox /ircd/tls/:wMymndox | while read -r notifies ; do
-                        echo "$notifies";
-                        echo "notify received, sending SIGHUP";
-                        pkill -HUP ergo;
-                      done
-                      echo "Exiting.";
+                      - "-c"
+                      - |
+                          echo "Watching /ircd/";
+                          inotifyd - /ircd/:wMymndox /ircd/tls/:wMymndox | while read -r notifies ; do
+                            echo "$notifies";
+                            echo "notify received, sending SIGHUP";
+                            pkill -HUP ergo;
+                          done
+                          echo "Exiting.";
                   volumeMounts:
-                    - mountPath: /ircd/
-                      name: irc-config
-                      readOnly: true
-                    - mountPath: /ircd/tls
-                      name: irc-certs
-                      readOnly: true
+                      - mountPath: /ircd/
+                        name: irc-config
+                        readOnly: true
+                      - mountPath: /ircd/tls
+                        name: irc-certs
+                        readOnly: true
             volumes:
                 - name: irc-config
                   configMap:
-                    name: irc-config
+                      name: irc-config
                 - name: irc-certs
                   secret:
-                    secretName: irc-certs
+                      secretName: irc-certs
                 - name: irc-db
                   persistentVolumeClaim:
-                    claimName: irc-db
+                      claimName: irc-db
 ---
 apiVersion: v1
 kind: Service
@@ -122,8 +122,8 @@ spec:
         - irc.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: irc
-              port: 443
+              - name: irc
+                port: 443
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -139,8 +139,8 @@ spec:
           sectionName: irc
     rules:
         - backendRefs:
-            - name: ircs
-              port: 6697
+              - name: ircs
+                port: 6697
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
