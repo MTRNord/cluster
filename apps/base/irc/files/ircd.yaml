@@ -34,6 +34,7 @@ server:
                 key: /ircd/tls/tls.key
                 cert: /ircd/tls/tls.crt
             proxy: true
+            min-tls-version: 1.2
             # 'proxy' is false here because internal traffic won't be routed through
             # the Kubernetes LoadBalancer. Relevant links:
             # https://github.com/kubernetes/kubernetes/issues/66607
@@ -143,7 +144,7 @@ server:
     # this should be restricted to 127.0.0.1/8 and ::1/128 (unless you have a good reason)
     # you should also add these addresses to the connection limits and throttling exemption lists
     proxy-allowed-from:
-        - 0.0.0.0/0
+        - 10.0.0.0/8
     # controls the use of the WEBIRC command (by IRC<->web interfaces, bouncers and similar)
     # webirc:
     #     # one webirc block -- should correspond to one set of gateways
@@ -161,10 +162,6 @@ server:
     #             # - localhost
     #             # - "192.168.1.1"
     #             # - "192.168.10.1/24"
-
-    # allow use of the RESUME extension over plaintext connections:
-    # do not enable this unless the ircd is only accessible over internal networks
-    allow-plaintext-resume: false
     # maximum length of clients' sendQ in bytes
     # this should be big enough to hold bursts of channel/direct messages
     max-sendq: 96k
@@ -186,16 +183,13 @@ server:
         # whether to limit the total number of concurrent connections per IP/CIDR
         count: true
         # maximum concurrent connections per IP/CIDR
-        max-concurrent-connections: 64
+        max-concurrent-connections: 16
         # whether to restrict the rate of new connections per IP/CIDR
         throttle: true
         # how long to keep track of connections for
         window: 10m
         # maximum number of new connections per IP/CIDR within the given duration
-        max-connections-per-window: 64
-        # how long to ban offenders for. after banning them, the number of connections is
-        # reset, which lets you use /UNDLINE to unban people
-        throttle-ban-duration: 10m
+        max-connections-per-window: 32
         # how wide the CIDR should be for IPv4 (a /32 is a fully specified IPv4 address)
         cidr-len-ipv4: 32
         # how wide the CIDR should be for IPv6 (a /64 is the typical prefix assigned
@@ -244,26 +238,20 @@ accounts:
     registration:
         # can users register new accounts for themselves? if this is false, operators with
         # the `accreg` capability can still create accounts with `/NICKSERV SAREGISTER`
-        enabled: true
+        # TODO: Enable
+        enabled: false
         # can users use the REGISTER command to register before fully connecting?
         allow-before-connect: true
+        throttling:
+            # whether to limit the rate of new account registrations
+            enabled: true
+            # how long to keep track of registrations for
+            duration: 10m
+            max-attempts: 30
         # this is the bcrypt cost we'll use for account passwords
         bcrypt-cost: 9
         # length of time a user has to verify their account before it can be re-registered
         verify-timeout: "32h"
-        # callbacks to allow
-        enabled-callbacks:
-            - none # no verification needed, will instantly register successfully
-            # example configuration for sending verification emails via a local mail relay
-            # callbacks:
-            #     mailto:
-            #         server: localhost
-            #         port: 25
-            #         tls:
-            #             enabled: false
-            #         username: ""
-            #         password: ""
-            #         sender: "admin@my.network"
     # throttle account login attempts (to prevent either password guessing, or DoS
     # attacks on the server aimed at forcing repeated expensive bcrypt computations)
     login-throttling:
@@ -310,15 +298,32 @@ accounts:
         # allow users to set their own nickname enforcement status, e.g.,
         # to opt in to strict enforcement
         allow-custom-enforcement: false
-        # rename-timeout - this is how long users have 'til they're renamed
-        rename-timeout: 30s
-        # rename-prefix - this is the prefix to use when renaming clients (e.g. Guest-AB54U31)
-        rename-prefix: Guest-
+
+        # format for guest nicknames:
+        # 1. these nicknames cannot be registered or reserved
+        # 2. if a client is automatically renamed by the server,
+        #    this is the template that will be used (e.g., Guest-nccj6rgmt97cg)
+        # 3. if enforce-guest-format (see below) is enabled, clients without
+        #    a registered account will have this template applied to their
+        #    nicknames (e.g., 'katie' will become 'Guest-katie')
+        guest-nickname-format: "Guest-*"
+
+        # when enabled, forces users not logged into an account to use
+        # a nickname matching the guest template. a caveat: this may prevent
+        # users from choosing nicknames in scripts different from the guest
+        # nickname format.
+        force-guest-format: false
+
         # when enabled, forces users logged into an account to use the
         # account name as their nickname. when combined with strict nickname
         # enforcement, this lets users treat nicknames and account names
         # as equivalent for the purpose of ban/invite/exception lists.
         force-nick-equals-account: true
+
+        # parallel setting to force-nick-equals-account: if true, this forbids
+        # anonymous users (i.e., users not logged into an account) to change their
+        # nickname after the initial connection is complete
+        forbid-anonymous-nick-changes: false
     # bouncer controls whether ergo can act as a bouncer, i.e., allowing
     # multiple connections to attach to the same client/nickname identity
     multiclient:
@@ -346,27 +351,14 @@ accounts:
         # regexp for testing the validity of a vhost
         # (make sure any changes you make here are RFC-compliant)
         valid-regexp: '^[0-9A-Za-z.\-_/]+$'
-        # options controlling users requesting vhosts:
-        user-requests:
-            # can users request vhosts at all? if this is false, operators with the
-            # 'vhosts' capability can still assign vhosts manually
-            enabled: false
-            # if uncommented, all new vhost requests will be dumped into the given
-            # channel, so opers can review them as they are sent in. ensure that you
-            # have registered and restricted the channel appropriately before you
-            # uncomment this.
-            #channel: "#vhosts"
-
-            # after a user's vhost has been approved or rejected, they need to wait
-            # this long (starting from the time of their original request)
-            # before they can request a new one.
-            cooldown: 168h
+    default-user-modes: +i
 # channel options
 channels:
     # modes that are set when new channels are created
-    # +n is no-external-messages and +t is op-only-topic
+    # +n is no-external-messages, +t is op-only-topic,
+    # +C is no CTCPs (besides ACTION)
     # see  /QUOTE HELP cmodes  for more channel modes
-    default-modes: +nt
+    default-modes: +ntC
     # how many channels can a client be in at once?
     max-channels-per-client: 100
     # if this is true, new channels can only be created by operators with the
@@ -376,6 +368,11 @@ channels:
     registration:
         # can users register new channels?
         enabled: true
+
+        # restrict new channel registrations to operators only?
+        # (operators can then transfer channels to regular users using /CS TRANSFER)
+        operator-only: false
+
         # how many channels can each account register?
         max-channels-per-account: 15
     # as a crude countermeasure against spambots, anonymous connections younger
@@ -413,6 +410,8 @@ oper-classes:
             - "chanreg"
             - "history"
             - "defcon"
+            - "history" # modify or delete history messages
+            - "massmessage" # message all users on the server
 # ircd operators
 opers:
     mtrnord:
@@ -450,9 +449,9 @@ logging:
       #   internal        unexpected runtime behavior, including potential bugs
       #   userinput       raw lines sent by users
       #   useroutput      raw lines sent to users
-      type: "server listeners connect connect-ip quit internal"
+      type: "* -userinput -useroutput"
       # one of: debug info warn error
-      level: debug
+      level: info
 #-
 #   # example of a file log that avoids logging IP addresses
 #   method: file
@@ -474,6 +473,7 @@ debug:
     # if you need to access it remotely, you can use an SSH tunnel.
     # set to `null`, "", leave blank, or omit to disable
     # pprof-listener: "localhost:6060"
+
 # datastore configuration
 datastore:
     # path to the datastore
@@ -506,35 +506,42 @@ languages:
 limits:
     # nicklen is the max nick length allowed
     nicklen: 32
+
     # identlen is the max ident length allowed
     identlen: 20
+
+    # realnamelen is the maximum realname length allowed
+    realnamelen: 150
+
     # channellen is the max channel length allowed
     channellen: 64
+
     # awaylen is the maximum length of an away message
-    awaylen: 500
+    awaylen: 390
+
     # kicklen is the maximum length of a kick message
-    kicklen: 1000
+    kicklen: 390
+
     # topiclen is the maximum length of a channel topic
-    topiclen: 1000
+    topiclen: 390
+
     # maximum number of monitor entries a client can have
     monitor-entries: 100
+
     # whowas entries to store
     whowas-entries: 100
+
     # maximum length of channel lists (beI modes)
-    chan-list-modes: 60
-    # maximum length of IRC lines
-    # this should generally be 1024-2048, and will only apply when negotiated by clients
-    linelen:
-        # ratified version of the message-tags cap fixes the max tag length at 8191 bytes
-        # configurable length for the rest of the message:
-        rest: 2048
+    chan-list-modes: 100
+
     # maximum number of messages to accept during registration (prevents
     # DoS / resource exhaustion attacks):
     registration-messages: 1024
+
     # message length limits for the new multiline cap
     multiline:
         max-bytes: 4096 # 0 means disabled
-        max-lines: 24 # 0 means no limit
+        max-lines: 100 # 0 means no limit
 # fakelag: prevents clients from spamming commands too rapidly
 fakelag:
     # whether to enforce fakelag
@@ -556,13 +563,14 @@ fakelag:
         "MARKREAD": 16
         "MONITOR": 1
         "WHO": 4
+        "WEBPUSH": 1
 # the roleplay commands are semi-standardized extensions to IRC that allow
 # sending and receiving messages from pseudo-nicknames. this can be used either
 # for actual roleplaying, or for bridging IRC with other protocols.
 roleplay:
     # are roleplay commands enabled at all? (channels and clients still have to
     # opt in individually with the +E mode)
-    enabled: false
+    enabled: true
     # require the "roleplay" oper capability to send roleplay messages?
     require-oper: false
     # require channel operator permissions to send roleplay messages?
@@ -601,13 +609,20 @@ history:
         # if this is set, messages older than this cannot be retrieved by anyone
         # (and will eventually be deleted from persistent storage, if that's enabled)
         expire-time: 2w
-        # if this is set, logged-in users cannot retrieve messages older than their
-        # account registration date, and logged-out users cannot retrieve messages
-        # older than their sign-on time (modulo grace-period, see below):
-        enforce-registration-date: true
-        # but if this is set, you can retrieve messages that are up to `grace-period`
-        # older than the above cutoff time. this is recommended to allow logged-out
-        # users to do session resumption / query history after disconnections.
+
+        # this restricts access to channel history (it can be overridden by channel
+        # owners). options are: 'none' (no restrictions), 'registration-time'
+        # (logged-in users cannot retrieve messages older than their account
+        # registration date, and anonymous users cannot retrieve messages older than
+        # their sign-on time, modulo the grace-period described below), and
+        # 'join-time' (users cannot retrieve messages older than the time they
+        # joined the channel, so only always-on clients can view history).
+        query-cutoff: "registration-time"
+
+        # if query-cutoff is set to 'registration-time', this allows retrieval
+        # of messages that are up to 'grace-period' older than the above cutoff.
+        # if you use 'registration-time', this is recommended to allow logged-out
+        # users to query history after disconnections.
         grace-period: 1h
     # options to store history messages in a persistent database (currently only MySQL):
     persistent:
@@ -644,5 +659,26 @@ history:
             #    - "+draft/typing"
             #    - "typing"
 # whether to allow customization of the config at runtime using environment variables,
-# e.g., ORAGONO__SERVER__MAX_SENDQ=128k. see the manual for more details.
+# e.g., ERGO__SERVER__MAX_SENDQ=128k. see the manual for more details.
 allow-environment-overrides: true
+
+# experimental support for mobile push notifications
+# see the manual for potential security, privacy, and performance implications.
+# DO NOT enable if you are running a Tor or I2P hidden service (i.e. one
+# with no public IP listeners, only Tor/I2P listeners).
+webpush:
+    # are push notifications enabled at all?
+    enabled: true
+    # request timeout for POST'ing the http notification
+    timeout: 10s
+    # delay sending the notification for this amount of time, then suppress it
+    # if the client sent MARKREAD to indicate that it was read on another device
+    delay: 0s
+    # subscriber field for the VAPID JWT authorization:
+    subscriber: "https://irc.midnightthoughts.space/"
+    # maximum number of push subscriptions per user
+    max-subscriptions: 4
+    # expiration time for a push subscription; it must be renewed within this time
+    # by the client reconnecting to IRC. we also detect whether the client is no longer
+    # successfully receiving push messages.
+    expiration: 14d
