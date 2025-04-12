@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: heisenbridge
+    namespace: matrix
+    labels:
+        app: heisenbridge
+spec:
+    selector:
+        app: heisenbridge
+    ports:
+        - port: 9898
+          targetPort: appservice
+          protocol: TCP
+          name: appservice
