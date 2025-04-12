@@ -34,8 +34,13 @@ spec:
                   image: ghcr.io/mtrnord/atheme:contrib
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /atheme/etc
+                      - mountPath: /atheme/etc/atheme.conf
                         name: atheme-secrets
+                        subPath: atheme.conf
+                        readOnly: true
+                      - mountPath: /atheme/etc/atheme.motd
+                        name: atheme-secrets
+                        subPath: atheme.motd
                         readOnly: true
                       - mountPath: /etc/msmtprc
                         name: atheme-secrets
