@@ -58,10 +58,13 @@ spec:
           toPorts:
             - ports:
                 - port: "8008"
-        - toServices:
-            - k8sService:
-                serviceName: heisenbridge
-                namespace: matrix
+        - toEndpoints:
+            - matchLabels:
+                k8s:app: heisenbridge
+                io.kubernetes.pod.namespace: matrix
+          toPorts:
+            - ports:
+                - port: "9898"
         - toEndpoints:
             - matchLabels:
                 k8s:app.kubernetes.io/instance: draupnir-synapse
