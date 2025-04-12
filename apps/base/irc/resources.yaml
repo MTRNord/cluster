@@ -82,6 +82,8 @@ spec:
                       - mountPath: /ircd/certs
                         name: irc-certs
                         readOnly: true
+                      - mountPath: /usr/local/logs
+                        name: logs
             volumes:
                 - name: solanum-config
                   secret:
@@ -89,6 +91,8 @@ spec:
                 - name: irc-certs
                   secret:
                       secretName: irc-certs
+                - name: logs
+                    emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
