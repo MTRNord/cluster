@@ -25,64 +25,57 @@ spec:
                 podAntiAffinity:
                     requiredDuringSchedulingIgnoredDuringExecution:
                         - labelSelector:
-                              matchExpressions:
-                                  - key: app
-                                    operator: In
-                                    values:
-                                        - heisenbridge
+                            matchExpressions:
+                                - key: app
+                                  operator: In
+                                  values:
+                                    - heisenbridge
                           topologyKey: "kubernetes.io/hostname"
             containers:
                 - name: heisenbridge
                   image: hif1/heisenbridge:1.15.3
                   imagePullPolicy: IfNotPresent
-                  args:
-                      [
-                          "-c",
-                          "/data/heisenbridge.yaml",
-                          "--listen-address",
-                          "0.0.0.0",
-                          "https://matrix.midnightthoughts.space",
-                          "-v"
-                      ]
+                  args: ["-c", "/data/heisenbridge.yaml", "--listen-address", "0.0.0.0", "https://matrix.midnightthoughts.space",
+                    "-v"]
                   resources:
-                      limits: {}
-                      requests:
-                          memory: "344Mi"
-                          cpu: "252m"
+                    limits: {}
+                    requests:
+                        memory: "344Mi"
+                        cpu: "252m"
                   securityContext:
-                      runAsUser: 1000
-                      runAsGroup: 1000
-                      readOnlyRootFilesystem: true
+                    runAsUser: 1000
+                    runAsGroup: 1000
+                    readOnlyRootFilesystem: true
                   ports:
-                      - containerPort: 9898
-                        name: appservice
-                        protocol: TCP
+                    - containerPort: 9898
+                      name: appservice
+                      protocol: TCP
                   volumeMounts:
-                      - name: config
-                        mountPath: "/data/heisenbridge.yaml"
-                        subPath: heisenbridge.yaml
-                        readOnly: true
-                      - mountPath: /tmp
-                        name: tmp
+                    - name: config
+                      mountPath: "/data/heisenbridge.yaml"
+                      subPath: heisenbridge.yaml
+                      readOnly: true
+                    - mountPath: /tmp
+                      name: tmp
                   livenessProbe:
-                      httpGet:
-                          path: /_matrix/mau/live
-                          port: appservice
-                          scheme: HTTP
+                    httpGet:
+                        path: /_matrix/mau/live
+                        port: appservice
+                        scheme: HTTP
                   readinessProbe:
-                      httpGet:
-                          path: /_matrix/mau/live
-                          port: appservice
-                          scheme: HTTP
+                    httpGet:
+                        path: /_matrix/mau/live
+                        port: appservice
+                        scheme: HTTP
                   startupProbe:
-                      httpGet:
-                          path: /_matrix/mau/live
-                          port: appservice
-                          scheme: HTTP
+                    httpGet:
+                        path: /_matrix/mau/live
+                        port: appservice
+                        scheme: HTTP
             volumes:
                 - name: config
                   secret:
-                      secretName: heisenbridge
+                    secretName: heisenbridge
                 - name: tmp
                   emptyDir:
-                      sizeLimit: 2048Mi
+                    sizeLimit: 2048Mi
