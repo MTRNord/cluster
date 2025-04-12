@@ -84,8 +84,8 @@ spec:
                         readOnly: true
             volumes:
                 - name: solanum-config
-                  configMap:
-                      name: solanum-config
+                  secret:
+                      secretName: solanum-config
                 - name: irc-certs
                   secret:
                       secretName: irc-certs
