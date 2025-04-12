@@ -68,24 +68,16 @@ spec:
                           path: /_matrix/mau/live
                           port: appservice
                           scheme: HTTP
-                      initialDelaySeconds: 15
-                      periodSeconds: 10
                   readinessProbe:
                       httpGet:
-                          path: /_matrix/mau/ready
+                          path: /_matrix/mau/live
                           port: appservice
                           scheme: HTTP
-                      initialDelaySeconds: 15
-                      failureThreshold: 30
-                      periodSeconds: 10
                   startupProbe:
                       httpGet:
-                          path: /_matrix/mau/ready
+                          path: /_matrix/mau/live
                           port: appservice
                           scheme: HTTP
-                      initialDelaySeconds: 15
-                      failureThreshold: 30
-                      periodSeconds: 10
             volumes:
                 - name: config
                   secret:
