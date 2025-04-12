@@ -14,126 +14,102 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: irc-deployment
+    name: atheme
     labels:
-        app: irc
+        app: atheme
 spec:
     replicas: 1
     strategy:
         type: RollingUpdate
     selector:
         matchLabels:
-            app: irc
+            app: atheme
     template:
         metadata:
             labels:
-                app: irc
+                app: atheme
         spec:
             shareProcessNamespace: true
             containers:
-                - name: irc
-                  image: ghcr.io/ergochat/ergo:v2.15.0
-                  ports:
-                    - containerPort: 6697
-                      name: ircs
-                    - containerPort: 443
-                      name: websocket
-                  readinessProbe:
-                    tcpSocket:
-                        port: 6697
-                  livenessProbe:
-                    tcpSocket:
-                        port: 6697
+                - name: atheme
+                  image: ghcr.io/mtrnord/atheme:compat
+                  imagePullPolicy: Always
                   volumeMounts:
-                    - mountPath: /ircd/
-                      name: irc-config
-                      readOnly: true
-                    - mountPath: /ircd/tls
-                      name: irc-certs
-                      readOnly: true
-                    - mountPath: /ircd/db
-                      name: irc-db
-                  env:
-                    - name: ERGO__DATASTORE__MYSQL__PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: irc-db
-                            key: password
-                    - name: ERGO__ACCOUNTS__REGISTRATION__EMAIL_VERIFICATION__MTA__USERNAME
-                      valueFrom:
-                        secretKeyRef:
-                            name: irc-db
-                            key: emailUser
-                    - name: ERGO__ACCOUNTS__REGISTRATION__EMAIL_VERIFICATION__MTA__PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: irc-db
-                            key: emailPassword
-                - name: config-reloader
-                  # image is based on busybox which includes inotifyd + pkill
-                  image: ghcr.io/ergochat/ergo
-                  command: ["/bin/sh"]
-                  args:
-                    - "-c"
-                    - |
-                      echo "Watching /ircd/";
-                      inotifyd - /ircd/:wMymndox /ircd/tls/:wMymndox | while read -r notifies ; do
-                        echo "$notifies";
-                        echo "notify received, sending SIGHUP";
-                        pkill -HUP ergo;
-                      done
-                      echo "Exiting.";
-                  volumeMounts:
-                    - mountPath: /ircd/
-                      name: irc-config
-                      readOnly: true
-                    - mountPath: /ircd/tls
-                      name: irc-certs
-                      readOnly: true
+                      - mountPath: /atheme/etc
+                        name: atheme-secrets
+                        readOnly: true
+                      - mountPath: /etc/msmtprc
+                        name: atheme-secrets
+                        subPath: msmtprc
+                        readOnly: true
+                      - mountPath: /atheme/etc/services.db
+                        name: atheme-pvc
             volumes:
-                - name: irc-config
+                - name: atheme-secrets
+                  secret:
+                      secretName: atheme-secrets
+                - name: atheme-pvc
+                  persistentVolumeClaim:
+                      claimName: atheme-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: solanum
+    labels:
+        app: solanum
+spec:
+    replicas: 1
+    strategy:
+        type: RollingUpdate
+    selector:
+        matchLabels:
+            app: solanum
+    template:
+        metadata:
+            labels:
+                app: solanum
+        spec:
+            shareProcessNamespace: true
+            containers:
+                - name: solanum
+                  image: ghcr.io/mtrnord/solanum:latest
+                  imagePullPolicy: Always
+                  volumeMounts:
+                      - mountPath: /usr/local/etc
+                        name: solanum-config
+                        readOnly: true
+                      - mountPath: /ircd/certs
+                        name: irc-certs
+                        readOnly: true
+            volumes:
+                - name: solanum-config
                   configMap:
-                    name: irc-config
+                      name: solanum-config
                 - name: irc-certs
                   secret:
-                    secretName: irc-certs
-                - name: irc-db
-                  persistentVolumeClaim:
-                    claimName: irc-db
+                      secretName: irc-certs
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: irc
+    name: solanum
     labels:
-        app: irc
+        app: solanum
 spec:
     type: ClusterIP
     ports:
         - name: ircs
           port: 6697
           targetPort: 6697
-        - name: websockets
-          port: 443
-          targetPort: 443
+        - name: irc
+          port: 6667
+          targetPort: 6667
+        - name: atheme
+          port: 6666
+          targetPort: 6666
     selector:
-        app: irc
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-    name: irc
-    namespace: irc
-spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - irc.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: irc
-              port: 443
+        app: solanum
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -149,8 +125,8 @@ spec:
           sectionName: ircs
     rules:
         - backendRefs:
-            - name: irc
-              port: 6697
+              - name: solanum
+                port: 6697
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
@@ -162,18 +138,15 @@ spec:
         - group: gateway.networking.k8s.io
           kind: TCPRoute
           name: ircs
-        - group: gateway.networking.k8s.io
-          kind: HTTPRoute
-          name: irc
     proxyProtocol:
         version: "V2"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: irc-db
+    name: atheme-db
     labels:
-        app: irc
+        app: atheme
 spec:
     storageClassName: ceph-filesystem
     accessModes:

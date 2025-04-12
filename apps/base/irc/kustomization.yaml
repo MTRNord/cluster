@@ -3,10 +3,12 @@ kind: Kustomization
 namespace: irc
 resources:
     - resources.yaml
-configMapGenerator:
-    - name: irc-config
-      options:
-        disableNameSuffixHash: true
+secretGenerator:
+    - name: atheme-secrets
       files:
-        - files/ircd.motd
-        - files/ircd.yaml
+        - msmtprc=files/msmtprc
+        - atheme.conf=files/atheme.conf
+        - atheme.motd=files/atheme.motd
+    - name: solanum-config
+      files:
+        - ircd.conf=files/ircd.conf
