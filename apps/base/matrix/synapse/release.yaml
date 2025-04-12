@@ -56,7 +56,7 @@ spec:
             pullSecrets:
                 - name: ghcr-pull
         extraConfig:
-            notify_appservices_from_worker: appservices
+            #notify_appservices_from_worker: appservices
             enable_authenticated_media: true
             stream_writers:
                 events: event_persister
@@ -102,13 +102,13 @@ spec:
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
                   config:
-                    broken_servers:
-                        #- matrix.org
-                        - matrix.im
-                        - funami.tech
-                        - suicideserver.net
-                        - cuteness-overdose.com
-                        - xmr.se
+                      broken_servers:
+                          #- matrix.org
+                          - matrix.im
+                          - funami.tech
+                          - suicideserver.net
+                          - cuteness-overdose.com
+                          - xmr.se
         persistence:
             enabled: true
             size: 20Gi
@@ -146,7 +146,7 @@ spec:
                       emptyDir: {}
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:2QSYYvHXW7uB923R,iv:cptJJgIQAASjlRc7O9eSzaqyXGAuCHW+lmAVzZG21tE=,tag:cBhL/Z14rgUMp0HAHmNtsQ==,type:str]
+                          secretName: ENC[AES256_GCM,data:2QSYYvHXW7uB923R,iv:cptJJgIQAASjlRc7O9eSzaqyXGAuCHW+lmAVzZG21tE=,tag:cBhL/Z14rgUMp0HAHmNtsQ==,type:str]
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -164,7 +164,7 @@ spec:
                 extraCommands:
                     - ENC[AES256_GCM,data:lHfyXA8R2ryLjvz/mOm6w7Hw6Aiy0RJd0VuMwLs7UMH9zrZhIM34xBntwnn+mK0G3YGFm55mtM1I1MANZ4QsAU8N3zeUk3xawsFV4zjYGgzEcIH2pUByf/jtpd3tOMRlLVz+Ugv5x4zLEaYKOEOHy0oHz1IWypqG5f33dfv8h+QbC8EtEbffR3YQg0Fi07AmnLAvx2bHBl7S7N6ZEg==,iv:fQAEqVV3kFB6U3zCcfqas4kzpYrxyVb4V8iscDNx8q4=,tag:9snnWrEUxi3LFd+VmAhMWQ==,type:str]
                 extraConfig:
-                    notify_appservices_from_worker: appservices
+                    #notify_appservices_from_worker: appservices
                     enable_authenticated_media: true
                     event_cache_size: 30K
                     caches:
@@ -179,11 +179,11 @@ spec:
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
                           config:
-                            broken_servers:
-                                #- matrix.org
-                                - matrix.im
-                                - funami.tech
-                                - suicideserver.net
+                              broken_servers:
+                                  #- matrix.org
+                                  - matrix.im
+                                  - funami.tech
+                                  - suicideserver.net
             federation_reader:
                 resources:
                     requests:
@@ -309,7 +309,7 @@ spec:
                 enabled: true
                 generic: true
             appservice:
-                enabled: true
+                enabled: false
                 name: appservices
                 generic: true
             federation_sender_1:
@@ -365,7 +365,7 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:8/VDnB+X6KWulTcd,iv:tSkZJtHVZj505D+f9/+BY0cM1Q0369Es49ACxOn2ce0=,tag:fXwKeUwxnVUOXxF6vpjRcg==,type:str]
+                      secretName: ENC[AES256_GCM,data:8/VDnB+X6KWulTcd,iv:tSkZJtHVZj505D+f9/+BY0cM1Q0369Es49ACxOn2ce0=,tag:fXwKeUwxnVUOXxF6vpjRcg==,type:str]
             extraVolumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -415,16 +415,16 @@ spec:
                 - matrix.midnightthoughts.space
             csPaths:
                 - backendRefs:
-                    - kind: Service
-                      name: mas
-                      port: 8080
+                      - kind: Service
+                        name: mas
+                        port: 8080
                   matches:
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/.*/(login|logout|refresh).*
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/.*/(login|logout|refresh).*
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
         ingress:
             enabled: false
 sops:
@@ -435,13 +435,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5aW9udGhOT3hJbzZGVTR4
-            bENnaHRRZ0c5OVYwTElzbDQ2WTJtaGZvaUFBCndWM1l3ekY2RkJWeHNkNXByL2NY
-            ZTFwZkZicWNkNmF3T2pPVy9UcVl4QmMKLS0tIHdWd0xnK1YrUFNYSU9pODUvdGFQ
-            K1crb3VHMWI4aHhrWnZpNURrOEtIWmMKjTTeR3ji95bdKAq+tYay0K13tCl2gk/0
-            2yzNLjRS/Gaq+kv42aTziLMggquysFaYI6zTulhHEUoaL8SVTl+dOg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5aW9udGhOT3hJbzZGVTR4
+              bENnaHRRZ0c5OVYwTElzbDQ2WTJtaGZvaUFBCndWM1l3ekY2RkJWeHNkNXByL2NY
+              ZTFwZkZicWNkNmF3T2pPVy9UcVl4QmMKLS0tIHdWd0xnK1YrUFNYSU9pODUvdGFQ
+              K1crb3VHMWI4aHhrWnZpNURrOEtIWmMKjTTeR3ji95bdKAq+tYay0K13tCl2gk/0
+              2yzNLjRS/Gaq+kv42aTziLMggquysFaYI6zTulhHEUoaL8SVTl+dOg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-04-12T16:00:10Z"
     mac: ENC[AES256_GCM,data:H2ZGm47kIpb063op6ImlglVcPzhTxZNHOqXp4HHhgxrHbDvDTL867AC36Q02p3+pfdervAFVAHzKgPSWsTEppSxGlePAVULOFhU7NsqdD9e/RJ7LOC2MsNGSKWvleEqkTIDG6kKYnXZ1Ww9p89vqi1IAxMflKQu0fIHHYUj8JSc=,iv:IufnoMRNu89h8EfGNDTlA4yQHRW51/ArIaqeR2Abqzk=,tag:hOA+wJjaa5Bfb/QDX6KRFw==,type:str]
     pgp: []
