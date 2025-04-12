@@ -35,22 +35,22 @@ spec:
                   image: ghcr.io/mtrnord/atheme:contrib
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /atheme/etc
-                        name: atheme-secrets
-                        readOnly: true
-                      - mountPath: /etc/msmtprc
-                        name: atheme-secrets
-                        subPath: msmtprc
-                        readOnly: true
-                      - mountPath: /atheme/etc/services.db
-                        name: atheme-pvc
+                    - mountPath: /atheme/etc
+                      name: atheme-secrets
+                      readOnly: true
+                    - mountPath: /etc/msmtprc
+                      name: atheme-secrets
+                      subPath: msmtprc
+                      readOnly: true
+                    - mountPath: /atheme/etc/services.db
+                      name: atheme-pvc
             volumes:
                 - name: atheme-secrets
                   secret:
-                      secretName: atheme-secrets
+                    secretName: atheme-secrets
                 - name: atheme-pvc
                   persistentVolumeClaim:
-                      claimName: atheme-db
+                    claimName: atheme-db
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -76,23 +76,23 @@ spec:
                   image: ghcr.io/mtrnord/solanum:latest
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /usr/local/etc
-                        name: solanum-config
-                        readOnly: true
-                      - mountPath: /ircd/certs
-                        name: irc-certs
-                        readOnly: true
-                      - mountPath: /usr/local/logs
-                        name: logs
+                    - mountPath: /usr/local/etc
+                      name: solanum-config
+                      readOnly: true
+                    - mountPath: /ircd/certs
+                      name: irc-certs
+                      readOnly: true
+                    - mountPath: /usr/local/logs
+                      name: logs
             volumes:
                 - name: solanum-config
                   secret:
-                      secretName: solanum-config
+                    secretName: solanum-config
                 - name: irc-certs
                   secret:
-                      secretName: irc-certs
+                    secretName: irc-certs
                 - name: logs
-                    emptyDir: {}
+                  emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -129,8 +129,8 @@ spec:
           sectionName: ircs
     rules:
         - backendRefs:
-              - name: solanum
-                port: 6697
+            - name: solanum
+              port: 6697
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
