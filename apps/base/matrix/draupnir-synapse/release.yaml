@@ -34,6 +34,7 @@ spec:
             use_presence: false
             app_service_config_files:
                 - /data/draupnir-registration.yaml
+            notify_appservices_from_worker: appservices
             stream_writers:
                 events: event_persister
             run_background_tasks_on: background_worker
@@ -110,7 +111,7 @@ spec:
                       emptyDir: {}
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:m7x2Z3oCmA6xIRqbkrccx91eNA==,iv:TsKqYTJLDiFtnH0TmLOsFLlwEdNg1r8hJYZdkhtWOGo=,tag:0SXGKKpLh0yUSHcqQ+aKcg==,type:str]
+                          secretName: ENC[AES256_GCM,data:m7x2Z3oCmA6xIRqbkrccx91eNA==,iv:TsKqYTJLDiFtnH0TmLOsFLlwEdNg1r8hJYZdkhtWOGo=,tag:0SXGKKpLh0yUSHcqQ+aKcg==,type:str]
                 extraConfig:
                     opentracing:
                         enabled: false
@@ -324,7 +325,7 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:aVOK2h6KTIKNX8Ypa+AF2UOITA==,iv:PIyZ94Tfr84QUqut2oFu09bYRGwJiKpEpfBmWtQZNXE=,tag:QZflZ3hovkN5a1Bs5S4oMg==,type:str]
+                      secretName: ENC[AES256_GCM,data:aVOK2h6KTIKNX8Ypa+AF2UOITA==,iv:PIyZ94Tfr84QUqut2oFu09bYRGwJiKpEpfBmWtQZNXE=,tag:QZflZ3hovkN5a1Bs5S4oMg==,type:str]
             ## Liveness probe configuration to use
             ##
             livenessProbe:
@@ -397,13 +398,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2dFpjM1lmcllpR0RKdXdv
-            bTAydDBWbVRoRXhDUjRwc0FxcjdNU1VNalNJCjcwWE9mQnUydU9QdGZNVWRvSk5k
-            NWRiY1diZy9XRkgxaEgycVp5ZHgyQlkKLS0tIFNtbFJRdm5lMklZUS9FL0xrMW5F
-            RUwrQmhKTlRLVjk3QlRxQ3pUb3pEMHcKRT/WEzTcOmlzlvMT5ddT82d8inRAgvyQ
-            qom+xJO9SM2jcej4kl+0cMJ8zqsrXmw7PukTLjKXOh6egmw+p6qMpQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2dFpjM1lmcllpR0RKdXdv
+              bTAydDBWbVRoRXhDUjRwc0FxcjdNU1VNalNJCjcwWE9mQnUydU9QdGZNVWRvSk5k
+              NWRiY1diZy9XRkgxaEgycVp5ZHgyQlkKLS0tIFNtbFJRdm5lMklZUS9FL0xrMW5F
+              RUwrQmhKTlRLVjk3QlRxQ3pUb3pEMHcKRT/WEzTcOmlzlvMT5ddT82d8inRAgvyQ
+              qom+xJO9SM2jcej4kl+0cMJ8zqsrXmw7PukTLjKXOh6egmw+p6qMpQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-01-18T16:41:05Z"
     mac: ENC[AES256_GCM,data:bejkU903B5B+O8+zzTa0Rypwfq29N94yWBw9/kOf/XByJZYdsCtC6kYX6G/QLwPRRvKuONYEozAxqFbiTqkR1NVyzqDf8Oj+KEXtQBf3P0SY334yCmaeajHLlKm6kanD5NnpVSmX3BcuVfTGwQK3jZ+Kab+cDNu4/AGqw+6Vnxg=,iv:vg1mrpIUNny4WqqS666kM4yvZpI0TuL7ViSP+ib7HVM=,tag:JF0OdVZino0cP0+Bmx+slw==,type:str]
     pgp: []
