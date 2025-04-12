@@ -59,7 +59,7 @@ spec:
             extraData:
                 support:
                     admins:
-                        - email_address: support@nordgedanken.dev
+                        - email_address: support@midnightthoughts.space
                           role: admin
         image:
             tag: "v1.128.0"
@@ -374,6 +374,8 @@ spec:
         config:
             reportStats: true
             enableRegistration: false
+            extraMainListenerTypes:
+                - media
         gateway:
             parentRefs:
                 - name: envoy-gateway
