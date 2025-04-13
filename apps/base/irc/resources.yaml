@@ -34,27 +34,27 @@ spec:
                   image: ghcr.io/mtrnord/atheme:contrib
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /atheme/etc/atheme.conf
-                        name: atheme-secrets
-                        subPath: atheme.conf
-                        readOnly: true
-                      - mountPath: /atheme/etc/atheme.motd
-                        name: atheme-secrets
-                        subPath: atheme.motd
-                        readOnly: true
-                      - mountPath: /etc/msmtprc
-                        name: atheme-secrets
-                        subPath: msmtprc
-                        readOnly: true
-                      - mountPath: /atheme/etc/services.db
-                        name: atheme-pvc
+                    - mountPath: /atheme/etc/atheme.conf
+                      name: atheme-secrets
+                      subPath: atheme.conf
+                      readOnly: true
+                    - mountPath: /atheme/etc/atheme.motd
+                      name: atheme-secrets
+                      subPath: atheme.motd
+                      readOnly: true
+                    - mountPath: /etc/msmtprc
+                      name: atheme-secrets
+                      subPath: msmtprc
+                      readOnly: true
+                    - mountPath: /atheme/etc/services.db
+                      name: atheme-pvc
             volumes:
                 - name: atheme-secrets
                   secret:
-                      secretName: atheme-secrets
+                    secretName: atheme-secrets
                 - name: atheme-pvc
                   persistentVolumeClaim:
-                      claimName: atheme-db
+                    claimName: atheme-db
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -79,27 +79,23 @@ spec:
                   image: ghcr.io/mtrnord/solanum:latest
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /ircd/etc/ircd.conf
-                        name: solanum-config
-                        subPath: ircd.conf
-                        readOnly: true
-                      - mountPath: /ircd/certs
-                        name: irc-certs
-                        readOnly: true
-                      - mountPath: /usr/local/logs
-                        name: logs
-                      - mountPath: /ircd/etc
-                        name: ban-db
+                    - mountPath: /ircd/etc/ircd.conf
+                      name: solanum-config
+                      subPath: ircd.conf
+                      readOnly: true
+                    - mountPath: /ircd/certs
+                      name: irc-certs
+                      readOnly: true
+                    - mountPath: /usr/local/logs
+                      name: logs
             volumes:
                 - name: solanum-config
                   secret:
-                      secretName: solanum-config
+                    secretName: solanum-config
                 - name: irc-certs
                   secret:
-                      secretName: irc-certs
+                    secretName: irc-certs
                 - name: logs
-                  emptyDir: {}
-                - name: ban-db
                   emptyDir: {}
 ---
 apiVersion: v1
@@ -137,8 +133,8 @@ spec:
           sectionName: ircs
     rules:
         - backendRefs:
-              - name: solanum
-                port: 6697
+            - name: solanum
+              port: 6697
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
