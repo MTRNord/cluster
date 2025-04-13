@@ -19,9 +19,9 @@ metadata:
         app: atheme
 spec:
     securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
     replicas: 1
     strategy:
         type: RollingUpdate
@@ -33,6 +33,17 @@ spec:
             labels:
                 app: atheme
         spec:
+            initContainer:
+                - name: fix-permissions
+                  image: alpine:latest
+                  comamnd:
+                    - chown
+                    - -R
+                    - 10000:10000
+                    - /atheme/etc
+                  volumeMounts:
+                    - name: atheme-pvc
+                      mountPath: /atheme/etc
             containers:
                 - name: atheme
                   image: ghcr.io/mtrnord/atheme:contrib
