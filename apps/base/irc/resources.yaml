@@ -163,19 +163,6 @@ spec:
             - name: solanum
               port: 6697
 ---
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: BackendTrafficPolicy
-metadata:
-    name: enable-proxy-protocol-policy
-    namespace: irc
-spec:
-    targetRefs:
-        - group: gateway.networking.k8s.io
-          kind: TCPRoute
-          name: ircs
-    proxyProtocol:
-        version: "V2"
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
