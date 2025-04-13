@@ -37,41 +37,41 @@ spec:
                 - name: fix-permissions
                   image: alpine:latest
                   command:
-                      - chown
-                      - -R
-                      - 10000:10000
-                      - /atheme/etc
+                    - chown
+                    - -R
+                    - 10000:10000
+                    - /atheme/etc
                   volumeMounts:
-                      - name: atheme-pvc
-                        mountPath: /atheme/etc
+                    - name: atheme-pvc
+                      mountPath: /atheme/etc
             containers:
                 - name: atheme
                   image: ghcr.io/mtrnord/atheme:contrib
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /atheme/etc/atheme.conf
-                        name: atheme-secrets
-                        subPath: atheme.conf
-                        readOnly: true
-                      - mountPath: /atheme/etc/atheme.motd
-                        name: atheme-secrets
-                        subPath: atheme.motd
-                        readOnly: true
-                      - mountPath: /etc/msmtprc
-                        name: atheme-secrets
-                        subPath: msmtprc
-                        readOnly: true
-                      - mountPath: /atheme/etc
-                        name: atheme-pvc
+                    - mountPath: /atheme/etc/atheme.conf
+                      name: atheme-secrets
+                      subPath: atheme.conf
+                      readOnly: true
+                    - mountPath: /atheme/etc/atheme.motd
+                      name: atheme-secrets
+                      subPath: atheme.motd
+                      readOnly: true
+                    - mountPath: /etc/msmtprc
+                      name: atheme-secrets
+                      subPath: msmtprc
+                      readOnly: true
+                    - mountPath: /atheme/etc
+                      name: atheme-pvc
                   securityContext:
-                      allowPrivilegeEscalation: false
+                    allowPrivilegeEscalation: false
             volumes:
                 - name: atheme-secrets
                   secret:
-                      secretName: atheme-secrets
+                    secretName: atheme-secrets
                 - name: atheme-pvc
                   persistentVolumeClaim:
-                      claimName: atheme-db
+                    claimName: atheme-db
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -96,32 +96,32 @@ spec:
                   image: ghcr.io/mtrnord/solanum:latest
                   imagePullPolicy: Always
                   ports:
-                      - containerPort: 6697
-                        name: ircs
-                        protocol: TCP
-                      - containerPort: 6667
-                        name: irc
-                        protocol: TCP
-                      - containerPort: 6666
-                        name: atheme
-                        protocol: TCP
+                    - containerPort: 6697
+                      name: ircs
+                      protocol: TCP
+                    - containerPort: 6667
+                      name: irc
+                      protocol: TCP
+                    - containerPort: 6666
+                      name: atheme
+                      protocol: TCP
                   volumeMounts:
-                      - mountPath: /ircd/etc/ircd.conf
-                        name: solanum-config
-                        subPath: ircd.conf
-                        readOnly: true
-                      - mountPath: /ircd/certs
-                        name: irc-certs
-                        readOnly: true
-                      - mountPath: /usr/local/logs
-                        name: logs
+                    - mountPath: /ircd/etc/ircd.conf
+                      name: solanum-config
+                      subPath: ircd.conf
+                      readOnly: true
+                    - mountPath: /ircd/certs
+                      name: irc-certs
+                      readOnly: true
+                    - mountPath: /usr/local/logs
+                      name: logs
             volumes:
                 - name: solanum-config
                   secret:
-                      secretName: solanum-config
+                    secretName: solanum-config
                 - name: irc-certs
                   secret:
-                      secretName: irc-certs
+                    secretName: irc-certs
                 - name: logs
                   emptyDir: {}
 ---
@@ -160,8 +160,8 @@ spec:
           sectionName: ircs
     rules:
         - backendRefs:
-              - name: solanum
-                port: 6697
+            - name: solanum
+              port: 6697
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
