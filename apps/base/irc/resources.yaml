@@ -79,15 +79,16 @@ spec:
                   image: ghcr.io/mtrnord/solanum:latest
                   imagePullPolicy: Always
                   volumeMounts:
-                      - mountPath: /ircd/etc
+                      - mountPath: /ircd/etc/ircd.conf
                         name: solanum-config
+                        subPath: ircd.conf
                         readOnly: true
                       - mountPath: /ircd/certs
                         name: irc-certs
                         readOnly: true
                       - mountPath: /usr/local/logs
                         name: logs
-                      - mountPath: /ircd
+                      - mountPath: /ircd/etc
                         name: ban_db
             volumes:
                 - name: solanum-config
