@@ -18,6 +18,10 @@ metadata:
     labels:
         app: atheme
 spec:
+    securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
     replicas: 1
     strategy:
         type: RollingUpdate
@@ -48,6 +52,8 @@ spec:
                       readOnly: true
                     - mountPath: /atheme/etc
                       name: atheme-pvc
+                  securityContext:
+                    allowPrivilegeEscalation: false
             volumes:
                 - name: atheme-secrets
                   secret:
