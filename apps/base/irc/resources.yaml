@@ -89,7 +89,7 @@ spec:
                       - mountPath: /usr/local/logs
                         name: logs
                       - mountPath: /ircd/etc
-                        name: ban_db
+                        name: ban-db
             volumes:
                 - name: solanum-config
                   secret:
@@ -99,7 +99,7 @@ spec:
                       secretName: irc-certs
                 - name: logs
                   emptyDir: {}
-                - name: ban_db
+                - name: ban-db
                   emptyDir: {}
 ---
 apiVersion: v1
