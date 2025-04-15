@@ -102,19 +102,19 @@ spec:
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
                   config:
-                    broken_servers:
-                        #- matrix.org
-                        - matrix.im
-                        - funami.tech
-                        - suicideserver.net
-                        - cuteness-overdose.com
-                        - xmr.se
+                      broken_servers:
+                          #- matrix.org
+                          - matrix.im
+                          - funami.tech
+                          - suicideserver.net
+                          - cuteness-overdose.com
+                          - xmr.se
                 - module: synapse_rspamd.AntispamModule
                   config:
-                    dry_run: true
-                    required_score_threshold: 10
-                    rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                    rspamd_password: ENC[AES256_GCM,data:nVZtRZ52tPmM,iv:aWdVYu43nMW5maTr33dQjgkih0pUN3quJ/so0zj3M6k=,tag:0dbAjhj3piswZqGU55F+Ag==,type:str]
+                      dry_run: true
+                      required_score_threshold: 10
+                      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                      rspamd_password: ENC[AES256_GCM,data:nVZtRZ52tPmM,iv:aWdVYu43nMW5maTr33dQjgkih0pUN3quJ/so0zj3M6k=,tag:0dbAjhj3piswZqGU55F+Ag==,type:str]
         persistence:
             enabled: true
             size: 20Gi
@@ -152,11 +152,12 @@ spec:
                       emptyDir: {}
                     - name: local
                       emptyDir: {}
-                    - name: media-nonesense
-                      emptyDir: {}
+                    - name: media
+                      persistentVolumeClaim:
+                          claimName: matrix-synapse-v2
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:hE1N/AbvFSqjXFLz,iv:A3ES2chrmdZ2qyGzERuX+7E+XbqJcv5juMrH5Vo0alk=,tag:RKKBhOb8Vz1n8vmkFCL5tw==,type:str]
+                          secretName: ENC[AES256_GCM,data:hE1N/AbvFSqjXFLz,iv:A3ES2chrmdZ2qyGzERuX+7E+XbqJcv5juMrH5Vo0alk=,tag:RKKBhOb8Vz1n8vmkFCL5tw==,type:str]
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -170,7 +171,7 @@ spec:
                       mountPath: /tmp
                     - name: local
                       mountPath: /.local
-                    - name: media-nonesense
+                    - name: media
                       mountPath: /synapse/data
                     - name: configs
                       mountPath: /data
@@ -195,17 +196,17 @@ spec:
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
                           config:
-                            broken_servers:
-                                #- matrix.org
-                                - matrix.im
-                                - funami.tech
-                                - suicideserver.net
+                              broken_servers:
+                                  #- matrix.org
+                                  - matrix.im
+                                  - funami.tech
+                                  - suicideserver.net
                         - module: synapse_rspamd.AntispamModule
                           config:
-                            dry_run: true
-                            required_score_threshold: 10
-                            rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                            rspamd_password: ENC[AES256_GCM,data:2u/2kPMXwzr3,iv:xJ9qW+sFSOjGRzKvo/Wzl8SegAKzME8g60hZ/DTcJRY=,tag:Tcjr1/atx7nF7blXr976bg==,type:str]
+                              dry_run: true
+                              required_score_threshold: 10
+                              rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                              rspamd_password: ENC[AES256_GCM,data:2u/2kPMXwzr3,iv:xJ9qW+sFSOjGRzKvo/Wzl8SegAKzME8g60hZ/DTcJRY=,tag:Tcjr1/atx7nF7blXr976bg==,type:str]
             federation_reader:
                 resources:
                     requests:
@@ -391,7 +392,7 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:qwI6AM6thZmCXwj8,iv:RRKjpH+2Yl8HV+Ko1PFAB0enhtaEZMlx4uifH0kHUik=,tag:2fjwBLZ/5/PmsFBKdPNb8w==,type:str]
+                      secretName: ENC[AES256_GCM,data:qwI6AM6thZmCXwj8,iv:RRKjpH+2Yl8HV+Ko1PFAB0enhtaEZMlx4uifH0kHUik=,tag:2fjwBLZ/5/PmsFBKdPNb8w==,type:str]
             extraVolumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -447,16 +448,16 @@ spec:
                 - matrix.midnightthoughts.space
             csPaths:
                 - backendRefs:
-                    - kind: Service
-                      name: mas
-                      port: 8080
+                      - kind: Service
+                        name: mas
+                        port: 8080
                   matches:
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/.*/(login|logout|refresh).*
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/.*/(login|logout|refresh).*
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
         ingress:
             enabled: false
 sops:
@@ -467,13 +468,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNbDVTZmx3V1Y5UlRWZTE3
-            Q0ViK0hGVmxpZGwwUXFQbWtiajlybVZaZWxJCjkrVFVxalpRR2ZLaGVXaC8wSjl1
-            TitmeUpTTFJHelZzUS9neGJ5ZHBFZFUKLS0tIHdiUVpoSTVuLytMRXZ1NGNYVFFR
-            T3R1dWd6RHBBTE4ySVdLSVhGZDlTUGMKGGMUco+38W7lwVjoavuXDLhBsZChmLoC
-            boKs8DHN2iZo6N/bJjLLDmpmj5tTI4z3VavuaM/boj4gNKDDO+MWcQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNbDVTZmx3V1Y5UlRWZTE3
+              Q0ViK0hGVmxpZGwwUXFQbWtiajlybVZaZWxJCjkrVFVxalpRR2ZLaGVXaC8wSjl1
+              TitmeUpTTFJHelZzUS9neGJ5ZHBFZFUKLS0tIHdiUVpoSTVuLytMRXZ1NGNYVFFR
+              T3R1dWd6RHBBTE4ySVdLSVhGZDlTUGMKGGMUco+38W7lwVjoavuXDLhBsZChmLoC
+              boKs8DHN2iZo6N/bJjLLDmpmj5tTI4z3VavuaM/boj4gNKDDO+MWcQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-04-15T12:24:10Z"
     mac: ENC[AES256_GCM,data:AcjuvvVDrG5cxxdE9fboTgN9SEvGepLVWZu5UPRbvbxEco9V4zzWZZw7S9VVEHYWXXRSjVxr4g1TWn9R6LDWj0zkAAkl8WmRSq4/kQGOGnGO+WSt9nc+a4OafqEhm1fHHgkMrGUP56XBLBtuKYmWwZtQ1DLJW9NqhbATc31c7dc=,iv:0jdf66I3HxeIjTnUY7oJt37F7qw42y4rwSkUOb9HNTM=,tag:/AN1XxF7Jw6d3P0YS5xzGQ==,type:str]
     pgp: []
