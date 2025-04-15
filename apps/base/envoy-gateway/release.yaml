@@ -466,6 +466,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: irc.midnightthoughts.space
+        - name: https-midnightthoughts-rspamd-matrix
+          protocol: HTTPS
+          hostname: "rspamd.matrix.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: rspamd.matrix.midnightthoughts.space
         - name: https-nordgedanken-root
           protocol: HTTPS
           hostname: "nordgedanken.dev"

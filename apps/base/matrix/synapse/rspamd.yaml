@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: rspamd-matrix
+    namespace: matrix
+spec:
+    resources:
+        requests:
+            storage: 1Gi
+    storageClassName: ceph-filesystem
+    volumeMode: Filesystem
+    accessModes:
+        - ReadWriteMany
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: rspamd-matrix
+    namespace: matrix
+spec:
+    selector:
+        matchLabels:
+            app: rspamd-matrix
+    template:
+        metadata:
+            labels:
+                app: rspamd-matrix
+        spec:
+            securityContext:
+                fsUser: 11333
+                fsGroup: 11333
+                runAsUser: 11333
+            containers:
+                - name: rspamd-matrix
+                  image: ghcr.io/rspamd/rspamd-docker:latest
+                  resources:
+                      limits:
+                          memory: "128Mi"
+                          cpu: "500m"
+                  ports:
+                      - containerPort: 11333
+                        name: rspamd-normal-worker
+                      - containerPort: 11334
+                        name: rspamd-control-worker
+                  volumeMounts:
+                      - name: rspamd-matrix
+                        mountPath: /var/lib/rspamd
+                      - name: greylist
+                        mountPath: /etc/rspamd/local.d/greylist.conf
+                        subPath: greylist.conf
+                      - name: classifier-bayes
+                        mountPath: /etc/rspamd/local.d/classifier-bayes.conf
+                        subPath: classifier-bayes.conf
+                      - name: options
+                        mountPath: /etc/rspamd/local.d/options.inc
+                        subPath: options.inc
+                      - name: worker-controller
+                        mountPath: /etc/rspamd/local.d/worker-controller.inc
+                        subPath: worker-controller.inc
+            volumes:
+                - name: rspamd-matrix
+                  persistentVolumeClaim:
+                      claimName: rspamd-matrix
+                - name: rspamd-config
+                  configMap:
+                      name: rspamd-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: rspamd-matrix
+    namespace: matrix
+spec:
+    selector:
+        app: rspamd-matrix
+    ports:
+        - port: 11333
+          targetPort: 11333
+          name: rspamd-normal-worker
+        - port: 11334
+          targetPort: 11334
+          name: rspamd-control-worker
+    type: ClusterIP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: rspamd-matrix
+    namespace: matrix
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - rspamd.matrix.midnightthoughts.space
+    rules:
+        - backendRefs:
+              - name: rspamd-matrix
+                port: 11334
+          timeouts:
+              request: 240s
+              backendRequest: 0s
