@@ -43,6 +43,9 @@ spec:
                   ports:
                       - containerPort: 3310
                         name: clamav
+                  volumeMounts:
+                      - name: run-clamav
+                        mountPath: /run/clamav
                 - name: rspamd-matrix
                   image: ghcr.io/rspamd/rspamd-docker:latest
                   resources:
@@ -94,6 +97,8 @@ spec:
                 - name: rspamd-config
                   configMap:
                       name: rspamd-config
+                - name: run-clamav
+                  emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
