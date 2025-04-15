@@ -1,1 +1,1 @@
-enable_password = "$2$ea1s7s5n5amkgb8zukzq656xyut53148$5qwo5k48fa1rzgkgr8cukdk9p4x3wip9oer48um6p8p6eerprcyb";
+password = "$2$ea1s7s5n5amkgb8zukzq656xyut53148$5qwo5k48fa1rzgkgr8cukdk9p4x3wip9oer48um6p8p6eerprcyb";
