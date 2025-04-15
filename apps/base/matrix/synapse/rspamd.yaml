@@ -31,45 +31,69 @@ spec:
                 fsGroup: 11333
                 runAsUser: 11333
             containers:
+                - name: rspamd-clamav
+                  image: clamav/clamav:1.4
+                  resources:
+                      requests:
+                          memory: "3000Mi"
+                          cpu: "500m"
+                      limits:
+                          memory: "4000Mi"
+                          cpu: "500m"
+                  ports:
+                      - containerPort: 3310
+                        name: clamav
                 - name: rspamd-matrix
                   image: ghcr.io/rspamd/rspamd-docker:latest
                   resources:
-                    limits:
-                        memory: "1000Mi"
-                        cpu: "500m"
+                      limits:
+                          memory: "1000Mi"
+                          cpu: "500m"
                   ports:
-                    - containerPort: 11333
-                      name: normal-worker
-                    - containerPort: 11334
-                      name: control-worker
+                      - containerPort: 11333
+                        name: normal-worker
+                      - containerPort: 11334
+                        name: control-worker
                   volumeMounts:
-                    - name: rspamd-matrix
-                      mountPath: /var/lib/rspamd
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/greylist.conf
-                      subPath: greylist.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/classifier-bayes.conf
-                      subPath: classifier-bayes.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/options.inc
-                      subPath: options.inc
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/worker-controller.inc
-                      subPath: worker-controller.inc
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/history_redis.conf
-                      subPath: history_redis.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/dmarc.conf
-                      subPath: dmarc.conf
+                      - name: rspamd-matrix
+                        mountPath: /var/lib/rspamd
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/actions.conf
+                        subPath: actions.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/antivirus.conf
+                        subPath: antivirus.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/classifier-bayes.conf
+                        subPath: classifier-bayes.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/dmarc.conf
+                        subPath: dmarc.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/greylist.conf
+                        subPath: greylist.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/hfilter.conf
+                        subPath: hfilter.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/history_redis.conf
+                        subPath: history_redis.conf
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/logging.inc
+                        subPath: logging.inc
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/options.inc
+                        subPath: options.inc
+                      - name: rspamd-config
+                        mountPath: /etc/rspamd/local.d/worker-controller.inc
+                        subPath: worker-controller.inc
             volumes:
                 - name: rspamd-matrix
                   persistentVolumeClaim:
-                    claimName: rspamd-matrix
+                      claimName: rspamd-matrix
                 - name: rspamd-config
                   configMap:
-                    name: rspamd-config
+                      name: rspamd-config
 ---
 apiVersion: v1
 kind: Service
@@ -101,8 +125,8 @@ spec:
         - rspamd.matrix.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: rspamd-matrix
-              port: 11334
+              - name: rspamd-matrix
+                port: 11334
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
