@@ -39,22 +39,22 @@ spec:
                           cpu: "500m"
                   ports:
                       - containerPort: 11333
-                        name: rspamd-normal-worker
+                        name: normal-worker
                       - containerPort: 11334
-                        name: rspamd-control-worker
+                        name: control-worker
                   volumeMounts:
                       - name: rspamd-matrix
                         mountPath: /var/lib/rspamd
-                      - name: greylist
+                      - name: rspamd-config
                         mountPath: /etc/rspamd/local.d/greylist.conf
                         subPath: greylist.conf
-                      - name: classifier-bayes
+                      - name: rspamd-config
                         mountPath: /etc/rspamd/local.d/classifier-bayes.conf
                         subPath: classifier-bayes.conf
-                      - name: options
+                      - name: rspamd-config
                         mountPath: /etc/rspamd/local.d/options.inc
                         subPath: options.inc
-                      - name: worker-controller
+                      - name: rspamd-config
                         mountPath: /etc/rspamd/local.d/worker-controller.inc
                         subPath: worker-controller.inc
             volumes:
@@ -76,10 +76,10 @@ spec:
     ports:
         - port: 11333
           targetPort: 11333
-          name: rspamd-normal-worker
+          name: normal-worker
         - port: 11334
           targetPort: 11334
-          name: rspamd-control-worker
+          name: control-worker
     type: ClusterIP
 ---
 apiVersion: gateway.networking.k8s.io/v1
