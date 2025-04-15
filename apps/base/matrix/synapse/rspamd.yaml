@@ -12,6 +12,20 @@ spec:
     accessModes:
         - ReadWriteMany
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: rspamd-clamav
+    namespace: matrix
+spec:
+    resources:
+        requests:
+            storage: 1Gi
+    storageClassName: ceph-filesystem
+    volumeMode: Filesystem
+    accessModes:
+        - ReadWriteMany
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,7 +42,7 @@ spec:
         spec:
             containers:
                 - name: rspamd-clamav
-                  image: clamav/clamav-debian:1.4
+                  image: clamav/clamav-debian:1.4_base
                   resources:
                       requests:
                           memory: "1000Mi"
@@ -42,9 +56,9 @@ spec:
                   volumeMounts:
                       - name: run-clamav
                         mountPath: /run/clamav
+                      - name: rspamd-clamav
+                        mountPath: /var/lib/clamav
                   env:
-                      - name: CLAMAV_NO_FRESHCLAMD
-                        value: "true"
                       - name: CLAMAV_NO_MILTERD
                         value: "true"
                   readinessProbe:
@@ -111,6 +125,9 @@ spec:
                 - name: rspamd-matrix
                   persistentVolumeClaim:
                       claimName: rspamd-matrix
+                - name: rspamd-clamav
+                  persistentVolumeClaim:
+                      claimName: rspamd-clamav
                 - name: rspamd-config
                   configMap:
                       name: rspamd-config
