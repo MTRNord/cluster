@@ -57,6 +57,9 @@ spec:
                     - name: rspamd-config
                       mountPath: /etc/rspamd/local.d/worker-controller.inc
                       subPath: worker-controller.inc
+                    - name: rspamd-config
+                      mountPath: /etc/rspamd/local.d/history_redis.conf
+                      subPath: history_redis.conf
             volumes:
                 - name: rspamd-matrix
                   persistentVolumeClaim:
