@@ -26,10 +26,6 @@ spec:
             labels:
                 app: rspamd-matrix
         spec:
-            securityContext:
-                runAsGroup: 11333
-                fsGroup: 11333
-                runAsUser: 11333
             containers:
                 - name: rspamd-clamav
                   image: clamav/clamav-debian:1.4
