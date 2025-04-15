@@ -184,19 +184,19 @@ spec:
         persistent_volume_claims:
             mail-config:
                 accessModes:
-                    - ReadWriteMany
+                    - ReadWriteOnce
                 storageClass: ceph-filesystem
             mail-data:
                 accessModes:
-                    - ReadWriteMany
+                    - ReadWriteOnce
                 storageClass: ceph-filesystem
             mail-state:
                 accessModes:
-                    - ReadWriteMany
+                    - ReadWriteOnce
                 storageClass: ceph-filesystem
             mail-log:
                 accessModes:
-                    - ReadWriteMany
+                    - ReadWriteOnce
                 storageClass: ceph-filesystem
         rspamd:
             ingress:
