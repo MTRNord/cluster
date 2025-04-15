@@ -42,6 +42,24 @@ spec:
                   volumeMounts:
                       - name: run-clamav
                         mountPath: /run/clamav
+                  env:
+                      - name: CLAMAV_NO_FRESHCLAMD
+                        value: "true"
+                      - name: CLAMAV_NO_MILTERD
+                        value: "true"
+                  readinessProbe:
+                      exec:
+                          command:
+                              - "/usr/local/bin/clamdcheck.sh"
+                  livenessProbe:
+                      exec:
+                          command:
+                              - "/usr/local/bin/clamdcheck.sh"
+                  startupProbe:
+                      exec:
+                          command:
+                              - "/usr/local/bin/clamdcheck.sh"
+
                 - name: rspamd-matrix
                   image: ghcr.io/rspamd/rspamd-docker:latest
                   resources:
