@@ -39,6 +39,13 @@ spec:
             - ports:
                 - port: "9000"
         - toEndpoints:
+            - matchLabels:k8s:
+                app: rspamd-matrix
+                io.kubernetes.pod.namespace: matrix
+          toPorts:
+            - ports:
+                - port: "11334"
+        - toEndpoints:
             - matchLabels:
                 k8s:app: draupnir-synapse-keydb
                 io.kubernetes.pod.namespace: matrix
