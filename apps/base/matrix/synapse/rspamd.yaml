@@ -60,6 +60,9 @@ spec:
                     - name: rspamd-config
                       mountPath: /etc/rspamd/local.d/history_redis.conf
                       subPath: history_redis.conf
+                    - name: rspamd-config
+                      mountPath: /etc/rspamd/local.d/dmarc.conf
+                      subPath: dmarc.conf
             volumes:
                 - name: rspamd-matrix
                   persistentVolumeClaim:
