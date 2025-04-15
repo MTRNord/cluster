@@ -66,15 +66,15 @@ spec:
                           command:
                               - "/usr/local/bin/clamdcheck.sh"
                       initialDelaySeconds: 15
-                      periodSeconds: 5
-                      failureThreshold: 5
+                      periodSeconds: 10
+                      failureThreshold: 10
                   livenessProbe:
                       exec:
                           command:
                               - "/usr/local/bin/clamdcheck.sh"
                       initialDelaySeconds: 15
-                      periodSeconds: 5
-                      failureThreshold: 5
+                      periodSeconds: 10
+                      failureThreshold: 10
 
                 - name: rspamd-matrix
                   image: ghcr.io/rspamd/rspamd-docker:latest
