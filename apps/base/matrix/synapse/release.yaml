@@ -109,14 +109,14 @@ spec:
                           - suicideserver.net
                           - cuteness-overdose.com
                           - xmr.se
-                - module: synapse_rspamd.AntispamModule
-                  config:
-                      dry_run: true
-                      required_score_threshold: 10
-                      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                      rspamd_password: ENC[AES256_GCM,data:oawyHMbChq7A,iv:PwIpJFtRpWVv7EIqssmdVRFJMKeIT03J9VNoD8LcGpU=,tag:MsYaPedvIxLKz2UiD8NS1Q==,type:str]
-                      local_server_address: matrix.midnightthoughts.space
-                      matrix_access_token: ENC[AES256_GCM,data:39s3mP9giCwVFslygyZuMIYwvQ9FRxlv2YYkwB5fuWdmQ0ATZ61NRDlx,iv:1ypgEQXrwzbJPkvc5oqFYdDz0JV4gQf6wflYN7yqHDQ=,tag:Dfui+n0hN8jgfr+f+slfjg==,type:str]
+                #- module: synapse_rspamd.AntispamModule
+                #  config:
+                #      dry_run: true
+                #      required_score_threshold: 10
+                #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                #      rspamd_password: ENC[AES256_GCM,data:oawyHMbChq7A,iv:PwIpJFtRpWVv7EIqssmdVRFJMKeIT03J9VNoD8LcGpU=,tag:MsYaPedvIxLKz2UiD8NS1Q==,type:str]
+                #      local_server_address: matrix.midnightthoughts.space
+                #      matrix_access_token: ENC[AES256_GCM,data:39s3mP9giCwVFslygyZuMIYwvQ9FRxlv2YYkwB5fuWdmQ0ATZ61NRDlx,iv:1ypgEQXrwzbJPkvc5oqFYdDz0JV4gQf6wflYN7yqHDQ=,tag:Dfui+n0hN8jgfr+f+slfjg==,type:str]
         persistence:
             enabled: true
             size: 20Gi
@@ -202,14 +202,14 @@ spec:
                                   - matrix.im
                                   - funami.tech
                                   - suicideserver.net
-                        - module: synapse_rspamd.AntispamModule
-                          config:
-                              dry_run: true
-                              required_score_threshold: 10
-                              rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                              rspamd_password: ENC[AES256_GCM,data:OZXUNW4g3AvV,iv:ZkNtB5dCnyDve0c9WI/E72YWqXyXtHFvnYAAf2TUz9Y=,tag:hYF/MwpEbtYMfOVe6zYlXg==,type:str]
-                              local_server_address: matrix.midnightthoughts.space
-                              matrix_access_token: ENC[AES256_GCM,data:MFfc6mlpCVg5KQH+ozXmTPFTX+0OjiIZjbn23cVS7SeqQuSqUhjkNxyy,iv:GUoRiYYAogBA4enHp/W+ZQvpkOyaixmd0hNm2gxp2o8=,tag:b6tDDnFpd/pYsrzXHEF0ig==,type:str]
+                        #- module: synapse_rspamd.AntispamModule
+                        #  config:
+                        #      dry_run: true
+                        #      required_score_threshold: 10
+                        #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                        #      rspamd_password: ENC[AES256_GCM,data:OZXUNW4g3AvV,iv:ZkNtB5dCnyDve0c9WI/E72YWqXyXtHFvnYAAf2TUz9Y=,tag:hYF/MwpEbtYMfOVe6zYlXg==,type:str]
+                        #      local_server_address: matrix.midnightthoughts.space
+                        #      matrix_access_token: ENC[AES256_GCM,data:MFfc6mlpCVg5KQH+ozXmTPFTX+0OjiIZjbn23cVS7SeqQuSqUhjkNxyy,iv:GUoRiYYAogBA4enHp/W+ZQvpkOyaixmd0hNm2gxp2o8=,tag:b6tDDnFpd/pYsrzXHEF0ig==,type:str]
             federation_reader:
                 resources:
                     requests:
