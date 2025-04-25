@@ -102,21 +102,21 @@ spec:
             modules:
                 - module: matrix_invitee_server_blocker.InviteeServerBlocker
                   config:
-                      broken_servers:
-                          #- matrix.org
-                          - matrix.im
-                          - funami.tech
-                          - suicideserver.net
-                          - cuteness-overdose.com
-                          - xmr.se
-                #- module: synapse_rspamd.AntispamModule
-                #  config:
-                #      dry_run: true
-                #      required_score_threshold: 10
-                #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                #      rspamd_password: ENC[AES256_GCM,data:oawyHMbChq7A,iv:PwIpJFtRpWVv7EIqssmdVRFJMKeIT03J9VNoD8LcGpU=,tag:MsYaPedvIxLKz2UiD8NS1Q==,type:str]
-                #      local_server_address: matrix.midnightthoughts.space
-                #      matrix_access_token: ENC[AES256_GCM,data:39s3mP9giCwVFslygyZuMIYwvQ9FRxlv2YYkwB5fuWdmQ0ATZ61NRDlx,iv:1ypgEQXrwzbJPkvc5oqFYdDz0JV4gQf6wflYN7yqHDQ=,tag:Dfui+n0hN8jgfr+f+slfjg==,type:str]
+                    broken_servers:
+                        #- matrix.org
+                        - matrix.im
+                        - funami.tech
+                        - suicideserver.net
+                        - cuteness-overdose.com
+                        - xmr.se
+                        #- module: synapse_rspamd.AntispamModule
+                        #  config:
+                        #      dry_run: true
+                        #      required_score_threshold: 10
+                        #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                        #      rspamd_password: ENC[AES256_GCM,data:oawyHMbChq7A,iv:PwIpJFtRpWVv7EIqssmdVRFJMKeIT03J9VNoD8LcGpU=,tag:MsYaPedvIxLKz2UiD8NS1Q==,type:str]
+                        #      local_server_address: matrix.midnightthoughts.space
+                        #      matrix_access_token: ENC[AES256_GCM,data:39s3mP9giCwVFslygyZuMIYwvQ9FRxlv2YYkwB5fuWdmQ0ATZ61NRDlx,iv:1ypgEQXrwzbJPkvc5oqFYdDz0JV4gQf6wflYN7yqHDQ=,tag:Dfui+n0hN8jgfr+f+slfjg==,type:str]
         persistence:
             enabled: true
             size: 20Gi
@@ -158,7 +158,7 @@ spec:
                       emptyDir: {}
                     - name: configs
                       secret:
-                          secretName: ENC[AES256_GCM,data:BRWm8EuHGNm6f1zo,iv:+Ntd/LiZOvuhx9b3PkmuWnj9uo1wPEmUFg2vcDGZtw0=,tag:TnvbjDY3tkjvr/NKU+1s+w==,type:str]
+                        secretName: ENC[AES256_GCM,data:BRWm8EuHGNm6f1zo,iv:+Ntd/LiZOvuhx9b3PkmuWnj9uo1wPEmUFg2vcDGZtw0=,tag:TnvbjDY3tkjvr/NKU+1s+w==,type:str]
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -197,19 +197,19 @@ spec:
                     modules:
                         - module: matrix_invitee_server_blocker.InviteeServerBlocker
                           config:
-                              broken_servers:
-                                  #- matrix.org
-                                  - matrix.im
-                                  - funami.tech
-                                  - suicideserver.net
-                        #- module: synapse_rspamd.AntispamModule
-                        #  config:
-                        #      dry_run: true
-                        #      required_score_threshold: 10
-                        #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                        #      rspamd_password: ENC[AES256_GCM,data:OZXUNW4g3AvV,iv:ZkNtB5dCnyDve0c9WI/E72YWqXyXtHFvnYAAf2TUz9Y=,tag:hYF/MwpEbtYMfOVe6zYlXg==,type:str]
-                        #      local_server_address: matrix.midnightthoughts.space
-                        #      matrix_access_token: ENC[AES256_GCM,data:MFfc6mlpCVg5KQH+ozXmTPFTX+0OjiIZjbn23cVS7SeqQuSqUhjkNxyy,iv:GUoRiYYAogBA4enHp/W+ZQvpkOyaixmd0hNm2gxp2o8=,tag:b6tDDnFpd/pYsrzXHEF0ig==,type:str]
+                            broken_servers:
+                                #- matrix.org
+                                - matrix.im
+                                - funami.tech
+                                - suicideserver.net
+                                #- module: synapse_rspamd.AntispamModule
+                                #  config:
+                                #      dry_run: true
+                                #      required_score_threshold: 10
+                                #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                                #      rspamd_password: ENC[AES256_GCM,data:OZXUNW4g3AvV,iv:ZkNtB5dCnyDve0c9WI/E72YWqXyXtHFvnYAAf2TUz9Y=,tag:hYF/MwpEbtYMfOVe6zYlXg==,type:str]
+                                #      local_server_address: matrix.midnightthoughts.space
+                                #      matrix_access_token: ENC[AES256_GCM,data:MFfc6mlpCVg5KQH+ozXmTPFTX+0OjiIZjbn23cVS7SeqQuSqUhjkNxyy,iv:GUoRiYYAogBA4enHp/W+ZQvpkOyaixmd0hNm2gxp2o8=,tag:b6tDDnFpd/pYsrzXHEF0ig==,type:str]
             federation_reader:
                 resources:
                     requests:
@@ -395,7 +395,7 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                      secretName: ENC[AES256_GCM,data:liAVBCfiT6zndP8J,iv:lDoxTSbrCj7BhojYqACrml8yLETtcEiBqe4dSm3KJao=,tag:Dm968GSNlyq4y8+7w6ZQXA==,type:str]
+                    secretName: ENC[AES256_GCM,data:liAVBCfiT6zndP8J,iv:lDoxTSbrCj7BhojYqACrml8yLETtcEiBqe4dSm3KJao=,tag:Dm968GSNlyq4y8+7w6ZQXA==,type:str]
             extraVolumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -451,16 +451,16 @@ spec:
                 - matrix.midnightthoughts.space
             csPaths:
                 - backendRefs:
-                      - kind: Service
-                        name: mas
-                        port: 8080
+                    - kind: Service
+                      name: mas
+                      port: 8080
                   matches:
-                      - path:
-                            type: RegularExpression
-                            value: /_matrix/client/.*/(login|logout|refresh).*
-                      - path:
-                            type: RegularExpression
-                            value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
+                    - path:
+                        type: RegularExpression
+                        value: /_matrix/client/.*/(login|logout|refresh).*
+                    - path:
+                        type: RegularExpression
+                        value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
         ingress:
             enabled: false
 sops:
@@ -471,13 +471,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXU3VtVlk1bW5UMXZSODhF
-              M3diS2pJTW9DSHN5TEhTNUx1Mk1UQmR0dldBCkJuaVMwRkZwOHpMbXBpZWQxZXVZ
-              RW9nWk9PTGFTK25NZVE0WHM3dlJpaDgKLS0tIGVhamZzVE1XeThIaUtqZ2Z6WW9i
-              T0FvR2UxYnlHODh2ZFcyYnJaamJJUEkKLTvc5HOerlSqlTkzoc3HkyZ/798q5f4/
-              Hqe+nGSWkNAOeZVRj+Y3vt1HLnzcm17xd2gRkaA1JAVDCY7yRnguaA==
-              -----END AGE ENCRYPTED FILE-----
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXU3VtVlk1bW5UMXZSODhF
+            M3diS2pJTW9DSHN5TEhTNUx1Mk1UQmR0dldBCkJuaVMwRkZwOHpMbXBpZWQxZXVZ
+            RW9nWk9PTGFTK25NZVE0WHM3dlJpaDgKLS0tIGVhamZzVE1XeThIaUtqZ2Z6WW9i
+            T0FvR2UxYnlHODh2ZFcyYnJaamJJUEkKLTvc5HOerlSqlTkzoc3HkyZ/798q5f4/
+            Hqe+nGSWkNAOeZVRj+Y3vt1HLnzcm17xd2gRkaA1JAVDCY7yRnguaA==
+            -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-04-15T14:35:11Z"
     mac: ENC[AES256_GCM,data:LqgYl93u5Jq3bxijiHfUoEC6jmrlT30XySfGGQOSgLYg9RVDQNimCj4sibUbPz65KBgSfhR90R2uaE0112W2NCQY4QdOZZviEhW31XVQfTCrSaBwzZQ8/yJ5a1AV1EtwnbspuX9BRQxMtr4S/2xd+Nj+tcAmF3eIT0LhuLmkIXo=,iv:eWn0qIolTocOCnoy3lH836OU2fxPqc2rtwHJMEsKv8s=,tag:OryIGctRAmflHGH960WCnw==,type:str]
     pgp: []
