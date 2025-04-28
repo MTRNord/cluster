@@ -149,14 +149,14 @@ spec:
                   livenessProbe:
                       httpGet:
                           path: /
-                          port: appservice
+                          port: web
                           scheme: HTTP
                       initialDelaySeconds: 15
                       periodSeconds: 10
                   startupProbe:
                       httpGet:
                           path: /
-                          port: appservice
+                          port: web
                       initialDelaySeconds: 15
                       failureThreshold: 30
                       periodSeconds: 10
