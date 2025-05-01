@@ -26,3 +26,14 @@ spec:
     url: https://gitlab.com/MTRNord/ananace-personal-charts.git
     ref:
         branch: MTRNord/gw-api-version-bumped
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+    name: livekit-nordeck
+    namespace: matrix
+spec:
+    interval: 1h
+    url: https://github.com/nordeck/livekit-helm.git
+    ref:
+        branch: nic/feat/NEO-1240

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: livekit-keydb
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: livekit-keydb
+    template:
+        metadata:
+            labels:
+                app: livekit-keydb
+        spec:
+            containers:
+                - name: livekit-keydb
+                  image: eqalpha/keydb:latest
+                  command: ["keydb-server"]
+                  args: ["/etc/keydb/keydb.conf", "--protected-mode", "no"]
+                  imagePullPolicy: Always
+                  ports:
+                    - containerPort: 6379
+                  resources:
+                    requests:
+                        memory: "128Mi"
+                        cpu: "100m"
+                    limits: {}
+            tolerations:
+                - key: arch
+                  operator: Equal
+                  value: arm64
+                  effect: NoSchedule
+            livenessProbe:
+                exec:
+                    command:
+                        - sh
+                        - -c
+                        - keydb-cli ping
+                initialDelaySeconds: 10
+                timeoutSeconds: 5
+            readinessProbe:
+                exec:
+                    command:
+                        - sh
+                        - -c
+                        - keydb-cli ping
+                initialDelaySeconds: 10
+                timeoutSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: livekit-keydb
+spec:
+    selector:
+        app: livekit-keydb
+    ports:
+        - name: redis
+          protocol: TCP
+          port: 6379
+          targetPort: 6379

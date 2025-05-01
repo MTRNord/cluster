@@ -1,0 +1,154 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+    name: fake
+spec:
+    controller: k8s.io/fake-ingrerss
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBweS9CNXQ5TC9qM3RlSU83
+            dGlsN1RWZjNsZFFoTHhtbG05WDdyQ29HV3lBClhPbVJFeUM2aGoxUmNObU5lTGNU
+            ejVxcDVzN09JWWNyMElWNmxSVjVxclEKLS0tIFFXR281U2E2TTR5WHd5cXE2T3NZ
+            TTdaSFBEYURPa3prQTRpbmszbFExYlkKXiBDhaJcdxS+4MVB1P420pkjRaxNn2ir
+            pVtnymmBxwOIpILJ2nyyFPS0LK7Dmw9M4xTFmwOuhjDflM+fslnKFw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-01T21:41:59Z"
+    mac: ENC[AES256_GCM,data:1jeJ+iiOPWrCILfxIlVOGQ2EaTdXnE1j+JqlXmd7xWSupWaRrJAV4GFcdNACGlIPyK8qqZ5K094RTZns6lPlPp0otjZISii++MESUVj+tzhmg/fgNL+/GpfenN4GXOmly+ylFNrJpvI9W4fFk+SFt6JsbLkMlmzLfseSEVikSko=,iv:FMXLsNLNvfB8XFr9THXwho7fpcBUYq6yc1UZIRN11Gw=,tag:ofn2w9moAU5h/uz+YhQUJQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: livekit
+    namespace: matrix
+spec:
+    chart:
+        spec:
+            chart: ./livekit-server/
+            sourceRef:
+                kind: GitRepository
+                name: livekit
+                namespace: matrix
+    interval: 60m
+    timeout: 25m
+    install:
+        remediation:
+            retries: 3
+    values:
+        replicaCount: 1
+        # Suggested value for gracefully terminate the pod: 5 hours
+        terminationGracePeriodSeconds: 18000
+        livekit:
+            # port: 7880
+            # Uncomment to enable prometheus metrics
+            # prometheus_port: 6789
+            log_level: info
+            rtc:
+                use_external_ip: true
+                # default ports used
+                port_range_start: 50000
+                port_range_end: 60000
+                tcp_port: 7881
+            redis:
+                address: matrix-synapse-keydb.matrix.svc.cluster.local:6379
+                # db: 0
+                # username:
+                # password:
+                # use_tls: true
+            # one or more API key/secret pairs
+            # see https://docs.livekit.io/guides/getting-started/#generate-api-key-and-secret
+            keys:
+                woosh: ENC[AES256_GCM,data:Su4NafleEcems8aTylbAOg==,iv:qWOZxpG0dPrViWm/Bbheq/lZye8Jfu0N2kXm+80dy7I=,tag:EDXUcpHQIfLZUtCavrlwdg==,type:str]
+            turn:
+                enabled: true
+                # must match domain of your TLS cert
+                domain: turn.matrix.midnightthoughts.space
+                # tls_port must be 443 if turn load balancer is disabled
+                tls_port: 443
+                # udp_port should be 443 for best connectivity through firewalls
+                udp_port: 443
+                # uncomment if you will manage TLS termination for TURN, secretName is not used
+                # when external_tls is set
+                # external_tls: true
+                # Kubernetes Secret containing TLS cert for <turn.myhost.com>
+                # See https://docs.livekit.io/deploy/kubernetes/#importing-ssl-certificates
+                secretName: livekit.matrix.midnightthoughts.space-tls
+                # set the Kubernetes serviceType for the TURN service. By default it sets it to "LoadBalancer" but for Hetzner you want ClusterIP and use a custom ingress
+                # See kubernetes serviceTypes on official documentation: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+                serviceType: ClusterIP
+        loadBalancer:
+            # valid values: disable, alb, aws, gke, gke-managed-cert, gke-native-vpc, do, hetzner
+            # on AWS, we recommend using alb load balancer, which supports TLS termination
+            # * in order to use alb, aws-ingress-controller must be installed
+            #   https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+            # * for gke-managed-cert type follow https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+            #   and set staticIpName to your reserved static IP, and certificateName to be
+            #   name of the managed cert
+            # * for do uncomment clusterIssuer with your cert manager issuer
+            type: hetzner
+            # staticIpName: <nameofIpAddressCreated>
+            # certificateName: <nameOfCert>
+            # clusterIssuer: letsencrypt-prod
+            tls:
+                - hosts:
+                    - livekit.matrix.midnightthoughts.space
+                    - turn.matrix.midnightthoughts.space
+                  #   with alb, certificates needs to reside in ACM for self-discovery
+                  #   with do, use cert-manager and create certificate for turn. Load balancer is autoamtic
+                  #   with gke, specify one or more secrets to use for the certificate
+                  #   see: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-multi-ssl#specifying_certificates_for_your_ingress
+                  secretName: livekit.matrix.midnightthoughts.space-tls
+            # Set the external DNS annotations for the load balancer here as Hetzner LB doesn't support UDP. So the load balancer is a NodePort meaning it is directly routing to the nodes.
+            extraAnnotations:
+                external-dns.alpha.kubernetes.io/hostname: livekit.matrix.midnightthoughts.space
+            # Ensure the ingress class name is set to the one used by your cluster
+            ingressClassName: fake
+        # autoscaling requires resources to be defined
+        autoscaling:
+            # set to true to enable autoscaling. when set, ignores replicaCount
+            enabled: false
+            minReplicas: 1
+            maxReplicas: 5
+            targetCPUUtilizationPercentage: 60
+        # if LiveKit should run only on specific nodes
+        # this can be used to isolate designated nodes
+        nodeSelector: {}
+        # node.kubernetes.io/instance-type: c5.2xlarge
+        resources: {}
+        # Due to port restrictions, you can run only one instance of LiveKit per physical
+        # node. Because of that, we recommend giving it plenty of resources to work with
+        # limits:
+        #   cpu: 6000m
+        #   memory: 2048Mi
+        # requests:
+        #   cpu: 4000m
+        #   memory: 1024Mi
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBweS9CNXQ5TC9qM3RlSU83
+            dGlsN1RWZjNsZFFoTHhtbG05WDdyQ29HV3lBClhPbVJFeUM2aGoxUmNObU5lTGNU
+            ejVxcDVzN09JWWNyMElWNmxSVjVxclEKLS0tIFFXR281U2E2TTR5WHd5cXE2T3NZ
+            TTdaSFBEYURPa3prQTRpbmszbFExYlkKXiBDhaJcdxS+4MVB1P420pkjRaxNn2ir
+            pVtnymmBxwOIpILJ2nyyFPS0LK7Dmw9M4xTFmwOuhjDflM+fslnKFw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-01T21:41:59Z"
+    mac: ENC[AES256_GCM,data:1jeJ+iiOPWrCILfxIlVOGQ2EaTdXnE1j+JqlXmd7xWSupWaRrJAV4GFcdNACGlIPyK8qqZ5K094RTZns6lPlPp0otjZISii++MESUVj+tzhmg/fgNL+/GpfenN4GXOmly+ylFNrJpvI9W4fFk+SFt6JsbLkMlmzLfseSEVikSko=,iv:FMXLsNLNvfB8XFr9THXwho7fpcBUYq6yc1UZIRN11Gw=,tag:ofn2w9moAU5h/uz+YhQUJQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
