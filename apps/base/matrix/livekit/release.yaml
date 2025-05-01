@@ -129,6 +129,9 @@ spec:
                 # set the Kubernetes serviceType for the TURN service. By default it sets it to "LoadBalancer" but for Hetzner you want NodePort and use a custom ingress
                 # See kubernetes serviceTypes on official documentation: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
                 serviceType: NodePort
+                loadBalancerAnnotations:
+                    external-dns.alpha.kubernetes.io/hostname: turn.matrix.midnightthoughts.space
+                    external-dns.alpha.kubernetes.io/access: public
         loadBalancer:
             # valid values: disable, alb, aws, gke, gke-managed-cert, gke-native-vpc, do, hetzner
             # on AWS, we recommend using alb load balancer, which supports TLS termination
@@ -154,6 +157,7 @@ spec:
             # Set the external DNS annotations for the load balancer here as Hetzner LB doesn't support UDP. So the load balancer is a NodePort meaning it is directly routing to the nodes.
             extraAnnotations:
                 external-dns.alpha.kubernetes.io/hostname: turn.matrix.midnightthoughts.space
+                external-dns.alpha.kubernetes.io/access: public
             # Ensure the ingress class name is set to the one used by your cluster
             ingressClassName: fake
         # autoscaling requires resources to be defined
