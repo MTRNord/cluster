@@ -1,3 +1,43 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+    name: livekit
+    namespace: matrix
+spec:
+    secretName: livekit.matrix.midnightthoughts.space-tls
+    privateKey:
+        rotationPolicy: ENC[AES256_GCM,data:fnvoyUCp,iv:MdSVceqAo8tj9ZqghAWrdjcjyPrZXXdq0cxcXN+hiDc=,tag:rQn/9tJqeoNCGYXleTpwJQ==,type:str]
+    issuerRef:
+        name: letsencrypt-dns
+        kind: ClusterIssuer
+    commonName: livekit.matrix.midnightthoughts.space
+    dnsNames:
+        - turn.matrix.midnightthoughts.space
+        - livekit.matrix.midnightthoughts.space
+    additionalOutputFormats:
+        - type: CombinedPEM
+        - type: DER
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBFRXpyUXdBS2ZCa2lCKy91
+            UUxBVEd0bElsbmw3NWU2aytaWGkxK2k1V0JRCjJPb1Q3ZG5LNkZkSUJqdGtGUk5r
+            YXIyR0lDMGtqUVpGQ3NqVDMvc1gxRDgKLS0tIFk3czJMZ25oZTZLK0kzckFUZzBO
+            ekdyQWI0K0Y4L0R0TWlybEl1Rm1DZ0kKoHr89ZLRwbuRdxlv9jgo1VnywV/bNM9O
+            LrwZKfXx579WTLWh8LlT1xy3NuDWL3S46spExm74wzZ6HjeGdiBBDg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-01T21:52:42Z"
+    mac: ENC[AES256_GCM,data:5WlnVDgvDJ7fqDdKB4dN+0RyP+sUrZyvW4TR2Y/HK5rx+RF2xzyVHoZzm0Jlhw4MaJkWg/Z2VMUa2RH0xLmC/oOAqQHEvxs68g306V5n2JWzqKyiQEpk881y7kJ6XB85w/cwTOtcp2+2AG73NfB1mu9Qkd31xbb3jdtaHN4iDK8=,iv:MnsP8ocDqa8cv8DTq+4hXpankGxNbDq2s12n7hxbMuY=,tag:NqMPtTNLW/50Uh+7J0HxOg==,type:str]
+    pgp: []
+    encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
 metadata:
@@ -13,14 +53,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBweS9CNXQ5TC9qM3RlSU83
-            dGlsN1RWZjNsZFFoTHhtbG05WDdyQ29HV3lBClhPbVJFeUM2aGoxUmNObU5lTGNU
-            ejVxcDVzN09JWWNyMElWNmxSVjVxclEKLS0tIFFXR281U2E2TTR5WHd5cXE2T3NZ
-            TTdaSFBEYURPa3prQTRpbmszbFExYlkKXiBDhaJcdxS+4MVB1P420pkjRaxNn2ir
-            pVtnymmBxwOIpILJ2nyyFPS0LK7Dmw9M4xTFmwOuhjDflM+fslnKFw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBFRXpyUXdBS2ZCa2lCKy91
+            UUxBVEd0bElsbmw3NWU2aytaWGkxK2k1V0JRCjJPb1Q3ZG5LNkZkSUJqdGtGUk5r
+            YXIyR0lDMGtqUVpGQ3NqVDMvc1gxRDgKLS0tIFk3czJMZ25oZTZLK0kzckFUZzBO
+            ekdyQWI0K0Y4L0R0TWlybEl1Rm1DZ0kKoHr89ZLRwbuRdxlv9jgo1VnywV/bNM9O
+            LrwZKfXx579WTLWh8LlT1xy3NuDWL3S46spExm74wzZ6HjeGdiBBDg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-01T21:41:59Z"
-    mac: ENC[AES256_GCM,data:1jeJ+iiOPWrCILfxIlVOGQ2EaTdXnE1j+JqlXmd7xWSupWaRrJAV4GFcdNACGlIPyK8qqZ5K094RTZns6lPlPp0otjZISii++MESUVj+tzhmg/fgNL+/GpfenN4GXOmly+ylFNrJpvI9W4fFk+SFt6JsbLkMlmzLfseSEVikSko=,iv:FMXLsNLNvfB8XFr9THXwho7fpcBUYq6yc1UZIRN11Gw=,tag:ofn2w9moAU5h/uz+YhQUJQ==,type:str]
+    lastmodified: "2025-05-01T21:52:42Z"
+    mac: ENC[AES256_GCM,data:5WlnVDgvDJ7fqDdKB4dN+0RyP+sUrZyvW4TR2Y/HK5rx+RF2xzyVHoZzm0Jlhw4MaJkWg/Z2VMUa2RH0xLmC/oOAqQHEvxs68g306V5n2JWzqKyiQEpk881y7kJ6XB85w/cwTOtcp2+2AG73NfB1mu9Qkd31xbb3jdtaHN4iDK8=,iv:MnsP8ocDqa8cv8DTq+4hXpankGxNbDq2s12n7hxbMuY=,tag:NqMPtTNLW/50Uh+7J0HxOg==,type:str]
     pgp: []
     encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
@@ -67,7 +107,7 @@ spec:
             # one or more API key/secret pairs
             # see https://docs.livekit.io/guides/getting-started/#generate-api-key-and-secret
             keys:
-                woosh: ENC[AES256_GCM,data:Su4NafleEcems8aTylbAOg==,iv:qWOZxpG0dPrViWm/Bbheq/lZye8Jfu0N2kXm+80dy7I=,tag:EDXUcpHQIfLZUtCavrlwdg==,type:str]
+                woosh: ENC[AES256_GCM,data:ohkmSTZVATMl9S+kxNMMzA==,iv:ztEoARv4e78lGbZFfukQcEBD6rWcVZYmQKxoxagLB/c=,tag:2+m0xwQtLbhwz6KvFuzAtA==,type:str]
             turn:
                 enabled: true
                 # must match domain of your TLS cert
@@ -141,14 +181,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBweS9CNXQ5TC9qM3RlSU83
-            dGlsN1RWZjNsZFFoTHhtbG05WDdyQ29HV3lBClhPbVJFeUM2aGoxUmNObU5lTGNU
-            ejVxcDVzN09JWWNyMElWNmxSVjVxclEKLS0tIFFXR281U2E2TTR5WHd5cXE2T3NZ
-            TTdaSFBEYURPa3prQTRpbmszbFExYlkKXiBDhaJcdxS+4MVB1P420pkjRaxNn2ir
-            pVtnymmBxwOIpILJ2nyyFPS0LK7Dmw9M4xTFmwOuhjDflM+fslnKFw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBFRXpyUXdBS2ZCa2lCKy91
+            UUxBVEd0bElsbmw3NWU2aytaWGkxK2k1V0JRCjJPb1Q3ZG5LNkZkSUJqdGtGUk5r
+            YXIyR0lDMGtqUVpGQ3NqVDMvc1gxRDgKLS0tIFk3czJMZ25oZTZLK0kzckFUZzBO
+            ekdyQWI0K0Y4L0R0TWlybEl1Rm1DZ0kKoHr89ZLRwbuRdxlv9jgo1VnywV/bNM9O
+            LrwZKfXx579WTLWh8LlT1xy3NuDWL3S46spExm74wzZ6HjeGdiBBDg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-01T21:41:59Z"
-    mac: ENC[AES256_GCM,data:1jeJ+iiOPWrCILfxIlVOGQ2EaTdXnE1j+JqlXmd7xWSupWaRrJAV4GFcdNACGlIPyK8qqZ5K094RTZns6lPlPp0otjZISii++MESUVj+tzhmg/fgNL+/GpfenN4GXOmly+ylFNrJpvI9W4fFk+SFt6JsbLkMlmzLfseSEVikSko=,iv:FMXLsNLNvfB8XFr9THXwho7fpcBUYq6yc1UZIRN11Gw=,tag:ofn2w9moAU5h/uz+YhQUJQ==,type:str]
+    lastmodified: "2025-05-01T21:52:42Z"
+    mac: ENC[AES256_GCM,data:5WlnVDgvDJ7fqDdKB4dN+0RyP+sUrZyvW4TR2Y/HK5rx+RF2xzyVHoZzm0Jlhw4MaJkWg/Z2VMUa2RH0xLmC/oOAqQHEvxs68g306V5n2JWzqKyiQEpk881y7kJ6XB85w/cwTOtcp2+2AG73NfB1mu9Qkd31xbb3jdtaHN4iDK8=,iv:MnsP8ocDqa8cv8DTq+4hXpankGxNbDq2s12n7hxbMuY=,tag:NqMPtTNLW/50Uh+7J0HxOg==,type:str]
     pgp: []
     encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
