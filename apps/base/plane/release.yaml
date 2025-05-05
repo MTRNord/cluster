@@ -20,31 +20,35 @@ spec:
             enabled: false
         services:
             minio:
-                root_password: ENC[AES256_GCM,data:wnvE6nYRjTIN1PVD/T6oH3L67oIHfJQnFtM+E2Dw/w+BbBNLFNYEdDeQ/3v25vFBZFNDKdwn711dpA41dd4F4g==,iv:oWz8iIQcDNas8s2Bf943Ceq0uwKOnBbwhC+nP/zpIH4=,tag:Jnok3oeiLA2iuXkWMDWyyA==,type:str]
+                root_password: ENC[AES256_GCM,data:Y8klJYr67rI3xzL2a6VD1goOLxSlItkP40r/atIdecVeHt2SbmszWzAHPZJcAIedFf40NOnvmfZmt4aRaU0t9Q==,iv:nP4+oZxqA+FTKfuTisH13Y/zVH+K1m78hZxR++iZkz0=,tag:OpqIBUvLSic0GwoY1oR7Cw==,type:str]
             postgres:
                 local_setup: false
+            worker:
+                replicas: 1
+                memoryLimit: 2000Mi
+                cpuLimit: 1000m
             silo:
                 connectors:
                     github:
                         enabled: true
-                        client_id: ENC[AES256_GCM,data:mIqAetN7Qyr7Du+qR/VeuSa8Csk=,iv:x37jRshEk3k3MIygtYhIKvrsZL6gqBwpx/E0uIorHOg=,tag:UbJtiACIkPPYX3eZo1fPyQ==,type:str]
-                        client_secret: ENC[AES256_GCM,data:PPI5XN5Jmjl5FHQvcHhUi0nrcFR5yR6fQPKwrTOIQN/6gPWJV91l9g==,iv:xDZz1EHJWVdRQjTDUT6HPhnXsCUtGJJxD5GAZ0ZNHyw=,tag:SON0GnYM+0HiaANgppuvoA==,type:str]
+                        client_id: ENC[AES256_GCM,data:Ih8cWJdeuAG3YofWt0AkNR3CHds=,iv:ZTt9DIZZsHzQtoaFuq2semEfHFIeaflmDyb5hPrDwtc=,tag:ddURkGPochprWNPZV1p0wg==,type:str]
+                        client_secret: ENC[AES256_GCM,data:3p06jzniGkeMQJz1dXUApMf0fponizRrcXD5h5O1RfXneVSFeSJcMg==,iv:hbKSISC9uCcy62fNz9xKSPWY/yRN+8v2fYA0n593prY=,tag:gTAqaUe8HPpags5MU8FzlQ==,type:str]
                         app_name: plane-midnightthoughts
                         app_id: "1242151"
-                        private_key: ENC[AES256_GCM,data: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,iv:lmEhMojmHhPzpmhGjyE9mg02mSg6xY2ck5IwtLYvEUg=,tag:NtvAIDIRxVwNDhINBg2BaA==,type:str]
+                        private_key: ENC[AES256_GCM,data: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,iv:iV1LutJ6Q7Xza6WwlZhR3KiGSb9IGG3F0eRHq0VS3TA=,tag:u0koCEwMSk+ssmi1ucQskA==,type:str]
         env:
             storageClass: ceph-filesystem
             pgdb_username: plane
-            pgdb_password: ENC[AES256_GCM,data:P1NBQ/ovTuSpkUB/JCm4ft6f48XMVtN0rWfBazCM66h+wRrYEjoz72KzH6HutFMewHi3L9uQgYWRCBXnpxeD0A==,iv:eZJ+RokKpFL47Ie3QROCFQPoaZy4P9ERulRY6JMHTD8=,tag:4r6/P9FBlBcw0vJEquOIgw==,type:str]
+            pgdb_password: ENC[AES256_GCM,data:ryfTytnx5j2aJgkFTZ0BWEph5Fnsp7cfob7bsYQsfh/TTb4YfuHq2QE7l5NcINEHMMMyqGTn7tksbHpFu/Bsog==,iv:u3N8PkQjc+eGjfj76mB3a4wJtqX8X0mdsDMiFK1a+TA=,tag:g8bQYqXh4C0NBIIxUSMSCg==,type:str]
             pgdb_name: plane
-            pgdb_remote_url: ENC[AES256_GCM,data:+uhDFwIaJKMslmzaYR//TIxEqnmOha2PoMh8VQwgtp5JVVno1rHwaXrLA3xXBw37zR+lXLWanK13P/pHmo4jL/1nYEtsFFFJs3MIKXY+T9G9kho2+F1Y4d7kY/rUbMVEDwY8rgq6iRY7vg2n5WX4YsekS2Y4ZB2LpkKIP5v7kqgMM+49c7mbGX1NSgep,iv:IAV9pk0uPEoytaNQdG4PyUU49RppFsUU9eciiNOOslc=,tag:G0h/7T3ad4utWOM9bD2fWQ==,type:str]
-            secret_key: ENC[AES256_GCM,data:hYtHZyL+I/2aVN//mt4xinC0xHTTwYmjEyNK+pGeAfFDQtLpJ8DRqcQS8AsVEzwBl3I8gDSYEJCWZYSXsAKtBg==,iv:kG1CKvDOYlskVierwJsdnnDwPAs6zoeekDqx6ko3KD8=,tag:L6SxmQwV52j6H4jETbI+tg==,type:str]
-            hmac_secret_key: ENC[AES256_GCM,data:AhUIuLXGDBi+W3wt7lPaCiQZN8TPCKo0DzupjP95nUDcSahtzGfEe2EwIqgi1gwN1nB+X2K2ozS8EcsZ+yfaaw==,iv:ghxP3edTtn+Nr4cBgjcrrYHbq2dlnwxU6ueN7XTnO/c=,tag:kRJtFMoK96Xk4AvjrFyFLw==,type:str]
+            pgdb_remote_url: ENC[AES256_GCM,data:YX1Q11FoU1zjiu/T9avukxsoatVp1lumk99u2VIfZPNrJJM8/hGc30FzcK7ohqhX9kCzXOGSuSfK7NrNnlvT3nQAku4o1Dx/dLhyrA2NU1iagcFhEztde/HeGWGSeWnMBGLVaptOcdu/LPSDS7etx2ZPBN87M6pWBgdKels9UkEL51IlsEe/G8DgMPBq,iv:jqXTmhI7r89nmwiuHehI/TUjBOUR7ItRvU0WWXsg/cY=,tag:whTTclpBJ7FM8flL34X2Nw==,type:str]
+            secret_key: ENC[AES256_GCM,data:8+yxOGc1Doq86I1+OWinpG7vEWqZhfwNOCTtQivH7NvT0yTekiPnzOpUAUSVPnsDcX5qOdfqYH9BAXHLfaNadQ==,iv:EePfKT+s+QiKGe/k+I00Pk6CxR5QWiQ3MKVSPnONXio=,tag:sAPjWcaYHk3jZiVjpM6HZQ==,type:str]
+            hmac_secret_key: ENC[AES256_GCM,data:3Fr3XiEI1S6xHNyCq7Q/y5mwmS7LLGMDkGxfP9g2n+3Xl0Zz3Lt0jfkeV3IarrTb7ArlXkTFvNCVvSZ0WVGW8Q==,iv:9r8l3Iz/9GPPrQhrOtNb136wZDs404c+r8eCfJfH30E=,tag:d2b3ARwTYGBivc8up2uJqA==,type:str]
             GITHUB_APP_NAME: plane-midnightthoughts
             GITHUB_APP_ID: "1242151"
-            GITHUB_CLIENT_ID: ENC[AES256_GCM,data:thifd0qGJQ+AuWk3tTll2A+uFFc=,iv:7uRPIBOMxj6TCxJNda4nTkwym1bvlkTRQfKyPCS1zgQ=,tag:B1rWSXbJBKahfFQQuele3Q==,type:str]
-            GITHUB_CLIENT_SECRET: ENC[AES256_GCM,data:RuxD/CglocOT97Hr1cayqmXyOM91yFYEhNJF+gPkueL3rqlvDqETFQ==,iv:GOCBffuLjh1qircMrwlWj90gz40WK9T4Rxcdop43FjU=,tag:12+qMQaUf0+oj3HpALdDGg==,type:str]
-            GITHUB_PRIVATE_KEY: ENC[AES256_GCM,data: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,iv:xusXr24HFA2IiyN7qCKd+q+ZbvJ9PM99hkKIp+rx70c=,tag:RqnwpczqplPwDzRQqATCdA==,type:str]
+            GITHUB_CLIENT_ID: ENC[AES256_GCM,data:weh6JjF6eg7FaX4snzHY18jJ1aU=,iv:QzSuC8+BBgDW63pT1Yui5gay/1f2oAzCKC/96+YXxMI=,tag:WkVoBXRyglTzPd3OTYmJTg==,type:str]
+            GITHUB_CLIENT_SECRET: ENC[AES256_GCM,data:ROt4I+uuimNq+z6xwnd+OUYRqrX7WqmFnyZJTWytxCGckVBi4nh+Wg==,iv:gYuvu8MGDpvKpMvwp0W98kft5XgEa77/1ao4qwLzyDw=,tag:IFrQI4XzNS5BgWdHp8AV0A==,type:str]
+            GITHUB_PRIVATE_KEY: ENC[AES256_GCM,data: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,iv:IkvgmpUtdVz/5ViaHcmc0IhTAT9OX6taF9m6A52s7Y4=,tag:jrE7sj4ita+y07M8c+gRAw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -53,15 +57,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkY24rWVEvbjZEMmFuZGJW
-              bkNTRmFaaXd1a1MzTVlrc2hDdXU3RUEvWkRNCnJsUk5XdU1LQjhDZ2cwYlFvdXNs
-              QmJLcDJiaE5FMG0rUTMrMEsyM21EWUkKLS0tIHBuZjJoa251YW5PQjZPSTVabDZM
-              OUV1REptQ2hYMnJmdEpUWDdCSmFocWMK/+WfhqObBeFmJNXwBORQRAJHnoU4pMCQ
-              krhWKDU0G6dy+ij4Uui5LPOU7C7itT8FhqNEIFeyo67MG1ed2YlYmg==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-05T19:47:30Z"
-    mac: ENC[AES256_GCM,data:MgtLkqcd73ek7cN4Pzjq7v4+2Pwk1I3dp0OG1sOFRBSdYl6OrODWW4KASt4RfLecxeSSciG2Ne/16AUIKUjYyYT/tKW119e3KD+YKiGFXGr3AJcqhuL5xRt+oI8w3f/Ep1dlZUfjW1/M14rhnZtZVIs8D15NDLzDYcEMlMJx0bw=,iv:qQRldKvdVh7BfOvp8EcTZXv9tDh9/2OHubwzBX5WJys=,tag:lmp/8IRNn6HtETlLXty4Qg==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPT3EzK25XVTl0eStwZnQy
+            Qkw3azRoVW5qTTd2aXNiVG9pRWU2V3Q5dlY4CkhxbkZpclU2NFlIQmZvUVhRSG1X
+            a1FINjI0Mnk1d1I0Q08yRzFUZHp1WncKLS0tIEE4a2grUDluNGZTSnNGM1hPT1JE
+            aGxMQ01lbURJSzI1cjBKNTc2UGN0VWcK7uwheJrQtha2XLy45pu8x8OFzxQ+/CgA
+            /p1aJfIJvNTwPL6umfE+uhXPLl0IdkG6q4d50xlUjC9QYFDv4pNEFA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-05T20:14:38Z"
+    mac: ENC[AES256_GCM,data:+Zbxrfu8/EWwCDhcT3YI+py99xK0hNHlZxVAOBE/Kvuk64iyR8py0ofbW2B8BAdDYsM9BT5P467I5kc0hNb69HNpE2DKxEGzpc0NMgueD4WGpODuSQApUYS5eVcEoBejLwNKNnsfon6mIq/eSBq/NSTwlklePsZ7Dyg10el+pNU=,iv:0k+aWNajUIiqGklyrQhkYN63RnwiQlNrpOBFI724kig=,tag:FnqlBqy7aC/EDbujI3IsQw==,type:str]
     pgp: []
     encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
@@ -79,61 +83,61 @@ spec:
         - plane.midnightthoughts.space
     rules:
         - backendRefs:
-              - name: plane-web
-                port: 3000
+            - name: plane-web
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /
+            - path:
+                type: PathPrefix
+                value: /
         - backendRefs:
-              - name: plane-api
-                port: 8000
+            - name: plane-api
+              port: 8000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /api
+            - path:
+                type: PathPrefix
+                value: /api
         - backendRefs:
-              - name: plane-api
-                port: 8000
+            - name: plane-api
+              port: 8000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /auth
+            - path:
+                type: PathPrefix
+                value: /auth
         - backendRefs:
-              - name: plane-live
-                port: 3000
+            - name: plane-live
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /live
+            - path:
+                type: PathPrefix
+                value: /live
         - backendRefs:
-              - name: plane-space
-                port: 3000
+            - name: plane-space
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /spaces
+            - path:
+                type: PathPrefix
+                value: /spaces
         - backendRefs:
-              - name: plane-admin
-                port: 3000
+            - name: plane-admin
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /god-mode
+            - path:
+                type: PathPrefix
+                value: /god-mode
         - backendRefs:
-              - name: plane-minio
-                port: 9000
+            - name: plane-minio
+              port: 9000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /uploads
+            - path:
+                type: PathPrefix
+                value: /uploads
         - backendRefs:
-              - name: plane-silo
-                port: 3000
+            - name: plane-silo
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /silo
+            - path:
+                type: PathPrefix
+                value: /silo
 sops:
     kms: []
     gcp_kms: []
@@ -142,15 +146,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkY24rWVEvbjZEMmFuZGJW
-              bkNTRmFaaXd1a1MzTVlrc2hDdXU3RUEvWkRNCnJsUk5XdU1LQjhDZ2cwYlFvdXNs
-              QmJLcDJiaE5FMG0rUTMrMEsyM21EWUkKLS0tIHBuZjJoa251YW5PQjZPSTVabDZM
-              OUV1REptQ2hYMnJmdEpUWDdCSmFocWMK/+WfhqObBeFmJNXwBORQRAJHnoU4pMCQ
-              krhWKDU0G6dy+ij4Uui5LPOU7C7itT8FhqNEIFeyo67MG1ed2YlYmg==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-05T19:47:30Z"
-    mac: ENC[AES256_GCM,data:MgtLkqcd73ek7cN4Pzjq7v4+2Pwk1I3dp0OG1sOFRBSdYl6OrODWW4KASt4RfLecxeSSciG2Ne/16AUIKUjYyYT/tKW119e3KD+YKiGFXGr3AJcqhuL5xRt+oI8w3f/Ep1dlZUfjW1/M14rhnZtZVIs8D15NDLzDYcEMlMJx0bw=,iv:qQRldKvdVh7BfOvp8EcTZXv9tDh9/2OHubwzBX5WJys=,tag:lmp/8IRNn6HtETlLXty4Qg==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPT3EzK25XVTl0eStwZnQy
+            Qkw3azRoVW5qTTd2aXNiVG9pRWU2V3Q5dlY4CkhxbkZpclU2NFlIQmZvUVhRSG1X
+            a1FINjI0Mnk1d1I0Q08yRzFUZHp1WncKLS0tIEE4a2grUDluNGZTSnNGM1hPT1JE
+            aGxMQ01lbURJSzI1cjBKNTc2UGN0VWcK7uwheJrQtha2XLy45pu8x8OFzxQ+/CgA
+            /p1aJfIJvNTwPL6umfE+uhXPLl0IdkG6q4d50xlUjC9QYFDv4pNEFA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-05T20:14:38Z"
+    mac: ENC[AES256_GCM,data:+Zbxrfu8/EWwCDhcT3YI+py99xK0hNHlZxVAOBE/Kvuk64iyR8py0ofbW2B8BAdDYsM9BT5P467I5kc0hNb69HNpE2DKxEGzpc0NMgueD4WGpODuSQApUYS5eVcEoBejLwNKNnsfon6mIq/eSBq/NSTwlklePsZ7Dyg10el+pNU=,iv:0k+aWNajUIiqGklyrQhkYN63RnwiQlNrpOBFI724kig=,tag:FnqlBqy7aC/EDbujI3IsQw==,type:str]
     pgp: []
     encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
