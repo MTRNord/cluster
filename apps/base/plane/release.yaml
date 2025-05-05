@@ -127,6 +127,13 @@ spec:
             - path:
                 type: PathPrefix
                 value: /uploads
+        - backendRefs:
+            - name: plane-silo
+              port: 3000
+          matches:
+            - path:
+                type: PathPrefix
+                value: /silo
 sops:
     kms: []
     gcp_kms: []
