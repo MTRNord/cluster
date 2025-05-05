@@ -20,17 +20,26 @@ spec:
             enabled: false
         services:
             minio:
-                root_password: ENC[AES256_GCM,data:u1K1V1APyIXbdRoaZpPmtd1pGk4feuGVkPPvLh4kciEb1JvhNZN2roJfnS8L4h72wCeoEogKqEyPSRvbFRWi4w==,iv:Lhhl0KW5bHtEnEpYxy6w2RMUXLaFhwl4ok6P8bl5cRQ=,tag:S/8jYLWbtME6dBZNUvI7fw==,type:str]
+                root_password: ENC[AES256_GCM,data:ejMKRnuMCSmFbuDqQi4pj3QBP1kY4tpGglZvU+FtzuFrnG0aoImK99vtfj4SUVTCosyR2mkh5ivq0tW4/NDzDQ==,iv:ebcnpmCsdcW/I4YYzZXtmtGn2eSkipFwNOm/865izM0=,tag:GalQPrCM6tiwFJ/FObJM9A==,type:str]
             postgres:
                 local_setup: false
+            silio:
+                connectors:
+                    github:
+                        enabled: true
+                        client_id: ENC[AES256_GCM,data:ycCs4F1hPMIN3yIr3dFJaSLV0AU=,iv:u9ipbie0ekay/KrrzyIoZ7Od3rjpxQw3Rstl5Zr/Kqo=,tag:nV4qAIzUqoAe6gSJbAZTng==,type:str]
+                        client_secret: ENC[AES256_GCM,data:krkqVE0Ufa/NOp+m4KFK+3Wjxz1ezkg8csUrf79Zwge3Ylv38RKylw==,iv:iKYec7UI+1YdJyFXm5/VxxfJTgp8H/CQ84P+ioyxIIE=,tag:BGrfIDWNl214YoKd22Lj8A==,type:str]
+                        app_name: Plane Midnightthoughts
+                        app_id: "1242151"
+                        private_key: ENC[AES256_GCM,data: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,iv:jltzFYlCLAjVKkYym5NikAfUxQRhaJpET/rtFBOdK3E=,tag:nRTnPEk66AOrg80alWmyOQ==,type:str]
         env:
             storageClass: ceph-filesystem
             pgdb_username: plane
-            pgdb_password: ENC[AES256_GCM,data:IgDY6WGfH5e4Eefoh5Nq1BmI+BbrozCvFk6SuND2wboWFzcNq2qDoVj06C1Ha8zOvVWxkI2WIDmk6m+bKzuaVA==,iv:cDWfObHLJvMP7g7JYFmRx/0++UYgEp8f+VsuF4EbaMI=,tag:luo0ZYmrld/wGmX0uI2A5w==,type:str]
+            pgdb_password: ENC[AES256_GCM,data:In0d9Q+oBcg4ukNNkOpm3DjSQjOvdcQDpJjUSm0i+oEBM5wKDfDfT91SSfYxP42Tr/sAb5qbB9gjlx0GwCOjIQ==,iv:VKpPnCSZh3MBo5BbhByMt5kZhh08S25RZSykZVKAvu4=,tag:+tUwAq6cKdiciQPP+gx0EQ==,type:str]
             pgdb_name: plane
-            pgdb_remote_url: ENC[AES256_GCM,data:eob4vhw8If4ClWf19sUz85luPHhTRS6doRVay+VKul8lxTtECUbY3eUuFddr/WsZW/vlp9eQFoWCaSnEjb/C+yZ8pfaewZUuqHhW6ctoL6mMN4GVgaCRkTHcTSp+lnBmQ+PxQ5xPcBCG6Ex5dfyBZWcD22ugZO1PmP4wf600j5Aq9bfzKJmi8Ve6Wf+5,iv:5r3qlVkvwZ73lDO545n8lEwaasoRGxcN9/JNuW+tqr8=,tag:+L6wkUtsoWsS0masQv87CQ==,type:str]
-            secret_key: ENC[AES256_GCM,data:1LGTDXXnApBnOgBUFSfJ7Nju2LGkNjDC1ICL6MjxojwwFv8Rxvxky5nLHR9lHSl3gc1bo2w/ZYFCGj0ADbET/g==,iv:xEvSHJPYGpzQuP6dO2bWDuAKJAojs5hPgcMrZ2/hhns=,tag:U0IxmUVyL+3qavOLZRwOsw==,type:str]
-            hmac_secret_key: ENC[AES256_GCM,data:F1WIOtIRG0BgqmP+P0lhC8iVA77A/BsOqx/7SGq1NdJ2qg0xZdVZBjPDsJ9CvwXPKC0cegzjwi2dU48xBD3SUg==,iv:rbIzPwihvd53ogg6VhZb+n6A7+oEcX6d/V0wNWURclQ=,tag:wVv1kSPmRRpWqd8/5HNxWA==,type:str]
+            pgdb_remote_url: ENC[AES256_GCM,data:HqISqTx8+M9F/F6bwlPS96+afNqJKXJYlLMxM0YhEv3/Tr8l0zMNOWdaj9SQioSAaPH4wXTU+tTLIhoHM3vXWM77x7M0VPEeh6ezXtG1ryXok7q+TDCkXmgwusNp1o8y4/+rGZlVZZIQ7tGTfyFkRbjk+Xn1dd8ephvxS1lOdiIbk2iq6S6Vdd8sd9hf,iv:sg1ONa+YOx81faJbzlDSy1fpajDiR4bh460HHXaVxuk=,tag:w7KDJv4fN6YkUCDdy15S7g==,type:str]
+            secret_key: ENC[AES256_GCM,data:CztMrNTGGBEJwQZqeKUEd7oyWA17oGdaPIqYdvQitoja1/CfvsIrPmiJsmrAJwx0ITXCzcTd25qipDZhyNX+0Q==,iv:f0jX01U9+XFbSiLllmvBPCpYtYYa8WbSL24ev0GLexs=,tag:npdmEHVZslbHEav35GLLDQ==,type:str]
+            hmac_secret_key: ENC[AES256_GCM,data:IZ4ayfvot5dfyUoJsli07nbrfxT0HQq8161OLb6ZqLSb+f4/O/dX8tskEfminIVPO0AnUdVeEpikGVf6LwT5kw==,iv:jg5Dtq4oC/1HB4fYYW0D8jONqPXjGG+tTv3hC8TPD6I=,tag:DHwCbWJyocNIfzTSdKGvXw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -39,17 +48,17 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBIQ2VsaVRmUEwweGcrOThP
-              b1lzMmRqby9DZjNmRGlyZHRDcEsxZlRqWUZZCmtYanF1MEZNQThzLzFIWS9kWjdz
-              ZjliY1VZNlNML0plY2gvN1p5N1YxeFUKLS0tIHJ0c2pvSElyMWJhcnVVU1VRNnk2
-              ckxNZ3MvNHc1VUxjSk5WUENZeFYxbzAKW1cTomUezUrDBhzgihmxA1pciPvgvoUP
-              D8OaUjVIrns28Icoihib38EsPL2x/EKoniHZppiZN309BPk0auGCAA==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-04-04T18:19:34Z"
-    mac: ENC[AES256_GCM,data:XEsMxsoeA7IKtlQ5yHfAC2MiNbgZ1ldHeMsXHBBiLEmSrofPYQpGczVUURZNYPkEa0eAbimzBeoVrsdTF7NXXV1eZ2dNrMbw03ij3g9NpgteXXZp/VpebgxI/Tvbq2hjezWUafYfrWBkgB+tdBGxv2AtYg8Pn1dXCZLtluvZNtE=,iv:EfC9dbS13UHn1yTG5VzDT0IaEw+X6tQ7eTWjq2ORdq4=,tag:dmmnzpPKoyPrebV2D2RRWg==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBRVjlSU0hRb2tVV1RVeXJ4
+            WVY3RTBpV2JaZWVFbnpyN1hTckRNVTJZUG5NCmtxSjJDMmxRRkUyWXdpakpZaWNs
+            T3J4OHk3WFJOSkJ6V3MvdlFxZFl5bmcKLS0tIGRKSGtWaTJ0U0Y4ekVpM1R5eU1J
+            ZjNxQTNOWXZ1ZDRpcDZQc1RGc1dlQ0EKTxJHbAITdkXVv1uTMqRRIRjMTgrPXUPF
+            eEYaFn8jCht9HFn7U+fGdNuEUuJzV7eCgtjnlONKTESUaUAl8LkFCg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-05T19:10:17Z"
+    mac: ENC[AES256_GCM,data:ht85vwyBIbRWezkzH8I3JqPvbQOwBd+Rc9V6wJdBEXmFDR6IB0ytIdHOjkb9N4K2uzuTbF9Fnn/fJKrSU43zIiLT7HMrftYpqwSjZ9uLFpd9v2gZH7b6ogHkvcbutW16OlNrP5rqqTnqy3kxPoE58erzmk9f1EqAzBOu8NkjIAI=,iv:R06PBVjzIjhuzTENfJtdmfgVC1OnpA/WvehbaMsaHx4=,tag:/r6LHYykUXxqkRQgg7HJwA==,type:str]
     pgp: []
-    encrypted_regex: ^(root_password|pgdb_password|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -65,54 +74,54 @@ spec:
         - plane.midnightthoughts.space
     rules:
         - backendRefs:
-              - name: plane-web
-                port: 3000
+            - name: plane-web
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /
+            - path:
+                type: PathPrefix
+                value: /
         - backendRefs:
-              - name: plane-api
-                port: 8000
+            - name: plane-api
+              port: 8000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /api
+            - path:
+                type: PathPrefix
+                value: /api
         - backendRefs:
-              - name: plane-api
-                port: 8000
+            - name: plane-api
+              port: 8000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /auth
+            - path:
+                type: PathPrefix
+                value: /auth
         - backendRefs:
-              - name: plane-live
-                port: 3000
+            - name: plane-live
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /live
+            - path:
+                type: PathPrefix
+                value: /live
         - backendRefs:
-              - name: plane-space
-                port: 3000
+            - name: plane-space
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /spaces
+            - path:
+                type: PathPrefix
+                value: /spaces
         - backendRefs:
-              - name: plane-admin
-                port: 3000
+            - name: plane-admin
+              port: 3000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /god-mode
+            - path:
+                type: PathPrefix
+                value: /god-mode
         - backendRefs:
-              - name: plane-minio
-                port: 9000
+            - name: plane-minio
+              port: 9000
           matches:
-              - path:
-                    type: PathPrefix
-                    value: /uploads
+            - path:
+                type: PathPrefix
+                value: /uploads
 sops:
     kms: []
     gcp_kms: []
@@ -121,15 +130,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBIQ2VsaVRmUEwweGcrOThP
-              b1lzMmRqby9DZjNmRGlyZHRDcEsxZlRqWUZZCmtYanF1MEZNQThzLzFIWS9kWjdz
-              ZjliY1VZNlNML0plY2gvN1p5N1YxeFUKLS0tIHJ0c2pvSElyMWJhcnVVU1VRNnk2
-              ckxNZ3MvNHc1VUxjSk5WUENZeFYxbzAKW1cTomUezUrDBhzgihmxA1pciPvgvoUP
-              D8OaUjVIrns28Icoihib38EsPL2x/EKoniHZppiZN309BPk0auGCAA==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-04-04T18:19:34Z"
-    mac: ENC[AES256_GCM,data:XEsMxsoeA7IKtlQ5yHfAC2MiNbgZ1ldHeMsXHBBiLEmSrofPYQpGczVUURZNYPkEa0eAbimzBeoVrsdTF7NXXV1eZ2dNrMbw03ij3g9NpgteXXZp/VpebgxI/Tvbq2hjezWUafYfrWBkgB+tdBGxv2AtYg8Pn1dXCZLtluvZNtE=,iv:EfC9dbS13UHn1yTG5VzDT0IaEw+X6tQ7eTWjq2ORdq4=,tag:dmmnzpPKoyPrebV2D2RRWg==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBRVjlSU0hRb2tVV1RVeXJ4
+            WVY3RTBpV2JaZWVFbnpyN1hTckRNVTJZUG5NCmtxSjJDMmxRRkUyWXdpakpZaWNs
+            T3J4OHk3WFJOSkJ6V3MvdlFxZFl5bmcKLS0tIGRKSGtWaTJ0U0Y4ekVpM1R5eU1J
+            ZjNxQTNOWXZ1ZDRpcDZQc1RGc1dlQ0EKTxJHbAITdkXVv1uTMqRRIRjMTgrPXUPF
+            eEYaFn8jCht9HFn7U+fGdNuEUuJzV7eCgtjnlONKTESUaUAl8LkFCg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-05-05T19:10:17Z"
+    mac: ENC[AES256_GCM,data:ht85vwyBIbRWezkzH8I3JqPvbQOwBd+Rc9V6wJdBEXmFDR6IB0ytIdHOjkb9N4K2uzuTbF9Fnn/fJKrSU43zIiLT7HMrftYpqwSjZ9uLFpd9v2gZH7b6ogHkvcbutW16OlNrP5rqqTnqy3kxPoE58erzmk9f1EqAzBOu8NkjIAI=,iv:R06PBVjzIjhuzTENfJtdmfgVC1OnpA/WvehbaMsaHx4=,tag:/r6LHYykUXxqkRQgg7HJwA==,type:str]
     pgp: []
-    encrypted_regex: ^(root_password|pgdb_password|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    encrypted_regex: ^(woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
