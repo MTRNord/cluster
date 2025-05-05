@@ -15,7 +15,7 @@ spec:
     interval: 60m
     values:
         license:
-            licenseDoamin: plane.midnightthoughts.space
+            licenseDomain: plane.midnightthoughts.space
         ingress:
             enabled: false
         services:
@@ -53,13 +53,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkY24rWVEvbjZEMmFuZGJW
-            bkNTRmFaaXd1a1MzTVlrc2hDdXU3RUEvWkRNCnJsUk5XdU1LQjhDZ2cwYlFvdXNs
-            QmJLcDJiaE5FMG0rUTMrMEsyM21EWUkKLS0tIHBuZjJoa251YW5PQjZPSTVabDZM
-            OUV1REptQ2hYMnJmdEpUWDdCSmFocWMK/+WfhqObBeFmJNXwBORQRAJHnoU4pMCQ
-            krhWKDU0G6dy+ij4Uui5LPOU7C7itT8FhqNEIFeyo67MG1ed2YlYmg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkY24rWVEvbjZEMmFuZGJW
+              bkNTRmFaaXd1a1MzTVlrc2hDdXU3RUEvWkRNCnJsUk5XdU1LQjhDZ2cwYlFvdXNs
+              QmJLcDJiaE5FMG0rUTMrMEsyM21EWUkKLS0tIHBuZjJoa251YW5PQjZPSTVabDZM
+              OUV1REptQ2hYMnJmdEpUWDdCSmFocWMK/+WfhqObBeFmJNXwBORQRAJHnoU4pMCQ
+              krhWKDU0G6dy+ij4Uui5LPOU7C7itT8FhqNEIFeyo67MG1ed2YlYmg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-05-05T19:47:30Z"
     mac: ENC[AES256_GCM,data:MgtLkqcd73ek7cN4Pzjq7v4+2Pwk1I3dp0OG1sOFRBSdYl6OrODWW4KASt4RfLecxeSSciG2Ne/16AUIKUjYyYT/tKW119e3KD+YKiGFXGr3AJcqhuL5xRt+oI8w3f/Ep1dlZUfjW1/M14rhnZtZVIs8D15NDLzDYcEMlMJx0bw=,iv:qQRldKvdVh7BfOvp8EcTZXv9tDh9/2OHubwzBX5WJys=,tag:lmp/8IRNn6HtETlLXty4Qg==,type:str]
     pgp: []
@@ -79,61 +79,61 @@ spec:
         - plane.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: plane-web
-              port: 3000
+              - name: plane-web
+                port: 3000
           matches:
-            - path:
-                type: PathPrefix
-                value: /
+              - path:
+                    type: PathPrefix
+                    value: /
         - backendRefs:
-            - name: plane-api
-              port: 8000
+              - name: plane-api
+                port: 8000
           matches:
-            - path:
-                type: PathPrefix
-                value: /api
+              - path:
+                    type: PathPrefix
+                    value: /api
         - backendRefs:
-            - name: plane-api
-              port: 8000
+              - name: plane-api
+                port: 8000
           matches:
-            - path:
-                type: PathPrefix
-                value: /auth
+              - path:
+                    type: PathPrefix
+                    value: /auth
         - backendRefs:
-            - name: plane-live
-              port: 3000
+              - name: plane-live
+                port: 3000
           matches:
-            - path:
-                type: PathPrefix
-                value: /live
+              - path:
+                    type: PathPrefix
+                    value: /live
         - backendRefs:
-            - name: plane-space
-              port: 3000
+              - name: plane-space
+                port: 3000
           matches:
-            - path:
-                type: PathPrefix
-                value: /spaces
+              - path:
+                    type: PathPrefix
+                    value: /spaces
         - backendRefs:
-            - name: plane-admin
-              port: 3000
+              - name: plane-admin
+                port: 3000
           matches:
-            - path:
-                type: PathPrefix
-                value: /god-mode
+              - path:
+                    type: PathPrefix
+                    value: /god-mode
         - backendRefs:
-            - name: plane-minio
-              port: 9000
+              - name: plane-minio
+                port: 9000
           matches:
-            - path:
-                type: PathPrefix
-                value: /uploads
+              - path:
+                    type: PathPrefix
+                    value: /uploads
         - backendRefs:
-            - name: plane-silo
-              port: 3000
+              - name: plane-silo
+                port: 3000
           matches:
-            - path:
-                type: PathPrefix
-                value: /silo
+              - path:
+                    type: PathPrefix
+                    value: /silo
 sops:
     kms: []
     gcp_kms: []
@@ -142,13 +142,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkY24rWVEvbjZEMmFuZGJW
-            bkNTRmFaaXd1a1MzTVlrc2hDdXU3RUEvWkRNCnJsUk5XdU1LQjhDZ2cwYlFvdXNs
-            QmJLcDJiaE5FMG0rUTMrMEsyM21EWUkKLS0tIHBuZjJoa251YW5PQjZPSTVabDZM
-            OUV1REptQ2hYMnJmdEpUWDdCSmFocWMK/+WfhqObBeFmJNXwBORQRAJHnoU4pMCQ
-            krhWKDU0G6dy+ij4Uui5LPOU7C7itT8FhqNEIFeyo67MG1ed2YlYmg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkY24rWVEvbjZEMmFuZGJW
+              bkNTRmFaaXd1a1MzTVlrc2hDdXU3RUEvWkRNCnJsUk5XdU1LQjhDZ2cwYlFvdXNs
+              QmJLcDJiaE5FMG0rUTMrMEsyM21EWUkKLS0tIHBuZjJoa251YW5PQjZPSTVabDZM
+              OUV1REptQ2hYMnJmdEpUWDdCSmFocWMK/+WfhqObBeFmJNXwBORQRAJHnoU4pMCQ
+              krhWKDU0G6dy+ij4Uui5LPOU7C7itT8FhqNEIFeyo67MG1ed2YlYmg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-05-05T19:47:30Z"
     mac: ENC[AES256_GCM,data:MgtLkqcd73ek7cN4Pzjq7v4+2Pwk1I3dp0OG1sOFRBSdYl6OrODWW4KASt4RfLecxeSSciG2Ne/16AUIKUjYyYT/tKW119e3KD+YKiGFXGr3AJcqhuL5xRt+oI8w3f/Ep1dlZUfjW1/M14rhnZtZVIs8D15NDLzDYcEMlMJx0bw=,iv:qQRldKvdVh7BfOvp8EcTZXv9tDh9/2OHubwzBX5WJys=,tag:lmp/8IRNn6HtETlLXty4Qg==,type:str]
     pgp: []
