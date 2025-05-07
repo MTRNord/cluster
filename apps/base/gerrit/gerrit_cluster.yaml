@@ -38,126 +38,126 @@ spec:
     gerrits:
         # A primary Gerrit
         - metadata:
-            name: gerrit
-            labels:
-                app: gerrit
+              name: gerrit
+              labels:
+                  app: gerrit
           spec:
-            mode: PRIMARY
-            serviceAccount: gerrit
-            replicas: 2
-            resources:
-                requests:
-                    cpu: 1
-                    memory: 5Gi
-                limits:
-                    cpu: 1
-                    memory: 6Gi
-            service:
-                type: NodePort
-                httpPort: 80
-                sshPort: 29418
-            site:
-                size: 1Gi
-            startupProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            readinessProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            livenessProbe:
-                initialDelaySeconds: 120
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
-            plugins:
-                # This way plugins are installed from the Gerrit-war file
-                - name: download-commands
-                - name: delete-project
-                - name: replication
-                - name: checks
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-checks-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/checks/checks.jar
-                  sha1: 727c916e7c16ef0e6f2a8b4daec45589003a7906
-                - name: oauth
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
-                  sha1: 2d516d0d0d64a117b4ef5e7b09c0d19aefc1c6be
-                - name: branch-network
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-branch-network-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/branch-network/branch-network.jar
-                  sha1: 8238b877c1233708b8b64293dbf3e978e61e2d32
-                - name: checks-jenkins
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-checks-jenkins-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/checks-jenkins/checks-jenkins.jar
-                  sha1: f689cbea071af4fd2416abad482b90ea362920c7
-                - name: events-log
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-events-log-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/events-log/events-log.jar
-                  sha1: be0b61eaf61b8529b248e829db89b7a732d05afd
-                  #- name: replication-status
-                  #  url: https://gerrit-ci.gerritforge.com/job/plugin-replication-status-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/replication-status/replication-status.jar
-                  #  sha1: 5eb04d2238ce7d130d8b9cf0cd79f14e68e7ddfd
-            configFiles:
-                checks-jenkins.config: |-
-                    [jenkins "main-jenkins"]
-                        url = "https://jenkins.midnightthoughts.space"
-                # Some configuration options are specific to the k8sgerrit setup. These
-                # will be set by the Gerrit Operator.
-                gerrit.config: ENC[AES256_GCM,data:/aXn80PMx2idk3GilYPYDjwMsTSDq84BzZVjrW0WZk/kP4RlrCZ6gEl6bN2n8N6g4E8iPL9Xu6U7utcXdaqu+lreSH7NZkhsQh8C/uPOgS3KHw0d7MNzU5MpVyF3y86qtJD7TXiPXCl/IFv0e9vCjTl9+5q4e14Y07h3c1YvLhi7BXK37IIniplIdADfHLKodEQgJWvkY2fye2EQEqlkSAnCJWk6mZUDS6jE4OzqOqIFsXVx6NIQzQAeXO5kB3BMg5cvFCw+Hp/bFUBvR6eGJddZrIHR+/LpFUcyP+Wi/bau/U8vN5BC5udvbL5GLebUSZazRkkJEZLoefByAcWSK0zd6IqeXw3q7VHPu0w0OgDs1VCqn2bSlH+6mCaFfq+WsTf91thUi/4PMCSiiMRZgeaSD5m7McbeLwH4XtzIZh0xHJDtFW0LUjLGlBirAncaySN4A5VG557MOq6NHj8zlEj741XmCaj0mWKqeZ2zS97B4yG8X50tQSkMwbDTbY+UY9dqdE2ON4D0v3lfNmLvyGQEdTPEmcoFkGTPRPyrwd+Zz2x8MiyH9B2imQ3V2eCRN9qe10DU9tzjwzeM0jHJWCfbqrjNh3e3VjqCY6SIRU9GadVWQxaRuUMvci5TRABFzjwy6da4X0VxKHKYsNiLpvl+tVlp/SrCMxo4FNBpyM7pGEOTZEtz3utgf+a8uJatGoD/Se4kpsuoCZdoPH+9p6Oic2cxOIXfHiSmFAhXfeNJG/PaTtO7YxLBOHJ7Z8SHGq/WT4Y4uEhjt3foaUy+qCGVHm6dYbtFJS7RH9/6ReAW1d2gJhPzYuOI5lUJgKDGIgpFYbrEEyosXUyavDE+G4p41GbvwdyBhbXITkNJwBJe570ZIa87/NkqWiayOJjZP5er2p/xx+8R5O2QiXZrNx+LdxeosG4fYtBk5MpibY+zAb46FptGFBRHsSjcSKEA5meonDhBFWAynuPYvNZC3+qwLVkSQuMLUUuKQWYbilrBgzL6EJdfakPqI1T63OgPusCB5ChTutom7Ok6R7VW64eYdxabE2NXN60ehBmGYmj8mCvsp0x1QBQ6tPbAMc5yAsCDBx742aVaEhVmA631TjJa3RR99jPTCktwyuFlFc8eJWpw3jrKYKNbHjaOSJIny/j/MBYGtMpZY/0mksZBW6YbjiZderrlfXQHx7Le0iBll9HwxSGi96PPjqEXuc0J4VpdLk09OFux45Md58DiX6LioheF0HDGkff1ttEHhR8bC5tnKsurWvuV89wl9LGzoOchsJmWQYlfYiHfAHv4QEnBTnPPl8T+Enud/LT1EvxazskP3jZdDLv+lASzw8jLUQwejqe1TqwDG/QUIvqcRnGJJ8zqIEkcadaE+OgmDZgcTD+JzWOV5ciOk0n+LzdBRs0UNfP2Svvhzr5a73YEncPrrVQoxUfMpvJRW9PHtNI8PJCBDwMV+zHyhC5wBEV9rjt6mCN2LVGamcHDvNQB3BANjvBoxhll2g/U4l5jhl4Da8DgigPE0AkMsf/t2hTIM9P/nTr45jMOxgUR9xR5psuf5qSiiai4ULITwQ4MH3H4dVD5IB26E4t8ZYDNnzoJGjnPSDE9CQHN1qWnf3+GeLyXUMk7xXoDK8w+wdofci5Ae+rw3plVh8qFvaek,iv:QXDR0f5R5qdIrs27dRSJPc0ufd7aKTyKHwR5wa2ftEM=,tag:CdUtfP39GX/wboOxQSOowQ==,type:str]
-            # Reference by name to the Secret containing secret files to be mounted to
-            # $SITE/etc
-            secretRef: gerrit-secure-config
+              mode: PRIMARY
+              serviceAccount: gerrit
+              replicas: 2
+              resources:
+                  requests:
+                      cpu: 1
+                      memory: 5Gi
+                  limits:
+                      cpu: 1
+                      memory: 6Gi
+              service:
+                  type: NodePort
+                  httpPort: 80
+                  sshPort: 29418
+              site:
+                  size: 1Gi
+              startupProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              readinessProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              livenessProbe:
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 3
+              plugins:
+                  # This way plugins are installed from the Gerrit-war file
+                  - name: download-commands
+                  - name: delete-project
+                  - name: replication
+                  - name: checks
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-checks-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/checks/checks.jar
+                    sha1: 1dd4976239050b60d01783273e68b3957d04052a
+                  - name: oauth
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
+                    sha1: 2d516d0d0d64a117b4ef5e7b09c0d19aefc1c6be
+                  - name: branch-network
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-branch-network-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/branch-network/branch-network.jar
+                    sha1: 8238b877c1233708b8b64293dbf3e978e61e2d32
+                  - name: checks-jenkins
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-checks-jenkins-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/checks-jenkins/checks-jenkins.jar
+                    sha1: 0ce402fb91760efacd7d18891b36b810541f601e
+                  - name: events-log
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-events-log-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/events-log/events-log.jar
+                    sha1: 511a2d256ec535c21b912169d4591fb418933ba6
+                    #- name: replication-status
+                    #  url: https://gerrit-ci.gerritforge.com/job/plugin-replication-status-bazel-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/replication-status/replication-status.jar
+                    #  sha1: 5eb04d2238ce7d130d8b9cf0cd79f14e68e7ddfd
+              configFiles:
+                  checks-jenkins.config: |-
+                      [jenkins "main-jenkins"]
+                          url = "https://jenkins.midnightthoughts.space"
+                  # Some configuration options are specific to the k8sgerrit setup. These
+                  # will be set by the Gerrit Operator.
+                  gerrit.config: ENC[AES256_GCM,data:/aXn80PMx2idk3GilYPYDjwMsTSDq84BzZVjrW0WZk/kP4RlrCZ6gEl6bN2n8N6g4E8iPL9Xu6U7utcXdaqu+lreSH7NZkhsQh8C/uPOgS3KHw0d7MNzU5MpVyF3y86qtJD7TXiPXCl/IFv0e9vCjTl9+5q4e14Y07h3c1YvLhi7BXK37IIniplIdADfHLKodEQgJWvkY2fye2EQEqlkSAnCJWk6mZUDS6jE4OzqOqIFsXVx6NIQzQAeXO5kB3BMg5cvFCw+Hp/bFUBvR6eGJddZrIHR+/LpFUcyP+Wi/bau/U8vN5BC5udvbL5GLebUSZazRkkJEZLoefByAcWSK0zd6IqeXw3q7VHPu0w0OgDs1VCqn2bSlH+6mCaFfq+WsTf91thUi/4PMCSiiMRZgeaSD5m7McbeLwH4XtzIZh0xHJDtFW0LUjLGlBirAncaySN4A5VG557MOq6NHj8zlEj741XmCaj0mWKqeZ2zS97B4yG8X50tQSkMwbDTbY+UY9dqdE2ON4D0v3lfNmLvyGQEdTPEmcoFkGTPRPyrwd+Zz2x8MiyH9B2imQ3V2eCRN9qe10DU9tzjwzeM0jHJWCfbqrjNh3e3VjqCY6SIRU9GadVWQxaRuUMvci5TRABFzjwy6da4X0VxKHKYsNiLpvl+tVlp/SrCMxo4FNBpyM7pGEOTZEtz3utgf+a8uJatGoD/Se4kpsuoCZdoPH+9p6Oic2cxOIXfHiSmFAhXfeNJG/PaTtO7YxLBOHJ7Z8SHGq/WT4Y4uEhjt3foaUy+qCGVHm6dYbtFJS7RH9/6ReAW1d2gJhPzYuOI5lUJgKDGIgpFYbrEEyosXUyavDE+G4p41GbvwdyBhbXITkNJwBJe570ZIa87/NkqWiayOJjZP5er2p/xx+8R5O2QiXZrNx+LdxeosG4fYtBk5MpibY+zAb46FptGFBRHsSjcSKEA5meonDhBFWAynuPYvNZC3+qwLVkSQuMLUUuKQWYbilrBgzL6EJdfakPqI1T63OgPusCB5ChTutom7Ok6R7VW64eYdxabE2NXN60ehBmGYmj8mCvsp0x1QBQ6tPbAMc5yAsCDBx742aVaEhVmA631TjJa3RR99jPTCktwyuFlFc8eJWpw3jrKYKNbHjaOSJIny/j/MBYGtMpZY/0mksZBW6YbjiZderrlfXQHx7Le0iBll9HwxSGi96PPjqEXuc0J4VpdLk09OFux45Md58DiX6LioheF0HDGkff1ttEHhR8bC5tnKsurWvuV89wl9LGzoOchsJmWQYlfYiHfAHv4QEnBTnPPl8T+Enud/LT1EvxazskP3jZdDLv+lASzw8jLUQwejqe1TqwDG/QUIvqcRnGJJ8zqIEkcadaE+OgmDZgcTD+JzWOV5ciOk0n+LzdBRs0UNfP2Svvhzr5a73YEncPrrVQoxUfMpvJRW9PHtNI8PJCBDwMV+zHyhC5wBEV9rjt6mCN2LVGamcHDvNQB3BANjvBoxhll2g/U4l5jhl4Da8DgigPE0AkMsf/t2hTIM9P/nTr45jMOxgUR9xR5psuf5qSiiai4ULITwQ4MH3H4dVD5IB26E4t8ZYDNnzoJGjnPSDE9CQHN1qWnf3+GeLyXUMk7xXoDK8w+wdofci5Ae+rw3plVh8qFvaek,iv:QXDR0f5R5qdIrs27dRSJPc0ufd7aKTyKHwR5wa2ftEM=,tag:CdUtfP39GX/wboOxQSOowQ==,type:str]
+              # Reference by name to the Secret containing secret files to be mounted to
+              # $SITE/etc
+              secretRef: gerrit-secure-config
         # Gerrit Replica
         - metadata:
-            name: gerrit-replica
-            labels:
-                app: gerrit-replica
+              name: gerrit-replica
+              labels:
+                  app: gerrit-replica
           spec:
-            mode: REPLICA
-            replicas: 2
-            resources:
-                requests:
-                    cpu: 1
-                    memory: 5Gi
-                limits:
-                    cpu: 1
-                    memory: 6Gi
-            service:
-                type: NodePort
-                httpPort: 80
-                sshPort: 29418
-            site:
-                size: 1Gi
-            plugins:
-                - name: oauth
-                  url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
-                  sha1: 2d516d0d0d64a117b4ef5e7b09c0d19aefc1c6be
-            startupProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            readinessProbe:
-                initialDelaySeconds: 30
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 10
-            livenessProbe:
-                initialDelaySeconds: 120
-                periodSeconds: 10
-                timeoutSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
-            configFiles:
-                gerrit.config: ENC[AES256_GCM,data:ONWBaGukHdMcTz50F1R5MjIWWHg1Omqfaae5PvPAxCBRaODGRVdj9WzMR74kZchbAVn7GrnZ+QCrjE2sq2JpCdSbdd6GV4quubtYYK8Ot2EDiJwZvSLVSgXXECYLOAgOcKhPhxopvyhilAWJ7w06TVZ08p6AwqF5w7F8sO+b2FJsq7jJfl12b0xcgFmOCbyRe9e4kidParaw232tne8m6QmBl7pMStXJ6JHtaek8NUymn6b9htad7aJW9IdDdx5j+35oPDIbHla/4lIZ9fAJQlxsSKcXhp22nUXBpfwn0cuiq+38u+HAMIo/bmPSJ2eWdfDyl84VeucrlYNZdVJRv6JRsU6cQ2+fTfjAgeLCOdDXT58nCZFEcH5xWboNkqSfYRA8Oql9xOuOLgSxZQ75jJrFZZzwU9KSD5XwuaD4R6F1Ts3jW2AuqrVM5s7vAJqpi81GzS9ql/cHl7ySoAACGcbXJcPfRR/Kwm/4GimB+ewCOZNxhqSivdbaxMEfe/oRgoIrS9iTobHWQKKWUDzWbQT9B6Bocnud1YnwdytcfWJ5VPVj008f07uSb5R1XuYAtHAhjO28Knv/yFWt6qq41Gz6gOsTVEk5Sbk8WLZbmYbM4uNGZQqxIx6Oq7GbrYNlPN2gEuWnnnbiDroZjYMa1kxHwFd2FmxjjfXZTd8TLKb8vbOFbUPNkZK0FpzDI7qwCFQxOZ3F9iIuJPv47nKG0jQ/36/R7ec/1zC/RMTBQZBsyRZeglrUorMSlNDmvSpzbekkWDXQl2Y2WkUIbJ+AVCdrhGRJtunIx67kkaTismOxEAXCHa2mO3BGnflj2cP3rTcGAB97b5FsDHqEoph3gSMDwDFDNLPjECKGCgvq3Zdg6SDT6XXE0fLeL8Ap3DACE8Cz8mI3UUQbftgdZK4P6S5YvjBMCPRcmrozdPPiwjhjvdKEyq1w/m1DI4pdzWXMkCCaBsnsW059aDPP3y+0Uw/25bHu73HD7mQu1VdaEQTx7pjy2VHCb1cTw2maOy6vErARiA0T0dCaL1c+Ww54H2SI0Y6zQvG6Ms6A2Cqn3PwBZOPiz6BOy82yAH8CnQj36PSXMuYfmPB3JJDxyE5LURvs9p6XfEsS+oZtiE1Iu7QjPHUGgwhqOlxheI+C9ne92r7XbdxAJH58IT7BZPiJlLVjtyP89qm4BN5XBktTbmchRBxsNmgzHLC0bgRlLkC8kJKkWeEsmB4DYWj6im0P4Q0uKobB6VyAk5ZCggl6X8IqfGjL0qWylxA2rfXdRWvlVZO+mNUzABJq10T2dkjxgP6wmfnQE4ZpQeq2aF43B/0DyYFVmw+v0Z7Gwa58ZK1BtUWDDRtQwREAwB/2/VBza1MP6J6CI0xJjxhzmWhuZQMJshidCl9KMkZCYhVvCv/tzL/QDeMcrvwgYZui7wIjDhKhk8g20qOUjKyGF1OPGbY3So3WGthCUMOBV0exHB22QM1qEhsPHc/lRKYW7j34C86r4sE3eXTj36QqCz2K7yRubuNbsYFMCXPCDFyTRRKB8sIAfT+Cif6esdmj08Wu/hvTJusaagTzo8odalav04xrKfprhFMs1TVlgzZ6cTAcoejvAGTWHe1YId5aTx7E6XOAbeCyIcKASsR4v+Lh0gDPWDejNLLUcVW7kqu3,iv:1PLzFCQ8LpS0IR7e3aesXvl/IvOExkvuhM7SxlB3lcg=,tag:+fLag80GzG/akf4Fo8U3TQ==,type:str]
-                healthcheck.config: |-
-                    [healthcheck "auth"]
-                      enabled = false
-            secretRef: gerrit-secure-config
+              mode: REPLICA
+              replicas: 2
+              resources:
+                  requests:
+                      cpu: 1
+                      memory: 5Gi
+                  limits:
+                      cpu: 1
+                      memory: 6Gi
+              service:
+                  type: NodePort
+                  httpPort: 80
+                  sshPort: 29418
+              site:
+                  size: 1Gi
+              plugins:
+                  - name: oauth
+                    url: https://gerrit-ci.gerritforge.com/job/plugin-oauth-bazel-master-master/lastSuccessfulBuild/artifact/bazel-bin/plugins/oauth/oauth.jar
+                    sha1: 2d516d0d0d64a117b4ef5e7b09c0d19aefc1c6be
+              startupProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              readinessProbe:
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 10
+              livenessProbe:
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 10
+                  successThreshold: 1
+                  failureThreshold: 3
+              configFiles:
+                  gerrit.config: ENC[AES256_GCM,data:ONWBaGukHdMcTz50F1R5MjIWWHg1Omqfaae5PvPAxCBRaODGRVdj9WzMR74kZchbAVn7GrnZ+QCrjE2sq2JpCdSbdd6GV4quubtYYK8Ot2EDiJwZvSLVSgXXECYLOAgOcKhPhxopvyhilAWJ7w06TVZ08p6AwqF5w7F8sO+b2FJsq7jJfl12b0xcgFmOCbyRe9e4kidParaw232tne8m6QmBl7pMStXJ6JHtaek8NUymn6b9htad7aJW9IdDdx5j+35oPDIbHla/4lIZ9fAJQlxsSKcXhp22nUXBpfwn0cuiq+38u+HAMIo/bmPSJ2eWdfDyl84VeucrlYNZdVJRv6JRsU6cQ2+fTfjAgeLCOdDXT58nCZFEcH5xWboNkqSfYRA8Oql9xOuOLgSxZQ75jJrFZZzwU9KSD5XwuaD4R6F1Ts3jW2AuqrVM5s7vAJqpi81GzS9ql/cHl7ySoAACGcbXJcPfRR/Kwm/4GimB+ewCOZNxhqSivdbaxMEfe/oRgoIrS9iTobHWQKKWUDzWbQT9B6Bocnud1YnwdytcfWJ5VPVj008f07uSb5R1XuYAtHAhjO28Knv/yFWt6qq41Gz6gOsTVEk5Sbk8WLZbmYbM4uNGZQqxIx6Oq7GbrYNlPN2gEuWnnnbiDroZjYMa1kxHwFd2FmxjjfXZTd8TLKb8vbOFbUPNkZK0FpzDI7qwCFQxOZ3F9iIuJPv47nKG0jQ/36/R7ec/1zC/RMTBQZBsyRZeglrUorMSlNDmvSpzbekkWDXQl2Y2WkUIbJ+AVCdrhGRJtunIx67kkaTismOxEAXCHa2mO3BGnflj2cP3rTcGAB97b5FsDHqEoph3gSMDwDFDNLPjECKGCgvq3Zdg6SDT6XXE0fLeL8Ap3DACE8Cz8mI3UUQbftgdZK4P6S5YvjBMCPRcmrozdPPiwjhjvdKEyq1w/m1DI4pdzWXMkCCaBsnsW059aDPP3y+0Uw/25bHu73HD7mQu1VdaEQTx7pjy2VHCb1cTw2maOy6vErARiA0T0dCaL1c+Ww54H2SI0Y6zQvG6Ms6A2Cqn3PwBZOPiz6BOy82yAH8CnQj36PSXMuYfmPB3JJDxyE5LURvs9p6XfEsS+oZtiE1Iu7QjPHUGgwhqOlxheI+C9ne92r7XbdxAJH58IT7BZPiJlLVjtyP89qm4BN5XBktTbmchRBxsNmgzHLC0bgRlLkC8kJKkWeEsmB4DYWj6im0P4Q0uKobB6VyAk5ZCggl6X8IqfGjL0qWylxA2rfXdRWvlVZO+mNUzABJq10T2dkjxgP6wmfnQE4ZpQeq2aF43B/0DyYFVmw+v0Z7Gwa58ZK1BtUWDDRtQwREAwB/2/VBza1MP6J6CI0xJjxhzmWhuZQMJshidCl9KMkZCYhVvCv/tzL/QDeMcrvwgYZui7wIjDhKhk8g20qOUjKyGF1OPGbY3So3WGthCUMOBV0exHB22QM1qEhsPHc/lRKYW7j34C86r4sE3eXTj36QqCz2K7yRubuNbsYFMCXPCDFyTRRKB8sIAfT+Cif6esdmj08Wu/hvTJusaagTzo8odalav04xrKfprhFMs1TVlgzZ6cTAcoejvAGTWHe1YId5aTx7E6XOAbeCyIcKASsR4v+Lh0gDPWDejNLLUcVW7kqu3,iv:1PLzFCQ8LpS0IR7e3aesXvl/IvOExkvuhM7SxlB3lcg=,tag:+fLag80GzG/akf4Fo8U3TQ==,type:str]
+                  healthcheck.config: |-
+                      [healthcheck "auth"]
+                        enabled = false
+              secretRef: gerrit-secure-config
 sops:
     kms: []
     gcp_kms: []
@@ -166,13 +166,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvelB4eDFRWHRKOExTbWMy
-            eG8zdXpiMVU4UDB4OHROeXpTNXhWdEpVUFV3CkFMTURNNm9vdEZZS2MzSURFSit3
-            b29iRHRYd2NnVU05cDdsajcwNmFqTFkKLS0tIE9CalFEWkcwSHRpNm1sVUhEVFhM
-            QjU5alNnRUE4aTNXRkRTd3lNbW52bTgKekBBurjQx7iKWOhWDV+TYUH+L5tjSM7r
-            KcakagouQFRGd3Ymchl3yOY8O3OBN5gd1wCGwUYruphgfG5/sDm7Cw==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvelB4eDFRWHRKOExTbWMy
+              eG8zdXpiMVU4UDB4OHROeXpTNXhWdEpVUFV3CkFMTURNNm9vdEZZS2MzSURFSit3
+              b29iRHRYd2NnVU05cDdsajcwNmFqTFkKLS0tIE9CalFEWkcwSHRpNm1sVUhEVFhM
+              QjU5alNnRUE4aTNXRkRTd3lNbW52bTgKekBBurjQx7iKWOhWDV+TYUH+L5tjSM7r
+              KcakagouQFRGd3Ymchl3yOY8O3OBN5gd1wCGwUYruphgfG5/sDm7Cw==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2024-12-22T02:54:18Z"
     mac: ENC[AES256_GCM,data:mXJxz/vHrQQYkuanhK89xF40WpMGhoPdLaXJVZxEXnH8cch/IIPF9M2ZDKaWL5MbMuUOYgLmfHR5h838tNlS5lzhPfoLbjf13+VoaGfs3qKVEITrgJrJmXLIWm1KufW9r21lfbAgJgJCVfIynTc5wp1eI4lOB28fbwlfEeK0YAA=,iv:O7yc3i5VrhBbAKJKDvear2l8ZmmBpmODg5Ua+BYYEXg=,tag:bXT+G1RCi3mmNBpjRbs4YA==,type:str]
     pgp: []
