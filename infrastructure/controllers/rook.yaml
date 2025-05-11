@@ -90,16 +90,16 @@ spec:
                                         operator: In
                                         values:
                                             - rook-ceph-osd-prepare
-            topologySpreadConstraints:
-                - maxSkew: 1
-                  topologyKey: topology.kubernetes.io/zone
-                  whenUnsatisfiable: DoNotSchedule
-                  labelSelector:
-                      matchExpressions:
-                          - key: app
-                            operator: In
-                            values:
-                                - rook-ceph-osd-prepare
+                topologySpreadConstraints:
+                    - maxSkew: 1
+                      topologyKey: topology.kubernetes.io/zone
+                      whenUnsatisfiable: DoNotSchedule
+                      labelSelector:
+                          matchExpressions:
+                              - key: app
+                                operator: In
+                                values:
+                                    - rook-ceph-osd-prepare
             mgr:
                 count: 2
                 modules:
