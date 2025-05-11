@@ -59,47 +59,6 @@ spec:
         cephClusterSpec:
             cephVersion:
                 image: quay.io/ceph/ceph:v19.2.2
-            # Since the OSDs could end up on any node, an effort needs to be made to spread the OSDs
-            # across nodes as much as possible. Unfortunately the pod anti-affinity breaks down
-            # as soon as you have more than one OSD per node. The topology spread constraints will
-            # give us an even spread on K8s 1.18 or newer.
-            placement:
-                topologySpreadConstraints:
-                    - maxSkew: 1
-                      topologyKey: kubernetes.io/hostname
-                      whenUnsatisfiable: ScheduleAnyway
-                      labelSelector:
-                          matchExpressions:
-                              - key: app
-                                operator: In
-                                values:
-                                    - rook-ceph-osd
-            preparePlacement:
-                podAntiAffinity:
-                    preferredDuringSchedulingIgnoredDuringExecution:
-                        - weight: 100
-                          podAffinityTerm:
-                              topologyKey: kubernetes.io/hostname
-                              labelSelector:
-                                  matchExpressions:
-                                      - key: app
-                                        operator: In
-                                        values:
-                                            - rook-ceph-osd
-                                      - key: app
-                                        operator: In
-                                        values:
-                                            - rook-ceph-osd-prepare
-                topologySpreadConstraints:
-                    - maxSkew: 1
-                      topologyKey: topology.kubernetes.io/zone
-                      whenUnsatisfiable: DoNotSchedule
-                      labelSelector:
-                          matchExpressions:
-                              - key: app
-                                operator: In
-                                values:
-                                    - rook-ceph-osd-prepare
             mgr:
                 count: 2
                 modules:
@@ -127,6 +86,47 @@ spec:
                       portable: true
                       encrypted: false
                       tuneFastDeviceClass: true
+                      # Since the OSDs could end up on any node, an effort needs to be made to spread the OSDs
+                      # across nodes as much as possible. Unfortunately the pod anti-affinity breaks down
+                      # as soon as you have more than one OSD per node. The topology spread constraints will
+                      # give us an even spread on K8s 1.18 or newer.
+                      placement:
+                          topologySpreadConstraints:
+                              - maxSkew: 1
+                                topologyKey: kubernetes.io/hostname
+                                whenUnsatisfiable: ScheduleAnyway
+                                labelSelector:
+                                    matchExpressions:
+                                        - key: app
+                                          operator: In
+                                          values:
+                                              - rook-ceph-osd
+                          preparePlacement:
+                              podAntiAffinity:
+                                  preferredDuringSchedulingIgnoredDuringExecution:
+                                      - weight: 100
+                                        podAffinityTerm:
+                                        topologyKey: kubernetes.io/hostname
+                                        labelSelector:
+                                            matchExpressions:
+                                                - key: app
+                                                  operator: In
+                                                  values:
+                                                      - rook-ceph-osd
+                                                - key: app
+                                                  operator: In
+                                                  values:
+                                                      - rook-ceph-osd-prepare
+                              topologySpreadConstraints:
+                                  - maxSkew: 1
+                                    topologyKey: topology.kubernetes.io/zone
+                                    whenUnsatisfiable: DoNotSchedule
+                                    labelSelector:
+                                        matchExpressions:
+                                            - key: app
+                                              operator: In
+                                              values:
+                                                  - rook-ceph-osd-prepare
                       volumeClaimTemplates:
                           - metadata:
                                 name: "data"
