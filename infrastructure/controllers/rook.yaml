@@ -48,7 +48,7 @@ spec:
             sourceRef:
                 kind: HelmRepository
                 name: rook-ceph
-            version: v1.16.5
+            version: v1.17.2
     interval: 60m
     values:
         toolbox:
@@ -80,16 +80,16 @@ spec:
                       encrypted: false
                       tuneFastDeviceClass: true
                       volumeClaimTemplates:
-                        - metadata:
-                            name: "data"
-                          spec:
-                            storageClassName: hcloud-volumes
-                            resources:
-                                requests:
-                                    storage: 130Gi
-                            volumeMode: Block
-                            accessModes:
-                                - ReadWriteOnce
+                          - metadata:
+                                name: "data"
+                            spec:
+                                storageClassName: hcloud-volumes
+                                resources:
+                                    requests:
+                                        storage: 130Gi
+                                volumeMode: Block
+                                accessModes:
+                                    - ReadWriteOnce
             dashboard:
                 enabled: true
                 ssl: false
@@ -101,28 +101,28 @@ spec:
         cephFilesystems:
             - name: cephfs
               spec:
-                metadataPool:
-                    replicated:
-                        size: 2
-                        requireSafeReplicaSize: false
-                    parameters:
-                        compression_mode: force
-                dataPools:
-                    - name: data0
+                  metadataPool:
                       replicated:
-                        size: 2
-                        requireSafeReplicaSize: false
+                          size: 2
+                          requireSafeReplicaSize: false
                       parameters:
-                        compression_mode: force
-                preserveFilesystemOnDelete: true
+                          compression_mode: force
+                  dataPools:
+                      - name: data0
+                        replicated:
+                            size: 2
+                            requireSafeReplicaSize: false
+                        parameters:
+                            compression_mode: force
+                  preserveFilesystemOnDelete: true
               storageClass:
-                enabled: true
-                isDefault: true
-                name: cephfs
-                pool: data0
-                reclaimPolicy: Delete
-                allowVolumeExpansion: true
-                volumeBindingMode: Immediate
+                  enabled: true
+                  isDefault: true
+                  name: cephfs
+                  pool: data0
+                  reclaimPolicy: Delete
+                  allowVolumeExpansion: true
+                  volumeBindingMode: Immediate
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -137,8 +137,8 @@ spec:
         - rook.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: rook-ceph-mgr-dashboard
-              port: 7000
+              - name: rook-ceph-mgr-dashboard
+                port: 7000
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
