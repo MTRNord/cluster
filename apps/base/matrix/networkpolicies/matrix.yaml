@@ -7,97 +7,104 @@ spec:
     endpointSelector: {}
     egress:
         - toEntities:
-            - world
+              - world
         - toEndpoints:
-            - matchLabels:
-                io.kubernetes.pod.namespace: kube-system
-                k8s-app: kube-dns
+              - matchLabels:
+                    io.kubernetes.pod.namespace: kube-system
+                    k8s-app: kube-dns
           toPorts:
-            - ports:
-                - port: "53"
-                  protocol: UDP
-              rules:
-                dns:
-                    - matchPattern: "*"
+              - ports:
+                    - port: "53"
+                      protocol: UDP
+                rules:
+                    dns:
+                        - matchPattern: "*"
         - toEndpoints:
-            - matchLabels:
-                k8s:app.kubernetes.io/component: proxy
-                k8s:app.kubernetes.io/managed-by: envoy-gateway
-                k8s:app.kubernetes.io/name: envoy
-                k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
-                k8s:gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
-                io.kubernetes.pod.namespace: envoy-gateway
+              - matchLabels:
+                    k8s:app.kubernetes.io/component: proxy
+                    k8s:app.kubernetes.io/managed-by: envoy-gateway
+                    k8s:app.kubernetes.io/name: envoy
+                    k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
+                    k8s:gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
+                    io.kubernetes.pod.namespace: envoy-gateway
           toPorts:
-            - ports:
-                - port: "10443"
-                - port: "6697"
+              - ports:
+                    - port: "10443"
+                    - port: "6697"
         - toEndpoints:
-            - matchLabels:
-                k8s:app.kubernetes.io/name: draupnir4all
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app.kubernetes.io/name: draupnir4all
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "9000"
+              - ports:
+                    - port: "9000"
         - toEndpoints:
-            - matchLabels:
-                k8s:app: rspamd-matrix
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app.kubernetes.io/name: meowlnir
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "11334"
+              - ports:
+                    - port: "29339"
         - toEndpoints:
-            - matchLabels:
-                k8s:app: draupnir-synapse-keydb
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app: rspamd-matrix
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "6379"
+              - ports:
+                    - port: "11334"
         - toEndpoints:
-            - matchLabels:
-                k8s:app: heisenbridge
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app: draupnir-synapse-keydb
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "9898"
+              - ports:
+                    - port: "6379"
         - toEndpoints:
-            - matchLabels:
-                k8s:app: matrix-synapse-keydb
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app: heisenbridge
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "6379"
+              - ports:
+                    - port: "9898"
         - toEndpoints:
-            - matchLabels:
-                k8s:app: pantalaimon-freifunk
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app: matrix-synapse-keydb
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "8008"
+              - ports:
+                    - port: "6379"
         - toEndpoints:
-            - matchLabels:
-                k8s:app.kubernetes.io/instance: draupnir-synapse
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app: pantalaimon-freifunk
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "9093"
+              - ports:
+                    - port: "8008"
         - toEndpoints:
-            - matchLabels:
-                k8s:app.kubernetes.io/instance: matrix-synapse
-                io.kubernetes.pod.namespace: matrix
+              - matchLabels:
+                    k8s:app.kubernetes.io/instance: draupnir-synapse
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "9093"
+              - ports:
+                    - port: "9093"
         - toEndpoints:
-            - matchLabels:
-                k8s:cnpg.io/cluster: pg-cluster-v2
-                io.kubernetes.pod.namespace: postgres-cluster
+              - matchLabels:
+                    k8s:app.kubernetes.io/instance: matrix-synapse
+                    io.kubernetes.pod.namespace: matrix
           toPorts:
-            - ports:
-                - port: "5432"
+              - ports:
+                    - port: "9093"
         - toEndpoints:
-            - matchLabels:
-                k8s:app.kubernetes.io/instance: traefik
-                io.kubernetes.pod.namespace: traefik-ingress
+              - matchLabels:
+                    k8s:cnpg.io/cluster: pg-cluster-v2
+                    io.kubernetes.pod.namespace: postgres-cluster
           toPorts:
-            - ports:
-                - port: "8443"
+              - ports:
+                    - port: "5432"
+        - toEndpoints:
+              - matchLabels:
+                    k8s:app.kubernetes.io/instance: traefik
+                    io.kubernetes.pod.namespace: traefik-ingress
+          toPorts:
+              - ports:
+                    - port: "8443"
