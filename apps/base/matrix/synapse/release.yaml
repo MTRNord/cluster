@@ -84,10 +84,10 @@ spec:
                 msc3861:
                     enabled: true
                     issuer: https://mas.matrix.midnightthoughts.space/
-                    client_id: ENC[AES256_GCM,data:cC2lKu+uPGS7h91c1dHK3g2R7H0ClVNfChM=,iv:BMsIhymQxB4sifNRw0fvXPWIpD5Hh70qjWODUXXRiwI=,tag:LKUTQrvPdzD9YpSo5SShwQ==,type:str]
+                    client_id: ENC[AES256_GCM,data:6mHxqC1z4Z2Q5tEuMFopvrLu29TL3tW14ZY=,iv:Gmu77Ocnfd3kknMpujvj6BEJf6Vg4dS41d6rRJQVmA0=,tag:FtnFtaXJUgyWtttSrIJjQQ==,type:str]
                     client_auth_method: client_secret_basic
-                    client_secret: ENC[AES256_GCM,data:YO39au0TWGs0lPtfh5HGMcM/Xd1J8xpU5EIiKTlIaiMLxSrYcsbqFadRSsTY/LaFxW56dwN3ze8W3dS9U/xA3A==,iv:QYiJenWFwL9telBZpLJBmrZ1aEcKX2EkWN+zXFFarwQ=,tag:OEhLWLQmzxjZ54YpHAmIPQ==,type:str]
-                    admin_token: ENC[AES256_GCM,data:e81P2qytCgmo1Q6CXik57cylj9mWFHifqbCrJ+pYo70=,iv:0fiRjcEiV1gaGJXo+0Zw+mCDB6gnIxUeDA4BwLMkQSU=,tag:eaYRLGhiOQIK9nVFZTafbw==,type:str]
+                    client_secret: ENC[AES256_GCM,data:FrZIz3wpLrX/8qIKpvmiLDYcBUpWwZuz6tjhw+5O8cq3Jnrn5r25jFws4UZ3CA39/dPX1d7KqVrwL02KOlpCgw==,iv:AWaXm1JKULzYSrhdzEF73IlB3AEVM+Jes4xQBJljdyc=,tag:qFWK2t+o5DmQ23zVV9j39g==,type:str]
+                    admin_token: ENC[AES256_GCM,data:l4ZQV/iMshjwMF9JYQDEwbmpcE8LixUjmzWuGbpA47o=,iv:frHh9q5DCarrI3zOGfwpsfIh78tGueWQ5Lh73OfcCgA=,tag:VGa9EbaOBNz1h0wzzVT8wQ==,type:str]
                     account_management_url: https://mas.matrix.midnightthoughts.space/account
             app_service_config_files:
                 - /data/heisenbridge.yaml
@@ -161,10 +161,10 @@ spec:
                       emptyDir: {}
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:WaKxrCREm2zBfQu9,iv:QiP8VDgQxemWgyJclIwg+upoy6mX1287fLhkfM/gXDg=,tag:r7mYQBdGqzbESmxJgt8Izg==,type:str]
+                        secretName: ENC[AES256_GCM,data:6k5TGAbWU3aCXfSL,iv:qRFAV/oQ8Tv7h+77o7DLJuhHh2FWQyP/Ree89yuhPFI=,tag:Jpjv/zxHN3wyovqU3XSr1w==,type:str]
                     - name: meowlnir-config
                       secret:
-                        secretName: ENC[AES256_GCM,data:SPuBxA0JNcQ=,iv:WjXnBPLznzYI+20MiridDCgMu+gKhH1rUlT6YhbKyQY=,tag:r/gvf3iWJ5X8q29JFc3SNg==,type:str]
+                        secretName: ENC[AES256_GCM,data:cBv5KbyXDT8=,iv:tlE3OJpa7VHw5tiJ0JMWY+RYihC4pA9nr6uFhPpc5xE=,tag:V9rJppRWFmfrEMNm2hnfEg==,type:str]
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -189,9 +189,9 @@ spec:
                       subPath: appservice.yaml
                       readOnly: true
                 extraCommands:
-                    - ENC[AES256_GCM,data:lghJ/sGdPymPobA5PHuD9JPQl/4lZCIYjr0ygeRY6LFdvrL1uPlzKjRLrnXtR2By50lxtUE4QgGXyhzaBtsWAkGsRym6CEOW+rd9EEqWGNumSaAXib+eMpi8WKE3UecQCutkmBoE7tPZUeqmE7wUfNMzkGYAFI8E8mzgBe5INCs4F6PgC5QSKN67DwfRKs7ihPASYRs3hYqSX19YpQ==,iv:w52Wa9QUuAKHxmkXGQO8/qPEymlAAfjTXl6BFFOencY=,tag:TnRdvCcHUQpPewbhNA3R+A==,type:str]
-                    - ENC[AES256_GCM,data:Re0cx1T4vKomZ6GgfpryBvw=,iv:6oHLQISsJWcfU6z47gqlXvP942pzra1qFMqqGI4890Y=,tag:DIujihBxQvDUHxxVlkzm6A==,type:str]
-                    - ENC[AES256_GCM,data:Tylm5s9FiAPMqq83oC6wcXB50yPC41Okac+ET0NyjcubDGZy4bttXb3Fz9cNKvlT3DjGLXQywmp4+CFx1dKivW6Jl8wW2tiL0ReT7PjAdcYKYZ22qK210usRFqp+,iv:75hGKkM1cWP8kD3KTBWxZ6NU33+hGk0JQQ9QTUNBSuw=,tag:OLC64T7P0kkA8x3yma6gGg==,type:str]
+                    - ENC[AES256_GCM,data:COnsasf0HTEbCJE2bbqKGIJgiwyJ+lkQDd3fKldeZa52H/EQFmYcoeVsOIhfQJBbUQeIz7zlVgFMca12OWtQSeV+YtvfYwPFBnHt1hE8RZZ5wREXjo72KXKiBfUbwlApKG4eYMUg8zirq3yrc8RXtRMNWWkwuZx994uBmRAoCjEoLJcQKhPAN1lZKgEdIc4CFMmUHxvpb5l1QmGqCA==,iv:Ppcb23q5FaqdeKEAmx3tVeBV18OVT0Pple1FY4JyxTM=,tag:Pop4kZsgbNuQ4t1mrMoNzQ==,type:str]
+                    - ENC[AES256_GCM,data:pMInE1PeKYAMmpuvT1P5xHfqDQ==,iv:gCVCdnAIvfy+QXaMpVtc0OGRcnSCGZ6wD9b6pQyx/xo=,tag:aAv22KHkXKbN1slDcBSuhg==,type:comment]
+                    - ENC[AES256_GCM,data:a223Vgw0YDjiXRDnkUYLoRXDxqt8URqD2C7SVNm4GOZn5RjvMh1J67PH1zdhhID/3ppffxir7B6YRAQq3qhkSDqXS1tuM732Mp0b7tVWvk4/zvXcONpvr3PSqD97kWY=,iv:RemCIkwjEd4UxntSm/4PFiIEoEtqjt7tNvP79zJsWm8=,tag:Agg5IyMlCrpuu0b0g1yW9Q==,type:comment]
                 extraConfig:
                     #notify_appservices_from_worker: appservices
                     enable_authenticated_media: true
@@ -406,10 +406,10 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:RPpX6lzD4ZJCDgwj,iv:DdR5qsTLUxsavwJhlzCG3PrAdaZootsl4c1R/8eLRY8=,tag:5W5IzXUE8gPESqCH7vGncA==,type:str]
+                    secretName: ENC[AES256_GCM,data:ATxGYarcyJDKSdq6,iv:6dElvnae8dMIrEitzX5EqSKix4dNg0n4M4YbZJyakz0=,tag:feWX1gILL+gqc4l3fZP6yg==,type:str]
                 - name: meowlnir-config
                   secret:
-                    secretName: ENC[AES256_GCM,data:y7sd8xoX7J8=,iv:pzegUkUTUpNaDlE6doSOwuG5JOqlI2n3dEZpPD3u/90=,tag:FsO+hy+kBVNyOFtdKGKM0g==,type:str]
+                    secretName: ENC[AES256_GCM,data:4TEtwXswGHE=,iv:NmfZZiaUPHnz23XQKhielCUq8Hm+G2HucWARnxW9BKM=,tag:Y8+nxCQ5c4HImQNCDjCrSA==,type:str]
             extraVolumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -430,9 +430,9 @@ spec:
                   subPath: appservice.yaml
                   readOnly: true
             extraCommands:
-                - ENC[AES256_GCM,data:tn3dI/rz9fXbSN5vMWjHE0XBwyMRcqDD5tt9lMPrnBKILdEC002ppzWRa3dq5GHdDz7si7r04eFhsKjQIAxDRI6uTOJ3kVJpge1OOBJAIspBdV8VkalZBNLSYvpTdgtROGkTFfd68fYUTlrPuaH9ekZpJ4I+Ur64bf0r5A53Pnsyyd/3PpD3lcvK38w4g1yJwkBsxwtr033DrcxHCA==,iv:zt7eFnog37exfHhA1iDjjvyZGBz33TJO/wdG4nln7X8=,tag:C1TeiMVLxH/9f6bW37ghhw==,type:str]
-                - ENC[AES256_GCM,data:6tVSWwrqgE5tsE2VvepkG0E=,iv:bLMTFEQHnw5ityHN2uF1SZop2k0m1QbgeNCZzEgApeU=,tag:9oCY2NXiHdwrWJQS9a+5Qg==,type:str]
-                - ENC[AES256_GCM,data:qoYZ8hUizprukBh7ABjOBSll0l0IIyGIG8ETSYbpR45P1OuMJXTR1K4OqHMqXztCqYyYru9oOtoSldg8KMOxrJPvIgg+eoiWM1iE29RyTZJ8Mj/TBZQoSaFzHCx6,iv:v7ZHwQOywo4G9h5mfzqYINaseHipKcOXwHWoTp8ejes=,tag:r7ZxHKnAMav0UicN90N1Jw==,type:str]
+                - ENC[AES256_GCM,data:I9A0YuPYEmx1tRD9jymT16p41mdXo2e0KJiKlf2/GAuqTkKDLuyo23YITQfr9OeAp1BVRG8xgrL+Z4jfVC9NGdt1wfmcifE0fYktw24cVVaGOhpsQ0Hyak/stNbRD+jGiO9kX4nSM3sxpqVWhrFo95T6029QuH6qfgF9cSPim2gRxOniXjW7u2wAjGy7nlGUJcet6zvvWOeQAKiC5g==,iv:G9/cAco2TzufK/k87TTy+E9xUBJGH/TiATAMkdhNz68=,tag:45uppC8KsSccdy27W9L6bQ==,type:str]
+                - ENC[AES256_GCM,data:Q9TZAA7BiF+dm+lq8VMGuJdWqw==,iv:zkrm4oSLpsHVFP/V36ay6fyt+zzM/QbxL09uUpy3iQY=,tag:mJJmiSBrytkEw8u4ZSqpMA==,type:comment]
+                - ENC[AES256_GCM,data:KrcL6l+V9nhs+bjFeYNIS43olSVVEqhGEBBVmxG2DIy1oPh5og/UUSEu0FPV4NmhPA4kGGahw4cVkbSvjzbIWG56eluB0EnJUyc9JPKJp+72OUml0SEXoA0va3cISaU=,iv:hvEvdYn5YKNPYO5hcd7Pl19bsz6TMX8ERvqqngosYe8=,tag:VrenTsokcsQy0qdlZ5auZA==,type:comment]
             annotations:
                 prometheus.io/scrape: "true"
                 prometheus.io/path: /_synapse/metrics
@@ -456,7 +456,7 @@ spec:
             sslmode: require
             username: synapse
             database: synapse
-            password: ENC[AES256_GCM,data:7sEb2zpacHbtFeSdWn94S/Z5GQW90uSeGQ6dTE25nB9YON7uhFfx9PEuanvtq1gdH1u0ddwNZuy1kALLSgx5sg==,iv:ZITKN92D5AxKDotky6Loub2DeTLKw53/J5/BtGzJmv0=,tag:On+XrfwtdvMAxMwCh0Y2PA==,type:str]
+            password: ENC[AES256_GCM,data:TZQAat7cBya20MorIkhMOcFsw71DQMKDQpwjbINSoGIquQn/chn7UpY0Jz2Mhgjq3oExk1JSge2lMTB+Eqe64A==,iv:6QD35GfKKoQtMRtqtmi2Qom1pULuQS44JrVzlkaJZEA=,tag:FFpPEDfBwac+kXD3fA8WQg==,type:str]
         gateway:
             parentRefs:
                 - name: envoy-gateway
@@ -491,14 +491,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0UnBEdzIwdGxWT3JLVVBh
-            Y3pmWnY5YmZaZlJhTE4rMVZ2QnJ2TWZGRzBrClBUbTVmUDdxYUVTb2hndWVXVGl5
-            bnBQMzdrUjJrWHJENGJjK1JJYVVIOUUKLS0tIHZaSGdzcXlXWlJ2bi9oZmtacWl3
-            bEtrOWs0WHA0elJ1QnhpekFwc0lzRDQK63QUTmd5AVmhTBmpB7KytUMl0eNXYhnw
-            ACwWIyE70K2gEZMXjfzEUXu5b0HQotG4oNbuP19Q64Y+TBvSDasz8A==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBQRUdpbEo1S0kzTmZ6RWcr
+            ZDlkZUtDaHJobGZjbklOZXkrR2YwUkZ4ejEwClhsamJDODJGOW1adWRtNDJ5RE5o
+            WHUyN2lFUS9tR2xXMFlkYWt2WlpXMEEKLS0tIEVsVFpXTWNkN0E1bmo2YXg3bGZB
+            N2hQb3BIamw4MHNUSHY1QlAxb1dYdWsK93HWeR0o1mgKQntFqZE/fXNQQ0tu7wgX
+            PQ1fhaFkUz3B5U3JBe/+ssJQabcT/9h05K8RqUmJ0wlRXAcU9Nvabw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-12T08:36:14Z"
-    mac: ENC[AES256_GCM,data:y914ZTFyei058f5+5xS8DkfIX77VGqn6QuvjYlaAkQhsmfHPiFVEkbeJd1kBIy/vI4U4KPt6VwWDj8fpsycEQajti4GivO/E7b/2GhJwM3NVkEMeRhevDAptNFAcLNLnhj5Bs9NYeuGx/uYu11PSCMuAMaqirBgDQ8VdNsJ3k/0=,iv:1ecp2YlBpqvoTQA0LbMGnQqSC2idqSNhadZqniPLvoo=,tag:q7yY5sqMyWFQaXJtxiQl9A==,type:str]
+    lastmodified: "2025-05-12T09:18:51Z"
+    mac: ENC[AES256_GCM,data:oKWTB1z5Y1Wdw7pGyfd6bGCZMJn9PGkr4cPtbeqxUJ44o+0ykEAcJ7KPCVCNuAax8892alLPxhkHcr+cuhQpccLTbY4kat/+CNh0yxzc7xJyU+RiPs8bMC9YsfqL3gjFdlqjtlJXECMHv9JIEnw6OBZwLpZ400wbpmLwq7wbzsg=,iv:0awuYCdVYSUfH7sXcQ93bMNiGBouXfM93vrzEfiNuJ0=,tag:2FXP6wqIJNjZ0xLRYOMvxA==,type:str]
     pgp: []
     encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
