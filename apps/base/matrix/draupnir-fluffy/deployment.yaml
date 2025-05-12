@@ -31,7 +31,8 @@ spec:
                 app: mjolnir-fluffy
         spec:
             containers:
-                - image: gnuxie/draupnir:v2.2.0
+                - image: ghcr.io/mtrnord/draupnir:no-root
+                  #image: gnuxie/draupnir:v2.2.0
                   imagePullPolicy: IfNotPresent
                   livenessProbe:
                     failureThreshold: 3
@@ -62,7 +63,8 @@ spec:
                         drop:
                             - ALL
                     readOnlyRootFilesystem: true
-                    #runAsNonRoot: true
+                    runAsNonRoot: true
+                    runAsGroup: 1000
                   volumeMounts:
                     - mountPath: /data/config/production.yaml
                       name: config-volume
