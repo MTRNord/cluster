@@ -15,13 +15,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWclJXRXBnNzAxWGJqeHl4
-            c25tTHpNTTVmTklVT2t6Qlhrd2hhYTZPNzFJCm03Vmhqc3BjbWJpTlV0M3Z2U2xC
-            K1UwV2FaZW5Wa2w1cHNnSjBsVzJia0kKLS0tIHF5QjQvSTExRmNQeTNBRHpERDlU
-            TUxwem16YTY0dWl1eUJGN1dua2xSTkEKu1FD1Vkn7gTx+q2tUOTRdtK9ccDsASwJ
-            pUkGzAoHKkRCXKs/hYygg79aap8bkhnbjgAgc2iNM88ut8Hc/rE4oQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWclJXRXBnNzAxWGJqeHl4
+              c25tTHpNTTVmTklVT2t6Qlhrd2hhYTZPNzFJCm03Vmhqc3BjbWJpTlV0M3Z2U2xC
+              K1UwV2FaZW5Wa2w1cHNnSjBsVzJia0kKLS0tIHF5QjQvSTExRmNQeTNBRHpERDlU
+              TUxwem16YTY0dWl1eUJGN1dua2xSTkEKu1FD1Vkn7gTx+q2tUOTRdtK9ccDsASwJ
+              pUkGzAoHKkRCXKs/hYygg79aap8bkhnbjgAgc2iNM88ut8Hc/rE4oQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-05-12T08:37:21Z"
     mac: ENC[AES256_GCM,data:p728Q31gqS3qTXL9gG7LhPjDI508oRPKNQTqfloaDbIScXOs1kc9KbbuaNgm9dXHG8na3i5qSO25OlqjoHJ0pCZRRXwrlbSCzt8ohSPP4frhpoLgLZNg7JA6owwLEVNk7nzo80mfOyjOGFbPA/pUEPaVcpMvJ2l5vKwduegOX9Q=,iv:YxmNSFl0vVqGvwV5JjwY6Ek9TgcWKzBLFJLRzYCQWMM=,tag:S4wBobR/3T+5T8/JXIk6Kg==,type:str]
     pgp: []
@@ -51,52 +51,53 @@ spec:
             containers:
                 - image: dock.mau.dev/maunium/meowlnir:v0.4.0
                   imagePullPolicy: IfNotPresent
+                  args: ["--no-update"]
                   livenessProbe:
-                    failureThreshold: 3
-                    httpGet:
-                        path: /_matrix/mau/live
-                        port: 29339
-                    initialDelaySeconds: 30
-                    periodSeconds: 30
-                    successThreshold: 1
-                    timeoutSeconds: 1
+                      failureThreshold: 3
+                      httpGet:
+                          path: /_matrix/mau/live
+                          port: 29339
+                      initialDelaySeconds: 30
+                      periodSeconds: 30
+                      successThreshold: 1
+                      timeoutSeconds: 1
                   name: meowlnir-container
                   resources:
-                    requests:
-                        ephemeral-storage: 1024Mi
-                        cpu: 100m
-                        memory: 200Mi
-                    limits:
-                        ephemeral-storage: 2048Mi
-                        cpu: 2000m
-                        memory: 2000Mi
+                      requests:
+                          ephemeral-storage: 1024Mi
+                          cpu: 100m
+                          memory: 200Mi
+                      limits:
+                          ephemeral-storage: 2048Mi
+                          cpu: 2000m
+                          memory: 2000Mi
                   readinessProbe:
-                    httpGet:
-                        path: /_matrix/mau/ready
-                        port: 29339
-                    initialDelaySeconds: 30
-                    periodSeconds: 30
+                      httpGet:
+                          path: /_matrix/mau/ready
+                          port: 29339
+                      initialDelaySeconds: 30
+                      periodSeconds: 30
                   securityContext:
-                    allowPrivilegeEscalation: false
-                    capabilities:
-                        drop:
-                            - ALL
-                    readOnlyRootFilesystem: true
-                    #runAsNonRoot: true
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                          drop:
+                              - ALL
+                      readOnlyRootFilesystem: true
+                      #runAsNonRoot: true
                   volumeMounts:
-                    - mountPath: /config.yaml
-                      name: meowlnir-config
-                      subPath: config.yaml
-                      readOnly: true
-                    - mountPath: /tmp
-                      name: tmp
+                      - mountPath: /data/config.yaml
+                        name: meowlnir-config
+                        subPath: config.yaml
+                        readOnly: true
+                      - mountPath: /tmp
+                        name: tmp
             volumes:
                 - name: meowlnir-config
                   secret:
-                    secretName: ENC[AES256_GCM,data:lixkmrVcu4c=,iv:cYrQs4+cgfFRtRT8w6djRGausj5BwykGdVFfzXgXZIg=,tag:FvHB+u3lTiTB74zJoPeaHA==,type:str]
+                      secretName: ENC[AES256_GCM,data:lixkmrVcu4c=,iv:cYrQs4+cgfFRtRT8w6djRGausj5BwykGdVFfzXgXZIg=,tag:FvHB+u3lTiTB74zJoPeaHA==,type:str]
                 - name: tmp
                   emptyDir:
-                    sizeLimit: 2048Mi
+                      sizeLimit: 2048Mi
 sops:
     kms: []
     gcp_kms: []
@@ -105,13 +106,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWclJXRXBnNzAxWGJqeHl4
-            c25tTHpNTTVmTklVT2t6Qlhrd2hhYTZPNzFJCm03Vmhqc3BjbWJpTlV0M3Z2U2xC
-            K1UwV2FaZW5Wa2w1cHNnSjBsVzJia0kKLS0tIHF5QjQvSTExRmNQeTNBRHpERDlU
-            TUxwem16YTY0dWl1eUJGN1dua2xSTkEKu1FD1Vkn7gTx+q2tUOTRdtK9ccDsASwJ
-            pUkGzAoHKkRCXKs/hYygg79aap8bkhnbjgAgc2iNM88ut8Hc/rE4oQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWclJXRXBnNzAxWGJqeHl4
+              c25tTHpNTTVmTklVT2t6Qlhrd2hhYTZPNzFJCm03Vmhqc3BjbWJpTlV0M3Z2U2xC
+              K1UwV2FaZW5Wa2w1cHNnSjBsVzJia0kKLS0tIHF5QjQvSTExRmNQeTNBRHpERDlU
+              TUxwem16YTY0dWl1eUJGN1dua2xSTkEKu1FD1Vkn7gTx+q2tUOTRdtK9ccDsASwJ
+              pUkGzAoHKkRCXKs/hYygg79aap8bkhnbjgAgc2iNM88ut8Hc/rE4oQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-05-12T08:37:21Z"
     mac: ENC[AES256_GCM,data:p728Q31gqS3qTXL9gG7LhPjDI508oRPKNQTqfloaDbIScXOs1kc9KbbuaNgm9dXHG8na3i5qSO25OlqjoHJ0pCZRRXwrlbSCzt8ohSPP4frhpoLgLZNg7JA6owwLEVNk7nzo80mfOyjOGFbPA/pUEPaVcpMvJ2l5vKwduegOX9Q=,iv:YxmNSFl0vVqGvwV5JjwY6Ek9TgcWKzBLFJLRzYCQWMM=,tag:S4wBobR/3T+5T8/JXIk6Kg==,type:str]
     pgp: []
@@ -136,13 +137,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWclJXRXBnNzAxWGJqeHl4
-            c25tTHpNTTVmTklVT2t6Qlhrd2hhYTZPNzFJCm03Vmhqc3BjbWJpTlV0M3Z2U2xC
-            K1UwV2FaZW5Wa2w1cHNnSjBsVzJia0kKLS0tIHF5QjQvSTExRmNQeTNBRHpERDlU
-            TUxwem16YTY0dWl1eUJGN1dua2xSTkEKu1FD1Vkn7gTx+q2tUOTRdtK9ccDsASwJ
-            pUkGzAoHKkRCXKs/hYygg79aap8bkhnbjgAgc2iNM88ut8Hc/rE4oQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWclJXRXBnNzAxWGJqeHl4
+              c25tTHpNTTVmTklVT2t6Qlhrd2hhYTZPNzFJCm03Vmhqc3BjbWJpTlV0M3Z2U2xC
+              K1UwV2FaZW5Wa2w1cHNnSjBsVzJia0kKLS0tIHF5QjQvSTExRmNQeTNBRHpERDlU
+              TUxwem16YTY0dWl1eUJGN1dua2xSTkEKu1FD1Vkn7gTx+q2tUOTRdtK9ccDsASwJ
+              pUkGzAoHKkRCXKs/hYygg79aap8bkhnbjgAgc2iNM88ut8Hc/rE4oQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-05-12T08:37:21Z"
     mac: ENC[AES256_GCM,data:p728Q31gqS3qTXL9gG7LhPjDI508oRPKNQTqfloaDbIScXOs1kc9KbbuaNgm9dXHG8na3i5qSO25OlqjoHJ0pCZRRXwrlbSCzt8ohSPP4frhpoLgLZNg7JA6owwLEVNk7nzo80mfOyjOGFbPA/pUEPaVcpMvJ2l5vKwduegOX9Q=,iv:YxmNSFl0vVqGvwV5JjwY6Ek9TgcWKzBLFJLRzYCQWMM=,tag:S4wBobR/3T+5T8/JXIk6Kg==,type:str]
     pgp: []
