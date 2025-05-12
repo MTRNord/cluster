@@ -84,10 +84,10 @@ spec:
                 msc3861:
                     enabled: true
                     issuer: https://mas.matrix.midnightthoughts.space/
-                    client_id: ENC[AES256_GCM,data:6mHxqC1z4Z2Q5tEuMFopvrLu29TL3tW14ZY=,iv:Gmu77Ocnfd3kknMpujvj6BEJf6Vg4dS41d6rRJQVmA0=,tag:FtnFtaXJUgyWtttSrIJjQQ==,type:str]
+                    client_id: ENC[AES256_GCM,data:x2nGg799ROwak6N8chnHBi0gI7PKo832VmU=,iv:ubF4mi5rtOTEwJ8NgIFFiAyUCwqui/Oeu9t58IHXsbg=,tag:eWG+v2ak8r6Fo97owxsSrA==,type:str]
                     client_auth_method: client_secret_basic
-                    client_secret: ENC[AES256_GCM,data:FrZIz3wpLrX/8qIKpvmiLDYcBUpWwZuz6tjhw+5O8cq3Jnrn5r25jFws4UZ3CA39/dPX1d7KqVrwL02KOlpCgw==,iv:AWaXm1JKULzYSrhdzEF73IlB3AEVM+Jes4xQBJljdyc=,tag:qFWK2t+o5DmQ23zVV9j39g==,type:str]
-                    admin_token: ENC[AES256_GCM,data:l4ZQV/iMshjwMF9JYQDEwbmpcE8LixUjmzWuGbpA47o=,iv:frHh9q5DCarrI3zOGfwpsfIh78tGueWQ5Lh73OfcCgA=,tag:VGa9EbaOBNz1h0wzzVT8wQ==,type:str]
+                    client_secret: ENC[AES256_GCM,data:dPt+Gv8od5pOI07qW6Y5G019vFDmRy9ES8cBZbkefOv1Vk9dqEftoeAGeBoPxjR1Rhv3vjiNNxoy4zYkfs282Q==,iv:yvPSu2F0nzTwbUZWmXoIrNvGzFyxhDVCc73F9O41ik4=,tag:Ntnngh9UkRgEHHVjrT6mHg==,type:str]
+                    admin_token: ENC[AES256_GCM,data:F1EX5GVojArw0wQLtbOpgTz4lgluarVPTpLjq2GENl0=,iv:mxyhJUC7A6WLJkFO7MtWxrCFbT6hp9YB9RqJYmlubVU=,tag:Y0WFFCzcftludevNpjY+tw==,type:str]
                     account_management_url: https://mas.matrix.midnightthoughts.space/account
             app_service_config_files:
                 - /data/heisenbridge.yaml
@@ -102,24 +102,24 @@ spec:
                     max_cache_memory_usage: 4069M
                     target_cache_memory_usage: 2048M
                     min_cache_ttl: 5m
-            modules:
-                - module: matrix_invitee_server_blocker.InviteeServerBlocker
-                  config:
-                    broken_servers:
-                        #- matrix.org
-                        - matrix.im
-                        - funami.tech
-                        - suicideserver.net
-                        - cuteness-overdose.com
-                        - xmr.se
-                        #- module: synapse_rspamd.AntispamModule
-                        #  config:
-                        #      dry_run: true
-                        #      required_score_threshold: 10
-                        #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                        #      rspamd_password: ENC[AES256_GCM,data:oawyHMbChq7A,iv:PwIpJFtRpWVv7EIqssmdVRFJMKeIT03J9VNoD8LcGpU=,tag:MsYaPedvIxLKz2UiD8NS1Q==,type:str]
-                        #      local_server_address: matrix.midnightthoughts.space
-                        #      matrix_access_token: ENC[AES256_GCM,data:39s3mP9giCwVFslygyZuMIYwvQ9FRxlv2YYkwB5fuWdmQ0ATZ61NRDlx,iv:1ypgEQXrwzbJPkvc5oqFYdDz0JV4gQf6wflYN7yqHDQ=,tag:Dfui+n0hN8jgfr+f+slfjg==,type:str]
+                    #modules:
+                    #    - module: matrix_invitee_server_blocker.InviteeServerBlocker
+                    #      config:
+                    #          broken_servers:
+                    #              #- matrix.org
+                    #              - matrix.im
+                    #              - funami.tech
+                    #              - suicideserver.net
+                    #              - cuteness-overdose.com
+                    #              - xmr.se
+                    #              #- module: synapse_rspamd.AntispamModule
+                    #              #  config:
+                    #              #      dry_run: true
+                    #              #      required_score_threshold: 10
+                    #              #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                    #              #      rspamd_password: ENC[AES256_GCM,data:oawyHMbChq7A,iv:PwIpJFtRpWVv7EIqssmdVRFJMKeIT03J9VNoD8LcGpU=,tag:MsYaPedvIxLKz2UiD8NS1Q==,type:str]
+                    #              #      local_server_address: matrix.midnightthoughts.space
+                    #              #      matrix_access_token: ENC[AES256_GCM,data:39s3mP9giCwVFslygyZuMIYwvQ9FRxlv2YYkwB5fuWdmQ0ATZ61NRDlx,iv:1ypgEQXrwzbJPkvc5oqFYdDz0JV4gQf6wflYN7yqHDQ=,tag:Dfui+n0hN8jgfr+f+slfjg==,type:str]
         persistence:
             enabled: true
             size: 20Gi
@@ -161,10 +161,10 @@ spec:
                       emptyDir: {}
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:6k5TGAbWU3aCXfSL,iv:qRFAV/oQ8Tv7h+77o7DLJuhHh2FWQyP/Ree89yuhPFI=,tag:Jpjv/zxHN3wyovqU3XSr1w==,type:str]
+                        secretName: ENC[AES256_GCM,data:ypFdR6+wvfYFJ9Sh,iv:9ml7d8JTqvDlZF4Aukn7T5fMbOC9ENe8BmMb5QG0+So=,tag:lxk+auEHLrdhuArPHzf/Aw==,type:str]
                     - name: meowlnir-config
                       secret:
-                        secretName: ENC[AES256_GCM,data:cBv5KbyXDT8=,iv:tlE3OJpa7VHw5tiJ0JMWY+RYihC4pA9nr6uFhPpc5xE=,tag:V9rJppRWFmfrEMNm2hnfEg==,type:str]
+                        secretName: ENC[AES256_GCM,data:UfJJuKOUBvk=,iv:QfNQKvVNgL7lYOskP5xDzqhcXd8TQttn/PauUqobd0I=,tag:jjfhNItpkRJ9FD/t07P+mA==,type:str]
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -188,10 +188,10 @@ spec:
                       mountPath: /data/meowlnir.yaml
                       subPath: appservice.yaml
                       readOnly: true
-                extraCommands:
-                    - ENC[AES256_GCM,data:COnsasf0HTEbCJE2bbqKGIJgiwyJ+lkQDd3fKldeZa52H/EQFmYcoeVsOIhfQJBbUQeIz7zlVgFMca12OWtQSeV+YtvfYwPFBnHt1hE8RZZ5wREXjo72KXKiBfUbwlApKG4eYMUg8zirq3yrc8RXtRMNWWkwuZx994uBmRAoCjEoLJcQKhPAN1lZKgEdIc4CFMmUHxvpb5l1QmGqCA==,iv:Ppcb23q5FaqdeKEAmx3tVeBV18OVT0Pple1FY4JyxTM=,tag:Pop4kZsgbNuQ4t1mrMoNzQ==,type:str]
-                    - ENC[AES256_GCM,data:pMInE1PeKYAMmpuvT1P5xHfqDQ==,iv:gCVCdnAIvfy+QXaMpVtc0OGRcnSCGZ6wD9b6pQyx/xo=,tag:aAv22KHkXKbN1slDcBSuhg==,type:comment]
-                    - ENC[AES256_GCM,data:a223Vgw0YDjiXRDnkUYLoRXDxqt8URqD2C7SVNm4GOZn5RjvMh1J67PH1zdhhID/3ppffxir7B6YRAQq3qhkSDqXS1tuM732Mp0b7tVWvk4/zvXcONpvr3PSqD97kWY=,iv:RemCIkwjEd4UxntSm/4PFiIEoEtqjt7tNvP79zJsWm8=,tag:Agg5IyMlCrpuu0b0g1yW9Q==,type:comment]
+                extraCommands: []
+                #- pip install --index-url https://MTRNord:6a34cfef990d89e6e081b64003dad6dc50d45ca4@codeberg.org/api/packages/MTRNord/pypi/simple/ matrix-invitee-server-blocker
+                #- pip install httpx
+                #- pip install --index-url https://codeberg.org/api/packages/MTRNord/pypi/simple/ synapse-rspamd
                 extraConfig:
                     #notify_appservices_from_worker: appservices
                     enable_authenticated_media: true
@@ -205,22 +205,22 @@ spec:
                             max_cache_memory_usage: 4069M
                             target_cache_memory_usage: 2048M
                             min_cache_ttl: 5m
-                    modules:
-                        - module: matrix_invitee_server_blocker.InviteeServerBlocker
-                          config:
-                            broken_servers:
-                                #- matrix.org
-                                - matrix.im
-                                - funami.tech
-                                - suicideserver.net
-                                #- module: synapse_rspamd.AntispamModule
-                                #  config:
-                                #      dry_run: true
-                                #      required_score_threshold: 10
-                                #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
-                                #      rspamd_password: ENC[AES256_GCM,data:OZXUNW4g3AvV,iv:ZkNtB5dCnyDve0c9WI/E72YWqXyXtHFvnYAAf2TUz9Y=,tag:hYF/MwpEbtYMfOVe6zYlXg==,type:str]
-                                #      local_server_address: matrix.midnightthoughts.space
-                                #      matrix_access_token: ENC[AES256_GCM,data:MFfc6mlpCVg5KQH+ozXmTPFTX+0OjiIZjbn23cVS7SeqQuSqUhjkNxyy,iv:GUoRiYYAogBA4enHp/W+ZQvpkOyaixmd0hNm2gxp2o8=,tag:b6tDDnFpd/pYsrzXHEF0ig==,type:str]
+                            #modules:
+                            #    - module: matrix_invitee_server_blocker.InviteeServerBlocker
+                            #      config:
+                            #        broken_servers:
+                            #            #- matrix.org
+                            #            - matrix.im
+                            #            - funami.tech
+                            #            - suicideserver.net
+                            #            #- module: synapse_rspamd.AntispamModule
+                            #            #  config:
+                            #            #      dry_run: true
+                            #            #      required_score_threshold: 10
+                            #            #      rspamd_url: http://rspamd-matrix.matrix.svc.cluster.local:11334/checkv2
+                            #            #      rspamd_password: ENC[AES256_GCM,data:OZXUNW4g3AvV,iv:ZkNtB5dCnyDve0c9WI/E72YWqXyXtHFvnYAAf2TUz9Y=,tag:hYF/MwpEbtYMfOVe6zYlXg==,type:str]
+                            #            #      local_server_address: matrix.midnightthoughts.space
+                            #            #      matrix_access_token: ENC[AES256_GCM,data:MFfc6mlpCVg5KQH+ozXmTPFTX+0OjiIZjbn23cVS7SeqQuSqUhjkNxyy,iv:GUoRiYYAogBA4enHp/W+ZQvpkOyaixmd0hNm2gxp2o8=,tag:b6tDDnFpd/pYsrzXHEF0ig==,type:str]
             federation_reader:
                 resources:
                     requests:
@@ -406,10 +406,10 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:ATxGYarcyJDKSdq6,iv:6dElvnae8dMIrEitzX5EqSKix4dNg0n4M4YbZJyakz0=,tag:feWX1gILL+gqc4l3fZP6yg==,type:str]
+                    secretName: ENC[AES256_GCM,data:RHjUkDXq0A5kZbRA,iv:dlxEo1fadEDNigoHr9Tqk/Zu+Q5bOQ74PywzO2PpoN4=,tag:xaijpRm11z5xdbGcyCWUkA==,type:str]
                 - name: meowlnir-config
                   secret:
-                    secretName: ENC[AES256_GCM,data:4TEtwXswGHE=,iv:NmfZZiaUPHnz23XQKhielCUq8Hm+G2HucWARnxW9BKM=,tag:Y8+nxCQ5c4HImQNCDjCrSA==,type:str]
+                    secretName: ENC[AES256_GCM,data:8IhzjPq+BrQ=,iv:j0FAZOfiI+oT9BSEWBDKlRFClCz5Uw+mmDYPIN3Vo+Y=,tag:xYLFCZdF1/i8PqZbLtOhcA==,type:str]
             extraVolumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -429,10 +429,10 @@ spec:
                   mountPath: /data/meowlnir.yaml
                   subPath: appservice.yaml
                   readOnly: true
-            extraCommands:
-                - ENC[AES256_GCM,data:I9A0YuPYEmx1tRD9jymT16p41mdXo2e0KJiKlf2/GAuqTkKDLuyo23YITQfr9OeAp1BVRG8xgrL+Z4jfVC9NGdt1wfmcifE0fYktw24cVVaGOhpsQ0Hyak/stNbRD+jGiO9kX4nSM3sxpqVWhrFo95T6029QuH6qfgF9cSPim2gRxOniXjW7u2wAjGy7nlGUJcet6zvvWOeQAKiC5g==,iv:G9/cAco2TzufK/k87TTy+E9xUBJGH/TiATAMkdhNz68=,tag:45uppC8KsSccdy27W9L6bQ==,type:str]
-                - ENC[AES256_GCM,data:Q9TZAA7BiF+dm+lq8VMGuJdWqw==,iv:zkrm4oSLpsHVFP/V36ay6fyt+zzM/QbxL09uUpy3iQY=,tag:mJJmiSBrytkEw8u4ZSqpMA==,type:comment]
-                - ENC[AES256_GCM,data:KrcL6l+V9nhs+bjFeYNIS43olSVVEqhGEBBVmxG2DIy1oPh5og/UUSEu0FPV4NmhPA4kGGahw4cVkbSvjzbIWG56eluB0EnJUyc9JPKJp+72OUml0SEXoA0va3cISaU=,iv:hvEvdYn5YKNPYO5hcd7Pl19bsz6TMX8ERvqqngosYe8=,tag:VrenTsokcsQy0qdlZ5auZA==,type:comment]
+            extraCommands: []
+            #- pip install --index-url https://MTRNord:6a34cfef990d89e6e081b64003dad6dc50d45ca4@codeberg.org/api/packages/MTRNord/pypi/simple/ matrix-invitee-server-blocker
+            #- pip install httpx
+            #- pip install --index-url https://codeberg.org/api/packages/MTRNord/pypi/simple/ synapse-rspamd
             annotations:
                 prometheus.io/scrape: "true"
                 prometheus.io/path: /_synapse/metrics
@@ -456,7 +456,7 @@ spec:
             sslmode: require
             username: synapse
             database: synapse
-            password: ENC[AES256_GCM,data:TZQAat7cBya20MorIkhMOcFsw71DQMKDQpwjbINSoGIquQn/chn7UpY0Jz2Mhgjq3oExk1JSge2lMTB+Eqe64A==,iv:6QD35GfKKoQtMRtqtmi2Qom1pULuQS44JrVzlkaJZEA=,tag:FFpPEDfBwac+kXD3fA8WQg==,type:str]
+            password: ENC[AES256_GCM,data:icO9RBxBViEh6AkA87NSm0ouIDhzcX9oJaXWii1sGgq6l1DOLU75zdODrzEXsxnnZc1uKNBuTtNQF3XpVHOtDw==,iv:nEHLDaH0zihHMO/vSS74EtOoJKtDZTH9IadI4+9BDPk=,tag:vC+Bvl9tL8sk9hP1scrvtQ==,type:str]
         gateway:
             parentRefs:
                 - name: envoy-gateway
@@ -491,14 +491,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBQRUdpbEo1S0kzTmZ6RWcr
-            ZDlkZUtDaHJobGZjbklOZXkrR2YwUkZ4ejEwClhsamJDODJGOW1adWRtNDJ5RE5o
-            WHUyN2lFUS9tR2xXMFlkYWt2WlpXMEEKLS0tIEVsVFpXTWNkN0E1bmo2YXg3bGZB
-            N2hQb3BIamw4MHNUSHY1QlAxb1dYdWsK93HWeR0o1mgKQntFqZE/fXNQQ0tu7wgX
-            PQ1fhaFkUz3B5U3JBe/+ssJQabcT/9h05K8RqUmJ0wlRXAcU9Nvabw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4ZyszR1dPREwzRmZWdHNx
+            cEU5UFZKRUhIQkFONmVlczk0T2tDTXpxY1V3Cm1tMHdvRWduOEZncVAzT3Z5K0Jj
+            WFRzL3lId3BQd0FPL2tFZUxLN0ZEdXcKLS0tIDZzSTJJK1lEa2JJclgrUzRaNjVq
+            TEtpck9aVzdRN1IvZENOWng4SlRrR1UKnSlzvPdolygQM9k5nErNlzXkMcfzCwgY
+            khE4PJGiZD7FRQkh4wyDiMaRxhKne1Z/bA78pox+5mFTG6/Fl5PHeg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-12T09:18:51Z"
-    mac: ENC[AES256_GCM,data:oKWTB1z5Y1Wdw7pGyfd6bGCZMJn9PGkr4cPtbeqxUJ44o+0ykEAcJ7KPCVCNuAax8892alLPxhkHcr+cuhQpccLTbY4kat/+CNh0yxzc7xJyU+RiPs8bMC9YsfqL3gjFdlqjtlJXECMHv9JIEnw6OBZwLpZ400wbpmLwq7wbzsg=,iv:0awuYCdVYSUfH7sXcQ93bMNiGBouXfM93vrzEfiNuJ0=,tag:2FXP6wqIJNjZ0xLRYOMvxA==,type:str]
+    lastmodified: "2025-05-12T09:23:36Z"
+    mac: ENC[AES256_GCM,data:R71A0wRXC2MXMuAiLl5ghZiYfDi3m4QWDfLHpNs+AhYYqqaAnK39pPCUDn0xZ4wIWeO//qnOs3bdusyTynlMFHzSo65NALpRFrfxx9sko5wk4cWjWNOTM/KCreD7D94DaCH1QpqIU9HtkLsBkYGfxLiKIbh7yUk5IuPEPaz5nW8=,iv:PZn53utalIC98SQqeRtbD3S5vdAeEqQsRMRGEo3/+3g=,tag:s78tBy23mPDE04zIgguPqg==,type:str]
     pgp: []
     encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
