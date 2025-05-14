@@ -40,3 +40,15 @@ spec:
             enabled: false
         envoy:
             enabled: false
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: cilium
+    namespace: kube-system
+spec:
+    selector:
+        matchLabels:
+            k8s-app: hubble
+    endpoints:
+        - port: hubble-metrics
