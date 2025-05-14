@@ -91,6 +91,14 @@ spec:
                       # as soon as you have more than one OSD per node. The topology spread constraints will
                       # give us an even spread on K8s 1.18 or newer.
                       placement:
+                        nodeAffinity:
+                            requiredDuringSchedulingIgnoredDuringExecution:
+                                nodeSelectorTerms:
+                                    - matchExpressions:
+                                        - key: midnightthoughts.rook.ceph/allowed
+                                          operator: In
+                                          values:
+                                            - "true"
                         topologySpreadConstraints:
                             - maxSkew: 1
                               topologyKey: kubernetes.io/hostname
@@ -102,6 +110,14 @@ spec:
                                       values:
                                         - rook-ceph-osd
                         preparePlacement:
+                            nodeAffinity:
+                                requiredDuringSchedulingIgnoredDuringExecution:
+                                    nodeSelectorTerms:
+                                        - matchExpressions:
+                                            - key: midnightthoughts.rook.ceph/allowed
+                                              operator: In
+                                              values:
+                                                - "true"
                             podAntiAffinity:
                                 preferredDuringSchedulingIgnoredDuringExecution:
                                     - weight: 100
