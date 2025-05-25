@@ -46,6 +46,9 @@ spec:
                         readOnly: true
                       - name: continuwuity-data
                         mountPath: /var/lib/continuwuity
+                  env:
+                      - name: CONTINUWUITY_CONFIG
+                        value: /etc/continuwuity/continuwuity.toml
             livenessProbe:
                 httpGet:
                     path: /_matrix/client/versions
