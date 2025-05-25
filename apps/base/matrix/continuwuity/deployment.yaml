@@ -39,7 +39,7 @@ spec:
                   image: forgejo.ellis.link/continuwuation/continuwuity:main
                   imagePullPolicy: Always
                   ports:
-                      - containerPort: 8008
+                      - containerPort: 8448
                   # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
                   volumeMounts:
                       - name: continuwuity-config
@@ -53,13 +53,13 @@ spec:
             livenessProbe:
                 httpGet:
                     path: /_matrix/client/versions
-                    port: 8008
+                    port: 8448
                 initialDelaySeconds: 10
                 timeoutSeconds: 5
             readinessProbe:
                 httpGet:
                     path: /_matrix/client/versions
-                    port: 8008
+                    port: 8448
                 initialDelaySeconds: 10
                 timeoutSeconds: 5
             # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
@@ -81,8 +81,8 @@ spec:
     ports:
         - name: http
           protocol: TCP
-          port: 8008
-          targetPort: 8008
+          port: 8448
+          targetPort: 8448
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -98,7 +98,7 @@ spec:
     rules:
         - backendRefs:
               - name: continuwuity
-                port: 8008
+                port: 8448
           timeouts:
               request: 240s
               backendRequest: 0s
