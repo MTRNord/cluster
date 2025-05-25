@@ -41,8 +41,7 @@ spec:
                   # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
                   volumeMounts:
                       - name: continuwuity-config
-                        mountPath: /etc/continuwuity/continuwuity.toml
-                        subPath: config
+                        mountPath: /etc/continuwuity
                         readOnly: true
                       - name: continuwuity-data
                         mountPath: /var/lib/continuwuity
