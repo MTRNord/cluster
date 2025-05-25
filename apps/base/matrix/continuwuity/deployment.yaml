@@ -35,7 +35,8 @@ spec:
                       requests:
                           memory: "100Mi"
                           cpu: "28m"
-                  image: forgejo.ellis.link/continuwuation/continuwuity:latest
+                  image: forgejo.ellis.link/continuwuation/continuwuity:main
+                  imagePullPolicy: Always
                   ports:
                       - containerPort: 8448
                   # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
