@@ -47,13 +47,13 @@ spec:
                         mountPath: /var/lib/continuwuity
             livenessProbe:
                 httpGet:
-                    path: /health
+                    path: /_matrix/client/versions
                     port: 8448
                 initialDelaySeconds: 10
                 timeoutSeconds: 5
             readinessProbe:
                 httpGet:
-                    path: /health
+                    path: /_matrix/client/versions
                     port: 8448
                 initialDelaySeconds: 10
                 timeoutSeconds: 5
