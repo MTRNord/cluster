@@ -28,6 +28,7 @@ spec:
             labels:
                 app: continuwuity
         spec:
+            enableServiceLinks: false
             containers:
                 - name: continuwuity
                   resources:
@@ -73,7 +74,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: service-continuwuity
+    name: continuwuity
 spec:
     selector:
         app: continuwuity
@@ -96,7 +97,7 @@ spec:
         - matrix.mtrnord.blog
     rules:
         - backendRefs:
-              - name: service-continuwuity
+              - name: continuwuity
                 port: 8008
           timeouts:
               request: 240s
