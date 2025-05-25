@@ -11,14 +11,14 @@ spec:
         - kind: GitRepository
           name: "*"
           namespace: flux-system
----
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
-kind: Provider
-metadata:
-    name: grafana
-    namespace: monitoring
-spec:
-    type: grafana
-    address: "http://kube-prometheus-grafana.monitoring/api/annotations"
-    secretRef:
-        name: grafana-auth
+#---
+#apiVersion: notification.toolkit.fluxcd.io/v1beta2
+#kind: Provider
+#metadata:
+#    name: grafana
+#    namespace: monitoring
+#spec:
+#    type: grafana
+#    address: "http://kube-prometheus-grafana.monitoring/api/annotations"
+#    secretRef:
+#        name: grafana-auth
