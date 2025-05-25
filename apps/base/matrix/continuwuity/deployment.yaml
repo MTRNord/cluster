@@ -35,7 +35,7 @@ spec:
                       requests:
                           memory: "100Mi"
                           cpu: "28m"
-                  image: ghcr.io/mtrnord/continuwuity:latest
+                  image: forgejo.ellis.link/continuwuation/continuwuity:main
                   imagePullPolicy: Always
                   ports:
                       - containerPort: 8008
@@ -73,7 +73,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: continuwuity
+    name: service-continuwuity
 spec:
     selector:
         app: continuwuity
@@ -96,7 +96,7 @@ spec:
         - matrix.mtrnord.blog
     rules:
         - backendRefs:
-              - name: continuwuity
+              - name: service-continuwuity
                 port: 8008
           timeouts:
               request: 240s
