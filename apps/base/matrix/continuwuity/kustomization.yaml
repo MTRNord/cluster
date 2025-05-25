@@ -5,6 +5,7 @@ resources:
     - deployment.yaml
 secretGenerator:
     - name: continuwuity-config
+      namespace: continuwuity
       files:
           - config=continuwuity.toml
       type: Opaque
