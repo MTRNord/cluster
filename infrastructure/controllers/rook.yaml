@@ -57,6 +57,9 @@ spec:
             enabled: true
             createPrometheusRules: true
         cephClusterSpec:
+            csi:
+                readAffinity:
+                    enabled: true
             cephVersion:
                 image: quay.io/ceph/ceph:v19.2.2
             mgr:
