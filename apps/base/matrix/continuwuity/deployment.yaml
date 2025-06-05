@@ -1,4 +1,3 @@
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -32,24 +31,24 @@ spec:
             containers:
                 - name: continuwuity
                   resources:
-                      limits: {}
-                      requests:
-                          memory: "100Mi"
-                          cpu: "28m"
+                    limits: {}
+                    requests:
+                        memory: "100Mi"
+                        cpu: "28m"
                   image: forgejo.ellis.link/continuwuation/continuwuity:main
                   imagePullPolicy: Always
                   ports:
-                      - containerPort: 8448
+                    - containerPort: 8448
                   # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
                   volumeMounts:
-                      - name: continuwuity-config
-                        mountPath: /etc/conduwuit
-                        readOnly: true
-                      - name: continuwuity-data
-                        mountPath: /var/lib/continuwuity
+                    - name: continuwuity-config
+                      mountPath: /etc/conduwuit
+                      readOnly: true
+                    - name: continuwuity-data
+                      mountPath: /var/lib/continuwuity
                   env:
-                      - name: CONTINUWUITY_CONFIG
-                        value: /etc/conduwuit/conduwuit.toml
+                    - name: CONTINUWUITY_CONFIG
+                      value: /etc/conduwuit/conduwuit.toml
             livenessProbe:
                 httpGet:
                     path: /_matrix/client/versions
@@ -66,10 +65,10 @@ spec:
             volumes:
                 - name: continuwuity-config
                   secret:
-                      secretName: continuwuity-config
+                    secretName: continuwuity-config
                 - name: continuwuity-data
                   persistentVolumeClaim:
-                      claimName: continuwuity
+                    claimName: continuwuity
 ---
 apiVersion: v1
 kind: Service
@@ -97,8 +96,8 @@ spec:
         - matrix.mtrnord.blog
     rules:
         - backendRefs:
-              - name: continuwuity
-                port: 8448
+            - name: continuwuity
+              port: 8448
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s
