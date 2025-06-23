@@ -61,7 +61,7 @@ spec:
                   securityContext:
                       runAsUser: 1000
                       runAsGroup: 1000
-                      readOnlyRootFilesystem: true
+                      readOnlyRootFilesystem: false
                   ports:
                       - containerPort: 3000
                         name: web
@@ -73,16 +73,6 @@ spec:
                         readOnly: true
                       - mountPath: /tmp
                         name: tmp
-                      - mountPath: /var/cache/nginx/client_temp
-                        name: nginx-cache
-                      - mountPath: /var/cache/nginx/proxy_temp
-                        name: nginx-cache-proxy
-                      - mountPath: /var/cache/nginx/fastcgi_temp
-                        name: nginx-cache-fastcgi
-                      - mountPath: /var/cache/nginx/uwsgi_temp
-                        name: nginx-cache-uwsgi
-                      - mountPath: /var/cache/nginx/scgi_temp
-                        name: nginx-cache-scgi
                   livenessProbe:
                       httpGet:
                           path: /
@@ -102,20 +92,5 @@ spec:
                   configMap:
                       name: connectivity-tester-config
                 - name: tmp
-                  emptyDir:
-                      sizeLimit: 2048Mi
-                - name: nginx-cache
-                  emptyDir:
-                      sizeLimit: 2048Mi
-                - name: nginx-cache-proxy
-                  emptyDir:
-                      sizeLimit: 2048Mi
-                - name: nginx-cache-fastcgi
-                  emptyDir:
-                      sizeLimit: 2048Mi
-                - name: nginx-cache-uwsgi
-                  emptyDir:
-                      sizeLimit: 2048Mi
-                - name: nginx-cache-scgi
                   emptyDir:
                       sizeLimit: 2048Mi
