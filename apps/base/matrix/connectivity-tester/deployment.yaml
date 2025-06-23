@@ -37,10 +37,10 @@ spec:
                         name: api
                         protocol: TCP
                   volumeMounts:
-                      - name: configs
-                        mountPath: "/usr/share/nginx/html/config.json"
-                        subPath: config.json
-                        readOnly: true
+                      - mountPath: /tmp
+                        name: tmp
+                      - mountPath: /var/cache/nginx/client_temp
+                        name: nginx-cache
                   #livenessProbe:
                   #    httpGet:
                   #        path: /healthz
@@ -72,6 +72,10 @@ spec:
                         name: web
                         protocol: TCP
                   volumeMounts:
+                      - name: configs
+                        mountPath: "/usr/share/nginx/html/config.json"
+                        subPath: config.json
+                        readOnly: true
                       - mountPath: /tmp
                         name: tmp
                   livenessProbe:
@@ -93,5 +97,8 @@ spec:
                   configMap:
                       name: connectivity-tester-config
                 - name: tmp
+                  emptyDir:
+                      sizeLimit: 2048Mi
+                - name: nginx-cache
                   emptyDir:
                       sizeLimit: 2048Mi
