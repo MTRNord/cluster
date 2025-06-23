@@ -81,6 +81,8 @@ spec:
                         name: nginx-cache-fastcgi
                       - mountPath: /var/cache/nginx/uwsgi_temp
                         name: nginx-cache-uwsgi
+                      - mountPath: /var/cache/nginx/scgi_temp
+                        name: nginx-cache-scgi
                   livenessProbe:
                       httpGet:
                           path: /
@@ -112,5 +114,8 @@ spec:
                   emptyDir:
                       sizeLimit: 2048Mi
                 - name: nginx-cache-uwsgi
+                  emptyDir:
+                      sizeLimit: 2048Mi
+                - name: nginx-cache-scgi
                   emptyDir:
                       sizeLimit: 2048Mi
