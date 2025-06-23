@@ -24,69 +24,69 @@ spec:
                   image: ghcr.io/mtrnord/rust-federation-tester:main
                   imagePullPolicy: Always
                   resources:
-                      limits: {}
-                      requests:
-                          memory: "344Mi"
-                          cpu: "252m"
+                    limits: {}
+                    requests:
+                        memory: "344Mi"
+                        cpu: "252m"
                   securityContext:
-                      runAsUser: 1000
-                      runAsGroup: 1000
-                      readOnlyRootFilesystem: true
+                    runAsUser: 1000
+                    runAsGroup: 1000
+                    readOnlyRootFilesystem: true
                   ports:
-                      - containerPort: 8080
-                        name: api
-                        protocol: TCP
-                  #livenessProbe:
-                  #    httpGet:
-                  #        path: /healthz
-                  #        port: appservice
-                  #        scheme: HTTP
-                  #    initialDelaySeconds: 15
-                  #    periodSeconds: 10
-                  #startupProbe:
-                  #    httpGet:
-                  #        path: /healthz
-                  #        port: appservice
-                  #    initialDelaySeconds: 15
-                  #    failureThreshold: 30
-                  #    periodSeconds: 10
+                    - containerPort: 8080
+                      name: api
+                      protocol: TCP
+                      #livenessProbe:
+                      #    httpGet:
+                      #        path: /healthz
+                      #        port: appservice
+                      #        scheme: HTTP
+                      #    initialDelaySeconds: 15
+                      #    periodSeconds: 10
+                      #startupProbe:
+                      #    httpGet:
+                      #        path: /healthz
+                      #        port: appservice
+                      #    initialDelaySeconds: 15
+                      #    failureThreshold: 30
+                      #    periodSeconds: 10
                 - name: connection-checker-ui
                   image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
                   imagePullPolicy: Always
                   resources:
-                      limits: {}
-                      requests:
-                          memory: "344Mi"
-                          cpu: "252m"
+                    limits: {}
+                    requests:
+                        memory: "344Mi"
+                        cpu: "252m"
                   ports:
-                      - containerPort: 3000
-                        name: web
-                        protocol: TCP
+                    - containerPort: 3000
+                      name: web
+                      protocol: TCP
                   volumeMounts:
-                      - name: configs
-                        mountPath: "/usr/share/nginx/html/config.json"
-                        subPath: config.json
-                        readOnly: true
-                      - mountPath: /tmp
-                        name: tmp
+                    - name: configs
+                      mountPath: "/usr/share/nginx/html/config.json"
+                      subPath: config.json
+                      readOnly: true
+                    - mountPath: /tmp
+                      name: tmp
                   livenessProbe:
-                      httpGet:
-                          path: /
-                          port: web
-                          scheme: HTTP
-                      initialDelaySeconds: 15
-                      periodSeconds: 10
+                    httpGet:
+                        path: /
+                        port: web
+                        scheme: HTTP
+                    initialDelaySeconds: 15
+                    periodSeconds: 10
                   startupProbe:
-                      httpGet:
-                          path: /
-                          port: web
-                      initialDelaySeconds: 15
-                      failureThreshold: 30
-                      periodSeconds: 10
+                    httpGet:
+                        path: /
+                        port: web
+                    initialDelaySeconds: 15
+                    failureThreshold: 30
+                    periodSeconds: 10
             volumes:
                 - name: configs
                   configMap:
-                      name: connectivity-tester-config
+                    name: connectivity-tester-config
                 - name: tmp
                   emptyDir:
-                      sizeLimit: 2048Mi
+                    sizeLimit: 2048Mi
