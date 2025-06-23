@@ -36,11 +36,6 @@ spec:
                       - containerPort: 8080
                         name: api
                         protocol: TCP
-                  volumeMounts:
-                      - mountPath: /tmp
-                        name: tmp
-                      - mountPath: /var/cache/nginx/client_temp
-                        name: nginx-cache
                   #livenessProbe:
                   #    httpGet:
                   #        path: /healthz
@@ -78,6 +73,8 @@ spec:
                         readOnly: true
                       - mountPath: /tmp
                         name: tmp
+                      - mountPath: /var/cache/nginx/client_temp
+                        name: nginx-cache
                   livenessProbe:
                       httpGet:
                           path: /
