@@ -75,6 +75,8 @@ spec:
                         name: tmp
                       - mountPath: /var/cache/nginx/client_temp
                         name: nginx-cache
+                      - mountPath: /var/cache/nginx/proxy_temp
+                        name: nginx-cache-proxy
                   livenessProbe:
                       httpGet:
                           path: /
@@ -97,5 +99,8 @@ spec:
                   emptyDir:
                       sizeLimit: 2048Mi
                 - name: nginx-cache
+                  emptyDir:
+                      sizeLimit: 2048Mi
+                - name: nginx-cache-proxy
                   emptyDir:
                       sizeLimit: 2048Mi
