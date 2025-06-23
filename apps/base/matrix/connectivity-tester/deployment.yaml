@@ -36,20 +36,20 @@ spec:
                     - containerPort: 8080
                       name: api
                       protocol: TCP
-                      #livenessProbe:
-                      #    httpGet:
-                      #        path: /healthz
-                      #        port: appservice
-                      #        scheme: HTTP
-                      #    initialDelaySeconds: 15
-                      #    periodSeconds: 10
-                      #startupProbe:
-                      #    httpGet:
-                      #        path: /healthz
-                      #        port: appservice
-                      #    initialDelaySeconds: 15
-                      #    failureThreshold: 30
-                      #    periodSeconds: 10
+                  livenessProbe:
+                    httpGet:
+                        path: /healthz
+                        port: appservice
+                        scheme: HTTP
+                    initialDelaySeconds: 15
+                    periodSeconds: 10
+                  startupProbe:
+                    httpGet:
+                        path: /healthz
+                        port: appservice
+                    initialDelaySeconds: 15
+                    failureThreshold: 30
+                    periodSeconds: 10
                 - name: connection-checker-ui
                   image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
                   imagePullPolicy: Always
