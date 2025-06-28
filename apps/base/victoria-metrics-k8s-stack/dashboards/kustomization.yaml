@@ -1,0 +1,49 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+configMapGenerator:
+    - name: grafana-dashboards-matrix
+      namespace: monitoring
+      files:
+          - draupnir4all_status.json=draupnir4all_status.json
+          - synapse.json=synapse.json
+      options:
+          labels:
+              grafana_dashboard: "1"
+          annotations:
+              grafana_folder: Matrix
+    - name: grafana-dashboards-flux
+      namespace: monitoring
+      files:
+          - flux-control-plane-dashboard.json=flux-control-plane-dashboard.json
+          - flux-cluster-dashboard.json=flux-cluster-dashboard.json
+          - flux-logs-dashboard.json=flux-logs-dashboard.json
+          - flagger.json:flagger.json
+      options:
+          labels:
+              grafana_dashboard: "1"
+          annotations:
+              grafana_folder: Flux
+    - name: grafana-dashboards-ceph
+      namespace: monitoring
+      files:
+          - ceph-cluster-dashboard.json=ceph-cluster-dashboard.json
+          - ceph-osd-single-dashboard.json=ceph-osd-single-dashboard.json
+          - ceph-pools-dashboard.json=ceph-pools-dashboard.json
+      options:
+          labels:
+              grafana_dashboard: "1"
+          annotations:
+              grafana_folder: Ceph
+    - name: grafana-dashboards-envoy
+      namespace: monitoring
+      files:
+          - envoy-clusters.json=envoy_clusters.json
+          - envoy-gateway-global.json:envoy-gateway-global.json
+          - envoy-proxy-global.json:envoy-proxy-global.json
+          - global-ratelimit.json:global-ratelimit.json
+      options:
+          labels:
+              grafana_dashboard: "1"
+          annotations:
+              grafana_folder: Envoy
