@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -90,3 +91,127 @@ spec:
                 - name: tmp
                   emptyDir:
                       sizeLimit: 2048Mi
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+    name: connectivity-tester-latency
+    namespace: flagger-system
+spec:
+    provider:
+        type: prometheus
+        address: "http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc:8481/select/0/prometheus"
+    query: |
+        histogram_quantile(0.99,
+          sum(
+            irate(
+              envoy_cluster_upstream_rq_time_bucket{
+                envoy_cluster_name=~".*{{ namespace }}/{{ target }}.*",
+              }[{{ interval }}]
+            )
+          ) by (le)
+        )
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+    name: connectivity-tester-error-rate
+    namespace: flagger-system
+spec:
+    provider:
+        type: prometheus
+        address: "http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc:8481/select/0/prometheus"
+    query: |
+        sum(
+          rate(
+            envoy_cluster_upstream_rq{
+              envoy_cluster_name=~".*{{ namespace }}/{{ target }}.*",
+              envoy_response_code!~"5.*"
+            }[{{ interval }}]
+          )
+        )
+        /
+        sum(
+          rate(
+            envoy_cluster_upstream_rq_total{
+              envoy_cluster_name=~".*{{ namespace }}/{{ target }}.*",
+            }[{{ interval }}]
+          )
+        )
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+    name: connectivity-tester
+    namespace: matrix
+spec:
+    # deployment reference
+    targetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: connectivity-tester
+    # the maximum time in seconds for the canary deployment
+    # to make progress before it is rollback (default 600s)
+    progressDeadlineSeconds: 60
+    # HPA reference (optional)
+    #autoscalerRef:
+    #    apiVersion: autoscaling/v2
+    #    kind: HorizontalPodAutoscaler
+    #    name: connectivity-tester
+    service:
+        # service port number
+        port: 3000
+        # container port number or name (optional)
+        targetPort: 3000
+        portDiscovery: true
+        # Gateway API HTTPRoute host names
+        hosts:
+            - connectivity-tester.mtrnord.blog
+            - federationtester.mtrnord.blog
+        # Reference to the Gateway that the generated HTTPRoute would attach to.
+        gatewayRefs:
+            - name: envoy-gateway
+              namespace: envoy-gateway
+    analysis:
+        # schedule interval (default 60s)
+        interval: 1m
+        # max number of failed metric checks before rollback
+        threshold: 5
+        # max traffic percentage routed to canary
+        # percentage (0-100)
+        maxWeight: 50
+        # canary increment step
+        # percentage (0-100)
+        stepWeight: 10
+        metrics:
+            - name: error-rate
+              # max error rate (5xx responses)
+              # percentage (0-100)
+              templateRef:
+                  name: connectivity-tester-error-rate
+                  namespace: flagger-system
+              thresholdRange:
+                  max: 1
+              interval: 1m
+            - name: latency
+              templateRef:
+                  name: connectivity-tester-latency
+                  namespace: flagger-system
+              # seconds
+              thresholdRange:
+                  max: 0.5
+              interval: 30s
+        # testing (optional)
+        webhooks:
+            - name: smoke-test
+              type: pre-rollout
+              url: http://flagger-loadtester.flagger-system/
+              timeout: 15s
+              metadata:
+                  type: bash
+                  cmd: "curl -s http://connectivity-tester.matrix:3000 && curl -s http://connectivity-tester.matrix:8080/healthz | grep 'OK'"
+            - name: load-test
+              url: http://flagger-loadtester.flagger-system/
+              timeout: 5s
+              metadata:
+                  cmd: "hey -z 2m -q 10 -c 2 -host connectivity-tester.mtrnord.blog http://connectivity-tester.matrix:3000/"
