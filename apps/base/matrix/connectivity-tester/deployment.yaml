@@ -13,19 +13,20 @@ spec:
         matchLabels:
             app: connectivity-tester
     template:
-        podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-                - labelSelector:
-                      matchExpressions:
-                          - key: app
-                            operator: In
-                            values:
-                                - connectivity-tester
-                      topologyKey: "kubernetes.io/hostname"
         metadata:
             labels:
                 app: connectivity-tester
         spec:
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                              matchExpressions:
+                                  - key: app
+                                    operator: In
+                                    values:
+                                        - connectivity-tester
+                          topologyKey: "kubernetes.io/hostname"
             imagePullSecrets:
                 - name: ghcr-pull
             hostNetwork: true
@@ -111,7 +112,7 @@ apiVersion: flagger.app/v1beta1
 kind: MetricTemplate
 metadata:
     name: connectivity-tester-latency
-    namespace: flagger-system
+    namespace: matrix
 spec:
     provider:
         type: prometheus
@@ -131,7 +132,7 @@ apiVersion: flagger.app/v1beta1
 kind: MetricTemplate
 metadata:
     name: connectivity-tester-error-rate
-    namespace: flagger-system
+    namespace: matrix
 spec:
     provider:
         type: prometheus
