@@ -20,11 +20,11 @@ spec:
             podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
                     - labelSelector:
-                        matchExpressions:
-                            - key: app
-                              operator: In
-                              values:
-                                - connectivity-tester
+                          matchExpressions:
+                              - key: app
+                                operator: In
+                                values:
+                                    - connectivity-tester
                       topologyKey: "kubernetes.io/hostname"
             imagePullSecrets:
                 - name: ghcr-pull
@@ -34,78 +34,78 @@ spec:
                   image: ghcr.io/mtrnord/rust-federation-tester:main
                   imagePullPolicy: Always
                   resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
+                      limits: {}
+                      requests:
+                          memory: "344Mi"
+                          cpu: "252m"
                   securityContext:
-                    runAsUser: 1000
-                    runAsGroup: 1000
-                    readOnlyRootFilesystem: true
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      readOnlyRootFilesystem: true
                   ports:
-                    - containerPort: 8080
-                      name: api
-                      protocol: TCP
+                      - containerPort: 8080
+                        name: api
+                        protocol: TCP
                   readinessProbe:
-                    httpGet:
-                        path: /healthz
-                        port: api
-                        scheme: HTTP
+                      httpGet:
+                          path: /healthz
+                          port: api
+                          scheme: HTTP
                   livenessProbe:
-                    httpGet:
-                        path: /healthz
-                        port: api
-                        scheme: HTTP
+                      httpGet:
+                          path: /healthz
+                          port: api
+                          scheme: HTTP
                   startupProbe:
-                    httpGet:
-                        path: /healthz
-                        port: api
+                      httpGet:
+                          path: /healthz
+                          port: api
                 - name: connection-checker-ui
                   image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
                   imagePullPolicy: Always
                   lifecycle:
-                    preStop:
-                        exec:
-                            command:
-                                - sleep
-                                - "10"
+                      preStop:
+                          exec:
+                              command:
+                                  - sleep
+                                  - "10"
                   resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
+                      limits: {}
+                      requests:
+                          memory: "344Mi"
+                          cpu: "252m"
                   ports:
-                    - containerPort: 3000
-                      name: web
-                      protocol: TCP
+                      - containerPort: 3000
+                        name: web
+                        protocol: TCP
                   volumeMounts:
-                    - name: configs
-                      mountPath: "/usr/share/nginx/html/config.json"
-                      subPath: config.json
-                      readOnly: true
-                    - mountPath: /tmp
-                      name: tmp
+                      - name: configs
+                        mountPath: "/usr/share/nginx/html/config.json"
+                        subPath: config.json
+                        readOnly: true
+                      - mountPath: /tmp
+                        name: tmp
                   livenessProbe:
-                    httpGet:
-                        path: /
-                        port: web
-                        scheme: HTTP
+                      httpGet:
+                          path: /
+                          port: web
+                          scheme: HTTP
                   readinessProbe:
-                    httpGet:
-                        path: /
-                        port: web
-                        scheme: HTTP
+                      httpGet:
+                          path: /
+                          port: web
+                          scheme: HTTP
                   startupProbe:
-                    httpGet:
-                        path: /
-                        port: web
+                      httpGet:
+                          path: /
+                          port: web
             volumes:
                 - name: configs
                   configMap:
-                    name: connectivity-tester-config
+                      name: connectivity-tester-config
                 - name: tmp
                   emptyDir:
-                    sizeLimit: 2048Mi
+                      sizeLimit: 2048Mi
 ---
 apiVersion: flagger.app/v1beta1
 kind: MetricTemplate
@@ -125,7 +125,7 @@ spec:
               }[{{ interval }}]
             )
           ) by (le)
-        )
+        )/1000
 ---
 apiVersion: flagger.app/v1beta1
 kind: MetricTemplate
@@ -137,7 +137,7 @@ spec:
         type: prometheus
         address: "http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc:8481/select/0/prometheus"
     query: |
-        sum(
+        100 - sum(
           rate(
             envoy_cluster_upstream_rq{
               envoy_cluster_name=~".*{{ namespace }}/{{ target }}.*",
@@ -153,6 +153,7 @@ spec:
             }[{{ interval }}]
           )
         )
+        * 100
 ---
 apiVersion: flagger.app/v1beta1
 kind: Canary
@@ -207,18 +208,18 @@ spec:
               # max error rate (5xx responses)
               # percentage (0-100)
               templateRef:
-                name: connectivity-tester-error-rate
-                namespace: matrix
+                  name: connectivity-tester-error-rate
+                  namespace: matrix
               thresholdRange:
-                max: 1
+                  max: 1
               interval: 1m
             - name: latency
               templateRef:
-                name: connectivity-tester-latency
-                namespace: matrix
+                  name: connectivity-tester-latency
+                  namespace: matrix
               # seconds
               thresholdRange:
-                max: 0.5
+                  max: 0.5
               interval: 30s
         # testing (optional)
         webhooks:
@@ -227,11 +228,12 @@ spec:
               url: http://flagger-loadtester.flagger-system/
               timeout: 15s
               metadata:
-                type: bash
-                cmd: "curl -s http://connectivity-tester.matrix:3000 && curl -s http://connectivity-tester.matrix:8080/healthz
-                    | grep 'OK'"
+                  type: bash
+                  cmd:
+                      "curl -s http://connectivity-tester.matrix:3000 && curl -s http://connectivity-tester.matrix:8080/healthz
+                      | grep 'OK'"
             - name: load-test
               url: http://flagger-loadtester.flagger-system/
               timeout: 5s
               metadata:
-                cmd: "hey -z 2m -q 10 -c 2 -host connectivity-tester.mtrnord.blog http://connectivity-tester.matrix:3000/"
+                  cmd: "hey -z 2m -q 10 -c 2 -host connectivity-tester.mtrnord.blog http://connectivity-tester.matrix:3000/"
