@@ -38,10 +38,10 @@ configMapGenerator:
     - name: grafana-dashboards-envoy
       namespace: monitoring
       files:
-          - envoy-clusters.json=envoy_clusters.json
-          - envoy-gateway-global.json:envoy-gateway-global.json
-          - envoy-proxy-global.json:envoy-proxy-global.json
-          - global-ratelimit.json:global-ratelimit.json
+          - envoy-clusters.json=envoy-clusters.json
+          - envoy-gateway-global.json=envoy-gateway-global.json
+          - envoy-proxy-global.json=envoy-proxy-global.json
+          - global-ratelimit.json=global-ratelimit.json
       options:
           labels:
               grafana_dashboard: "1"
