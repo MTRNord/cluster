@@ -234,7 +234,7 @@ spec:
                       | grep 'OK'"
             - name: load-test
               url: http://flagger-loadtester.flagger-system/
-              timeout: 5s
+              timeout: 2m
               metadata:
                   cmd: "hey -z 2m -q 10 -c 2 http://connectivity-tester-canary.matrix/?serverName=mtrnord.blog"
 # TODO: Split api and ui into separate deployments so we can scale and update them independently.
