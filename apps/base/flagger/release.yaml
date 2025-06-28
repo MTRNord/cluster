@@ -1,0 +1,42 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: flagger
+    namespace: flagger-system
+spec:
+    interval: 1h
+    releaseName: flagger
+    install: # override existing Flagger CRDs
+        crds: CreateReplace
+    upgrade: # update Flagger CRDs
+        crds: CreateReplace
+    chart:
+        spec:
+            chart: flagger
+            version: 1.x # update Flagger to the latest minor version
+            interval: 6h # scan for new versions every six hours
+            sourceRef:
+                kind: HelmRepository
+                name: flagger
+            verify: # verify the chart signature with Cosign keyless
+                provider: cosign
+    values:
+        nodeSelector:
+            kubernetes.io/os: linux
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+    name: flagger-loadtester
+    namespace: flagger-system
+spec:
+    interval: 6h
+    wait: true
+    timeout: 5m
+    prune: true
+    sourceRef:
+        kind: OCIRepository
+        name: flagger-loadtester
+    path: ./tester
+    targetNamespace: apps
