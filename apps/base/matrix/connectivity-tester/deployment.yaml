@@ -42,15 +42,10 @@ spec:
                         path: /healthz
                         port: api
                         scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
                   startupProbe:
                     httpGet:
                         path: /healthz
                         port: api
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
                 - name: connection-checker-ui
                   image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
                   imagePullPolicy: Always
@@ -75,15 +70,10 @@ spec:
                         path: /
                         port: web
                         scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
                   startupProbe:
                     httpGet:
                         path: /
                         port: web
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
             volumes:
                 - name: configs
                   configMap:
