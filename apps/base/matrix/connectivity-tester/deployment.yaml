@@ -13,19 +13,19 @@ spec:
         matchLabels:
             app: connectivity-tester
     template:
+        podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                      matchExpressions:
+                          - key: app
+                            operator: In
+                            values:
+                                - connectivity-tester
+                      topologyKey: "kubernetes.io/hostname"
         metadata:
             labels:
                 app: connectivity-tester
         spec:
-            podAntiAffinity:
-                requiredDuringSchedulingIgnoredDuringExecution:
-                    - labelSelector:
-                          matchExpressions:
-                              - key: app
-                                operator: In
-                                values:
-                                    - connectivity-tester
-                      topologyKey: "kubernetes.io/hostname"
             imagePullSecrets:
                 - name: ghcr-pull
             hostNetwork: true
