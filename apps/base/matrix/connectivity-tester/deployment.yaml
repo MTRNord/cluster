@@ -236,4 +236,5 @@ spec:
               url: http://flagger-loadtester.flagger-system/
               timeout: 5s
               metadata:
-                  cmd: "hey -z 2m -q 10 -c 2 https://connectivity-tester.mtrnord.blog/?serverName=mtrnord.blog"
+                  cmd: "hey -z 2m -q 10 -c 2 http://connectivity-tester-canary.matrix/?serverName=mtrnord.blog"
+# TODO: Split api and ui into separate deployments so we can scale and update them independently.
