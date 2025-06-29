@@ -268,9 +268,9 @@ spec:
                   cmd: "curl -s http://connectivity-tester-canary.matrix:3000"
             - name: load-test
               url: http://flagger-loadtester.flagger-system/
-              timeout: 2m
+              timeout: 10m
               metadata:
-                  cmd: "hey -z 2m -q 10 -c 2 http://connectivity-tester-canary.matrix/?serverName=mtrnord.blog"
+                  cmd: "hey -z 10m -q 10 -c 2 http://connectivity-tester-canary.matrix/?serverName=mtrnord.blog"
 ---
 apiVersion: flagger.app/v1beta1
 kind: Canary
@@ -349,6 +349,6 @@ spec:
                   cmd: "curl -s http://connectivity-tester-api.matrix-canary:8080/healthz | grep 'OK'"
             - name: load-test
               url: http://flagger-loadtester.flagger-system/
-              timeout: 2m
+              timeout: 10m
               metadata:
-                  cmd: "hey -z 2m -q 10 -c 2 http://connectivity-tester-api-canary.matrix/api/federation-ok?serverName=mtrnord.blog&no_cache=true"
+                  cmd: "hey -z 10m -q 10 -c 2 http://connectivity-tester-api-canary.matrix/api/federation-ok?serverName=mtrnord.blog&no_cache=true"
