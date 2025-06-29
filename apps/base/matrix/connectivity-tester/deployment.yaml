@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,36 +32,6 @@ spec:
                 - name: ghcr-pull
             hostNetwork: true
             containers:
-                - name: federation-tester-api
-                  image: ghcr.io/mtrnord/rust-federation-tester:v0.1.0
-                  imagePullPolicy: Always
-                  resources:
-                      limits: {}
-                      requests:
-                          memory: "344Mi"
-                          cpu: "252m"
-                  securityContext:
-                      runAsUser: 1000
-                      runAsGroup: 1000
-                      readOnlyRootFilesystem: true
-                  ports:
-                      - containerPort: 8080
-                        name: api
-                        protocol: TCP
-                  readinessProbe:
-                      httpGet:
-                          path: /healthz
-                          port: api
-                          scheme: HTTP
-                  livenessProbe:
-                      httpGet:
-                          path: /healthz
-                          port: api
-                          scheme: HTTP
-                  startupProbe:
-                      httpGet:
-                          path: /healthz
-                          port: api
                 - name: connection-checker-ui
                   image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
                   imagePullPolicy: Always
@@ -107,6 +78,70 @@ spec:
                 - name: tmp
                   emptyDir:
                       sizeLimit: 2048Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: connectivity-tester-api
+    namespace: matrix
+spec:
+    progressDeadlineSeconds: 120
+    strategy:
+        rollingUpdate:
+            maxUnavailable: 0
+        type: RollingUpdate
+    selector:
+        matchLabels:
+            app: connectivity-tester-api
+    template:
+        metadata:
+            labels:
+                app: connectivity-tester-api
+        spec:
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                              matchExpressions:
+                                  - key: app
+                                    operator: In
+                                    values:
+                                        - connectivity-tester-api
+                          topologyKey: "kubernetes.io/hostname"
+            imagePullSecrets:
+                - name: ghcr-pull
+            hostNetwork: true
+            containers:
+                - name: federation-tester-api
+                  image: ghcr.io/mtrnord/rust-federation-tester:v0.1.0
+                  imagePullPolicy: Always
+                  resources:
+                      limits: {}
+                      requests:
+                          memory: "344Mi"
+                          cpu: "252m"
+                  securityContext:
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      readOnlyRootFilesystem: true
+                  ports:
+                      - containerPort: 8080
+                        name: api
+                        protocol: TCP
+                  readinessProbe:
+                      httpGet:
+                          path: /healthz
+                          port: api
+                          scheme: HTTP
+                  livenessProbe:
+                      httpGet:
+                          path: /healthz
+                          port: api
+                          scheme: HTTP
+                  startupProbe:
+                      httpGet:
+                          path: /healthz
+                          port: api
 ---
 apiVersion: flagger.app/v1beta1
 kind: MetricTemplate
@@ -231,12 +266,91 @@ spec:
               timeout: 15s
               metadata:
                   type: bash
-                  cmd:
-                      "curl -s http://connectivity-tester.matrix:3000 && curl -s http://connectivity-tester.matrix:8080/healthz
-                      | grep 'OK'"
+                  cmd: "curl -s http://connectivity-tester-canary.matrix:3000"
             - name: load-test
               url: http://flagger-loadtester.flagger-system/
               timeout: 2m
               metadata:
                   cmd: "hey -z 2m -q 10 -c 2 http://connectivity-tester-canary.matrix/?serverName=mtrnord.blog"
-# TODO: Split api and ui into separate deployments so we can scale and update them independently.
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+    name: connectivity-tester-api
+    namespace: matrix
+spec:
+    # deployment reference
+    targetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: connectivity-tester-api
+    # the maximum time in seconds for the canary deployment
+    # to make progress before it is rollback (default 600s)
+    progressDeadlineSeconds: 60
+    # HPA reference (optional)
+    #autoscalerRef:
+    #    apiVersion: autoscaling/v2
+    #    kind: HorizontalPodAutoscaler
+    #    name: connectivity-tester
+    service:
+        # service port number
+        port: 8080
+        # container port number or name (optional)
+        targetPort: 8080
+        portDiscovery: true
+        # Gateway API HTTPRoute host names
+        hosts:
+            - api.connectivity-tester.mtrnord.blog
+        # Reference to the Gateway that the generated HTTPRoute would attach to.
+        gatewayRefs:
+            - name: envoy-gateway
+              namespace: envoy-gateway
+        retries:
+            attempts: 10
+            perTryTimeout: 5s
+            retryOn: "gateway-error,connect-failure,refused-stream"
+    analysis:
+        # schedule interval (default 60s)
+        interval: 1m
+        # max number of failed metric checks before rollback
+        threshold: 5
+        # max traffic percentage routed to canary
+        # percentage (0-100)
+        maxWeight: 50
+        # canary increment step
+        # percentage (0-100)
+        stepWeight: 10
+        metrics:
+            - name: error-rate
+              # max error rate (5xx responses)
+              # percentage (0-100)
+              templateRef:
+                  name: connectivity-tester-error-rate
+                  namespace: matrix
+              thresholdRange:
+                  max: 2
+              interval: 1m
+            - name: latency
+              templateRef:
+                  name: connectivity-tester-latency
+                  namespace: matrix
+              # seconds
+              thresholdRange:
+                  max: 1
+              interval: 30s
+        sessionAffinity:
+            cookieName: flagger-cookie
+        # testing (optional)
+        webhooks:
+            - name: smoke-test
+              type: pre-rollout
+              url: http://flagger-loadtester.flagger-system/
+              timeout: 15s
+              metadata:
+                  type: bash
+                  cmd: "curl -s http://connectivity-tester-api.matrix-canary:8080/healthz | grep 'OK'"
+            - name: load-test
+              url: http://flagger-loadtester.flagger-system/
+              timeout: 2m
+              metadata:
+                  cmd: "hey -z 2m -q 10 -c 2 http://connectivity-tester-api-canary.matrix/api/federation-ok?serverName=mtrnord.blog&no_cache=true"
