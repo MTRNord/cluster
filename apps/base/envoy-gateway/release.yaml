@@ -562,6 +562,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: mastodon.mtrnord.blog-tls
+        - name: https-api-connectivity-tester-mtrnord-blog
+          protocol: HTTPS
+          hostname: "api.connectivity-tester.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: api.connectivity-tester.mtrnord.blog-tls
         - name: https-connectivity-tester-mtrnord-blog
           protocol: HTTPS
           hostname: "connectivity-tester.mtrnord.blog"
