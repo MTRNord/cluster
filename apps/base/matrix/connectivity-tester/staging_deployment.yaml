@@ -1,0 +1,157 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: connectivity-tester-stage
+    namespace: matrix
+spec:
+    progressDeadlineSeconds: 120
+    strategy:
+        rollingUpdate:
+            maxUnavailable: 0
+        type: RollingUpdate
+    selector:
+        matchLabels:
+            app: connectivity-tester-stage
+    template:
+        metadata:
+            labels:
+                app: connectivity-tester-stage
+        spec:
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                            matchExpressions:
+                                - key: app
+                                  operator: In
+                                  values:
+                                    - connectivity-tester-stage
+                          topologyKey: "kubernetes.io/hostname"
+            imagePullSecrets:
+                - name: ghcr-pull
+            hostNetwork: true
+            containers:
+                - name: federation-tester-api
+                  image: ghcr.io/mtrnord/rust-federation-tester:main
+                  imagePullPolicy: Always
+                  resources:
+                    limits: {}
+                    requests:
+                        memory: "344Mi"
+                        cpu: "252m"
+                  securityContext:
+                    runAsUser: 1000
+                    runAsGroup: 1000
+                    readOnlyRootFilesystem: true
+                  ports:
+                    - containerPort: 8080
+                      hostPort: 8081
+                      name: api
+                      protocol: TCP
+                  readinessProbe:
+                    httpGet:
+                        path: /healthz
+                        port: api
+                        scheme: HTTP
+                  livenessProbe:
+                    httpGet:
+                        path: /healthz
+                        port: api
+                        scheme: HTTP
+                  startupProbe:
+                    httpGet:
+                        path: /healthz
+                        port: api
+                - name: connection-checker-ui
+                  image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
+                  imagePullPolicy: Always
+                  lifecycle:
+                    preStop:
+                        exec:
+                            command:
+                                - sleep
+                                - "10"
+                  resources:
+                    limits: {}
+                    requests:
+                        memory: "344Mi"
+                        cpu: "252m"
+                  ports:
+                    - containerPort: 3000
+                      hostPort: 3001
+                      name: web
+                      protocol: TCP
+                  volumeMounts:
+                    - name: configs
+                      mountPath: "/usr/share/nginx/html/config.json"
+                      subPath: config.json
+                      readOnly: true
+                    - mountPath: /tmp
+                      name: tmp
+                  livenessProbe:
+                    httpGet:
+                        path: /
+                        port: web
+                        scheme: HTTP
+                  readinessProbe:
+                    httpGet:
+                        path: /
+                        port: web
+                        scheme: HTTP
+                  startupProbe:
+                    httpGet:
+                        path: /
+                        port: web
+            volumes:
+                - name: configs
+                  configMap:
+                    name: connectivity-tester-config
+                - name: tmp
+                  emptyDir:
+                    sizeLimit: 2048Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: connectivity-tester-stage
+spec:
+    selector:
+        app: connectivity-tester-stage
+    ports:
+        - port: 8080
+          targetPort: 8081
+        - port: 3000
+          targetPort: 3001
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: connectivity-tester-stage
+    namespace: matrix
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - stage.connectivity-tester.mtrnord.blog
+    rules:
+        - matches:
+            - path:
+                value: /api
+                type: PathPrefix
+          backendRefs:
+            - name: connectivity-tester-stage
+              port: 8080
+          timeouts:
+            request: 240s
+            backendRequest: 0s
+        - matches:
+            - path:
+                value: /
+                type: PathPrefix
+          backendRefs:
+            - name: connectivity-tester-stage
+              port: 3000
+          timeouts:
+            request: 240s
+            backendRequest: 0s

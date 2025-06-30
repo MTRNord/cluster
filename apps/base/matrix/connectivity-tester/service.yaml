@@ -12,12 +12,12 @@ spec:
         - federationtester.mtrnord.blog
     rules:
         - matches:
-              - path:
-                    value: /api
-                    type: PathPrefix
+            - path:
+                value: /api
+                type: PathPrefix
           backendRefs:
-              - name: connectivity-tester-api-primary
-                port: 8080
+            - name: connectivity-tester-api-primary
+              port: 8080
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s
