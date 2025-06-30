@@ -30,7 +30,7 @@ spec:
                           topologyKey: "kubernetes.io/hostname"
             imagePullSecrets:
                 - name: ghcr-pull
-            hostNetwork: true
+            hostNetwork: false
             containers:
                 - name: connection-checker-ui
                   image: ghcr.io/mtrnord/matrix-connection-tester-ui:main
@@ -114,7 +114,7 @@ spec:
             containers:
                 - name: federation-tester-api
                   image: ghcr.io/mtrnord/rust-federation-tester:v0.1.0
-                  imagePullPolicy: Always
+                  imagePullPolicy: IfNotPresent
                   resources:
                       limits: {}
                       requests:
