@@ -161,10 +161,10 @@ spec:
                       emptyDir: {}
                     - name: configs
                       secret:
-                        secretName: ENC[AES256_GCM,data:ypFdR6+wvfYFJ9Sh,iv:9ml7d8JTqvDlZF4Aukn7T5fMbOC9ENe8BmMb5QG0+So=,tag:lxk+auEHLrdhuArPHzf/Aw==,type:str]
+                          secretName: ENC[AES256_GCM,data:ypFdR6+wvfYFJ9Sh,iv:9ml7d8JTqvDlZF4Aukn7T5fMbOC9ENe8BmMb5QG0+So=,tag:lxk+auEHLrdhuArPHzf/Aw==,type:str]
                     - name: meowlnir-config
                       secret:
-                        secretName: ENC[AES256_GCM,data:UfJJuKOUBvk=,iv:QfNQKvVNgL7lYOskP5xDzqhcXd8TQttn/PauUqobd0I=,tag:jjfhNItpkRJ9FD/t07P+mA==,type:str]
+                          secretName: ENC[AES256_GCM,data:UfJJuKOUBvk=,iv:QfNQKvVNgL7lYOskP5xDzqhcXd8TQttn/PauUqobd0I=,tag:jjfhNItpkRJ9FD/t07P+mA==,type:str]
                 volumeMounts:
                     - name: matrix-org-blocker
                       mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -227,7 +227,7 @@ spec:
                         cpu: 100m
                         memory: 1026Mi
                     limits: {}
-                replicaCount: 1
+                replicaCount: 0
                 enabled: true
                 generic: true
                 listeners:
@@ -256,14 +256,14 @@ spec:
                     - /_matrix/federation/v1/hierarchy/.*
             event_persister:
                 name: event_persister
-                replicaCount: 1
+                replicaCount: 0
                 enabled: true
                 generic: true
                 listeners:
                     - replication
             background_worker:
                 name: background_worker
-                replicaCount: 1
+                replicaCount: 0
                 enabled: true
                 generic: true
             generic_frontend:
@@ -272,7 +272,7 @@ spec:
                         cpu: 232m
                         memory: 1008Mi
                     limits: {}
-                replicaCount: 1
+                replicaCount: 0
                 enabled: true
                 generic: true
                 listeners:
@@ -406,10 +406,10 @@ spec:
                   emptyDir: {}
                 - name: configs
                   secret:
-                    secretName: ENC[AES256_GCM,data:RHjUkDXq0A5kZbRA,iv:dlxEo1fadEDNigoHr9Tqk/Zu+Q5bOQ74PywzO2PpoN4=,tag:xaijpRm11z5xdbGcyCWUkA==,type:str]
+                      secretName: ENC[AES256_GCM,data:RHjUkDXq0A5kZbRA,iv:dlxEo1fadEDNigoHr9Tqk/Zu+Q5bOQ74PywzO2PpoN4=,tag:xaijpRm11z5xdbGcyCWUkA==,type:str]
                 - name: meowlnir-config
                   secret:
-                    secretName: ENC[AES256_GCM,data:8IhzjPq+BrQ=,iv:j0FAZOfiI+oT9BSEWBDKlRFClCz5Uw+mmDYPIN3Vo+Y=,tag:xYLFCZdF1/i8PqZbLtOhcA==,type:str]
+                      secretName: ENC[AES256_GCM,data:8IhzjPq+BrQ=,iv:j0FAZOfiI+oT9BSEWBDKlRFClCz5Uw+mmDYPIN3Vo+Y=,tag:xYLFCZdF1/i8PqZbLtOhcA==,type:str]
             extraVolumeMounts:
                 - name: matrix-org-blocker
                   mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
@@ -470,16 +470,16 @@ spec:
                 - matrix.midnightthoughts.space
             csPaths:
                 - backendRefs:
-                    - kind: Service
-                      name: mas
-                      port: 8080
+                      - kind: Service
+                        name: mas
+                        port: 8080
                   matches:
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/.*/(login|logout|refresh).*
-                    - path:
-                        type: RegularExpression
-                        value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/.*/(login|logout|refresh).*
+                      - path:
+                            type: RegularExpression
+                            value: /_matrix/client/(api/v1|r0|v3|unstable)/login/sso/redirect
         ingress:
             enabled: false
 sops:
@@ -490,13 +490,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4ZyszR1dPREwzRmZWdHNx
-            cEU5UFZKRUhIQkFONmVlczk0T2tDTXpxY1V3Cm1tMHdvRWduOEZncVAzT3Z5K0Jj
-            WFRzL3lId3BQd0FPL2tFZUxLN0ZEdXcKLS0tIDZzSTJJK1lEa2JJclgrUzRaNjVq
-            TEtpck9aVzdRN1IvZENOWng4SlRrR1UKnSlzvPdolygQM9k5nErNlzXkMcfzCwgY
-            khE4PJGiZD7FRQkh4wyDiMaRxhKne1Z/bA78pox+5mFTG6/Fl5PHeg==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4ZyszR1dPREwzRmZWdHNx
+              cEU5UFZKRUhIQkFONmVlczk0T2tDTXpxY1V3Cm1tMHdvRWduOEZncVAzT3Z5K0Jj
+              WFRzL3lId3BQd0FPL2tFZUxLN0ZEdXcKLS0tIDZzSTJJK1lEa2JJclgrUzRaNjVq
+              TEtpck9aVzdRN1IvZENOWng4SlRrR1UKnSlzvPdolygQM9k5nErNlzXkMcfzCwgY
+              khE4PJGiZD7FRQkh4wyDiMaRxhKne1Z/bA78pox+5mFTG6/Fl5PHeg==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-05-12T09:23:36Z"
     mac: ENC[AES256_GCM,data:R71A0wRXC2MXMuAiLl5ghZiYfDi3m4QWDfLHpNs+AhYYqqaAnK39pPCUDn0xZ4wIWeO//qnOs3bdusyTynlMFHzSo65NALpRFrfxx9sko5wk4cWjWNOTM/KCreD7D94DaCH1QpqIU9HtkLsBkYGfxLiKIbh7yUk5IuPEPaz5nW8=,iv:PZn53utalIC98SQqeRtbD3S5vdAeEqQsRMRGEo3/+3g=,tag:s78tBy23mPDE04zIgguPqg==,type:str]
     pgp: []
