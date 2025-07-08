@@ -17,6 +17,12 @@ spec:
         timeout: 5m
         remediation:
             retries: 3
+        crds: Create
+    upgrade:
+        crds: CreateReplace
+        # Force recreation due to Helm not properly patching Deployment with e.g. added port,
+        # causing spurious drift detection
+        force: true
     values:
         #image:
         #    repository: ghcr.io/mtrnord/workaround_db_operator
