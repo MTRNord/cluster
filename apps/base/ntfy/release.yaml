@@ -48,6 +48,8 @@ spec:
                         mountPath: /opt/docker/ntfy/cache
                       - name: ntfy-data
                         mountPath: /etc/ntfy
+                      - name: ntfy-cache-2
+                        mountPath: /var/cache/ntfy
             containers:
                 - name: ntfy
                   securityContext:
@@ -78,6 +80,8 @@ spec:
                         mountPath: /opt/docker/ntfy/cache
                       - name: ntfy-data
                         mountPath: /etc/ntfy
+                      - name: ntfy-cache-2
+                        mountPath: /var/cache/ntfy
             probes:
                 livenessProbe:
                     httpGet:
@@ -92,6 +96,8 @@ spec:
                   configMap:
                       name: ntfy-config
                 - name: ntfy-cache
+                  emptyDir: {}
+                - name: ntfy-cache-2
                   emptyDir: {}
                 - name: ntfy-data
                   persistentVolumeClaim:
