@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ntfy
+resources:
+    - release.yaml
+configMapGenerator:
+    - name: ntfy-config
+      files:
+        - ntfy.yml

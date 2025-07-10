@@ -610,6 +610,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: federationtester.mtrnord.blog-tls
+        - name: https-notify-mtrnord-blog
+          protocol: HTTPS
+          hostname: "notify.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: notify.mtrnord.blog-tls
         - name: http
           protocol: HTTP
           port: 80
