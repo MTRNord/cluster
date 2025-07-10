@@ -29,7 +29,8 @@ spec:
             containers:
                 - name: ntfy
                   image: binwiederhier/ntfy
-                  args: ["serve"]
+                  args:
+                      ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
                   env:
                       - name: TZ
                         value: "Europe/Berlin"
