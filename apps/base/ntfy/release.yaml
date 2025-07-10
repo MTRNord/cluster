@@ -26,8 +26,37 @@ spec:
             labels:
                 app: ntfy
         spec:
+            securityContext:
+                runAsUser: 1000
+                runAsGroup: 1000
+                fsGroup: 1000
+            initContainers:
+                - name: fix-permissions
+                  image: busybox
+                  securityContext:
+                      runAsUser: 0
+                      runAsGroup: 0
+                      allowPrivilegeEscalation: true
+                  command:
+                      [
+                          "sh",
+                          "-c",
+                          "chown -R 1000:1000 /opt/docker/ntfy/config /opt/docker/ntfy/cache /etc/ntfy",
+                      ]
+                  volumeMounts:
+                      - name: ntfy-config
+                        mountPath: /opt/docker/ntfy/config
+                      - name: ntfy-cache
+                        mountPath: /opt/docker/ntfy/cache
+                      - name: ntfy-data
+                        mountPath: /etc/ntfy
             containers:
                 - name: ntfy
+                  securityContext:
+                      allowPrivilegeEscalation: false
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      readOnlyRootFilesystem: true
                   image: binwiederhier/ntfy
                   args:
                       ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
