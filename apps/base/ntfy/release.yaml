@@ -50,7 +50,16 @@ spec:
                       - name: ntfy-cache
                         mountPath: /opt/docker/ntfy/cache
                       - name: ntfy-data
-                        mountPath: /etc/ntfy/
+                        mountPath: /etc/ntfy
+            probes:
+                livenessProbe:
+                    httpGet:
+                        path: /v1/health
+                        port: 8080
+                readinessProbe:
+                    httpGet:
+                        path: /v1/health
+                        port: 8080
             volumes:
                 - name: ntfy-config
                   configMap:
