@@ -1,0 +1,43 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+    name: oidc-capacitor
+    namespace: flux-system
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: capacitor
+    oidc:
+        provider:
+            issuer: https://auth.midnightthoughts.space/application/o/capacitor/
+            authorizationEndpoint: https://auth.midnightthoughts.space/application/o/authorize/
+            tokenEndpoint: https://auth.midnightthoughts.space/application/o/token/
+        clientID: LKNnKYcm816EEnnFTmEdfo91kmWyJnc3lrh98NWW
+        #gitleaks:allow
+        clientSecret:
+            name: capacitor-oidc-config
+        #redirectURL: https://ui.k8s.midnightthoughts.space/oauth2/callback
+        #logoutPath: /logout
+        refreshToken: true
+        cookieDomain: midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2Y1dqRnR6Wlc5R0xxMXRB
+            WWtDcFFETFAzcjdVempiSmtWMkdFNmZabkdnCmxoYjdFVisxQUhKSWtNWDZ0UTQw
+            ZnJFZzY5UmhlWU5aVyszSGg2VzBadXcKLS0tIE02b2xzY1pPWHZGSTUxSnc1SkNa
+            RENiUGZkZ1VJZm0xVHltbFR5azlRY28K8OyBCdnNoryiln5lgxIjgPXL0eigUlQj
+            eo7aPaQr7KZy25MGpNHEMOFxk8B6QzgWS+KtXtAf/iWwl0PoRRFsFw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-07-11T06:55:24Z"
+    mac: ENC[AES256_GCM,data:4qrKYJZhlURM0hBWv6XrL+d2DYinPOdgfXxnilxFO/lpemMjb8Jqu2qRYwhlaPWFHafVFj6o3wJ4ImGqqoKM7q2kSkCUEAmbWD2ioVRsqVOD6IztoFhAVDkEuAcyCRjcJeUELy4JXDARl6jd4ev+7AXJ4k80gCLBNMRgBWCW1lw=,iv:uTVK0q+YYPmazP4SzKKPhH0Jo76kR8kIvNDRxlgVqg8=,tag:kHI9zsb/MueKxZ6nAykaBA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
