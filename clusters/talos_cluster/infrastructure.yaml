@@ -10,7 +10,7 @@ spec:
     sourceRef:
         kind: GitRepository
         name: flux-system
-    path: ./infrastructure/controllers
+    path: ./infrastructure_talos/controllers
     prune: true
     wait: true
     decryption:
@@ -32,7 +32,7 @@ spec:
     sourceRef:
         kind: GitRepository
         name: flux-system
-    path: ./infrastructure/notifications
+    path: ./infrastructure_talos/notifications
     prune: true
     decryption:
         provider: sops
@@ -53,7 +53,7 @@ spec:
     sourceRef:
         kind: GitRepository
         name: flux-system
-    path: ./infrastructure/configs
+    path: ./infrastructure_talos/configs
     prune: true
     patches:
         - patch: |
@@ -93,7 +93,7 @@ spec:
     sourceRef:
         kind: GitRepository
         name: flux-system
-    path: ./infrastructure/monitoring
+    path: ./infrastructure_talos/monitoring
     prune: true
     decryption:
         provider: sops
