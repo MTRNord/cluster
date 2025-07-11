@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: webhook-ingress
+    namespace: flux-system
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - webhook.kubernetes.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: webhook-receiver
+              port: 80
+          timeouts:
+            request: 240s
+            backendRequest: 0s
