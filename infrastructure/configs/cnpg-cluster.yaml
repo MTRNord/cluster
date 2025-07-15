@@ -147,13 +147,13 @@ spec:
               superuser: false
               passwordSecret:
                 name: meowlnir
-            - name: connectivity_tester_stage
+            - name: connectivity-tester-stage
               ensure: present
               login: true
               comment: Read Only Access for synapse required but RW to meowlnir db
               superuser: false
               passwordSecret:
-                name: connectivity_tester_stage
+                name: connectivity-tester-stage
             - name: draupnir_synapse
               ensure: present
               login: true
@@ -471,11 +471,11 @@ sops:
 apiVersion: postgresql.cnpg.io/v1
 kind: Database
 metadata:
-    name: connectivity_tester_stage
+    name: connectivity-tester-stage
     namespace: postgres-cluster
 spec:
-    name: connectivity_tester_stage
-    owner: connectivity_tester_stage
+    name: connectivity-tester-stage
+    owner: connectivity-tester-stage
     cluster:
         name: pg-cluster-v2
 sops:
