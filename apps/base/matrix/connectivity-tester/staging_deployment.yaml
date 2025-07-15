@@ -50,6 +50,11 @@ spec:
                     runAsUser: 1000
                     runAsGroup: 1000
                     readOnlyRootFilesystem: true
+                  volumeMounts:
+                    - name: api-config
+                      mountPath: /app/config/config.yaml
+                      subPath: config.yaml
+                      readOnly: true
                   ports:
                     - containerPort: 8080
                       name: api
@@ -114,6 +119,9 @@ spec:
                 - name: tmp
                   emptyDir:
                     sizeLimit: 2048Mi
+                - name: api-config
+                  secret:
+                    secretName: connectivity-tester-stage-config
 ---
 apiVersion: v1
 kind: Service
