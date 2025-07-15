@@ -11,7 +11,6 @@ spec:
     accessModes:
         - ReadWriteMany
     storageClassName: ceph-filesystem
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,54 +33,48 @@ spec:
                 - name: fix-permissions
                   image: busybox
                   securityContext:
-                      runAsUser: 0
-                      runAsGroup: 0
-                      allowPrivilegeEscalation: true
-                  command:
-                      [
-                          "sh",
-                          "-c",
-                          "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy",
-                      ]
+                    runAsUser: 0
+                    runAsGroup: 0
+                    allowPrivilegeEscalation: true
+                  command: ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
                   volumeMounts:
-                      - name: ntfy-cache
-                        mountPath: /opt/docker/ntfy/cache
-                      - name: ntfy-data
-                        mountPath: /etc/ntfy
-                      - name: ntfy-cache-2
-                        mountPath: /var/cache/ntfy
+                    - name: ntfy-cache
+                      mountPath: /opt/docker/ntfy/cache
+                    - name: ntfy-data
+                      mountPath: /etc/ntfy
+                    - name: ntfy-cache-2
+                      mountPath: /var/cache/ntfy
             containers:
                 - name: ntfy
                   securityContext:
-                      allowPrivilegeEscalation: false
-                      runAsUser: 1000
-                      runAsGroup: 1000
-                      readOnlyRootFilesystem: true
+                    allowPrivilegeEscalation: false
+                    runAsUser: 1000
+                    runAsGroup: 1000
+                    readOnlyRootFilesystem: true
                   image: binwiederhier/ntfy
-                  args:
-                      ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
+                  args: ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
                   env:
-                      - name: TZ
-                        value: "Europe/Berlin"
+                    - name: TZ
+                      value: "Europe/Berlin"
                   resources:
-                      limits:
-                          memory: "256Mi"
-                          cpu: "700m"
-                      requests:
-                          memory: "128Mi"
-                          cpu: "500m"
+                    limits:
+                        memory: "256Mi"
+                        cpu: "700m"
+                    requests:
+                        memory: "128Mi"
+                        cpu: "500m"
                   ports:
-                      - containerPort: 8080
-                        name: http
+                    - containerPort: 8080
+                      name: http
                   volumeMounts:
-                      - name: ntfy-config
-                        mountPath: /opt/docker/ntfy/config
-                      - name: ntfy-cache
-                        mountPath: /opt/docker/ntfy/cache
-                      - name: ntfy-data
-                        mountPath: /etc/ntfy
-                      - name: ntfy-cache-2
-                        mountPath: /var/cache/ntfy
+                    - name: ntfy-config
+                      mountPath: /opt/docker/ntfy/config
+                    - name: ntfy-cache
+                      mountPath: /opt/docker/ntfy/cache
+                    - name: ntfy-data
+                      mountPath: /etc/ntfy
+                    - name: ntfy-cache-2
+                      mountPath: /var/cache/ntfy
             probes:
                 livenessProbe:
                     httpGet:
@@ -94,14 +87,14 @@ spec:
             volumes:
                 - name: ntfy-config
                   configMap:
-                      name: ntfy-config
+                    name: ntfy-config
                 - name: ntfy-cache
                   emptyDir: {}
                 - name: ntfy-cache-2
                   emptyDir: {}
                 - name: ntfy-data
                   persistentVolumeClaim:
-                      claimName: ntfy-data
+                    claimName: ntfy-data
 ---
 apiVersion: v1
 kind: Service
@@ -128,5 +121,5 @@ spec:
         - notify.mtrnord.blog
     rules:
         - backendRefs:
-              - name: ntfy-service
-                port: 8080
+            - name: ntfy-service
+              port: 8080
