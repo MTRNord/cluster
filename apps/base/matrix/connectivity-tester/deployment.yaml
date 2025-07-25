@@ -110,6 +110,7 @@ spec:
             imagePullSecrets:
                 - name: ghcr-pull
             hostNetwork: true
+            dnsPolicy: ClusterFirstWithHostNet
             containers:
                 - name: federation-tester-api
                   image: ghcr.io/mtrnord/rust-federation-tester:v0.2.1
