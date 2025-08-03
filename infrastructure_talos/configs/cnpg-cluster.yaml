@@ -1,0 +1,557 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: postgres-cluster
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: pg-s3-credentials
+    namespace: postgres-cluster
+type: Opaque
+stringData:
+    ACCESS_KEY_ID: ENC[AES256_GCM,data:gr3wSNRZTflgHeIuur5P5YlxJJw=,iv:GhwhkwVevPO6NGY2p1kPVNhOWYAGPZaBtYfcW6OVvjU=,tag:tO5FvSVnVeNp5/xodHFw8A==,type:str]
+    ACCESS_SECRET_KEY: ENC[AES256_GCM,data:tQbziz0uyxcQ7DR+YNmTi2rbMr/n8UNMjsBccG1W/koH+PXFzw4/QQ==,iv:+8f6oHhCSN91kkgAMewyXwe39TS+i4OyaED8fzXxoz0=,tag:GCXF9QileGUVVk1XmDlLTQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+    name: pg-cluster-v2
+    namespace: postgres-cluster
+spec:
+    instances: 3
+    imageName: ghcr.io/cloudnative-pg/postgresql:17.2@sha256:13ee1d8acd9bce3626f2abe6559fc2c092926038d5cd55eff59be2a48c6b176c
+    enableSuperuserAccess: true
+    primaryUpdateMethod: switchover
+    ephemeralVolumesSizeLimit:
+        shm: 250Mi
+        temporaryData: 250Mi
+    postgresql:
+        parameters:
+            # Tuned by https://pgconfigurator.cybertec-postgresql.com/
+            # Connectivity
+            #max_connections: "220"
+            superuser_reserved_connections: "5"
+            # # Memory Settings
+            # shared_buffers: 2048 MB
+            # work_mem: 32 MB
+            # maintenance_work_mem: 320 MB
+            # huge_pages: "off"
+            # effective_cache_size: 6 GB
+            # effective_io_concurrency: "150"
+            # random_page_cost: "1.5"
+            # # Monitoring
+            # track_io_timing: "on"
+            # # track execution times of pl-language procedures if any
+            # track_functions: pl
+            # # Replication
+            # max_wal_senders: "10"
+            # # Checkpointing
+            # checkpoint_timeout: 15 min
+            # checkpoint_completion_target: "0.9"
+            # max_wal_size: 1024 MB
+            # min_wal_size: 512 MB
+            # # WAL writing
+            # wal_compression: "on"
+            # wal_buffers: "-1"
+            # wal_writer_delay: 200ms
+            # wal_writer_flush_after: 1MB
+            # wal_keep_size: 3650 MB
+            # # Background writer
+            # bgwriter_delay: 200ms
+            # bgwriter_lru_maxpages: "100"
+            # bgwriter_lru_multiplier: "2.0"
+            # bgwriter_flush_after: "0"
+            # # Parallel queries:
+            # max_worker_processes: "5"
+            # max_parallel_workers_per_gather: "3"
+            # max_parallel_maintenance_workers: "3"
+            # max_parallel_workers: "5"
+            # parallel_leader_participation: "on"
+            # # Advanced features
+            # enable_partitionwise_join: "on"
+            # enable_partitionwise_aggregate: "on"
+            # jit: "on"
+            # max_slot_wal_keep_size: 1000 MB
+            # track_wal_io_timing: "on"
+            # maintenance_io_concurrency: "150"
+            # wal_recycle: "on"
+            # #pg_hba:
+            # #    - host all bugzilla all md5
+    # backup:
+    #     target: prefer-standby
+    #     retentionPolicy: 30d
+    #     # barmanObjectStore:
+    #     #     destinationPath: s3://midnightthoughts-pg-backup/pg-base-backup
+    #     #     endpointURL: https://hel1.your-objectstorage.com
+    #     #     s3Credentials:
+    #     #         accessKeyId:
+    #     #             name: pg-s3-credentials
+    #     #             key: ACCESS_KEY_ID
+    #     #         secretAccessKey:
+    #     #             name: pg-s3-credentials
+    #     #             key: ACCESS_SECRET_KEY
+    #     #     wal:
+    #     #         compression: gzip
+    #     #         maxParallel: 2
+    #     #     data:
+    #     #         compression: gzip
+    #     #         immediateCheckpoint: true
+    #     #         jobs: 2
+    managed:
+        roles:
+            - name: freshrss
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: freshrss
+            - name: meowlnir
+              ensure: present
+              login: true
+              comment: Read Only Access for synapse required but RW to meowlnir db
+              superuser: false
+              passwordSecret:
+                name: meowlnir
+            - name: connectivity-tester-stage
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: connectivity-tester-stage
+            - name: connectivity-tester
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: connectivity-tester
+            - name: draupnir_synapse
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: draupnir-synapse
+            - name: authentik
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: authentik
+            - name: ejabberd
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: ejabberd
+            - name: vaultwarden
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: vaultwarden
+            - name: mastodon
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: mastodon
+            - name: openproject
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: openproject
+            - name: plausible
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: plausible
+            - name: coder
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: coder
+            - name: matrix_auth
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: matrix-auth
+            - name: cachet
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: cachet
+            - name: docuseal
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: docuseal
+            - name: bugzilla
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: bugzilla
+            - name: rundeck
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: rundeck
+            - name: plane
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: plane
+    storage:
+        storageClass: hcloud-volumes
+        size: 10Gi
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+    name: pg-cluster-v2
+    namespace: postgres-cluster
+spec:
+    selector:
+        matchLabels:
+            cnpg.io/cluster: pg-cluster-v2
+    podMetricsEndpoints:
+        - port: metrics
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+    name: hetzner-base-backup
+    namespace: postgres-cluster
+spec:
+    schedule: 0 5 4 * * */3
+    backupOwnerReference: self
+    method: barmanObjectStore
+    immediate: true
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: rundeck
+    namespace: postgres-cluster
+spec:
+    name: rundeck
+    owner: rundeck
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: plane
+    namespace: postgres-cluster
+spec:
+    name: plane
+    owner: plane
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: meowlnir
+    namespace: postgres-cluster
+spec:
+    name: meowlnir
+    owner: meowlnir
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: connectivity-tester-stage
+    namespace: postgres-cluster
+spec:
+    name: connectivity-tester-stage
+    owner: connectivity-tester-stage
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: connectivity-tester
+    namespace: postgres-cluster
+spec:
+    name: connectivity-tester
+    owner: connectivity-tester
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: freshrss
+    namespace: postgres-cluster
+spec:
+    name: freshrss
+    owner: freshrss
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: synapse
+    namespace: postgres-cluster
+spec:
+    name: synapse
+    owner: synapse
+    ensure: absent
+    cluster:
+        name: pg-cluster-v2
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrRXlmenV0ejNKY05Qamxy
+            MFdYU0hhZFdEdVdOdXRoQTczM0ZCMzZ5VWtNCkdGakF2bk5uOEI1ZTNCVlYzdDh0
+            dHJ1Vmd1ZEhJV3VIMXRBZXBtNHNHbHMKLS0tIE9KWE94R2NjTjZZNDhjTFEycklw
+            UDFMTDdhbC9FREFOVkxzQythMG81UWcKDSu0AHEXpJKP8dtGUQ5A4lG5F13h1AxD
+            8nL1WOng8koXu4wDIvdmND2G70Pyz3nOWuskz8ExTsUqL/q0qSioAQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-03T15:32:52Z"
+    mac: ENC[AES256_GCM,data:OoMBBzhf5Z6/1qrWIh5EFXe8PA1jCQ9qRdPpiAi1exP91D3Te7ZKT3ZfJv6a+ryOHtr5wr+EAh59809P5R2/7N3nuplnSUU62D2KOvlyljWpia/avdVm/qY8MWhJpUETidJr9jeY3XJnO8lY2aNvS89oXlUzCY5iLl3YZN2Cp0c=,iv:1/d2oVN7ta4gYH1C3eyab4ad7b52N1hDiBOfnD2u/cc=,tag:V6gO2mUnB204rzJFR+ZEcA==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
