@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: draupnir4all
+    namespace: matrix
+    labels:
+        app: draupnir4all
+spec:
+    selector:
+        app: draupnir4all
+    ports:
+        - port: 9000
+          targetPort: appservice
+          protocol: TCP
+          name: appservice
+        - port: 9001
+          targetPort: api
+          protocol: TCP
+          name: api
+        - port: 3000
+          targetPort: web
+          protocol: TCP
+          name: web
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: draupnir4all-web
+    namespace: matrix
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - draupnir.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: draupnir4all
+              port: 3000

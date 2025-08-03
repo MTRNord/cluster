@@ -1,0 +1,406 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: draupnir-synapse
+    namespace: matrix
+spec:
+    chart:
+        spec:
+            chart: matrix-synapse
+            sourceRef:
+                kind: HelmRepository
+                name: ananace-charts
+            version: 3.12.x
+    interval: 60m
+    install:
+        remediation:
+            retries: 3
+    values:
+        extraConfig:
+            opentracing:
+                enabled: false
+                homeserver_whitelist:
+                    - matrix.midnightthoughts.space
+                jaeger_config:
+                    local_agent:
+                        reporting_host: tempo.monitoring.svc.cluster.local
+            use_presence: false
+            app_service_config_files:
+                - /data/draupnir-registration.yaml
+            notify_appservices_from_worker: appservices
+            stream_writers:
+                events: event_persister
+            run_background_tasks_on: background_worker
+            presence:
+                enabled: false
+            federation_sender_instances:
+                - federation-sender-1
+                - federation-sender-2
+            event_cache_size: 10K
+            caches:
+                global_factor: 10
+                expire_caches: true
+                cache_entry_ttl: 240m
+                cache_autotuning:
+                    max_cache_memory_usage: 2048M
+                    target_cache_memory_usage: 1024M
+                    min_cache_ttl: 5m
+        wellknown:
+            enabled: true
+            client:
+                m.homeserver:
+                    base_url: https://matrix.draupnir.midnightthoughts.space
+            extraData:
+                support:
+                    admins:
+                        - email_address: support@midnightthoughts.space
+                          role: admin
+        image:
+            tag: "v1.128.0"
+            pullSecrets:
+                - name: ghcr-pull
+        persistence:
+            size: 2Gi
+            existingClaim: draupnir-synapse-matrix-synapse-v2
+        volumePermissions:
+            enabled: true
+        workers:
+            default:
+                podSecurityContext:
+                    fsGroup: 666
+                    runAsGroup: 666
+                    runAsUser: 666
+                securityContext:
+                    capabilities:
+                        drop:
+                            - ALL
+                    readOnlyRootFilesystem: true
+                    runAsNonRoot: true
+                    runAsUser: 666
+                volumeMounts:
+                    - name: matrix-org-blocker
+                      mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
+                    - name: pip-cache
+                      mountPath: /.cache/pip
+                    - name: tmp
+                      mountPath: /tmp
+                    - name: local
+                      mountPath: /.local
+                    - name: media-nonesense
+                      mountPath: /synapse/data
+                    - name: configs
+                      mountPath: /data
+                      readOnly: true
+                volumes:
+                    - name: matrix-org-blocker
+                      emptyDir: {}
+                    - name: pip-cache
+                      emptyDir: {}
+                    - name: tmp
+                      emptyDir: {}
+                    - name: local
+                      emptyDir: {}
+                    - name: media-nonesense
+                      emptyDir: {}
+                    - name: configs
+                      secret:
+                        secretName: ENC[AES256_GCM,data:m7x2Z3oCmA6xIRqbkrccx91eNA==,iv:TsKqYTJLDiFtnH0TmLOsFLlwEdNg1r8hJYZdkhtWOGo=,tag:0SXGKKpLh0yUSHcqQ+aKcg==,type:str]
+                extraConfig:
+                    opentracing:
+                        enabled: false
+                        homeserver_whitelist:
+                            - matrix.midnightthoughts.space
+                        jaeger_config:
+                            local_agent:
+                                reporting_host: tempo.monitoring.svc.cluster.local
+                    notify_appservices_from_worker: appservices
+                    event_cache_size: 30K
+                    caches:
+                        global_factor: 10
+                        expire_caches: true
+                        cache_entry_ttl: 1080m
+                        sync_response_cache_duration: 2m
+                        cache_autotuning:
+                            max_cache_memory_usage: 4069M
+                            target_cache_memory_usage: 2048M
+                            min_cache_ttl: 5m
+            generic_frontend:
+                resources:
+                    requests:
+                        cpu: 101m
+                        memory: 500Mi
+                    limits: {}
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - client
+                csPaths:
+                    # Sync requests
+                    - /_matrix/client/(r0|v3)/sync$
+                    - /_matrix/client/(api/v1|r0|v3)/events$
+                    - /_matrix/client/(api/v1|r0|v3)/initialSync$
+                    - /_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$
+                    # Client API requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/createRoom$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/joined_members$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/context/.*$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/members$
+                    #- /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$
+                    - /_matrix/client/v1/rooms/.*/hierarchy$
+                    - /_matrix/client/(v1|unstable)/rooms/.*/relations/.*
+                    - /_matrix/client/v1/rooms/.*/threads$
+                    - /_matrix/client/unstable/im.nheko.summary/summary/.*$
+                    - /_matrix/client/(r0|v3|unstable)/account/3pid$
+                    - /_matrix/client/(r0|v3|unstable)/account/whoami$
+                    - /_matrix/client/(r0|v3|unstable)/devices$
+                    - /_matrix/client/versions$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/voip/turnServer$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$
+                    - /_matrix/client/v1/rooms/.*/timestamp_to_event$
+                    - /_matrix/client/(api/v1|r0|v3|unstable/.*)/rooms/.*/aliases.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/search$
+                    - /_matrix/client/(r0|v3|unstable)/user/.*/filter(/.*|$)
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/directory/room/.*$
+                    - /_matrix/client/(r0|v3|unstable)/capabilities$
+                    - /_matrix/client/(r0|v3|unstable)/notifications$
+                    # Encryption requests
+                    - /_matrix/client/(r0|v3|unstable)/keys/query$
+                    - /_matrix/client/(r0|v3|unstable)/keys/changes$
+                    - /_matrix/client/(r0|v3|unstable)/keys/claim$
+                    - /_matrix/client/(r0|v3|unstable)/room_keys/.*
+                    - /_matrix/client/(r0|v3|unstable)/keys/upload/.*
+                    # Registration/login requests are done by MAS.
+                    # Event sending requests
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send.*
+                    #- /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/join/.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/knock/.*
+                    - /_matrix/client/(api/v1|r0|v3|unstable)/profile/.*
+                    # # User directory search requests
+                    - /_matrix/client/(r0|v3|unstable)/user_directory/search$
+                    # Worker event streams
+                    # See https://matrix-org.github.io/synapse/latest/workers.html#stream-writers
+                    # hopefully no stream
+                    - ^/_matrix/client/unstable/org.matrix.msc4140/delayed_events.*
+                    # The pushrules event stream
+                    # - ^/_matrix/client/(api/v1|r0|v3|unstable)/pushrules/
+                    # The account_data event stream
+                    # - /_matrix/client/(r0|v3|unstable)/.*/tags
+                    # - /_matrix/client/(r0|v3|unstable)/.*/account_data
+                    # The receipts event stream
+                    # - /_matrix/client/(r0|v3|unstable)/rooms/.*/receipt
+                    # - /_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers
+                    # The presence event stream
+                    # - /_matrix/client/(api/v1|r0|v3|unstable)/presence/
+            federation_reader:
+                resources:
+                    requests:
+                        cpu: 17m
+                        memory: 153Mi
+                    limits: {}
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - federation
+                paths:
+                    - /_matrix/federation/v1/send/.*
+                    - /_matrix/federation/v1/event/.*
+                    - /_matrix/federation/v1/state/.*
+                    - /_matrix/federation/v1/state_ids/.*
+                    - /_matrix/federation/v1/backfill/.*
+                    - /_matrix/federation/v1/get_missing_events/.*
+                    - /_matrix/federation/v1/publicRooms.*
+                    - /_matrix/federation/v1/query/.*
+                    - /_matrix/federation/v1/make_join/.*
+                    - /_matrix/federation/v1/make_leave/.*
+                    - /_matrix/federation/(v1|v2)/send_join/.*
+                    - /_matrix/federation/(v1|v2)/send_leave/.*
+                    - /_matrix/federation/v1/make_knock/.*
+                    - /_matrix/federation/v1/send_knock/.*
+                    - /_matrix/federation/(v1|v2)/invite/.*
+                    - /_matrix/federation/v1/event_auth/.*
+                    - /_matrix/federation/v1/timestamp_to_event/.*
+                    - /_matrix/federation/v1/exchange_third_party_invite/.*
+                    - /_matrix/federation/v1/user/devices/.*
+                    - /_matrix/key/v2/query.*
+                    - /_matrix/federation/v1/hierarchy/.*
+            appservice:
+                resources:
+                    requests:
+                        cpu: 18m
+                        memory: 120Mi
+                    limits: {}
+                enabled: true
+                name: appservices
+                generic: true
+            federation_sender_1:
+                resources:
+                    requests:
+                        cpu: 24m
+                        memory: 131Mi
+                    limits: {}
+                labels:
+                    synapse-component: federation-sender
+                name: federation-sender-1
+                enabled: true
+                generic: true
+            federation_sender_2:
+                resources:
+                    requests:
+                        cpu: 24m
+                        memory: 131Mi
+                    limits: {}
+                labels:
+                    synapse-component: federation-sender
+                name: federation-sender-2
+                enabled: true
+                generic: true
+            background_worker:
+                resources:
+                    requests:
+                        cpu: 22m
+                        memory: 116Mi
+                    limits: {}
+                name: background_worker
+                replicaCount: 1
+                enabled: true
+                generic: true
+            event_persister:
+                resources:
+                    requests:
+                        cpu: 32m
+                        memory: 201Mi
+                    limits: {}
+                name: event_persister
+                replicaCount: 1
+                enabled: true
+                generic: true
+                listeners:
+                    - replication
+        synapse:
+            podSecurityContext:
+                fsGroup: 666
+                runAsGroup: 666
+                runAsUser: 666
+            securityContext:
+                capabilities:
+                    drop:
+                        - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 666
+            resources:
+                requests:
+                    cpu: 14m
+                    memory: 150Mi
+                limits: {}
+            extraVolumeMounts:
+                - name: configs
+                  mountPath: /data
+                  readOnly: true
+                - name: matrix-org-blocker
+                  mountPath: /usr/local/lib/python3.11/site-packages/matrix_invitee_server_blocker
+                - name: pip-cache
+                  mountPath: /.cache/pip
+                - name: local
+                  mountPath: /.local
+            extraVolumes:
+                - name: matrix-org-blocker
+                  emptyDir: {}
+                - name: pip-cache
+                  emptyDir: {}
+                - name: local
+                  emptyDir: {}
+                - name: configs
+                  secret:
+                    secretName: ENC[AES256_GCM,data:aVOK2h6KTIKNX8Ypa+AF2UOITA==,iv:PIyZ94Tfr84QUqut2oFu09bYRGwJiKpEpfBmWtQZNXE=,tag:QZflZ3hovkN5a1Bs5S4oMg==,type:str]
+            ## Liveness probe configuration to use
+            ##
+            livenessProbe:
+                timeoutSeconds: 60
+                failureThreshold: 5
+                httpGet:
+                    path: /health
+                    port: http
+            ## Readiness probe configuration to use
+            ##
+            readinessProbe:
+                timeoutSeconds: 60
+                failureThreshold: 5
+                httpGet:
+                    path: /health
+                    port: http
+            extraCommands: []
+            annotations:
+                prometheus.io/scrape: "true"
+                prometheus.io/path: /_synapse/metrics
+                prometheus.io/port: "9090"
+        externalRedis:
+            host: draupnir-synapse-keydb.matrix.svc.cluster.local
+            port: 6379
+            password: null
+        redis:
+            enabled: false
+            usePassword: false
+            password: null
+            auth:
+                enabled: false
+                password: null
+        postgresql:
+            enabled: false
+        externalPostgresql:
+            host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+            port: 5432
+            sslmode: require
+            database: draupnir_synapse
+            username: draupnir_synapse
+            password: ENC[AES256_GCM,data:AKyUY8U2Yv4P9eGE35GeinMk2mutkhmqJtD2LbyNXY1FczzC82m4oguktEouOsrdCmPTugokdzQuDB/VODsAwQ==,iv:An2J8dC74tnGFq1zrTho0SeSjrIJxsF2wZjIJiiAnAs=,tag:WaWLRBU8xzsmOgcm4g8kYA==,type:str]
+        signingkey:
+            job:
+                enabled: false
+        serverName: draupnir.midnightthoughts.space
+        publicServerName: matrix.draupnir.midnightthoughts.space
+        config:
+            reportStats: true
+            enableRegistration: false
+            extraMainListenerTypes:
+                - media
+        gateway:
+            parentRefs:
+                - name: envoy-gateway
+                  namespace: envoy-gateway
+            enabled: true
+            timeouts:
+                request: 60s
+                backendRequest: 60s
+            hosts:
+                - draupnir.midnightthoughts.space
+                - matrix.draupnir.midnightthoughts.space
+        ingress:
+            enabled: false
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2dFpjM1lmcllpR0RKdXdv
+            bTAydDBWbVRoRXhDUjRwc0FxcjdNU1VNalNJCjcwWE9mQnUydU9QdGZNVWRvSk5k
+            NWRiY1diZy9XRkgxaEgycVp5ZHgyQlkKLS0tIFNtbFJRdm5lMklZUS9FL0xrMW5F
+            RUwrQmhKTlRLVjk3QlRxQ3pUb3pEMHcKRT/WEzTcOmlzlvMT5ddT82d8inRAgvyQ
+            qom+xJO9SM2jcej4kl+0cMJ8zqsrXmw7PukTLjKXOh6egmw+p6qMpQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-18T16:41:05Z"
+    mac: ENC[AES256_GCM,data:bejkU903B5B+O8+zzTa0Rypwfq29N94yWBw9/kOf/XByJZYdsCtC6kYX6G/QLwPRRvKuONYEozAxqFbiTqkR1NVyzqDf8Oj+KEXtQBf3P0SY334yCmaeajHLlKm6kanD5NnpVSmX3BcuVfTGwQK3jZ+Kab+cDNu4/AGqw+6Vnxg=,iv:vg1mrpIUNny4WqqS666kM4yvZpI0TuL7ViSP+ib7HVM=,tag:JF0OdVZino0cP0+Bmx+slw==,type:str]
+    pgp: []
+    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
