@@ -127,6 +127,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: auth.midnightthoughts.space-tls
+        - name: https-midnightthoughts-grafana
+          protocol: HTTPS
+          hostname: "grafana.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: grafana.midnightthoughts.space-tls
                   # - name: https-draupnir-midnightthoughts
                   #   protocol: HTTPS
                   #   hostname: "draupnir.midnightthoughts.space"
@@ -295,18 +307,6 @@ spec:
                   #       certificateRefs:
                   #           - kind: Secret
                   #             name: rspamd.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-grafana
-                  #   protocol: HTTPS
-                  #   hostname: "grafana.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: grafana.midnightthoughts.space-tls
                   # - name: https-midnightthoughts-osticket
                   #   protocol: HTTPS
                   #   hostname: "osticket.midnightthoughts.space"
