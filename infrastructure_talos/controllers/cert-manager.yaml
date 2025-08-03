@@ -36,19 +36,19 @@ spec:
             podmonitor:
                 enabled: false
         image:
-            tag: v1.16.2
+            tag: v1.18.2
         webhook:
             image:
-                tag: v1.16.2
+                tag: v1.18.2
         cainjector:
             image:
-                tag: v1.16.2
+                tag: v1.18.2
         acmesolver:
             image:
-                tag: v1.16.2
+                tag: v1.18.2
         startupapicheck:
             image:
-                tag: v1.16.2
+                tag: v1.18.2
         config:
             apiVersion: controller.config.cert-manager.io/v1alpha1
             kind: ControllerConfiguration
@@ -68,7 +68,7 @@ spec:
             acme.cert-manager.io/http01-solver: "true"
     ingress:
         - ports:
-            - protocol: TCP
-              port: 8089
+              - protocol: TCP
+                port: 8089
     policyTypes:
         - Ingress
