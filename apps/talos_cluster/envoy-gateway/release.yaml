@@ -1,0 +1,739 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: envoy-gateway
+    namespace: envoy-gateway
+spec:
+    releaseName: envoy-gateway
+    interval: 60m
+    chartRef:
+        kind: OCIRepository
+        name: envoy-gateway
+    values:
+        podDisruptionBudget:
+            minAvailable: 1
+        deployment:
+            replicas: 3
+        config:
+            # -- EnvoyGateway configuration. Visit https://gateway.envoyproxy.io/docs/api/extension_types/#envoygateway to view all options.
+            envoyGateway:
+                gateway:
+                    controllerName: gateway.envoyproxy.io/gatewayclass-controller
+                provider:
+                    type: Kubernetes
+                logging:
+                    level:
+                        default: info
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+    name: custom-proxy-config
+    namespace: envoy-gateway
+spec:
+    provider:
+        type: Kubernetes
+        kubernetes:
+            envoyDeployment:
+                replicas: 3
+    logging:
+        level:
+            default: info
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: GatewayClass
+metadata:
+    name: envoy-gateway-class
+    namespace: envoy-gateway
+spec:
+    controllerName: gateway.envoyproxy.io/gatewayclass-controller
+    parametersRef:
+        group: gateway.envoyproxy.io
+        kind: EnvoyProxy
+        name: custom-proxy-config
+        namespace: envoy-gateway
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+    name: email-gateway
+    namespace: envoy-gateway
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+spec:
+    gatewayClassName: envoy-gateway-class
+    infrastructure:
+        annotations:
+            external-dns.alpha.kubernetes.io/access: public
+            load-balancer.hetzner.cloud/location: hel1
+            load-balancer.hetzner.cloud/name: email-envoy
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "true"
+    # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
+    listeners:
+        - name: smtp
+          protocol: TCP
+          port: 25
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+        - name: submissions
+          protocol: TCP
+          port: 465
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+        - name: submission
+          protocol: TCP
+          port: 587
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+        - name: imap
+          protocol: TCP
+          port: 143
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+        - name: imaps
+          protocol: TCP
+          port: 993
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+    name: envoy-gateway
+    namespace: envoy-gateway
+    annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+spec:
+    gatewayClassName: envoy-gateway-class
+    infrastructure:
+        annotations:
+            external-dns.alpha.kubernetes.io/access: public
+            load-balancer.hetzner.cloud/location: hel1
+            load-balancer.hetzner.cloud/name: envoy
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/uses-proxyprotocol: "true"
+    # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
+    listeners:
+        - name: https-mas-midnightthoughts
+          protocol: HTTPS
+          hostname: "mas.matrix.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mas.matrix.midnightthoughts.space-tls
+        - name: https-matrix-midnightthoughts
+          protocol: HTTPS
+          hostname: "matrix.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: matrix.midnightthoughts.space-tls
+        - name: https-draupnir-midnightthoughts
+          protocol: HTTPS
+          hostname: "draupnir.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: draupnir.midnightthoughts.space-tls
+        - name: https-matrix-draupnir-midnightthoughts
+          protocol: HTTPS
+          hostname: "matrix.draupnir.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: matrix.draupnir.midnightthoughts.space-tls
+        - name: https-docuseal-midnightthoughts
+          protocol: HTTPS
+          hostname: "docuseal.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: docuseal.midnightthoughts.space-tls
+        - name: https-midnightthoughts-neoboard
+          protocol: HTTPS
+          hostname: "miro-export.neoboard.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: miro-export.neoboard.midnightthoughts.space-tls
+        - name: https-midnightthoughts-certs
+          protocol: HTTPS
+          hostname: "certs.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: certs.midnightthoughts.space-tls
+        - name: https-midnightthoughts-capacitor
+          protocol: HTTPS
+          hostname: "ui.k8s.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: ui.k8s.midnightthoughts.space-tls
+        - name: https-midnightthoughts-auth
+          protocol: HTTPS
+          hostname: "auth.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: auth.midnightthoughts.space-tls
+        - name: https-midnightthoughts-ldap
+          protocol: HTTPS
+          hostname: "ldap.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: ldap.midnightthoughts.space-tls
+        - name: https-midnightthoughts-status-webhook
+          protocol: HTTPS
+          hostname: "webhook.status.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: webhook.status.midnightthoughts.space-tls
+        - name: https-midnightthoughts-budget
+          protocol: HTTPS
+          hostname: "budget.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: budget.midnightthoughts.space-tls
+        - name: https-midnightthoughts-bugzilla
+          protocol: HTTPS
+          hostname: "bugzilla.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: bugzilla.midnightthoughts.space-tls
+        - name: https-midnightthoughts-root
+          protocol: HTTPS
+          hostname: "midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: midnightthoughts.space-tls
+        - name: https-midnightthoughts-status
+          protocol: HTTPS
+          hostname: "status.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: status.midnightthoughts.space-tls
+        - name: https-midnightthoughts-webhook-kubernetes
+          protocol: HTTPS
+          hostname: "webhook.kubernetes.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: webhook.kubernetes.midnightthoughts.space-tls
+        - name: https-midnightthoughts-rspamd
+          protocol: HTTPS
+          hostname: "rspamd.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rspamd.midnightthoughts.space-tls
+        - name: https-midnightthoughts-grafana
+          protocol: HTTPS
+          hostname: "grafana.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: grafana.midnightthoughts.space-tls
+        - name: https-midnightthoughts-osticket
+          protocol: HTTPS
+          hostname: "osticket.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: osticket.midnightthoughts.space-tls
+        - name: https-midnightthoughts-vault
+          protocol: HTTPS
+          hostname: "vault.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: vault.midnightthoughts.space-tls
+        - name: https-midnightthoughts-rook
+          protocol: HTTPS
+          hostname: "rook.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rook.midnightthoughts.space-tls
+        - name: https-midnightthoughts-jenkins
+          protocol: HTTPS
+          hostname: "jenkins.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: jenkins.midnightthoughts.space-tls
+        - name: https-midnightthoughts-gerrit
+          protocol: HTTPS
+          hostname: "gerrit.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: gerrit.midnightthoughts.space-tls
+        - name: https-midnightthoughts-uptime
+          protocol: HTTPS
+          hostname: "uptime.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: uptime.midnightthoughts.space-tls
+        - name: https-midnightthoughts-element-changes
+          protocol: HTTPS
+          hostname: "element-changes.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: element-changes.midnightthoughts.space
+        - name: https-midnightthoughts-dav
+          protocol: HTTPS
+          hostname: "dav.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: dav.midnightthoughts.space
+        - name: https-midnightthoughts-plane
+          protocol: HTTPS
+          hostname: "plane.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: plane.midnightthoughts.space
+        - name: https-midnightthoughts-irc
+          protocol: HTTPS
+          hostname: "irc.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: irc.midnightthoughts.space
+        - name: https-midnightthoughts-rspamd-matrix
+          protocol: HTTPS
+          hostname: "rspamd.matrix.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rspamd.matrix.midnightthoughts.space
+        - name: https-midnightthoughts-collabora
+          protocol: HTTPS
+          hostname: "collabora.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: collabora.midnightthoughts.space
+        - name: https-nordgedanken-root
+          protocol: HTTPS
+          hostname: "nordgedanken.dev"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: nordgedanken.dev-tls
+        - name: https-nordgedanken
+          protocol: HTTPS
+          hostname: "*.nordgedanken.dev"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: nordgedanken.dev-tls
+        - name: https-mtrnord-blog-root
+          protocol: HTTPS
+          hostname: "mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mtrnord.blog-tls
+        - name: https-mtrnord-blog-matrix
+          protocol: HTTPS
+          hostname: "matrix.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: matrix.mtrnord.blog-tls
+        - name: https-mtrnord-blog-hubzilla
+          protocol: HTTPS
+          hostname: "hub.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: hub.mtrnord.blog-tls
+        - name: https-mtrnord-blog-mastodon
+          protocol: HTTPS
+          hostname: "mastodon.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mastodon.mtrnord.blog-tls
+        - name: https-api-connectivity-tester-mtrnord-blog
+          protocol: HTTPS
+          hostname: "api.connectivity-tester.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: api.connectivity-tester.mtrnord.blog-tls
+        - name: https-stage-connectivity-tester-mtrnord-blog
+          protocol: HTTPS
+          hostname: "stage.connectivity-tester.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: stage.connectivity-tester.mtrnord.blog-tls
+        - name: https-connectivity-tester-mtrnord-blog
+          protocol: HTTPS
+          hostname: "connectivity-tester.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: connectivity-tester.mtrnord.blog-tls
+        - name: https-federationtester-mtrnord-blog
+          protocol: HTTPS
+          hostname: "federationtester.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: federationtester.mtrnord.blog-tls
+        - name: https-notify-mtrnord-blog
+          protocol: HTTPS
+          hostname: "notify.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: notify.mtrnord.blog-tls
+        - name: https-rss-mtrnord-blog
+          protocol: HTTPS
+          hostname: "rss.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rss.mtrnord.blog-tls
+        - name: http
+          protocol: HTTP
+          port: 80
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+        - name: ldap
+          protocol: TCP
+          port: 389
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+        - name: gerrit-ssh
+          protocol: TCP
+          port: 29418
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+        - name: ircs
+          protocol: TCP
+          port: 6697
+          allowedRoutes:
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+    name: enable-proxy-protocol-policy
+    namespace: envoy-gateway
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: envoy-gateway
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: email-gateway
+    # WARNING: Cilium 1.17+ only supports the correct ipMode magic for this to work. Hence it currently fails
+    enableProxyProtocol: true
+    # Alternative to enableProxyProtocol: true
+    #clientIPDetection:
+    #    xForwardedFor:
+    #        trustedCIDRs:
+    #            - 10.10.0.0/16
+    #            - 100.96.0.0/16
+    tcpKeepalive:
+        idleTime: 1h
+        interval: 75s
+        probes: 9
+    path:
+        escapedSlashesAction: KeepUnchanged
+---
+# Monitors the above gateway using a servicemonitor
+# First we do a service matching on the labels "gateway.envoyproxy.io/owning-gateway-name: envoy-gateway" and "gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway"
+kind: Service
+apiVersion: v1
+metadata:
+    name: envoy-gateway-monitor
+    namespace: envoy-gateway
+    labels:
+        proxy: envoy
+spec:
+    selector:
+        gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
+        gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
+    ports:
+        - name: metrics
+          port: 19001
+          targetPort: 19001
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: envoy-gateway-monitor
+    namespace: envoy-gateway
+spec:
+    selector:
+        matchLabels:
+            proxy: envoy
+    endpoints:
+        - port: metrics
+          path: /stats/prometheus
+          interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: envoy-gateway-controlplane-monitor
+    namespace: envoy-gateway
+spec:
+    selector:
+        matchLabels:
+            control-plane: envoy-gateway
+    endpoints:
+        - port: metrics
+          interval: 10s
