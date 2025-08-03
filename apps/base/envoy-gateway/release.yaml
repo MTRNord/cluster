@@ -202,18 +202,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: ui.k8s.midnightthoughts.space-tls
-        - name: https-midnightthoughts-auth
-          protocol: HTTPS
-          hostname: "auth.midnightthoughts.space"
-          port: 443
-          allowedRoutes:
-            namespaces:
-                from: "All"
-          tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: auth.midnightthoughts.space-tls
+        # - name: https-midnightthoughts-auth
+        #   protocol: HTTPS
+        #   hostname: "auth.midnightthoughts.space"
+        #   port: 443
+        #   allowedRoutes:
+        #     namespaces:
+        #         from: "All"
+        #   tls:
+        #     mode: Terminate
+        #     certificateRefs:
+        #         - kind: Secret
+        #           name: auth.midnightthoughts.space-tls
         - name: https-midnightthoughts-ldap
           protocol: HTTPS
           hostname: "ldap.midnightthoughts.space"
