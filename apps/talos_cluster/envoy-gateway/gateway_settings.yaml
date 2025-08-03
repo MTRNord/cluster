@@ -48,42 +48,42 @@ spec:
           protocol: TCP
           port: 25
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: submissions
           protocol: TCP
           port: 465
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: submission
           protocol: TCP
           port: 587
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: imap
           protocol: TCP
           port: 143
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: imaps
           protocol: TCP
           port: 993
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -108,61 +108,73 @@ spec:
           hostname: "talos.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: talos.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: talos.midnightthoughts.space-tls
         - name: https-midnightthoughts-auth
           protocol: HTTPS
           hostname: "auth.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: auth.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: auth.midnightthoughts.space-tls
         - name: https-midnightthoughts-grafana
           protocol: HTTPS
           hostname: "grafana.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: grafana.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: grafana.midnightthoughts.space-tls
         - name: https-draupnir-midnightthoughts
           protocol: HTTPS
           hostname: "draupnir.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: draupnir.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: draupnir.midnightthoughts.space-tls
         - name: https-matrix-draupnir-midnightthoughts
           protocol: HTTPS
           hostname: "matrix.draupnir.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: matrix.draupnir.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: matrix.draupnir.midnightthoughts.space-tls
+        - name: https-midnightthoughts-vault
+          protocol: HTTPS
+          hostname: "vault.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: vault.midnightthoughts.space-tls
                   # - name: https-docuseal-midnightthoughts
                   #   protocol: HTTPS
                   #   hostname: "docuseal.midnightthoughts.space"
@@ -319,18 +331,6 @@ spec:
                   #       certificateRefs:
                   #           - kind: Secret
                   #             name: osticket.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-vault
-                  #   protocol: HTTPS
-                  #   hostname: "vault.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: vault.midnightthoughts.space-tls
                   # - name: https-midnightthoughts-rook
                   #   protocol: HTTPS
                   #   hostname: "rook.midnightthoughts.space"
