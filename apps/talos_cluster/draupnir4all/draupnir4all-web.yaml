@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: draupnir4all-web
+    namespace: matrix
+type: Opaque
+stringData:
+    session-secret: ENC[AES256_GCM,data:3DuYllirgKK4m1/J/PRGNf6MDTwPk9ecpL/Ti4Y4Dz96q3JYbkbMp+xeCJAMXpdPVv5FweTTlBaGceVCX+Bugg==,iv:e1w26ng6jguk+fYX7U0mwN9frXKM/srgrReHzV67yA4=,tag:aAwSW5ooUvCqtP1eS/4MJw==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWV1RoOVlrUmNBQ0lYVndv
+            aThXbE5aMjE0dVU2MHlFaTh4SXUzSGVXc0hFCmxlZ0JqU2V2aGNGZ3V0b2ZBWk9q
+            cmlPdllRU1g1M3BwNXoxOFErNzJ0WTQKLS0tIDNVd2d2dTFWd2Z2Z1l1WURVbVpJ
+            WWQreDVmVHMwbjZ1ZWpxTmI2alluaGcKSgClGHGhWC0extu+MGGqUWvqAVQh4LoN
+            cK2UyZBOor6Mm0dWHg7cZRGPJocGZ9fkyBLsJMBWa+DSWIs3WeOD8w==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-28T09:22:52Z"
+    mac: ENC[AES256_GCM,data:gyUWaw9muoP/t8tOGvSFzrKydhpzj0olAdco4UNVUAC42PXC94oxNYlA2Kr0KxN5zQudpBwnJHNpfIUKPV2VqNu0e6jNWRlJOpk9/p6Kbbzlq5LG2QVA4qNEV9F3HcnhzNF+JbQ70KesPMfCSOVS+caHKwd2zZgIxGxe2k7xRdY=,iv:2EVTJpuHFO87BNRR7BRSwcblK2MMDCJEkAq3HHqfFNY=,tag:ANRnXMVYZn1M8tPDD6ieww==,type:str]
+    pgp: []
+    encrypted_regex: ^(root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: v1
+data:
+    .dockerconfigjson: ENC[AES256_GCM,data:ZZJzEUNanUg+0uvgB/qZfnLqdLmA6xgzEjvhSWK62pT48JuHk4xn7jJ6Axwx1E4lxThL9GKznNRabz7H4ihcpVXu+AsCOsvLc0PSIeUT5ER9Ut5TRpi/+k7sYLVoinaxfmfQeirueEfEC7D6djeYBOqOY1zcwRT+SDBbdUV5i/dScpsB5VFljHMwaMEIvCEbkdRoDxZcPop+jN9lURkTydaqPcUiWIVUAnWAWCSIgKhbMQJREkN4gEak7XhLgfSacu696w==,iv:0qJ2U6SXxzAX5Eb/kH2ZDyAmCF3O9jFGBHMts/SjAQA=,tag:6XCtGd1TNIL64ZJulPqNnw==,type:str]
+kind: Secret
+metadata:
+    name: ghcr-pull
+    namespace: matrix
+type: kubernetes.io/dockerconfigjson
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWV1RoOVlrUmNBQ0lYVndv
+            aThXbE5aMjE0dVU2MHlFaTh4SXUzSGVXc0hFCmxlZ0JqU2V2aGNGZ3V0b2ZBWk9q
+            cmlPdllRU1g1M3BwNXoxOFErNzJ0WTQKLS0tIDNVd2d2dTFWd2Z2Z1l1WURVbVpJ
+            WWQreDVmVHMwbjZ1ZWpxTmI2alluaGcKSgClGHGhWC0extu+MGGqUWvqAVQh4LoN
+            cK2UyZBOor6Mm0dWHg7cZRGPJocGZ9fkyBLsJMBWa+DSWIs3WeOD8w==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-28T09:22:52Z"
+    mac: ENC[AES256_GCM,data:gyUWaw9muoP/t8tOGvSFzrKydhpzj0olAdco4UNVUAC42PXC94oxNYlA2Kr0KxN5zQudpBwnJHNpfIUKPV2VqNu0e6jNWRlJOpk9/p6Kbbzlq5LG2QVA4qNEV9F3HcnhzNF+JbQ70KesPMfCSOVS+caHKwd2zZgIxGxe2k7xRdY=,iv:2EVTJpuHFO87BNRR7BRSwcblK2MMDCJEkAq3HHqfFNY=,tag:ANRnXMVYZn1M8tPDD6ieww==,type:str]
+    pgp: []
+    encrypted_regex: ^(root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
