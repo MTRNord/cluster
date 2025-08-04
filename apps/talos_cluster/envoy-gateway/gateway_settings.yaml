@@ -351,42 +351,6 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: rspamd.midnightthoughts.space-tls
-                  # - name: https-docuseal-midnightthoughts
-                  #   protocol: HTTPS
-                  #   hostname: "docuseal.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: docuseal.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-neoboard
-                  #   protocol: HTTPS
-                  #   hostname: "miro-export.neoboard.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: miro-export.neoboard.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-certs
-                  #   protocol: HTTPS
-                  #   hostname: "certs.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: certs.midnightthoughts.space-tls
                   # - name: https-midnightthoughts-capacitor
                   #   protocol: HTTPS
                   #   hostname: "ui.k8s.midnightthoughts.space"
@@ -399,18 +363,6 @@ spec:
                   #       certificateRefs:
                   #           - kind: Secret
                   #             name: ui.k8s.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-osticket
-                  #   protocol: HTTPS
-                  #   hostname: "osticket.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: osticket.midnightthoughts.space-tls
                   # - name: https-midnightthoughts-plane
                   #   protocol: HTTPS
                   #   hostname: "plane.midnightthoughts.space"
@@ -429,22 +381,6 @@ spec:
                   #   allowedRoutes:
                   #       namespaces:
                   #           from: "All"
-                  # - name: gerrit-ssh
-                  #   protocol: TCP
-                  #   port: 29418
-                  #   allowedRoutes:
-                  #       kinds:
-                  #           - kind: TCPRoute
-                  #       namespaces:
-                  #           from: All
-                  # - name: ircs
-                  #   protocol: TCP
-                  #   port: 6697
-                  #   allowedRoutes:
-                  #       kinds:
-                  #           - kind: TCPRoute
-                  #       namespaces:
-                  #           from: All
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
@@ -491,30 +427,30 @@ spec:
         - name: metrics
           port: 19001
           targetPort: 19001
-# ---
-# apiVersion: monitoring.coreos.com/v1
-# kind: ServiceMonitor
-# metadata:
-#     name: envoy-gateway-monitor
-#     namespace: envoy-gateway
-# spec:
-#     selector:
-#         matchLabels:
-#             proxy: envoy
-#     endpoints:
-#         - port: metrics
-#           path: /stats/prometheus
-#           interval: 10s
-# ---
-# apiVersion: monitoring.coreos.com/v1
-# kind: ServiceMonitor
-# metadata:
-#     name: envoy-gateway-controlplane-monitor
-#     namespace: envoy-gateway
-# spec:
-#     selector:
-#         matchLabels:
-#             control-plane: envoy-gateway
-#     endpoints:
-#         - port: metrics
-#           interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: envoy-gateway-monitor
+    namespace: envoy-gateway
+spec:
+    selector:
+        matchLabels:
+            proxy: envoy
+    endpoints:
+        - port: metrics
+          path: /stats/prometheus
+          interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: envoy-gateway-controlplane-monitor
+    namespace: envoy-gateway
+spec:
+    selector:
+        matchLabels:
+            control-plane: envoy-gateway
+    endpoints:
+        - port: metrics
+          interval: 10s
