@@ -207,6 +207,18 @@ spec:
                   - kind: TCPRoute
               namespaces:
                   from: All
+        - name: https-mtrnord-blog-gts
+          protocol: HTTPS
+          hostname: "gts.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: gts.mtrnord.blog-tls
                   # - name: https-docuseal-midnightthoughts
                   #   protocol: HTTPS
                   #   hostname: "docuseal.midnightthoughts.space"
