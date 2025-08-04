@@ -1,0 +1,397 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: mailserver
+    namespace: mailserver
+spec:
+    releaseName: mailserver
+    interval: 60m
+    chart:
+        spec:
+            chart: docker-mailserver
+            sourceRef:
+                kind: HelmRepository
+                name: mailserver
+    values:
+        certificate: mail.midnightthoughts.space-tls
+        deployment:
+            env:
+                OVERRIDE_HOSTNAME: mail.midnightthoughts.space
+                # -----------------------------------------------
+                # --- General Section ---------------------------
+                # -----------------------------------------------
+                LOG_LEVEL: info
+                SUPERVISOR_LOGLEVEL:
+                DMS_VMAIL_UID:
+                DMS_VMAIL_GID:
+                ACCOUNT_PROVISIONER:
+                POSTMASTER_ADDRESS: postmaster@midnightthoughts.space
+                ENABLE_UPDATE_CHECK: 1
+                UPDATE_CHECK_INTERVAL: 1d
+                PERMIT_DOCKER: none
+                TZ: Europe/Berlin
+                NETWORK_INTERFACE:
+                TLS_LEVEL:
+                SPOOF_PROTECTION:
+                ENABLE_MTA_STS: 1
+                ENABLE_SRS: 0
+                ENABLE_OPENDKIM: 0
+                ENABLE_OPENDMARC: 0
+                ENABLE_POLICYD_SPF: 0
+                ENABLE_POP3: 0
+                ENABLE_IMAP: 1
+                ENABLE_CLAMAV: 0
+                ENABLE_RSPAMD: 1
+                ENABLE_RSPAMD_REDIS: 1
+                RSPAMD_LEARN: 1
+                RSPAMD_CHECK_AUTHENTICATED: 1
+                RSPAMD_GREYLISTING: 1
+                RSPAMD_HFILTER: 1
+                RSPAMD_HFILTER_HOSTNAME_UNKNOWN_SCORE: 3
+                RSPAMD_NEURAL: 0
+                ENABLE_AMAVIS: 0
+                AMAVIS_LOGLEVEL: 0
+                ENABLE_DNSBL: 0
+                # TODO: Setup proxy protocol in postfix and dovecot and envoy (See also https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/mailserver-behind-proxy/)
+                ENABLE_FAIL2BAN: 0
+                FAIL2BAN_BLOCKTYPE: drop
+                ENABLE_MANAGESIEVE:
+                POSTSCREEN_ACTION: enforce
+                SMTP_ONLY:
+                # These values are automatically set by the chart based on the certificate key
+                # SSL_TYPE:
+                # SSL_CERT_PATH:
+                # SSL_KEY_PATH:
+                SSL_ALT_CERT_PATH:
+                SSL_ALT_KEY_PATH:
+                VIRUSMAILS_DELETE_DELAY:
+                POSTFIX_DAGENT:
+                POSTFIX_MAILBOX_SIZE_LIMIT:
+                ENABLE_QUOTAS: 1
+                POSTFIX_MESSAGE_SIZE_LIMIT:
+                CLAMAV_MESSAGE_SIZE_LIMIT:
+                PFLOGSUMM_TRIGGER:
+                PFLOGSUMM_RECIPIENT:
+                PFLOGSUMM_SENDER:
+                LOGWATCH_INTERVAL:
+                LOGWATCH_RECIPIENT:
+                LOGWATCH_SENDER:
+                REPORT_RECIPIENT:
+                REPORT_SENDER:
+                LOGROTATE_COUNT: 4
+                LOGROTATE_INTERVAL: weekly
+                POSTFIX_REJECT_UNKNOWN_CLIENT_HOSTNAME: 0
+                POSTFIX_INET_PROTOCOLS: all
+                DOVECOT_INET_PROTOCOLS: all
+                # -----------------------------------------------
+                # --- SpamAssassin Section ----------------------
+                # -----------------------------------------------
+                ENABLE_SPAMASSASSIN: 0
+                ENABLE_SPAMASSASSIN_KAM: 0
+                SPAMASSASSIN_SPAM_TO_INBOX: 1
+                MOVE_SPAM_TO_JUNK: 1
+                MARK_SPAM_AS_READ: 0
+                SA_TAG: 2.0
+                SA_TAG2: 6.31
+                SA_KILL: 10.0
+                SPAM_SUBJECT: "***SPAM*** "
+                # -----------------------------------------------
+                # --- Fetchmail Section -------------------------
+                # -----------------------------------------------
+                ENABLE_FETCHMAIL: 0
+                FETCHMAIL_POLL: 300
+                FETCHMAIL_PARALLEL: 0
+                ENABLE_GETMAIL: 0
+                GETMAIL_POLL: 5
+                # -----------------------------------------------
+                # --- LDAP Section ------------------------------
+                # -----------------------------------------------
+                LDAP_START_TLS:
+                LDAP_SERVER_HOST:
+                LDAP_SEARCH_BASE:
+                LDAP_BIND_DN:
+                LDAP_BIND_PW:
+                LDAP_QUERY_FILTER_USER:
+                LDAP_QUERY_FILTER_GROUP:
+                LDAP_QUERY_FILTER_ALIAS:
+                LDAP_QUERY_FILTER_DOMAIN:
+                # -----------------------------------------------
+                # --- Dovecot Section ---------------------------
+                # -----------------------------------------------
+                DOVECOT_TLS:
+                DOVECOT_USER_FILTER:
+                DOVECOT_PASS_FILTER:
+                DOVECOT_MAILBOX_FORMAT: maildir
+                DOVECOT_AUTH_BIND:
+                # -----------------------------------------------
+                # --- Postgrey Section --------------------------
+                # -----------------------------------------------
+                ENABLE_POSTGREY: 0
+                POSTGREY_DELAY: 300
+                POSTGREY_MAX_AGE: 35
+                POSTGREY_TEXT: "Delayed by Postgrey"
+                POSTGREY_AUTO_WHITELIST_CLIENTS: 5
+                # -----------------------------------------------
+                # --- SASL Section ------------------------------
+                # -----------------------------------------------
+                ENABLE_SASLAUTHD: 0
+                SASLAUTHD_MECHANISMS:
+                SASLAUTHD_MECH_OPTIONS:
+                SASLAUTHD_LDAP_SERVER:
+                SASLAUTHD_LDAP_BIND_DN:
+                SASLAUTHD_LDAP_PASSWORD:
+                SASLAUTHD_LDAP_SEARCH_BASE:
+                SASLAUTHD_LDAP_FILTER:
+                SASLAUTHD_LDAP_START_TLS:
+                SASLAUTHD_LDAP_TLS_CHECK_PEER:
+                SASLAUTHD_LDAP_TLS_CACERT_FILE:
+                SASLAUTHD_LDAP_TLS_CACERT_DIR:
+                SASLAUTHD_LDAP_PASSWORD_ATTR:
+                SASLAUTHD_LDAP_AUTH_METHOD:
+                SASLAUTHD_LDAP_MECH:
+                # -----------------------------------------------
+                # --- SRS Section -------------------------------
+                # -----------------------------------------------
+                SRS_SENDER_CLASSES: envelope_sender
+                SRS_EXCLUDE_DOMAINS:
+                SRS_SECRET:
+                # -----------------------------------------------
+                # --- Default Relay Host Section ----------------
+                # -----------------------------------------------
+                DEFAULT_RELAY_HOST:
+                # -----------------------------------------------
+                # --- Multi-Domain Relay Section ----------------
+                # -----------------------------------------------
+                RELAY_HOST:
+                RELAY_PORT: 25
+                RELAY_USER:
+                RELAY_PASSWORD:
+            resources:
+                requests:
+                    cpu: 249m
+                    memory: 294Mi
+                limits: {}
+        service:
+            annotations:
+                external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+            type: ClusterIP
+            nodePort:
+                smtp: 25
+                smtps: 465
+                submission: 587
+                imap: 143
+                imaps: 993
+        persistent_volume_claims:
+            mail-config:
+                accessModes:
+                    - ReadWriteOnce
+                storageClass: longhorn
+                existingClaim: "mailserver-docker-mailserver-mail-config"
+            mail-data:
+                accessModes:
+                    - ReadWriteOnce
+                storageClass: longhorn
+                existingClaim: "mailserver-docker-mailserver-mail-data"
+            mail-state:
+                accessModes:
+                    - ReadWriteOnce
+                storageClass: longhorn
+                existingClaim: "mailserver-docker-mailserver-mail-state"
+            mail-log:
+                accessModes:
+                    - ReadWriteOnce
+                storageClass: longhorn
+                existingClaim: "mailserver-docker-mailserver-mail-log"
+        rspamd:
+            ingress:
+                enabled: false
+                ingressClassName: traefik
+                annotations:
+                    cert-manager.io/cluster-issuer: letsencrypt-dns
+                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+                host: rspamd.midnightthoughts.space
+                tls:
+                    enabled: true
+                    secret: rspamd.midnightthoughts.space-tls
+        proxyProtocol:
+            enabled: false
+        configMaps:
+            custom-commands.conf:
+                create: true
+                path: rspamd/custom-commands.conf
+                data: |
+                    set-option-for-controller password "$2$q19y9w4kqeh1568zhy1ipszk6zx5usid$n3giktipbsr7pbef9b6n566jk4ggd147qrrhg5xtmauh6w4yoj5y"
+            dovecot.cf:
+                create: true
+                path: dovecot.cf
+                data:
+                    "{{- if .Values.proxyProtocol.enabled }}\n  haproxy_trusted_networks = {{ .Values.proxyProtocol.trustedNetworks
+                    }}\n\n  {{- if and (.Values.deployment.env.ENABLE_IMAP) (not .Values.deployment.env.SMTP_ONLY) }}\n  service
+                    imap-login {\n      inet_listener imap {\n          port = 143\n      }\n\n      inet_listener imaps {\n
+                    \         port = 993\n          ssl = yes\n      }\n\n      inet_listener imap_proxy {\n          haproxy
+                    = yes\n          port = 10143\n          ssl = no\n      }\n\n      inet_listener imaps_proxy {\n          haproxy
+                    = yes\n          port = 10993\n          ssl = yes\n      }\n  }    \n  {{- end -}}\n\n  {{- if and (.Values.deployment.env.ENABLE_POP3)
+                    (not .Values.deployment.env.SMTP_ONLY) }}\n  service pop3-login {\n      inet_listener pop3 {\n          port
+                    = 110\n      }\n\n      inet_listener pop3s {\n          port = 995\n          ssl = yes\n      }\n\n
+                    \    inet_listener pop3_proxy {\n          haproxy = yes\n          port = 10110\n          ssl = no\n
+                    \    }\n\n     inet_listener pop3s_proxy {\n          haproxy = yes\n          port = 10995\n          ssl
+                    = yes\n     }                        \n  }\n  {{- end -}}\n{{- end -}}\n"
+            fts-xapian-plugin.conf:
+                create: true
+                path: /etc/dovecot/conf.d/10-plugin.conf
+                data: |
+                    {{- if .Values.dovecot.fullTextSearch.enabled }}
+                      mail_plugins = $mail_plugins fts fts_xapian
+
+                      plugin {
+                        fts_decoder = decode2text
+                      }
+
+                      plugin {
+                          fts = xapian
+                          fts_xapian = partial=3 full=20 verbose={{ .Values.dovecot.fullTextSearch.verbose }}
+
+                          fts_autoindex = yes
+                          fts_enforced = yes
+
+                          # Index attachements
+                          fts_decoder = decode2text
+                      }
+
+                      service indexer-worker {
+                          # limit size of indexer-worker RAM usage, ex: 512MB, 1GB, 2GB
+                          vsz_limit = {{ .Values.dovecot.fullTextSearch.resources.memory }}
+                      }
+
+                      service decode2text {
+                          executable = script /usr/lib/dovecot/decode2text.sh
+                          user = dovecot
+                          unix_listener decode2text {
+                              mode = 0666
+                          }
+                      }
+                    {{- end -}}
+            user-patches.sh:
+                create: true
+                path: user-patches.sh
+                data:
+                    "#!/bin/bash\n\n{{- if .Values.proxyProtocol.enabled }}\n# Make sure to keep this file in sync with
+                    https://github.com/docker-mailserver/docker-mailserver/blob/master/target/postfix/master.cf!\ncat <<EOS
+                    >> /etc/postfix/master.cf\n\n# Submission with proxy\n10587     inet  n       -       n       -       -
+                    \      smtpd\n  -o syslog_name=postfix/submission\n  -o smtpd_tls_security_level=encrypt\n  -o smtpd_sasl_auth_enable=yes\n
+                    \ -o smtpd_sasl_type=dovecot\n  -o smtpd_reject_unlisted_recipient=no\n  -o smtpd_sasl_authenticated_header=yes\n
+                    \ -o smtpd_client_restrictions=permit_sasl_authenticated,reject\n  -o smtpd_relay_restrictions=permit_sasl_authenticated,reject\n
+                    \ -o smtpd_sender_restrictions=\\$mua_sender_restrictions\n  -o smtpd_discard_ehlo_keywords=\n  -o milter_macro_daemon_name=ORIGINATING\n
+                    \ -o cleanup_service_name=sender-cleanup\n  -o smtpd_upstream_proxy_protocol=haproxy  \n\n# Submissions
+                    with proxy\n10465     inet  n       -       n       -       -       smtpd\n  -o syslog_name=postfix/submissions\n
+                    \ -o smtpd_tls_wrappermode=yes\n  -o smtpd_sasl_auth_enable=yes\n  -o smtpd_sasl_type=dovecot\n  -o smtpd_reject_unlisted_recipient=no\n
+                    \ -o smtpd_sasl_authenticated_header=yes\n  -o smtpd_client_restrictions=permit_sasl_authenticated,reject\n
+                    \ -o smtpd_relay_restrictions=permit_sasl_authenticated,reject\n  -o smtpd_sender_restrictions=\\$mua_sender_restrictions\n
+                    \ -o smtpd_discard_ehlo_keywords=\n  -o milter_macro_daemon_name=ORIGINATING\n  -o cleanup_service_name=sender-cleanup\n
+                    \ -o smtpd_upstream_proxy_protocol=haproxy\n\n# Smtp with proxy\n12525     inet  n       -       n       -
+                    \      1       postscreen\n  -o syslog_name=postfix/smtp-proxy\n  -o postscreen_upstream_proxy_protocol=haproxy\n
+                    \ -o postscreen_cache_map=btree:$data_directory/postscreen_10025_cache\nEOS\n{{- end }}\n"
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+    name: mailserver-smtp
+    namespace: mailserver
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+spec:
+    parentRefs:
+        - name: email-gateway
+          namespace: envoy-gateway
+          sectionName: smtp
+    rules:
+        - backendRefs:
+              - name: mailserver-docker-mailserver
+                port: 25
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+    name: mailserver-submissions
+    namespace: mailserver
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+spec:
+    parentRefs:
+        - name: email-gateway
+          namespace: envoy-gateway
+          sectionName: submissions
+    rules:
+        - backendRefs:
+              - name: mailserver-docker-mailserver
+                port: 465
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+    name: mailserver-submission
+    namespace: mailserver
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+spec:
+    parentRefs:
+        - name: email-gateway
+          namespace: envoy-gateway
+          sectionName: submission
+    rules:
+        - backendRefs:
+              - name: mailserver-docker-mailserver
+                port: 587
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+    name: mailserver-imap
+    namespace: mailserver
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+spec:
+    parentRefs:
+        - name: email-gateway
+          namespace: envoy-gateway
+          sectionName: imap
+    rules:
+        - backendRefs:
+              - name: mailserver-docker-mailserver
+                port: 143
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+    name: mailserver-imaps
+    namespace: mailserver
+    annotations:
+        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+spec:
+    parentRefs:
+        - name: email-gateway
+          namespace: envoy-gateway
+          sectionName: imaps
+    rules:
+        - backendRefs:
+              - name: mailserver-docker-mailserver
+                port: 993
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: mailserver-docker-mailserver-rspamd
+    namespace: mailserver
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - rspamd.midnightthoughts.space
+    rules:
+        - backendRefs:
+              - name: mailserver-docker-mailserver
+                port: 11334
+          timeouts:
+              request: 240s
+              backendRequest: 0s
