@@ -3,8 +3,8 @@ kind: Kustomization
 namespace: ntfy
 resources:
     - pvc.yaml
-    #- release.yaml
+    - release.yaml
 configMapGenerator:
     - name: ntfy-config
       files:
-        - ntfy.yml
+          - ntfy.yml
