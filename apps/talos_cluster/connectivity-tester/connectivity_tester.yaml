@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: connectivity-tester-stage-config
+    namespace: matrix
+type: Opaque
+stringData:
+    config.yaml: ENC[AES256_GCM,data:9+xUlhm/W1QceUci8tOYmdnYtMhy0elcedXnlCwYOzQ9TpnnmS44FRKlITGqFoUUWmFwA09L7TJn8t0CVbFj1/2OP9btAHmcXhkgrCpmWrSiI6fPFdlFIXI0UTBuJZfC3lC6IB8rNym+1f+5UukARIGKRGBIYtuThYXETrY5lTYTsJ5qovoa8i9HP58T2UVLQc6ZCREElJDnyZC27J5tQ2kavtdYwoxtQUYJxAqHGWW61fw41qSfzW2MRAcrWnZ9D8R/CvC1c5FuqonDkE730kvk1HH/tMC18iMS1lWYtpM1zgaLLnA88vo4Y1UQkF/5N+wgp7NlfCdzaKt0qJ9vNXng82pRF2phjfgTiFjhC7aMCa9tKp12VMJyI41nSw7ytFbJ4wznvaMp1A38Og8DYmT4O7Bky4pFbQ9vXJ4VrHjvUmA0BhCtZRcPlcSdedznOj8LPLSeqfaLIJZ8nWgHElE5Cvrc/mB16qCUDSlkIxRDxGEw1tBcRIjBHO2XcDxDagLqRfxkOZ16a9iCvYq5vCMZp7SqwmJL/mc5cbkaP9+MnSY9lriE6ctBddQNcLW90BmHcf5RuDoNmBRSy1wG78HIHTSwzvpZjfZ4AXMf4mkGhohIBPVu0tCTrYpSdMrV88icIqgXNpKpYmpxYxA5/daMlY9eyx5lzrI+I3ZZ5UaUQZEGNRl0yqZp7q6/HcMD6M2rNIV9K4fmmRLV0hLJ+QOqtSmB587SCBzcxUiEYQ==,iv:uZLfSDlS9dVAjn48smAhix9cXEJMydEaNCKMZ+OvW+c=,tag:wbaGGomRoE+/IHKWtNueXA==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxT1FaNGpTTFd3bmJwRUNj
+            VlQxOHh6U2JEWU9yQ2VOK25yMGwycUV2aDBvCmpxVXZPbUZ0UTdNTWtPUnkrZGhC
+            MW1vOWVtZGVxZzRyaG9EWWpPdk5EV0EKLS0tIGp5STZNUUg0bFRHc29KbitKVk42
+            WlkyVk94U1NHeER5T2NEM0w4MmgzM3cKEB5CAlKIELESDvGA9iX8QyIUuDYJ5ekz
+            POqNU/+I6V9t5CdaR2C3uZOTCHcWecUT4CQwibrXHgsGiRW1Aqx1ag==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-07-25T14:11:31Z"
+    mac: ENC[AES256_GCM,data:Rg/LIpK9muWCpEeMAvpIWeunc56446AE/pch871aIFtI5aSpp6r0GB3xnJJbt5lzCVW7saX+8cMGrGr5DfnwdUVNM8ciXF+wieFULpnt8lixBG31QjTpcrCHQoZNvLPERdk5bvb53cnCgjXq6vZZ7B0WbX6MKCUWIvBMgcbzWIM=,iv:SIAf0GMEpCMMZ0PZXveTOYWFpECKpUn/VcXeFkjQbzY=,tag:H6Lpo6WjCo0PdVcISJgw8A==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: connectivity-tester-config
+    namespace: matrix
+type: Opaque
+stringData:
+    config.yaml: ENC[AES256_GCM,data:esU6pUpxPOORsMIqzDNRszNcYVJ9OxwiBr76ChPDUf2noEX3oK8RfPBZ3uGYWv7VA1e44FKpUJBN5l/JUnd1mtcLqY8f68Z2JGnGYWQzieCpxYZf5e/YJYmQa2s8fn2/Fu0baCfoUUrCKO8nTPpGFzl3bjJC7tIs3h36PpNNYvjyF5tD++DemiXg5pSCF0PhTQbJ7Bm5/JJ854rE2S5jsmEtAviMrrNrl2GFzePG8Ba8zcnor4vXsHUlVU6IVbtFUNptv3Rlu6Aus+304zoLQechS5oCSgYuNl3A+v8dxbzMC+WNGwzMIM1RH4nPsaEK0mbpdN2LrnHybKjr88NzhgAtP2d+0+beVilMHAlmTD7mMJ0pVbVMGAAtV7q+bWQo+nLTPyxaSpNiTbLre7VYXfRergyfTSnKpw6zs4tvKF3A6sl99PpgfRCyydJN04adq7Ca4gQYWaE0HFZ96SfWkbexM3RaVIxCbfTLJLidhZugQ1t1oeFsMVi/IlnB/mUtTBoCrAHFBRkYv5pgnCw4c547S4/xtSc6634C0yCvSzoJtSdVeUTue9SjC4gO4S3kP+x5esP4emvQ0sdpKBkMwv3DuVIlX2izhMOw6dLV0eeAU0XMp1ogpA+UX665kf/g8fyOWftVMeBrVZVbvvSXkbJEylaeXnAciEo7aMa+VnUDj/M0MNj+yPaplpPvKwIT1R2Fn1utm/2juBUb9Q==,iv:lIHWP/z0g2WPtlwGLw5rp6OhX6pNtMTM3VkgfKlvRGw=,tag:EUNFJv6Q6BEfgX/e0QAR/g==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxT1FaNGpTTFd3bmJwRUNj
+            VlQxOHh6U2JEWU9yQ2VOK25yMGwycUV2aDBvCmpxVXZPbUZ0UTdNTWtPUnkrZGhC
+            MW1vOWVtZGVxZzRyaG9EWWpPdk5EV0EKLS0tIGp5STZNUUg0bFRHc29KbitKVk42
+            WlkyVk94U1NHeER5T2NEM0w4MmgzM3cKEB5CAlKIELESDvGA9iX8QyIUuDYJ5ekz
+            POqNU/+I6V9t5CdaR2C3uZOTCHcWecUT4CQwibrXHgsGiRW1Aqx1ag==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-07-25T14:11:31Z"
+    mac: ENC[AES256_GCM,data:Rg/LIpK9muWCpEeMAvpIWeunc56446AE/pch871aIFtI5aSpp6r0GB3xnJJbt5lzCVW7saX+8cMGrGr5DfnwdUVNM8ciXF+wieFULpnt8lixBG31QjTpcrCHQoZNvLPERdk5bvb53cnCgjXq6vZZ7B0WbX6MKCUWIvBMgcbzWIM=,iv:SIAf0GMEpCMMZ0PZXveTOYWFpECKpUn/VcXeFkjQbzY=,tag:H6Lpo6WjCo0PdVcISJgw8A==,type:str]
+    pgp: []
+    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
