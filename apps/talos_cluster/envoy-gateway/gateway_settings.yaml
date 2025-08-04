@@ -219,6 +219,30 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: gts.mtrnord.blog-tls
+        - name: https-midnightthoughts-collabora
+          protocol: HTTPS
+          hostname: "collabora.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: collabora.midnightthoughts.space
+        - name: https-midnightthoughts-webhook-kubernetes
+          protocol: HTTPS
+          hostname: "webhook.kubernetes.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: webhook.kubernetes.midnightthoughts.space-tls
                   # - name: https-docuseal-midnightthoughts
                   #   protocol: HTTPS
                   #   hostname: "docuseal.midnightthoughts.space"
@@ -315,18 +339,6 @@ spec:
                   #       certificateRefs:
                   #           - kind: Secret
                   #             name: status.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-webhook-kubernetes
-                  #   protocol: HTTPS
-                  #   hostname: "webhook.kubernetes.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: webhook.kubernetes.midnightthoughts.space-tls
                   # - name: https-midnightthoughts-rspamd
                   #   protocol: HTTPS
                   #   hostname: "rspamd.midnightthoughts.space"
@@ -459,18 +471,6 @@ spec:
                   #       certificateRefs:
                   #           - kind: Secret
                   #             name: rspamd.matrix.midnightthoughts.space
-                  # - name: https-midnightthoughts-collabora
-                  #   protocol: HTTPS
-                  #   hostname: "collabora.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: collabora.midnightthoughts.space
                   # - name: https-nordgedanken-root
                   #   protocol: HTTPS
                   #   hostname: "nordgedanken.dev"
