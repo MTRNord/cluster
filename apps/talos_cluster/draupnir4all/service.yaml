@@ -21,19 +21,19 @@ spec:
           targetPort: web
           protocol: TCP
           name: web
-# ---
-# apiVersion: gateway.networking.k8s.io/v1
-# kind: HTTPRoute
-# metadata:
-#     name: draupnir4all-web
-#     namespace: matrix
-# spec:
-#     parentRefs:
-#         - name: envoy-gateway
-#           namespace: envoy-gateway
-#     hostnames:
-#         - draupnir.midnightthoughts.space
-#     rules:
-#         - backendRefs:
-#             - name: draupnir4all
-#               port: 3000
+          # ---
+          # apiVersion: gateway.networking.k8s.io/v1
+          # kind: HTTPRoute
+          # metadata:
+          #     name: draupnir4all-web
+          #     namespace: matrix
+          # spec:
+          #     parentRefs:
+          #         - name: envoy-gateway
+          #           namespace: envoy-gateway
+          #     hostnames:
+          #         - draupnir.midnightthoughts.space
+          #     rules:
+          #         - backendRefs:
+          #             - name: draupnir4all
+          #               port: 3000
