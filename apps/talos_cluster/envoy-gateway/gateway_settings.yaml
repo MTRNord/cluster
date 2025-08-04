@@ -48,42 +48,42 @@ spec:
           protocol: TCP
           port: 25
           allowedRoutes:
-              kinds:
-                  - kind: TCPRoute
-              namespaces:
-                  from: All
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
         - name: submissions
           protocol: TCP
           port: 465
           allowedRoutes:
-              kinds:
-                  - kind: TCPRoute
-              namespaces:
-                  from: All
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
         - name: submission
           protocol: TCP
           port: 587
           allowedRoutes:
-              kinds:
-                  - kind: TCPRoute
-              namespaces:
-                  from: All
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
         - name: imap
           protocol: TCP
           port: 143
           allowedRoutes:
-              kinds:
-                  - kind: TCPRoute
-              namespaces:
-                  from: All
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
         - name: imaps
           protocol: TCP
           port: 993
           allowedRoutes:
-              kinds:
-                  - kind: TCPRoute
-              namespaces:
-                  from: All
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -108,141 +108,141 @@ spec:
           hostname: "talos.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: talos.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: talos.midnightthoughts.space-tls
         - name: https-midnightthoughts-auth
           protocol: HTTPS
           hostname: "auth.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: auth.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: auth.midnightthoughts.space-tls
         - name: https-midnightthoughts-grafana
           protocol: HTTPS
           hostname: "grafana.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: grafana.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: grafana.midnightthoughts.space-tls
         - name: https-draupnir-midnightthoughts
           protocol: HTTPS
           hostname: "draupnir.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: draupnir.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: draupnir.midnightthoughts.space-tls
         - name: https-matrix-draupnir-midnightthoughts
           protocol: HTTPS
           hostname: "matrix.draupnir.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: matrix.draupnir.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: matrix.draupnir.midnightthoughts.space-tls
         - name: https-midnightthoughts-vault
           protocol: HTTPS
           hostname: "vault.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: vault.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: vault.midnightthoughts.space-tls
         - name: https-midnightthoughts-budget
           protocol: HTTPS
           hostname: "budget.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: budget.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: budget.midnightthoughts.space-tls
         - name: https-midnightthoughts-ldap
           protocol: HTTPS
           hostname: "ldap.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: ldap.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: ldap.midnightthoughts.space-tls
         - name: ldap
           protocol: TCP
           port: 389
           allowedRoutes:
-              kinds:
-                  - kind: TCPRoute
-              namespaces:
-                  from: All
+            kinds:
+                - kind: TCPRoute
+            namespaces:
+                from: All
         - name: https-mtrnord-blog-gts
           protocol: HTTPS
           hostname: "gts.mtrnord.blog"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: gts.mtrnord.blog-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: gts.mtrnord.blog-tls
         - name: https-midnightthoughts-collabora
           protocol: HTTPS
           hostname: "collabora.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: collabora.midnightthoughts.space
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: collabora.midnightthoughts.space
         - name: https-midnightthoughts-webhook-kubernetes
           protocol: HTTPS
           hostname: "webhook.kubernetes.midnightthoughts.space"
           port: 443
           allowedRoutes:
-              namespaces:
-                  from: "All"
+            namespaces:
+                from: "All"
           tls:
-              mode: Terminate
-              certificateRefs:
-                  - kind: Secret
-                    name: webhook.kubernetes.midnightthoughts.space-tls
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: webhook.kubernetes.midnightthoughts.space-tls
                   # - name: https-docuseal-midnightthoughts
                   #   protocol: HTTPS
                   #   hostname: "docuseal.midnightthoughts.space"
