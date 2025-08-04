@@ -315,6 +315,18 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: matrix.mtrnord.blog-tls
+        - name: https-rss-mtrnord-blog
+          protocol: HTTPS
+          hostname: "rss.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rss.mtrnord.blog-tls
                   # - name: https-docuseal-midnightthoughts
                   #   protocol: HTTPS
                   #   hostname: "docuseal.midnightthoughts.space"
@@ -411,18 +423,6 @@ spec:
                   #       certificateRefs:
                   #           - kind: Secret
                   #             name: notify.mtrnord.blog-tls
-                  # - name: https-rss-mtrnord-blog
-                  #   protocol: HTTPS
-                  #   hostname: "rss.mtrnord.blog"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: rss.mtrnord.blog-tls
                   # - name: http
                   #   protocol: HTTP
                   #   port: 80
