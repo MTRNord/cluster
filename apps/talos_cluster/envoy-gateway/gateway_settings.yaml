@@ -351,36 +351,36 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: rspamd.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-capacitor
-                  #   protocol: HTTPS
-                  #   hostname: "ui.k8s.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: ui.k8s.midnightthoughts.space-tls
-                  # - name: https-midnightthoughts-plane
-                  #   protocol: HTTPS
-                  #   hostname: "plane.midnightthoughts.space"
-                  #   port: 443
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
-                  #   tls:
-                  #       mode: Terminate
-                  #       certificateRefs:
-                  #           - kind: Secret
-                  #             name: plane.midnightthoughts.space
-                  # - name: http
-                  #   protocol: HTTP
-                  #   port: 80
-                  #   allowedRoutes:
-                  #       namespaces:
-                  #           from: "All"
+        - name: https-midnightthoughts-plane
+          protocol: HTTPS
+          hostname: "plane.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: plane.midnightthoughts.space
+        - name: http
+          protocol: HTTP
+          port: 80
+          allowedRoutes:
+            namespaces:
+                from: "All"
+                # - name: https-midnightthoughts-capacitor
+                #   protocol: HTTPS
+                #   hostname: "ui.k8s.midnightthoughts.space"
+                #   port: 443
+                #   allowedRoutes:
+                #       namespaces:
+                #           from: "All"
+                #   tls:
+                #       mode: Terminate
+                #       certificateRefs:
+                #           - kind: Secret
+                #             name: ui.k8s.midnightthoughts.space-tls
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
