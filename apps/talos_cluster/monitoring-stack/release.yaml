@@ -38,8 +38,8 @@ spec:
                             storage: 5Gi
         vmcluster:
             enabled: true
-            replicationFactor: 2
             spec:
+                retentionPeriod: "30d"
                 vminsert:
                     replicaCount: 1
                     resources:
@@ -159,7 +159,9 @@ spec:
                               annotations:
                                 __dashboardUid__: tbO9LAiZK
                                 __panelId__: "7"
-                                description: One or more OSDs have reached the NEARFULL threshold. Use 'ceph health detail' and 'ceph osd df' to identify the problem. To resolve, add capacity to the affected OSD's failure domain, restore down/out OSDs, or delete unwanted data.
+                                description: One or more OSDs have reached the NEARFULL threshold. Use 'ceph health detail'
+                                    and 'ceph osd df' to identify the problem. To resolve, add capacity to the affected OSD's
+                                    failure domain, restore down/out OSDs, or delete unwanted data.
                                 runbook_url: https://docs.ceph.com/en/latest/rados/operations/health-checks#osd-nearfull
                                 summary: OSD(s) running low on free space (NEARFULL)
                               isPaused: false
@@ -220,7 +222,8 @@ spec:
                               execErrState: Error
                               for: 5m
                               annotations:
-                                description: Depending on the rate limit, cert-manager may be unable to generate certificates for up to a week.
+                                description: Depending on the rate limit, cert-manager may be unable to generate certificates
+                                    for up to a week.
                                 summary: Cert manager hitting LetsEncrypt rate limits.
                               labels: {}
                               isPaused: false
@@ -920,7 +923,7 @@ spec:
                             - receiver: PagerDuty
                               object_matchers:
                                 - - service_id
-                                  - '!='
+                                  - "!="
                                   - draupnir4all
                             - receiver: PagerDuty Draupnir4All
                               object_matchers:
@@ -1010,7 +1013,8 @@ spec:
                     auth_url: https://auth.midnightthoughts.space/application/o/authorize/
                     token_url: https://auth.midnightthoughts.space/application/o/token/
                     api_url: https://auth.midnightthoughts.space/application/o/userinfo/
-                    role_attribute_path: contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'
+                    role_attribute_path: contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors')
+                        && 'Editor' || 'Viewer'
             imageRenderer:
                 enabled: true
         kubeProxy:
