@@ -214,7 +214,7 @@ spec:
                     enabled: true
                     secret: rspamd.midnightthoughts.space-tls
         proxyProtocol:
-            enabled: true
+            enabled: false
             trustedNetworks: 10.0.0.0/16
         configMaps:
             custom-commands.conf:
@@ -225,7 +225,8 @@ spec:
             dovecot.cf:
                 create: true
                 path: dovecot.cf
-                data: "{{- if .Values.proxyProtocol.enabled }}\n  haproxy_trusted_networks = {{ .Values.proxyProtocol.trustedNetworks
+                data:
+                    "{{- if .Values.proxyProtocol.enabled }}\n  haproxy_trusted_networks = {{ .Values.proxyProtocol.trustedNetworks
                     }}\n\n  {{- if and (.Values.deployment.env.ENABLE_IMAP) (not .Values.deployment.env.SMTP_ONLY) }}\n  service
                     imap-login {\n      inet_listener imap {\n          port = 143\n      }\n\n      inet_listener imaps {\n
                     \         port = 993\n          ssl = yes\n      }\n\n      inet_listener imap_proxy {\n          haproxy
@@ -274,7 +275,8 @@ spec:
             user-patches.sh:
                 create: true
                 path: user-patches.sh
-                data: "#!/bin/bash\n\n{{- if .Values.proxyProtocol.enabled }}\n# Make sure to keep this file in sync with
+                data:
+                    "#!/bin/bash\n\n{{- if .Values.proxyProtocol.enabled }}\n# Make sure to keep this file in sync with
                     https://github.com/docker-mailserver/docker-mailserver/blob/master/target/postfix/master.cf!\ncat <<EOS
                     >> /etc/postfix/master.cf\n\n# Submission with proxy\n10587     inet  n       -       n       -       -
                     \      smtpd\n  -o syslog_name=postfix/submission\n  -o smtpd_tls_security_level=encrypt\n  -o smtpd_sasl_auth_enable=yes\n
@@ -305,8 +307,8 @@ spec:
           sectionName: smtp
     rules:
         - backendRefs:
-            - name: mailserver-docker-mailserver
-              port: 25
+              - name: mailserver-docker-mailserver
+                port: 25
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -322,8 +324,8 @@ spec:
           sectionName: submissions
     rules:
         - backendRefs:
-            - name: mailserver-docker-mailserver
-              port: 465
+              - name: mailserver-docker-mailserver
+                port: 465
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -339,8 +341,8 @@ spec:
           sectionName: submission
     rules:
         - backendRefs:
-            - name: mailserver-docker-mailserver
-              port: 587
+              - name: mailserver-docker-mailserver
+                port: 587
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -356,8 +358,8 @@ spec:
           sectionName: imap
     rules:
         - backendRefs:
-            - name: mailserver-docker-mailserver
-              port: 143
+              - name: mailserver-docker-mailserver
+                port: 143
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -373,8 +375,8 @@ spec:
           sectionName: imaps
     rules:
         - backendRefs:
-            - name: mailserver-docker-mailserver
-              port: 993
+              - name: mailserver-docker-mailserver
+                port: 993
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
@@ -414,8 +416,8 @@ spec:
         - rspamd.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: mailserver-docker-mailserver
-              port: 11334
+              - name: mailserver-docker-mailserver
+                port: 11334
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
