@@ -385,6 +385,19 @@ spec:
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
 metadata:
+    name: email-policy
+    namespace: envoy-gateway
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: email-gateway
+    # WARNING: Cilium 1.17+ only supports the correct ipMode magic for this to work. Hence it currently fails
+    enableProxyProtocol: true
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
     name: enable-proxy-protocol-policy
     namespace: envoy-gateway
 spec:
@@ -392,9 +405,6 @@ spec:
         - group: gateway.networking.k8s.io
           kind: Gateway
           name: envoy-gateway
-        - group: gateway.networking.k8s.io
-          kind: Gateway
-          name: email-gateway
     # WARNING: Cilium 1.17+ only supports the correct ipMode magic for this to work. Hence it currently fails
     enableProxyProtocol: true
     # Alternative to enableProxyProtocol: true
