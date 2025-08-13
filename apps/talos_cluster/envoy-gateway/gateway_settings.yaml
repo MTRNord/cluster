@@ -363,6 +363,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: plane.midnightthoughts.space
+        - name: https-midnightthoughts-kimai
+          protocol: HTTPS
+          hostname: "kimai.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: kimai.midnightthoughts.space
         - name: http
           protocol: HTTP
           port: 80
