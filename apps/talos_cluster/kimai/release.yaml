@@ -13,9 +13,9 @@ spec:
                 kind: HelmRepository
                 name: kimai
     values:
-        kimaiAppSecret: ENC[AES256_GCM,data:GrQrVTqmVIUyryPaMnV8Dy8E2aJKaLuKDNq0Ukz4BN6vL8BK1IhTZyegMwPc07x1t6Zg3d/CoGJSBteLnMI58Q==,iv:GV4EnVZ3af70ByOkQCiOv2jIpVub5IwyX8WicpLvW5g=,tag:IkOPWvrKTKc7TAFtBrEBZg==,type:str]
+        kimaiAppSecret: ENC[AES256_GCM,data:APXLkwtm73WT+DgrtTbywYNq+NnFSqWhXHE84MhYqJxKQcVBbZ41QY7ArzmjOEeGlEBgVTXsL4sSR66GwtRt+w==,iv:tmaZrgPMzrKLvUv+BdjPXvHD1B9N61pFTD0bllDnNHg=,tag:GLEBu5iybkO/Qophmuw8Kw==,type:str]
         kimaiAdminEmail: noreply@midnightthoughts.space
-        kimaiAdminPassword: ENC[AES256_GCM,data:l9OAms9NdQA3,iv:0Pqvr7v61ocDcDfAnwI96DgWB6DDlhHSqeNaRFcer7w=,tag:6+9Di44hmmjMkj/htPPq3g==,type:str]
+        kimaiAdminPassword: ENC[AES256_GCM,data:rPluVn+0bMhO,iv:/6MPtw/nRjSX1X3EAoSAYmsu3GGFoj4I7j1zUGVLqJ4=,tag:YZYbOnjwA1n6hEN2Hih7pA==,type:str]
         kimaiMailerFrom: noreply@midnightthoughts.space
         # TODO
         kimaiMailerUrl: null://localhost
@@ -42,8 +42,8 @@ spec:
             enabled: true
             architecture: standalone
             auth:
-                rootPassword: ENC[AES256_GCM,data:NfYUj+y4/YGrdDGbEVxIFw8Wiqs0cws7dSyPrDCag29qY0iBNMmZYbhA8T2HkyPaYPrMzbaXnbFrnUmV6xBnJA==,iv:z0JcqWnLOns9NMPlBomdQMC7pA+ENWQzpt/1kaMDLR4=,tag:Wl4uB6w+6sfF8hmHT6/08w==,type:str]
-                password: ENC[AES256_GCM,data:FBQon1kmxTI0zWCY3ltdcbaC/WfUwxlJWAlxbaL8YssnN1iGGSlEPSnq2TI+Y7ncKsr0nLOs4cZRQjGZ4apsEA==,iv:H0FA42rQ7oFCYTZTMlgfgfaXi9FFEulavw43igzdZXc=,tag:7lOS/MX272wB6dZz1sogsQ==,type:str]
+                rootPassword: ENC[AES256_GCM,data:cIIGXYiN/+AFXe7PEfDY5DhGEVRCvs47FZt0+qeFYnguv7Rfpzy3NEM8fhlhi8WICsShCtPLq6qFc+3eAna9KA==,iv:1SQbsHux0HHZ+IopSSVLeSLNPPKFjMSx3FwNy18yBVY=,tag:d1JZexKVjXeap5qCbmVnSw==,type:str]
+                password: ENC[AES256_GCM,data:Je6oVx1UDwJ00wN3UNgN2V5IfwKA+bPpS1qxpfbnvQWzVj3yXYXYL77uFErQq7j0G9otjb3T5iq/ifoAv+xzFw==,iv:AFGd8yUb6uUnX7mBZ2wwFi1BWubxljNnCHVBrN8bHT4=,tag:QxGck+BqS60fThDoZjKH/w==,type:str]
             primary:
                 persistence:
                     enabled: true
@@ -54,25 +54,6 @@ spec:
         redis:
             enabled: true
             architecture: standalone
-# ---
-# apiVersion: gateway.networking.k8s.io/v1
-# kind: HTTPRoute
-# metadata:
-#     name: kimai
-#     namespace: kimai
-# spec:
-#     parentRefs:
-#         - name: envoy-gateway
-#           namespace: envoy-gateway
-#     hostnames:
-#         - kimai.midnightthoughts.space
-#     rules:
-#         - backendRefs:
-#               - name: kimai-service
-#                 port: 8080
-#           timeouts:
-#               request: 240s
-#               backendRequest: 0s
 sops:
     kms: []
     gcp_kms: []
@@ -81,15 +62,54 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBHRXE0OWtNS0cvQUV5eVJU
-              UC9BcHVWdFBpUEU5cDlBTGZ2QkhsYWR2ZmlRCjBvR1QvRGhFSlR6UnE2RWdsSmpm
-              cFBLVHc2dGhpVkRiWUc1aFB0ZUVZdE0KLS0tIFVlVWl3VEdYbHdxeTQ0MTkzZEJL
-              ekRWMkQzbTRCK2YzTSt3M01FZFlTbUkKD8v4HQXBCIiSwOl/YDEL8kY3k5C2cfwI
-              wF+Qip6CYBbce2tx88mnzdJqD1ZhRuNGJLrhe5Df/ojinSIQnFmKdw==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-08-13T13:06:54Z"
-    mac: ENC[AES256_GCM,data:JD6+ppLM3xI5rnXcY8ch1DEmGq29lkqMxK5Gr5+ZC4403aSf3TUr93dvGxfRTO+AP5oHc2d0eqZISDDPsg59VpK8m7fwbn9/kohv93MZGKjtMJ00diGRhnCak4AHNA+SfatpU/wkYxxDTAJWqCx+e8inoopqhcK1NJMF5g8cESA=,iv:OR+OC5L8hhsphOchWDEw+NADpAh0ltFAt1HnwakS2gA=,tag:Rqw8JvtJCtFbUpXFHEUmNw==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5V1djTlY4djAyTG0ybXE2
+            dHZMc1MybU82TDlVRVBJR2RCaGZvQy9XN0Y4CldwdUo2ckxWbEFZQlNwRlU4RFpm
+            aTFOSnpKdkNEWXRxcW1EdDFLaCtkMk0KLS0tIGkrWGVSOW5sTUxPS25JWVRGOVZC
+            aVZHUThkZkQ5N3ZDaE0xYUpPTktFdlUKyXnmTdBYiBn0lmL09N/rSCOwA5ydC7a0
+            D0B1sYyxdlFV1T4msbzwXyBcOKZYHRRBDccnzCscdMC6izZJlpornw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-13T13:38:38Z"
+    mac: ENC[AES256_GCM,data:DoVQ4+QoGkYWU3RDgKP1af6xMBYtBD84C6b12vzMgDnz3hPzAm+Ubicn9O1oxuv85v/pXml2pEcqO4K+5k0pokxCWK7Q7DYr2cWPBgLECyEN0f9RNDs45PLd3Uxja+OSyWuNeUkAsdUxt8AiiQapgMBjCrO0VwdtOU3epoftcMI=,iv:E8eTUluv5MsBUADNEzSni7I4WXQkYRrpsI2sx1evJaE=,tag:BwQ3a1Fa+dTsOejXARkewQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: kimai
+    namespace: kimai
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - kimai.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: kimai-kimai2
+              port: 80
+          timeouts:
+            request: 240s
+            backendRequest: 0s
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5V1djTlY4djAyTG0ybXE2
+            dHZMc1MybU82TDlVRVBJR2RCaGZvQy9XN0Y4CldwdUo2ckxWbEFZQlNwRlU4RFpm
+            aTFOSnpKdkNEWXRxcW1EdDFLaCtkMk0KLS0tIGkrWGVSOW5sTUxPS25JWVRGOVZC
+            aVZHUThkZkQ5N3ZDaE0xYUpPTktFdlUKyXnmTdBYiBn0lmL09N/rSCOwA5ydC7a0
+            D0B1sYyxdlFV1T4msbzwXyBcOKZYHRRBDccnzCscdMC6izZJlpornw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-08-13T13:38:38Z"
+    mac: ENC[AES256_GCM,data:DoVQ4+QoGkYWU3RDgKP1af6xMBYtBD84C6b12vzMgDnz3hPzAm+Ubicn9O1oxuv85v/pXml2pEcqO4K+5k0pokxCWK7Q7DYr2cWPBgLECyEN0f9RNDs45PLd3Uxja+OSyWuNeUkAsdUxt8AiiQapgMBjCrO0VwdtOU3epoftcMI=,iv:E8eTUluv5MsBUADNEzSni7I4WXQkYRrpsI2sx1evJaE=,tag:BwQ3a1Fa+dTsOejXARkewQ==,type:str]
     pgp: []
     encrypted_regex: ^(kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
