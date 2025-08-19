@@ -7,7 +7,7 @@ spec:
     releaseName: vaultwarden
     chart:
         spec:
-            version: 0.32.4
+            version: 0.34.3
             chart: vaultwarden
             sourceRef:
                 kind: HelmRepository
@@ -71,13 +71,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXY25DbjBHRXptTFd4U0Qv
-            WUpBejVlem5qRkNqdTFkL204MjQ4SG95d2hRCmNqay9vL2t1ZjRKemJHbEUva29j
-            ZW5DcnVrTDlJNjNtK3VXZlRRV1ptM2MKLS0tIFFDMjBKOU1IOTRQZmhyUkU2NFJI
-            akd6NWdaQWcraVF3ODE2Yk9CeVRYVlkK9+kkjjx7Tc460EBcyKo8ABuowyun7BHF
-            MfxYFcO1qSoate+NX1RPZjErpoW3SccgPd6YgkN6zXxic5PGZu4ILQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXY25DbjBHRXptTFd4U0Qv
+              WUpBejVlem5qRkNqdTFkL204MjQ4SG95d2hRCmNqay9vL2t1ZjRKemJHbEUva29j
+              ZW5DcnVrTDlJNjNtK3VXZlRRV1ptM2MKLS0tIFFDMjBKOU1IOTRQZmhyUkU2NFJI
+              akd6NWdaQWcraVF3ODE2Yk9CeVRYVlkK9+kkjjx7Tc460EBcyKo8ABuowyun7BHF
+              MfxYFcO1qSoate+NX1RPZjErpoW3SccgPd6YgkN6zXxic5PGZu4ILQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-08-03T20:07:48Z"
     mac: ENC[AES256_GCM,data:IJboxKsmBu4xBfLAufFLcqGlrRtKiZLMZi3QQ81yn6op3YcHEnrAhz298mGXzHT7EDsdQf8SdvJw6A8YnJ/oZ+V8O2XZjF3Os/Jmb4UC0MgA8Tx/14FVLJ7w2MEvH+HcBn63VhBjCOyWd5LukMIwZ4fpviUl/Y8NhxulAX9F5R8=,iv:ZvhSalxt6ny4+3pJDNq8DiHuGar37AQl6L2zAFK5+ag=,tag:Hb8HEi0PEA7xP/1Rl3+dgQ==,type:str]
     pgp: []
@@ -97,11 +97,11 @@ spec:
         - vault.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: vaultwarden
-              port: 80
+              - name: vaultwarden
+                port: 80
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
 sops:
     kms: []
     gcp_kms: []
@@ -110,13 +110,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXY25DbjBHRXptTFd4U0Qv
-            WUpBejVlem5qRkNqdTFkL204MjQ4SG95d2hRCmNqay9vL2t1ZjRKemJHbEUva29j
-            ZW5DcnVrTDlJNjNtK3VXZlRRV1ptM2MKLS0tIFFDMjBKOU1IOTRQZmhyUkU2NFJI
-            akd6NWdaQWcraVF3ODE2Yk9CeVRYVlkK9+kkjjx7Tc460EBcyKo8ABuowyun7BHF
-            MfxYFcO1qSoate+NX1RPZjErpoW3SccgPd6YgkN6zXxic5PGZu4ILQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXY25DbjBHRXptTFd4U0Qv
+              WUpBejVlem5qRkNqdTFkL204MjQ4SG95d2hRCmNqay9vL2t1ZjRKemJHbEUva29j
+              ZW5DcnVrTDlJNjNtK3VXZlRRV1ptM2MKLS0tIFFDMjBKOU1IOTRQZmhyUkU2NFJI
+              akd6NWdaQWcraVF3ODE2Yk9CeVRYVlkK9+kkjjx7Tc460EBcyKo8ABuowyun7BHF
+              MfxYFcO1qSoate+NX1RPZjErpoW3SccgPd6YgkN6zXxic5PGZu4ILQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-08-03T20:07:48Z"
     mac: ENC[AES256_GCM,data:IJboxKsmBu4xBfLAufFLcqGlrRtKiZLMZi3QQ81yn6op3YcHEnrAhz298mGXzHT7EDsdQf8SdvJw6A8YnJ/oZ+V8O2XZjF3Os/Jmb4UC0MgA8Tx/14FVLJ7w2MEvH+HcBn63VhBjCOyWd5LukMIwZ4fpviUl/Y8NhxulAX9F5R8=,iv:ZvhSalxt6ny4+3pJDNq8DiHuGar37AQl6L2zAFK5+ag=,tag:Hb8HEi0PEA7xP/1Rl3+dgQ==,type:str]
     pgp: []
