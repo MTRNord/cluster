@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: m-org-statistics-persistent-storage
+    namespace: statistics
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 100M
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: statistics
+    namespace: statistics
+spec:
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    selector:
+        matchLabels:
+            app: statistics
+    template:
+        spec:
+            imagePullSecrets:
+                - name: ghcr-pull
+            containers:
+                - name: statistics
+                  image: gnuxie/draupnir:v2.6.1
+                  imagePullPolicy: IfNotPresent
+                  env:
+                      - name: CACHE_DIR
+                        value: "/data"
+                  resources:
+                      limits:
+                          memory: "1Gi"
+                          cpu: "1"
+                      requests:
+                          memory: "500Mi"
+                          cpu: "250m"
+                  securityContext:
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      readOnlyRootFilesystem: true
+                  ports:
+                      - containerPort: 8080
+                        name: http
+                        protocol: TCP
+                  volumeMounts:
+                      - mountPath: /data
+                        name: storage
+                      - mountPath: /tmp
+                        name: tmp
+                  livenessProbe:
+                      httpGet:
+                          path: /
+                          port: http
+                          scheme: HTTP
+                      initialDelaySeconds: 15
+                      periodSeconds: 10
+                  startupProbe:
+                      httpGet:
+                          path: /
+                          port: http
+                      initialDelaySeconds: 15
+                      failureThreshold: 30
+                      periodSeconds: 10
+            volumes:
+                - name: storage
+                  persistentVolumeClaim:
+                      claimName: m-org-statistics-persistent-storage
+                - name: tmp
+                  emptyDir:
+                      sizeLimit: 2048Mi
