@@ -58,6 +58,8 @@ spec:
                       name: storage
                     - mountPath: /tmp
                       name: tmp
+                    - mountPath: /var/log/shiny-server/
+                      name: tmp_log
                   livenessProbe:
                     httpGet:
                         path: /
@@ -77,6 +79,9 @@ spec:
                   persistentVolumeClaim:
                     claimName: m-org-statistics-persistent-storage
                 - name: tmp
+                  emptyDir:
+                    sizeLimit: 2048Mi
+                - name: tmp_log
                   emptyDir:
                     sizeLimit: 2048Mi
 ---
