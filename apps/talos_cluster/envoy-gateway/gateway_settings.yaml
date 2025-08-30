@@ -375,6 +375,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: kimai.midnightthoughts.space
+        - name: https-midnightthoughts-morg-statistics
+          protocol: HTTPS
+          hostname: "morg-statistics.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: morg-statistics.midnightthoughts.space
         - name: http
           protocol: HTTP
           port: 80
