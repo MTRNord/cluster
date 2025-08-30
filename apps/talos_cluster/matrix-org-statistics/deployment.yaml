@@ -36,59 +36,64 @@ spec:
                   image: ghcr.io/mtrnord/matrix-org-statistics:latest
                   imagePullPolicy: Always
                   env:
-                    - name: CACHE_DIR
-                      value: "/data"
+                      - name: CACHE_DIR
+                        value: "/data"
                   resources:
-                    limits:
-                        memory: "1Gi"
-                        cpu: "1"
-                    requests:
-                        memory: "500Mi"
-                        cpu: "250m"
+                      limits:
+                          memory: "1Gi"
+                          cpu: "1"
+                      requests:
+                          memory: "500Mi"
+                          cpu: "250m"
                   securityContext:
-                    runAsUser: 999
-                    runAsGroup: 999
-                    readOnlyRootFilesystem: true
+                      runAsUser: 999
+                      runAsGroup: 999
+                      readOnlyRootFilesystem: true
                   ports:
-                    - containerPort: 8080
-                      name: http
-                      protocol: TCP
+                      - containerPort: 8080
+                        name: http
+                        protocol: TCP
                   volumeMounts:
-                    - mountPath: /data
-                      name: storage
-                    - mountPath: /tmp
-                      name: tmp
-                    - mountPath: /var/log/shiny-server/
-                      name: tmp-log
-                    - mountPath: /var/lib/shiny-server/bookmarks
-                      name: tmp-bookmarks
+                      - mountPath: /data
+                        name: storage
+                      - mountPath: /tmp
+                        name: tmp
+                      - mountPath: /var/log/shiny-server/
+                        name: tmp-log
+                      - mountPath: /var/lib/shiny-server/bookmarks
+                        name: tmp-bookmarks
+                      - mountPath: /home/shiny/.cache/R
+                        name: tmp-r-cache
                   livenessProbe:
-                    httpGet:
-                        path: /
-                        port: http
-                        scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
+                      httpGet:
+                          path: /
+                          port: http
+                          scheme: HTTP
+                      initialDelaySeconds: 15
+                      periodSeconds: 10
                   startupProbe:
-                    httpGet:
-                        path: /
-                        port: http
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
+                      httpGet:
+                          path: /
+                          port: http
+                      initialDelaySeconds: 15
+                      failureThreshold: 30
+                      periodSeconds: 10
             volumes:
                 - name: storage
                   persistentVolumeClaim:
-                    claimName: m-org-statistics-persistent-storage
+                      claimName: m-org-statistics-persistent-storage
                 - name: tmp
                   emptyDir:
-                    sizeLimit: 2048Mi
+                      sizeLimit: 2048Mi
                 - name: tmp-log
                   emptyDir:
-                    sizeLimit: 2048Mi
+                      sizeLimit: 2048Mi
                 - name: tmp-bookmarks
                   emptyDir:
-                    sizeLimit: 2048Mi
+                      sizeLimit: 2048Mi
+                - name: tmp-r-cache
+                  emptyDir:
+                      sizeLimit: 2048Mi
 ---
 apiVersion: v1
 kind: Service
@@ -119,5 +124,5 @@ spec:
         - morg-statistics.midnightthoughts.space
     rules:
         - backendRefs:
-            - name: morg-statistics
-              port: 8080
+              - name: morg-statistics
+                port: 8080
