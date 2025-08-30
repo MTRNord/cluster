@@ -62,8 +62,8 @@ spec:
                         name: tmp-log
                       - mountPath: /var/lib/shiny-server/bookmarks
                         name: tmp-bookmarks
-                      - mountPath: /home/shiny/.cache/R
-                        name: tmp-r-cache
+                      - mountPath: /home/shiny/.cache
+                        name: tmp-cache
                   livenessProbe:
                       httpGet:
                           path: /
@@ -91,7 +91,7 @@ spec:
                 - name: tmp-bookmarks
                   emptyDir:
                       sizeLimit: 2048Mi
-                - name: tmp-r-cache
+                - name: tmp-cache
                   emptyDir:
                       sizeLimit: 2048Mi
 ---
