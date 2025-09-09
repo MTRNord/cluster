@@ -216,132 +216,126 @@ spec:
         proxyProtocol:
             enabled: true
             trustedNetworks: "10.0.0.0/8 192.168.0.0/16 172.16.0.0/12"
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-    name: mailserver-smtp
-    namespace: mailserver
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
-spec:
-    parentRefs:
-        - name: email-gateway
-          namespace: envoy-gateway
-          sectionName: smtp
-    rules:
-        - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 12525
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-    name: mailserver-submissions
-    namespace: mailserver
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
-spec:
-    parentRefs:
-        - name: email-gateway
-          namespace: envoy-gateway
-          sectionName: submissions
-    rules:
-        - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10465
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-    name: mailserver-submission
-    namespace: mailserver
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
-spec:
-    parentRefs:
-        - name: email-gateway
-          namespace: envoy-gateway
-          sectionName: submission
-    rules:
-        - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10587
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-    name: mailserver-imap
-    namespace: mailserver
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
-spec:
-    parentRefs:
-        - name: email-gateway
-          namespace: envoy-gateway
-          sectionName: imap
-    rules:
-        - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10143
----
-apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: TCPRoute
-metadata:
-    name: mailserver-imaps
-    namespace: mailserver
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
-spec:
-    parentRefs:
-        - name: email-gateway
-          namespace: envoy-gateway
-          sectionName: imaps
-    rules:
-        - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10993
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: BackendTrafficPolicy
-metadata:
-    name: mail-policy
-    namespace: mailserver
-spec:
-    targetRefs:
-        - group: gateway.networking.k8s.io
-          kind: TCPRoute
-          name: mailserver-imaps
-        - group: gateway.networking.k8s.io
-          kind: TCPRoute
-          name: mailserver-imap
-        - group: gateway.networking.k8s.io
-          kind: TCPRoute
-          name: mailserver-submission
-        - group: gateway.networking.k8s.io
-          kind: TCPRoute
-          name: mailserver-submissions
-        - group: gateway.networking.k8s.io
-          kind: TCPRoute
-          name: mailserver-smtp
-    proxyProtocol:
-        version: "V2"
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-    name: mailserver-docker-mailserver-rspamd
-    namespace: mailserver
-spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - rspamd.midnightthoughts.space
-    rules:
-        - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 11334
-          timeouts:
-              request: 240s
-              backendRequest: 0s
+        configMaps:
+            dovecot.cf:
+                create: true
+                path: dovecot.cf
+                data: |
+                    {{- if .Values.proxyProtocol.enabled }}
+                      haproxy_trusted_networks = {{ .Values.proxyProtocol.trustedNetworks }}
+
+                      {{- if and (.Values.deployment.env.ENABLE_IMAP) (not .Values.deployment.env.SMTP_ONLY) }}
+                      service imap-login {
+                          inet_listener imap {
+                              port = 143
+                          }
+
+                          inet_listener imaps {
+                              port = 993
+                              ssl = yes
+                          }
+
+                          inet_listener imap_proxyprotocol {
+                              haproxy = yes
+                              port = 10143
+                              ssl = no
+                          }
+
+                          inet_listener imaps_proxyprotocol {
+                              haproxy = yes
+                              port = 10993
+                              ssl = yes
+                          }
+                      }
+                      {{- end -}}
+
+                      {{- if and (.Values.deployment.env.ENABLE_POP3) (not .Values.deployment.env.SMTP_ONLY) }}
+                      service pop3-login {
+                          inet_listener pop3 {
+                                  port = 110
+                          }
+
+                          inet_listener pop3s {
+                              port = 995
+                              ssl = yes
+                          }
+
+                          inet_listener pop3_proxyprotocol {
+                              haproxy = yes
+                              port = 10110
+                              ssl = no
+                          }
+
+                          inet_listener pop3s_proxyprotocol {
+                              haproxy = yes
+                              port = 10995
+                              ssl = yes
+                          }
+                      }
+                      {{- end -}}
+
+                      {{- if and (.Values.deployment.env.ENABLE_MANAGESIEVE) (not .Values.deployment.env.SMTP_ONLY) }}
+                      service managesieve-login {
+                          inet_listener sieve {
+                              port = 4190
+                          }
+
+                          inet_listener sieve_proxyprotocol {
+                              port = 14190
+                          }
+                      }
+                      {{- end -}}
+                    {{- end -}}
+
+            fts-xapian-plugin.conf:
+                create: true
+                path: /etc/dovecot/conf.d/10-plugin.conf
+                data: |
+                    {{- if .Values.dovecot.fullTextSearch.enabled }}
+                      mail_plugins = $mail_plugins fts fts_xapian
+
+                      plugin {
+                          fts = xapian
+                          fts_xapian = partial=3 full=20 verbose={{ .Values.dovecot.fullTextSearch.verbose }}
+
+                          fts_autoindex = yes
+                          fts_enforced = yes
+
+                          # Index attachements
+                          fts_decoder = decode2text
+                      }
+
+                      service indexer-worker {
+                          # limit size of indexer-worker RAM usage, ex: 512MB, 1GB, 2GB
+                          vsz_limit = {{ .Values.dovecot.fullTextSearch.resources.memory }}
+                      }
+                    {{- end -}}
+
+            user-patches.sh:
+                create: true
+                path: user-patches.sh
+                data: |
+                    #!/bin/bash
+
+                    {{- if .Values.proxyProtocol.enabled }}
+                    # NOTE: Keep in sync with upstream advice:
+                    # https://github.com/docker-mailserver/docker-mailserver/blob/v15.0.0/docs/content/examples/tutorials/mailserver-behind-proxy.md?plain=1#L238-L268
+
+                    # Duplicate the config for the submission(s) service ports (587 / 465) with adjustments for the PROXY ports (10587 / 10465) and `syslog_name` setting:
+                    postconf -Mf submission/inet | sed -e s/^submission/10587/ -e 's/submission/submission-proxyprotocol/' >> /etc/postfix/master.cf
+                    postconf -Mf submissions/inet | sed -e s/^submissions/10465/ -e 's/submissions/submissions-proxyprotocol/' >> /etc/postfix/master.cf
+                    # Enable PROXY Protocol support for these new service variants:
+                    postconf -P 10587/inet/smtpd_upstream_proxy_protocol=haproxy
+                    postconf -P 10465/inet/smtpd_upstream_proxy_protocol=haproxy
+
+                    # Create a variant for port 25 too (NOTE: Port 10025 is already assigned in DMS to Amavis):
+                    postconf -Mf smtp/inet | sed -e s/^smtp/12525/ >> /etc/postfix/master.cf
+                    # Enable PROXY Protocol support (different setting as port 25 is handled via postscreen), optionally configure a `syslog_name` to distinguish in logs:
+                    postconf -P 12525/inet/postscreen_upstream_proxy_protocol=haproxy 12525/inet/postscreen_cache_map=proxy:btree:\$data_directory/postscreen_12525_cache 12525/inet/syslog_name=postfix/smtpd-proxyprotocol
+                    {{- end }}
+
+            custom-commands.conf:
+                create: true
+                path: custom-commands.conf
+                data: |
+                    set-option-for-controller password "$2$za4wi4q5hwmypty9oe65xzhgonxwe5cx$wfqdx11iozg5cs9gnni3zfmopqqhqtmh75xw3848twrhw8f1eyiy"
