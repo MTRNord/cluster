@@ -310,7 +310,13 @@ spec:
                           vsz_limit = {{ .Values.dovecot.fullTextSearch.resources.memory }}
                       }
                     {{- end -}}
-
+            postfix-main.cf:
+                create: true
+                path: /tmp/docker-mailserver/postfix-main.cf
+                data: |
+                    {{- if .Values.proxyProtocol.enabled }}
+                        postscreen_cache_map = proxy:btree:$data_directory/postscreen_cache
+                    {{- end }}
             user-patches.sh:
                 create: true
                 path: user-patches.sh
