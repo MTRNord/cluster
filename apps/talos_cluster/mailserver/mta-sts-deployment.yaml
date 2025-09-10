@@ -88,6 +88,9 @@ data:
         server {
             listen 8080;
             server_name _;
+            
+            root /usr/share/nginx/html;
+            index index.html;
 
             # Security headers
             add_header X-Content-Type-Options nosniff;
