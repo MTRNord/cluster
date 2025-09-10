@@ -28,6 +28,12 @@ spec:
                     - name: mta-sts-content
                       mountPath: /usr/share/nginx/html/.well-known
                       readOnly: true
+                    - name: tmp
+                      mountPath: /tmp
+                    - name: var-cache-nginx
+                      mountPath: /var/cache/nginx
+                    - name: var-run
+                      mountPath: /var/run
                   resources:
                     requests:
                         memory: "32Mi"
@@ -63,6 +69,12 @@ spec:
                 - name: mta-sts-content
                   configMap:
                     name: mta-sts-content
+                - name: tmp
+                  emptyDir: {}
+                - name: var-cache-nginx
+                  emptyDir: {}
+                - name: var-run
+                  emptyDir: {}
             securityContext:
                 fsGroup: 101
 ---
