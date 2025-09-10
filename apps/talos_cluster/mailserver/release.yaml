@@ -344,3 +344,20 @@ spec:
                 path: rspamd/custom-commands.conf
                 data: |
                     set-option-for-controller password "$2$za4wi4q5hwmypty9oe65xzhgonxwe5cx$wfqdx11iozg5cs9gnni3zfmopqqhqtmh75xw3848twrhw8f1eyiy"
+            arc.conf:
+                create: true
+                path: rspamd/override.d/arc.conf
+                data: |
+                    sign_local = true;
+                    sign_authenticated = true;
+
+                    domain {
+                        mail.midnightthoughts.space {
+                            path = "/tmp/docker-mailserver/rspamd/dkim/rsa-2048-mail-mail.midnightthoughts.space.private.txt";
+                            selector = "mail";
+                        },
+                        midnightthoughts.space {
+                            path = "/tmp/docker-mailserver/rspamd/dkim/rsa-2048-mail-midnightthoughts.space.private.txt";
+                            selector = "mail";
+                        }
+                    }
