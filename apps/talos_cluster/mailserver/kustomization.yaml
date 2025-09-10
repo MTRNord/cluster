@@ -7,3 +7,11 @@ resources:
     - pvc.yaml
     - release.yaml
     - routing.yaml
+    - mta-sts-deployment.yaml
+configMapGenerator:
+    - name: mta-sts-content
+      files:
+        - mta-sts.txt=mta-sts.txt
+      options:
+        labels:
+            app: mta-sts-server

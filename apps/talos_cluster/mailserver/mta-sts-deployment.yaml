@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mta-sts-server
+    namespace: mailserver
+    labels:
+        app: mta-sts-server
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mta-sts-server
+    template:
+        metadata:
+            labels:
+                app: mta-sts-server
+        spec:
+            containers:
+                - name: nginx
+                  image: nginxinc/nginx-unprivileged:1.25-alpine
+                  ports:
+                    - containerPort: 8080
+                      name: http
+                  volumeMounts:
+                    - name: mta-sts-config
+                      mountPath: /etc/nginx/conf.d
+                      readOnly: true
+                    - name: mta-sts-content
+                      mountPath: /usr/share/nginx/html/.well-known
+                      readOnly: true
+                  resources:
+                    requests:
+                        memory: "32Mi"
+                        cpu: "10m"
+                    limits:
+                        memory: "64Mi"
+                        cpu: "50m"
+                  livenessProbe:
+                    httpGet:
+                        path: /.well-known/mta-sts.txt
+                        port: 8080
+                    initialDelaySeconds: 10
+                    periodSeconds: 30
+                  readinessProbe:
+                    httpGet:
+                        path: /.well-known/mta-sts.txt
+                        port: 8080
+                    initialDelaySeconds: 5
+                    periodSeconds: 10
+                  securityContext:
+                    allowPrivilegeEscalation: false
+                    readOnlyRootFilesystem: true
+                    runAsNonRoot: true
+                    runAsUser: 101
+                    runAsGroup: 101
+                    capabilities:
+                        drop:
+                            - ALL
+            volumes:
+                - name: mta-sts-config
+                  configMap:
+                    name: mta-sts-nginx-config
+                - name: mta-sts-content
+                  configMap:
+                    name: mta-sts-content
+            securityContext:
+                fsGroup: 101
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: mta-sts-nginx-config
+    namespace: mailserver
+data:
+    default.conf: |
+        server {
+            listen 8080;
+            server_name _;
+
+            # Security headers
+            add_header X-Content-Type-Options nosniff;
+            add_header X-Frame-Options DENY;
+            add_header X-XSS-Protection "1; mode=block";
+
+            # MTA-STS specific configuration
+            location /.well-known/mta-sts.txt {
+                add_header Content-Type "text/plain; charset=utf-8";
+                add_header Cache-Control "max-age=604800";
+                try_files $uri =404;
+            }
+
+            # Health check endpoint
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+
+            # Deny access to other locations
+            location / {
+                return 404;
+            }
+
+            # Disable server tokens
+            server_tokens off;
+        }
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: mta-sts-server
+    namespace: mailserver
+    labels:
+        app: mta-sts-server
+spec:
+    selector:
+        app: mta-sts-server
+    ports:
+        - name: http
+          port: 8080
+          targetPort: http
+          protocol: TCP
+    type: ClusterIP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: mailserver-mta-sts
+    namespace: mailserver
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - mta-sts.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: mta-sts-server
+              port: 8080
+          timeouts:
+            request: 240s
+            backendRequest: 0s
