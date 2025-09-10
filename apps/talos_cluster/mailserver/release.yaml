@@ -312,7 +312,7 @@ spec:
                     {{- end -}}
             postfix-main.cf:
                 create: true
-                path: dms/config/postfix-main.cf
+                path: postfix-main.cf
                 data: |
                     {{- if .Values.proxyProtocol.enabled }}
                         postscreen_cache_map = proxy:btree:$data_directory/postscreen_cache
