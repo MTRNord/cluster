@@ -10,6 +10,7 @@ resources:
     - mta-sts-deployment.yaml
 configMapGenerator:
     - name: mta-sts-content
+      namespace: mailserver
       files:
         - mta-sts.txt=mta-sts.txt
       options:
