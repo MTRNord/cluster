@@ -281,12 +281,12 @@ spec:
                           }
 
                           inet_listener sieve_proxyprotocol {
+                              haproxy = yes
                               port = 14190
                           }
                       }
                       {{- end -}}
                     {{- end -}}
-
             fts-xapian-plugin.conf:
                 create: true
                 path: /etc/dovecot/conf.d/10-plugin.conf
@@ -312,7 +312,7 @@ spec:
                     {{- end -}}
             postfix-main.cf:
                 create: true
-                path: /tmp/docker-mailserver/postfix-main.cf
+                path: postfix-main.cf
                 data: |
                     {{- if .Values.proxyProtocol.enabled }}
                         postscreen_cache_map = proxy:btree:$data_directory/postscreen_cache
@@ -339,7 +339,6 @@ spec:
                     # Enable PROXY Protocol support (different setting as port 25 is handled via postscreen), optionally configure a `syslog_name` to distinguish in logs:
                     postconf -P 12525/inet/postscreen_upstream_proxy_protocol=haproxy 12525/inet/postscreen_cache_map=proxy:btree:\$data_directory/postscreen_12525_cache 12525/inet/syslog_name=postfix/smtpd-proxyprotocol
                     {{- end }}
-
             custom-commands.conf:
                 create: true
                 path: rspamd/custom-commands.conf

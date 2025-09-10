@@ -1,4 +1,3 @@
----
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
 metadata:
@@ -13,8 +12,8 @@ spec:
           sectionName: smtp
     rules:
         - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 12525
+            - name: mailserver-docker-mailserver
+              port: 12525
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -30,8 +29,8 @@ spec:
           sectionName: submissions
     rules:
         - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10465
+            - name: mailserver-docker-mailserver
+              port: 10465
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -47,8 +46,8 @@ spec:
           sectionName: submission
     rules:
         - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10587
+            - name: mailserver-docker-mailserver
+              port: 10587
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -64,8 +63,8 @@ spec:
           sectionName: imap
     rules:
         - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10143
+            - name: mailserver-docker-mailserver
+              port: 10143
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
@@ -81,8 +80,8 @@ spec:
           sectionName: imaps
     rules:
         - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 10993
+            - name: mailserver-docker-mailserver
+              port: 10993
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
@@ -122,8 +121,8 @@ spec:
         - rspamd.midnightthoughts.space
     rules:
         - backendRefs:
-              - name: mailserver-docker-mailserver
-                port: 11334
+            - name: mailserver-docker-mailserver
+              port: 11334
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s
