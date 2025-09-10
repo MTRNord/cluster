@@ -4,6 +4,11 @@ metadata:
     name: mail.midnightthoughts.space
     namespace: mailserver
 spec:
+    isCA: false
+    privateKey:
+        algorithm: RSA
+        encoding: PKCS1
+        size: 2048
     secretName: mail.midnightthoughts.space-tls
     dnsNames:
         - mail.midnightthoughts.space

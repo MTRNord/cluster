@@ -172,15 +172,15 @@ spec:
                     memory: 294Mi
                 limits: {}
         service:
-            annotations:
-                external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
+            #annotations:
+            #    external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
             type: ClusterIP
-            nodePort:
-                smtp: 25
-                smtps: 465
-                submission: 587
-                imap: 143
-                imaps: 993
+            # nodePort:
+            #     smtp: 25
+            #     smtps: 465
+            #     submission: 587
+            #     imap: 143
+            #     imaps: 993
         persistent_volume_claims:
             mail-config:
                 accessModes:
@@ -215,7 +215,7 @@ spec:
                     secret: rspamd.midnightthoughts.space-tls
         proxyProtocol:
             enabled: true
-            trustedNetworks: "10.0.0.0/8 192.168.0.0/16 172.16.0.0/12"
+            trustedNetworks: "10.0.0.0/8"
         configMaps:
             dovecot.cf:
                 create: true
