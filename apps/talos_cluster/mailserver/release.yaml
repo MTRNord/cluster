@@ -315,7 +315,7 @@ spec:
                 path: postfix-main.cf
                 data: |
                     {{- if .Values.proxyProtocol.enabled }}
-                        postscreen_cache_map = proxy:btree:$data_directory/postscreen_cache
+                        postscreen_cache_map = proxy:btree:$data_directory/postscreen_12525_cache
                     {{- end }}
             user-patches.sh:
                 create: true
