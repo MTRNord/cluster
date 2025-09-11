@@ -122,7 +122,10 @@ data:
 
             # Tell synapse to not look for a matrix server here
             location /.well-known/matrix/server {
-                return 404;
+                return 410;
+            }
+            location /_matrix {
+                return 410;
             }
 
             # Health check endpoint
