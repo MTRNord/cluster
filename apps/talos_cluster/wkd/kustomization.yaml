@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: mailserver
+resources:
+    - deployment.yaml
+configMapGenerator:
+    - name: wkd-content
+      namespace: mailserver
+      files:
+        - p6d5q6ozbrkcy3cnexq8s8uzh1rk9fbs=p6d5q6ozbrkcy3cnexq8s8uzh1rk9fbs
+      options:
+        labels:
+            app: wkd-server

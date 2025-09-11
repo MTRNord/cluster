@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: mta-sts-server
+    name: wkd-server
     namespace: mailserver
     labels:
-        app: mta-sts-server
+        app: wkd-server
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: mta-sts-server
+            app: wkd-server
     template:
         metadata:
             labels:
-                app: mta-sts-server
+                app: wkd-server
         spec:
             containers:
                 - name: nginx
@@ -22,11 +22,11 @@ spec:
                     - containerPort: 8080
                       name: http
                   volumeMounts:
-                    - name: mta-sts-config
+                    - name: wkd-config
                       mountPath: /etc/nginx/conf.d
                       readOnly: true
-                    - name: mta-sts-content
-                      mountPath: /usr/share/nginx/html/.well-known
+                    - name: wkd-content
+                      mountPath: /usr/share/nginx/html/.well-known/openpgpkey/hu/
                       readOnly: true
                     - name: tmp
                       mountPath: /tmp
@@ -63,12 +63,12 @@ spec:
                         drop:
                             - ALL
             volumes:
-                - name: mta-sts-config
+                - name: wkd-config
                   configMap:
-                    name: mta-sts-nginx-config
-                - name: mta-sts-content
+                    name: wkd-nginx-config
+                - name: wkd-content
                   configMap:
-                    name: mta-sts-content
+                    name: wkd-content
                 - name: tmp
                   emptyDir: {}
                 - name: var-cache-nginx
@@ -81,13 +81,13 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: mta-sts-nginx-config
+    name: wkd-nginx-config
     namespace: mailserver
 data:
     default.conf: "server {\n    listen 8080;\n    server_name _;\n    \n    root /usr/share/nginx/html;\n    index index.html;\n\n
         \   # Security headers\n    add_header X-Content-Type-Options nosniff;\n    add_header X-Frame-Options DENY;\n    add_header
-        X-XSS-Protection \"1; mode=block\";\n\n    # MTA-STS specific configuration\n    location /.well-known/mta-sts.txt
-        {\n        add_header Content-Type \"text/plain; charset=utf-8\";\n        add_header Cache-Control \"max-age=604800\";\n
+        X-XSS-Protection \"1; mode=block\";\n\n    # wkd specific configuration\n    location /.well-known/openpgpkey/hu/p6d5q6ozbrkcy3cnexq8s8uzh1rk9fbs
+        {\n        add_header Content-Type \"application/pgp-key; charset=utf-8\";\n        add_header Cache-Control \"max-age=604800\";\n
         \       try_files $uri =404;\n    }\n\n    # Health check endpoint\n    location /health {\n        access_log off;\n
         \       return 200 \"healthy\\n\";\n        add_header Content-Type text/plain;\n    }\n\n    # Deny access to other
         locations\n    location / {\n        return 404;\n    }\n\n    # Disable server tokens\n    server_tokens off;\n}\n"
@@ -95,13 +95,13 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-    name: mta-sts-server
+    name: wkd-server
     namespace: mailserver
     labels:
-        app: mta-sts-server
+        app: wkd-server
 spec:
     selector:
-        app: mta-sts-server
+        app: wkd-server
     ports:
         - name: http
           port: 8080
@@ -112,17 +112,17 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: mailserver-mta-sts
+    name: wkd-server
     namespace: mailserver
 spec:
     parentRefs:
         - name: envoy-gateway
           namespace: envoy-gateway
     hostnames:
-        - mta-sts.midnightthoughts.space
+        - nordgedanken.dev
     rules:
         - backendRefs:
-            - name: mta-sts-server
+            - name: wkd-server
               port: 8080
           timeouts:
             request: 240s

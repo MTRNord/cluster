@@ -115,6 +115,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: talos.midnightthoughts.space-tls
+        - name: https-nordgedanken.dev
+          protocol: HTTPS
+          hostname: "nordgedanken.dev"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: nordgedanken.dev-tls
         - name: https-midnightthoughts-auth
           protocol: HTTPS
           hostname: "auth.midnightthoughts.space"
