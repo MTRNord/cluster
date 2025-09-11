@@ -104,8 +104,11 @@ data:
                 try_files $uri =404;
             }
             location /.well-known/openpgpkey/policy {
-                access_log off;
                 return 200 "";
+                add_header Content-Type text/plain;
+            }
+            location / {
+                return 200 "OK\n";
                 add_header Content-Type text/plain;
             }
 
