@@ -118,12 +118,7 @@ data:
                 return 200 "healthy\n";
                 add_header Content-Type text/plain;
             }
-
-            # Deny access to other locations
-            location / {
-                return 404;
-            }
-
+            
             # Disable server tokens
             server_tokens off;
         }
