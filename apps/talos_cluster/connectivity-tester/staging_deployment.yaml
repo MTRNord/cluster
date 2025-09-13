@@ -42,6 +42,11 @@ spec:
                 - name: federation-tester-api
                   image: ghcr.io/mtrnord/rust-federation-tester:main
                   imagePullPolicy: Always
+                  env:
+                    - name: RFT_DEBUG
+                      value: "1"
+                    - name: RFT_TRACE_SPANS
+                      value: "close"
                   resources:
                     limits: {}
                     requests:
