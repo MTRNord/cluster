@@ -18,6 +18,9 @@ spec:
             - path:
                 value: /api-docs
                 type: PathPrefix
+            - path:
+                value: /metrics
+                type: PathPrefix
           backendRefs:
             - name: connectivity-tester-api-primary
               port: 8080
