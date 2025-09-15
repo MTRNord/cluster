@@ -22,7 +22,7 @@ jobs:
               run: "flux install --components-extra=image-reflector-controller,image-automation-controller \\\n  --export
                 > ./clusters/2024_cluster/flux-system/gotk-components.yaml\n\nVERSION=\"$(flux -v)\"\necho \"flux_version=$VERSION\"
                 >> $GITHUB_OUTPUT          \n"
-            - uses: actions/setup-go@v5
+            - uses: actions/setup-go@v6
               with:
                 go-version: '^1.23.2'
             - name: Run yamlfmt
