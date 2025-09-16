@@ -1,0 +1,127 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 39,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "postgres-d4all"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "filterable": true,
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 16,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "enablePagination": true,
+                    "fields": [
+                        "protected_room_count"
+                    ],
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": true
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "12.0.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "grafana-postgresql-datasource",
+                        "uid": "postgres-d4all"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "WITH mjolnir_senders AS (\n  SELECT\n    DISTINCT room_id,\n    sender\n  FROM\n    events\n  WHERE\n    type = 'org.matrix.mjolnir.setting'\n),\nmember_events AS (\n  SELECT\n    room_id,\n    event_id,\n    sender,\n    state_key,\n    depth,\n    ROW_NUMBER() OVER (\n      PARTITION BY room_id\n      ORDER BY\n        depth\n    ) AS member_index\n  FROM\n    events\n  WHERE\n    type = 'm.room.member'\n    AND sender LIKE '%:draupnir.midnightthoughts.space'\n),\nprotected_counts AS (\n  SELECT\n    user_id,\n    jsonb_array_length(content :: jsonb -> 'rooms') AS room_count\n  FROM\n    account_data\n  WHERE\n    account_data_type = 'org.matrix.mjolnir.protected_rooms'\n)\nSELECT\n  m.room_id,\n  m.state_key,\n  m.sender AS member_sender,\n  COALESCE(pc.room_count, 0) AS protected_room_count\nFROM\n  member_events m\n  JOIN mjolnir_senders mj ON m.room_id = mj.room_id\n  AND m.sender = mj.sender\n  LEFT JOIN protected_counts pc ON m.sender = pc.user_id\nWHERE\n  m.member_index = 2\nORDER BY\n  m.room_id;",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                }
+            ],
+            "title": "New Panel",
+            "type": "table"
+        }
+    ],
+    "preload": false,
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "D4All V2",
+    "uid": "fe9e4ec8-fe82-458f-8181-7ca3be36c6bb",
+    "version": 1
+}
