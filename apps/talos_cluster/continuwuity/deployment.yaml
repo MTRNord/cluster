@@ -82,12 +82,40 @@ spec:
     hostnames:
         - matrix.mtrnord.blog
     rules:
-        - backendRefs:
+        # Client traffic (sync, login, media, etc.)
+        - matches:
+              - path:
+                    type: PathPrefix
+                    value: /_matrix/client
+          backendRefs:
               - name: continuwuity
                 port: 8448
           timeouts:
               request: 240s
               backendRequest: 0s
+        - matches:
+              - path:
+                    type: PathPrefix
+                    value: /_matrix/media
+          backendRefs:
+              - name: continuwuity
+                port: 8448
+        # Federation traffic
+        - matches:
+              - path:
+                    type: PathPrefix
+                    value: /_matrix/federation
+          backendRefs:
+              - name: continuwuity
+                port: 8448
+          timeouts:
+              request: 240s
+              backendRequest: 0s
+
+        # Fallback (anything else Matrix-y)
+        - backendRefs:
+              - name: continuwuity
+                port: 8448
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
