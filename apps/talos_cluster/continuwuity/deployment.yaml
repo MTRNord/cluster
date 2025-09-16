@@ -83,7 +83,8 @@ spec:
         - matrix.mtrnord.blog
     rules:
         # Client traffic (sync, login, media, etc.)
-        - matches:
+        - name: client-traffic
+          matches:
               - path:
                     type: PathPrefix
                     value: /_matrix/client
@@ -93,7 +94,8 @@ spec:
           timeouts:
               request: 240s
               backendRequest: 0s
-        - matches:
+        - name: media-traffic
+          matches:
               - path:
                     type: PathPrefix
                     value: /_matrix/media
@@ -101,7 +103,8 @@ spec:
               - name: continuwuity
                 port: 8448
         # Federation traffic
-        - matches:
+        - name: federation-traffic
+          matches:
               - path:
                     type: PathPrefix
                     value: /_matrix/federation
@@ -113,22 +116,75 @@ spec:
               backendRequest: 0s
 
         # Fallback (anything else Matrix-y)
-        - backendRefs:
+        - name: fallback
+          backendRefs:
               - name: continuwuity
                 port: 8448
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
-    name: continuwuity-general-ratelimit
+    name: continuwuity-client-traffic-cb
     namespace: continuwuity
 spec:
     targetRefs:
         - group: gateway.networking.k8s.io
           kind: HTTPRoute
           name: continuwuity
+          sectionName: "client-traffic"
+    circuitBreaker:
+        maxConnections: 200
+        maxPendingRequests: 100
+        maxParallelRequests: 150
+        maxParallelRetries: 10
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+    name: continuwuity-media-traffic-cb
+    namespace: continuwuity
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: continuwuity
+          sectionName: "media-traffic"
+    circuitBreaker:
+        maxConnections: 200
+        maxPendingRequests: 200
+        maxParallelRequests: 250
+        maxParallelRetries: 10
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+    name: continuwuity-federation-traffic-cb
+    namespace: continuwuity
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: continuwuity
+          sectionName: "federation-traffic"
     circuitBreaker:
         maxConnections: 1500
         maxPendingRequests: 300
         maxParallelRequests: 700
+        maxParallelRetries: 50
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+    name: continuwuity-fallback-traffic-cb
+    namespace: continuwuity
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: continuwuity
+          sectionName: "fallback-traffic"
+    circuitBreaker:
+        maxConnections: 50
+        maxPendingRequests: 300
+        maxParallelRequests: 50
         maxParallelRetries: 50
