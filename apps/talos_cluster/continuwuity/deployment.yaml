@@ -100,5 +100,7 @@ spec:
           kind: HTTPRoute
           name: continuwuity
     circuitBreaker:
-        maxPendingRequests: 20
-        maxParallelRequests: 100
+        maxConnections: 1500
+        maxPendingRequests: 300
+        maxParallelRequests: 700
+        maxParallelRetries: 50
