@@ -104,6 +104,8 @@ spec:
         local:
             rules:
                 - limit:
-                      # Once the sync isnt shortcircuiting anymore this can be lowered again to 100
-                      requests: 600
+                      requests: 400
                       unit: Minute
+                - limit:
+                      requests: 20
+                      unit: Second
