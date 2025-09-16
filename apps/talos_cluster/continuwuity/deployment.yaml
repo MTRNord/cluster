@@ -106,6 +106,21 @@ spec:
                 - limit:
                       requests: 300
                       unit: Minute
+                  clientSelectors:
+                      - sourceCIDR:
+                            type: Distinct
+                            value: "0.0.0.0/0"
+                      - sourceCIDR:
+                            type: Distinct
+                            value: "::/0"
+
                 - limit:
                       requests: 20
                       unit: Second
+                  clientSelectors:
+                      - sourceCIDR:
+                            type: Distinct
+                            value: "0.0.0.0/0"
+                      - sourceCIDR:
+                            type: Distinct
+                            value: "::/0"
