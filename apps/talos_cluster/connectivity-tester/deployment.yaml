@@ -147,6 +147,9 @@ spec:
                     httpGet:
                         path: /healthz
                         port: api
+                  env:
+                    - name: RUST_LOG
+                      value: rust_federation_tester=info,hyper=warn,sea_orm=info,tower_http=debug
             volumes:
                 - name: api-config
                   secret:
