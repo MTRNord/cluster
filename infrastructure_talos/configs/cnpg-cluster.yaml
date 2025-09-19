@@ -112,7 +112,7 @@ spec:
         - name: barman-cloud.cloudnative-pg.io
           isWALArchiver: true
           parameters:
-            barmanObjectName: hetzner-base-backup
+              barmanObjectName: hetzner-base-backup
     managed:
         roles:
             - name: freshrss
@@ -120,122 +120,128 @@ spec:
               login: true
               superuser: false
               passwordSecret:
-                name: freshrss
+                  name: freshrss
             - name: meowlnir
               ensure: present
               login: true
               comment: Read Only Access for synapse required but RW to meowlnir db
               superuser: false
               passwordSecret:
-                name: meowlnir
+                  name: meowlnir
             - name: connectivity-tester-stage
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: connectivity-tester-stage
+                  name: connectivity-tester-stage
             - name: connectivity-tester
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: connectivity-tester
+                  name: connectivity-tester
             - name: draupnir_synapse
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: draupnir-synapse
+                  name: draupnir-synapse
             - name: authentik
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: authentik
+                  name: authentik
             - name: ejabberd
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: ejabberd
+                  name: ejabberd
             - name: vaultwarden
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: vaultwarden
+                  name: vaultwarden
             - name: mastodon
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: mastodon
+                  name: mastodon
             - name: openproject
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: openproject
+                  name: openproject
             - name: plausible
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: plausible
+                  name: plausible
             - name: coder
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: coder
+                  name: coder
             - name: matrix_auth
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: matrix-auth
+                  name: matrix-auth
             - name: cachet
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: cachet
+                  name: cachet
             - name: docuseal
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: docuseal
+                  name: docuseal
             - name: bugzilla
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: bugzilla
+                  name: bugzilla
             - name: rundeck
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: rundeck
+                  name: rundeck
             - name: plane
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: plane
+                  name: plane
             - name: gotosocial
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: gotosocial
+                  name: gotosocial
             - name: grafana-ro
               ensure: present
               login: true
               superuser: false
               passwordSecret:
-                name: grafana-ro
+                  name: grafana-ro
+            - name: harbor
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: harbor
     storage:
         storageClass: hcloud-volumes
         size: 15Gi
@@ -401,6 +407,18 @@ metadata:
 spec:
     name: gotosocial
     owner: gotosocial
+    ensure: present
+    cluster:
+        name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: harbor
+    namespace: postgres-cluster
+spec:
+    name: harbor
+    owner: harbor
     ensure: present
     cluster:
         name: pg-cluster-v2
