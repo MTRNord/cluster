@@ -36,18 +36,18 @@ spec:
                   env:
                     - name: CONTINUWUITY_CONFIG
                       value: /etc/conduwuit/conduwuit.toml
-                  livenessProbe:
-                    httpGet:
-                        path: /_matrix/client/versions
-                        port: 8448
-                    initialDelaySeconds: 10
-                    timeoutSeconds: 5
-                  readinessProbe:
-                    httpGet:
-                        path: /_matrix/client/versions
-                        port: 8448
-                    initialDelaySeconds: 10
-                    timeoutSeconds: 5
+                #   livenessProbe:
+                #     httpGet:
+                #         path: /_matrix/client/versions
+                #         port: 8448
+                #     initialDelaySeconds: 10
+                #     timeoutSeconds: 5
+                #   readinessProbe:
+                #     httpGet:
+                #         path: /_matrix/client/versions
+                #         port: 8448
+                #     initialDelaySeconds: 10
+                #     timeoutSeconds: 5
             # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
             volumes:
                 - name: continuwuity-config
