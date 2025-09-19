@@ -13,3 +13,65 @@ spec:
                 name: harbor
     interval: 60m
     values:
+        database:
+            type: external
+            external:
+                host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+                port: "5432"
+                username: harbor
+                password: ENC[AES256_GCM,data:4pfuY9GLClsTuNh2ydjB/emvjBjjM3WZqa/ReZV9GxdDGKDkDkamVCw+DFjFUoOlK66bkzX9pM2bPwg2W0nCVw==,iv:1cXS9OVhan1lGr0MBPlPcYX+gi8sRulIZURte8qUKFM=,tag:sk1eFeZgNRl8HG3hrmXM7g==,type:str]
+                coreDatabase: harbor
+            maxIdleConns: 10
+            maxOpenConns: 10
+        expose:
+            type: route
+            route:
+                parentRefs:
+                    - name: envoy-gateway
+                      namespace: envoy-gateway
+                hosts:
+                    - harbor.midnightthoughts.space
+        externalURL: https://harbor.midnightthoughts.space
+        persistence:
+            enabled: true
+            resourcePolicy: keep
+            persistentVolumeClaim:
+                registry:
+                    size: 5Gi
+                    storageClass: longhorn
+                    accessMode: ReadWriteMany
+                jobservice:
+                    size: 1Gi
+                    storageClass: longhorn
+                    accessMode: ReadWriteMany
+                redis:
+                    size: 1Gi
+                    storageClass: longhorn
+                    accessMode: ReadWriteMany
+                trivy:
+                    size: 5Gi
+                    storageClass: longhorn
+                    accessMode: ReadWriteMany
+            existingSecretAdminPassword: ""
+            existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+            harborAdminPassword: ENC[AES256_GCM,data:lq+6px3PfJVlrta67RW7h6LN3IAtnCz7ybtNjuYvIjyNo5/sc3cxS5/CEZ/7wZ+oQk2ioqp/Bg3xX1vQrxQKIA==,iv:FSy2lGEG+Lgp8UZAJI5b54ROv+jmBLMZ8vHFlZbhXj0=,tag:gwbfRq6OKfkXF3e4auoi/w==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwQUhYQmxtZVQ2TGZYeENq
+            MnQxWm5lY3o0Y2FWNjRmQlgvbEpSYTZXb1djCnFubkpBcklOcnJGeE5PWXF3TDNK
+            N0F5cVowK1R5MnhHek9RUWpydDFYT0kKLS0tIDRpVTd3SnFIS0hBRUZ5Wkw2bUY5
+            Ykk4QmphS0tzNEFUSFl2dWZzTEhDamsKBLeUNe4qlBr1yH2o+rKQj1hqLBHleW7F
+            9xpGSvJ8IOBdHOvhmgw1eDPinzAg7sFBG1U9yOD7Hvx2hrtBez7oqQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-09-19T09:41:26Z"
+    mac: ENC[AES256_GCM,data:UWAN84oBJigxTYQrbQziWLOxjBYA6y5a00NTm144/oqC0LIlJPiqDVCZtloOiGmO74cxiHNBaJVqMNz7SaNA4hofa6zVOey9NCNjgjLtdIt0A0cAip/pZOSmgI8S/DlPURL1m7c3V1/abL3+J2aZRVevGTWLNGpiKvwBG0459Dw=,iv:Xx0SgHuYblWVrRBdG27egRveQH+8oNIot48h2SRWIUM=,tag:Dmz5K+KB2Jy3BtqFI83CsA==,type:str]
+    pgp: []
+    encrypted_regex: ^(harborAdminPassword|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1
