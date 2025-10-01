@@ -18,238 +18,238 @@ spec:
             hostAliases:
                 - ip: 0.0.0.0
                   hostnames:
-                      - mailman.mailserver.svc.cluster.local
+                    - mailman.mailserver.svc.cluster.local
                 - ip: 127.0.0.1
                   hostnames:
-                      - mailman-web
+                    - mailman-web
             containers:
                 - name: core
                   image: ghcr.io/mtrnord/mailman-core:rolling
                   imagePullPolicy: Always
                   ports:
-                      - name: api
-                        containerPort: 8001
-                      - name: lmtp
-                        containerPort: 8024
+                    - name: api
+                      containerPort: 8001
+                    - name: lmtp
+                      containerPort: 8024
                   env:
-                      - name: DATABASE_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailmancore
-                                key: url
-                      - name: DATABASE_TYPE
-                        value: postgres
-                      - name: DATABASE_CLASS
-                        value: mailman.database.postgresql.PostgreSQLDatabase
-                      - name: HYPERKITTY_API_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: apikey
-                      - name: MAILMAN_REST_USER
-                        value: restadm
-                      - name: MAILMAN_REST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: restpassword
-                      - name: SMTP_HOST
-                        value: mail.midnightthoughts.space
-                      - name: SMTP_PORT
-                        value: "465"
-                      - name: SMTP_USE_SSL
-                        value: "true"
-                      - name: SMTP_SECURE_MODE
-                        value: "smtps"
-                      - name: SMTP_HOST_USER
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: smtp_user
-                      - name: SMTP_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: smtp_password
-                      - name: MTA
-                        value: postfix
-                      - name: MM_HOSTNAME
-                        value: mailman.mailserver.svc.cluster.local
-                      - name: HYPERKITTY_URL
-                        value: http://localhost:8000/hyperkitty
+                    - name: DATABASE_URL
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailmancore
+                            key: url
+                    - name: DATABASE_TYPE
+                      value: postgres
+                    - name: DATABASE_CLASS
+                      value: mailman.database.postgresql.PostgreSQLDatabase
+                    - name: HYPERKITTY_API_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: apikey
+                    - name: MAILMAN_REST_USER
+                      value: restadm
+                    - name: MAILMAN_REST_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: restpassword
+                    - name: SMTP_HOST
+                      value: mail.midnightthoughts.space
+                    - name: SMTP_PORT
+                      value: "465"
+                    - name: SMTP_USE_SSL
+                      value: "true"
+                    - name: SMTP_SECURE_MODE
+                      value: "smtps"
+                    - name: SMTP_HOST_USER
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: smtp_user
+                    - name: SMTP_HOST_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: smtp_password
+                    - name: MTA
+                      value: postfix
+                    - name: MM_HOSTNAME
+                      value: mailman.mailserver.svc.cluster.local
+                    - name: HYPERKITTY_URL
+                      value: http://localhost:8000/hyperkitty
                   volumeMounts:
-                      - name: mailman-opt
-                        mountPath: /opt/mailman
-                      - name: mailman-extra
-                        mountPath: /opt/mailman/mailman-extra.cfg
-                        subPath: mailman-extra.cfg
-                      - name: mailman-extra
-                        mountPath: /usr/bin/chown
-                        subPath: chown
+                    - name: mailman-opt
+                      mountPath: /opt/mailman
+                    - name: mailman-extra
+                      mountPath: /opt/mailman/mailman-extra.cfg
+                      subPath: mailman-extra.cfg
+                    - name: mailman-extra
+                      mountPath: /usr/bin/chown
+                      subPath: chown
                 - name: web
                   image: ghcr.io/mtrnord/mailman-web:rolling
                   imagePullPolicy: Always
                   ports:
-                      - name: http
-                        containerPort: 8000
-                      - name: uwsgi
-                        containerPort: 8080
+                    - name: http
+                      containerPort: 8000
+                    - name: uwsgi
+                      containerPort: 8080
                   #command:
                   #  - tail
                   #args:
                   #  - -f
                   #  - /dev/null
                   env:
-                      - name: DATABASE_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailmanweb
-                                key: url
-                      - name: DATABASE_TYPE
-                        value: postgres
-                      - name: DATABASE_CLASS
-                        value: mailman.database.postgresql.PostgreSQLDatabase
-                      - name: HYPERKITTY_API_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: apikey
-                      - name: MAILMAN_REST_USER
-                        value: restadm
-                      - name: MAILMAN_REST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: restpassword
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: websecretkey
-                      - name: POSTORIUS_TEMPLATE_BASE_URL
-                        value: http://localhost:8000/
-                      # serving static files by uwsgi
-                      - name: UWSGI_STATIC_MAP
-                        value: /static=/opt/mailman-web-data/static
-                      - name: MAILMAN_ADMIN_USER
-                        value: admin
-                      - name: MAILMAN_ADMIN_EMAIL
-                        value: mtrnord@nordgedanken.dev
-                      - name: MAILMAN_HOST_IP
-                        value: 127.0.0.1
-                      - name: MAILMAN_HOSTNAME
-                        value: localhost
-                      - name: SERVE_FROM_DOMAIN
-                        value: lists.midnightthoughts.space
-                      - name: MAILMAN_REST_URL # MAILMAN_REST_API_URL is set from this variable in settings.
-                        value: http://127.0.0.1:8001
-                      - name: MAILMAN_REST_API_USER
-                        value: restadm
-                      - name: MAILMAN_REST_API_PASS
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: restpassword
-                      - name: SMTP_HOST
-                        value: mail.midnightthoughts.space
-                      - name: SMTP_PORT
-                        value: "465"
-                      - name: SMTP_USE_SSL
-                        value: "true"
-                      - name: SMTP_HOST_USER
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: smtp_user
-                      - name: SMTP_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mailman-passwords
-                                key: smtp_password
+                    - name: DATABASE_URL
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailmanweb
+                            key: url
+                    - name: DATABASE_TYPE
+                      value: postgres
+                    - name: DATABASE_CLASS
+                      value: mailman.database.postgresql.PostgreSQLDatabase
+                    - name: HYPERKITTY_API_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: apikey
+                    - name: MAILMAN_REST_USER
+                      value: restadm
+                    - name: MAILMAN_REST_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: restpassword
+                    - name: SECRET_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: websecretkey
+                    - name: POSTORIUS_TEMPLATE_BASE_URL
+                      value: http://localhost:8000/
+                    # serving static files by uwsgi
+                    - name: UWSGI_STATIC_MAP
+                      value: /static=/opt/mailman-web-data/static
+                    - name: MAILMAN_ADMIN_USER
+                      value: admin
+                    - name: MAILMAN_ADMIN_EMAIL
+                      value: mtrnord@nordgedanken.dev
+                    - name: MAILMAN_HOST_IP
+                      value: 127.0.0.1
+                    - name: MAILMAN_HOSTNAME
+                      value: localhost
+                    - name: SERVE_FROM_DOMAIN
+                      value: lists.midnightthoughts.space
+                    - name: MAILMAN_REST_URL # MAILMAN_REST_API_URL is set from this variable in settings.
+                      value: http://127.0.0.1:8001
+                    - name: MAILMAN_REST_API_USER
+                      value: restadm
+                    - name: MAILMAN_REST_API_PASS
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: restpassword
+                    - name: SMTP_HOST
+                      value: mail.midnightthoughts.space
+                    - name: SMTP_PORT
+                      value: "465"
+                    - name: SMTP_USE_SSL
+                      value: "true"
+                    - name: SMTP_HOST_USER
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: smtp_user
+                    - name: SMTP_HOST_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mailman-passwords
+                            key: smtp_password
                   # otherwise django cannot find the mysql driver.
                   #- name: DYLD_LIBRARY_PATH
                   #  value: /usr/local/mysql/lib/
 
                   volumeMounts:
-                      - name: mailman-web
-                        mountPath: /opt/mailman-web-data
-                      - name: mailman-extra
-                        mountPath: /opt/mailman-web-data/settings_local.py
-                        subPath: settings_local.py
-                      - name: mailman-extra
-                        mountPath: /usr/bin/chown
-                        subPath: chown
+                    - name: mailman-web
+                      mountPath: /opt/mailman-web-data
+                    - name: mailman-extra
+                      mountPath: /opt/mailman-web-data/settings_local.py
+                      subPath: settings_local.py
+                    - name: mailman-extra
+                      mountPath: /usr/bin/chown
+                      subPath: chown
                 - name: nginx
                   image: ghcr.io/nginx/nginx-unprivileged:stable-alpine
                   imagePullPolicy: IfNotPresent
                   ports:
-                      - name: http
-                        containerPort: 9090
+                    - name: http
+                      containerPort: 9090
                   startupProbe:
-                      httpGet:
-                          path: /mailman3/lists/
-                          port: 9090
-                          httpHeaders:
+                    httpGet:
+                        path: /mailman3/lists/
+                        port: 9090
+                        httpHeaders:
                             - name: Host
                               value: lists.midnightthoughts.space
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                      timeoutSeconds: 5
-                      failureThreshold: 24
+                    initialDelaySeconds: 30
+                    periodSeconds: 10
+                    timeoutSeconds: 5
+                    failureThreshold: 24
                   livenessProbe:
-                      httpGet:
-                          path: /mailman3/lists/
-                          port: 9090
-                          httpHeaders:
+                    httpGet:
+                        path: /mailman3/lists/
+                        port: 9090
+                        httpHeaders:
                             - name: Host
                               value: lists.midnightthoughts.space
-                      periodSeconds: 30
-                      timeoutSeconds: 5
-                      failureThreshold: 3
+                    periodSeconds: 30
+                    timeoutSeconds: 5
+                    failureThreshold: 3
                   readinessProbe:
-                      httpGet:
-                          path: /mailman3/lists/
-                          port: 9090
-                          httpHeaders:
+                    httpGet:
+                        path: /mailman3/lists/
+                        port: 9090
+                        httpHeaders:
                             - name: Host
                               value: lists.midnightthoughts.space
-                      periodSeconds: 10
-                      timeoutSeconds: 3
-                      failureThreshold: 3
+                    periodSeconds: 10
+                    timeoutSeconds: 3
+                    failureThreshold: 3
                   volumeMounts:
-                      - name: mailman-web
-                        mountPath: /opt/mailman-web-data
-                        readOnly: true
-                      - name: nginx-config
-                        mountPath: /etc/nginx/nginx.conf
-                        subPath: nginx.conf
-                        readOnly: true
-                      - name: tmp
-                        mountPath: /tmp
-                        readOnly: false
-                      - name: tmp-client-body
-                        mountPath: /tmp/nginx/client_body
-                        readOnly: false
-                      - name: tmp-cgi
-                        mountPath: /tmp/nginx/fastcgi
-                        readOnly: false
-                      - name: tmp-cgi
-                        mountPath: /tmp/nginx/uwsgi
-                        readOnly: false
-                      - name: tmp-cgi
-                        mountPath: /tmp/nginx/scgi
-                        readOnly: false
-                      - name: tmp-proxy
-                        mountPath: /tmp/nginx/proxy
-                        readOnly: false
+                    - name: mailman-web
+                      mountPath: /opt/mailman-web-data
+                      readOnly: true
+                    - name: nginx-config
+                      mountPath: /etc/nginx/nginx.conf
+                      subPath: nginx.conf
+                      readOnly: true
+                    - name: tmp
+                      mountPath: /tmp
+                      readOnly: false
+                    - name: tmp-client-body
+                      mountPath: /tmp/nginx/client_body
+                      readOnly: false
+                    - name: tmp-cgi
+                      mountPath: /tmp/nginx/fastcgi
+                      readOnly: false
+                    - name: tmp-cgi
+                      mountPath: /tmp/nginx/uwsgi
+                      readOnly: false
+                    - name: tmp-cgi
+                      mountPath: /tmp/nginx/scgi
+                      readOnly: false
+                    - name: tmp-proxy
+                      mountPath: /tmp/nginx/proxy
+                      readOnly: false
             volumes:
                 - name: mailman-extra
                   secret:
-                      secretName: mailman-extra
-                      defaultMode: 0555
+                    secretName: mailman-extra
+                    defaultMode: 0555
                 - name: nginx-config
                   configMap:
-                      name: mailman-nginx
+                    name: mailman-nginx
                 - name: tmp
                   emptyDir: {}
                 - name: tmp-client-body
@@ -262,27 +262,27 @@ spec:
         - apiVersion: v1
           kind: PersistentVolumeClaim
           metadata:
-              name: mailman-opt
-              namespace: mailserver
+            name: mailman-opt
+            namespace: mailserver
           spec:
-              storageClassName: longhorn
-              accessModes:
-                  - ReadWriteMany
-              resources:
-                  requests:
-                      storage: 10Gi
+            storageClassName: longhorn
+            accessModes:
+                - ReadWriteMany
+            resources:
+                requests:
+                    storage: 10Gi
         - apiVersion: v1
           kind: PersistentVolumeClaim
           metadata:
-              name: mailman-web
-              namespace: mailserver
+            name: mailman-web
+            namespace: mailserver
           spec:
-              storageClassName: longhorn
-              accessModes:
-                  - ReadWriteMany
-              resources:
-                  requests:
-                      storage: 10Gi
+            storageClassName: longhorn
+            accessModes:
+                - ReadWriteMany
+            resources:
+                requests:
+                    storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
@@ -318,8 +318,8 @@ spec:
         - lists.midnightthoughts.space
     rules:
         - backendRefs:
-              - name: mailman
-                port: 9090
+            - name: mailman
+              port: 9090
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s
