@@ -187,7 +187,7 @@ spec:
                         containerPort: 9090
                   startupProbe:
                       httpGet:
-                          path: /
+                          path: /mailman3/lists/
                           port: 9090
                       initialDelaySeconds: 30
                       periodSeconds: 10
@@ -195,14 +195,14 @@ spec:
                       failureThreshold: 24
                   livenessProbe:
                       httpGet:
-                          path: /
+                          path: /mailman3/lists/
                           port: 9090
                       periodSeconds: 30
                       timeoutSeconds: 5
                       failureThreshold: 3
                   readinessProbe:
                       httpGet:
-                          path: /
+                          path: /mailman3/lists/
                           port: 9090
                       periodSeconds: 10
                       timeoutSeconds: 3
