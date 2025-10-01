@@ -332,7 +332,7 @@ spec:
                         transport_maps = regexp:/etc/postfix/mailman/postfix_lmtp
                         local_recipient_maps = $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
                         virtual_mailbox_domains = texthash:/etc/postfix/vmailbox regexp:/etc/postfix/mailman/postfix_lmtp
-                        relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} regexp:/etc/postfix/mailman/postfix_domains
+                        relay_domains = {{`${{$compatibility_level} < {2} ? {$mydestination} : {}}`}} regexp:/etc/postfix/mailman/postfix_domains
             user-patches.sh:
                 create: true
                 path: user-patches.sh
