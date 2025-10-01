@@ -127,7 +127,7 @@ spec:
                       - name: POSTORIUS_TEMPLATE_BASE_URL
                         value: http://localhost:8000/
                       # serving static files by uwsgi
-                      - name: UWSGI_STATIC_MAP.
+                      - name: UWSGI_STATIC_MAP
                         value: /static=/opt/mailman-web-data/static
                       - name: MAILMAN_ADMIN_USER
                         value: admin
@@ -164,8 +164,6 @@ spec:
                             secretKeyRef:
                                 name: mailman-passwords
                                 key: smtp_password
-                      - name: UWSGI_STATIC_MAP
-                        value: /static=/opt/mailman-web-data/static
                       # otherwise django cannot find the mysql driver.
                       #- name: DYLD_LIBRARY_PATH
                       #  value: /usr/local/mysql/lib/
