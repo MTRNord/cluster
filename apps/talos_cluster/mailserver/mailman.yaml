@@ -191,6 +191,21 @@ spec:
                         mountPath: /etc/nginx/nginx.conf
                         subPath: nginx.conf
                         readOnly: true
+                      - name: tmp
+                        mountPath: /tmp
+                        readOnly: false
+                      - name: tmp-client-body
+                        mountPath: /tmp/nginx/client_body
+                        readOnly: false
+                      - name: tmp-cgi
+                        mountPath: /tmp/nginx/fastcgi
+                        readOnly: false
+                      - name: tmp-cgi
+                        mountPath: /tmp/nginx/uwsgi
+                        readOnly: false
+                      - name: tmp-cgi
+                        mountPath: /tmp/nginx/scgi
+                        readOnly: false
 
             volumes:
                 - name: mailman-extra
@@ -200,6 +215,12 @@ spec:
                 - name: nginx-config
                   configMap:
                       name: mailman-nginx
+                - name: tmp
+                  emptyDir: {}
+                - name: tmp-client-body
+                  emptyDir: {}
+                - name: tmp-cgi
+                  emptyDir: {}
     volumeClaimTemplates:
         - apiVersion: v1
           kind: PersistentVolumeClaim
