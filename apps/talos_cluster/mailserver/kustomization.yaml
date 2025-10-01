@@ -14,14 +14,21 @@ configMapGenerator:
     - name: mta-sts-content
       namespace: mailserver
       files:
-        - mta-sts.txt=mta-sts.txt
+          - mta-sts.txt=mta-sts.txt
       options:
-        labels:
-            app: mta-sts-server
+          labels:
+              app: mta-sts-server
     - name: mailman-nginx
       namespace: mailserver
       files:
-        - nginx.conf=mailman-nginx.conf
+          - nginx.conf=mailman-nginx.conf
       options:
-        labels:
-            app: mailman
+          labels:
+              app: mailman
+    - name: mailman-uwsgi
+      namespace: mailserver
+      files:
+          - uwsgi.ini=mailman-uwsgi.ini
+      options:
+          labels:
+              app: mailman
