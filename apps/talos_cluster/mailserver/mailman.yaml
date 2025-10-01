@@ -25,6 +25,7 @@ spec:
             containers:
                 - name: core
                   image: ghcr.io/mtrnord/mailman-core:rolling
+                  imagePullPolicy: Always
                   ports:
                       - name: api
                         containerPort: 8001
@@ -85,6 +86,7 @@ spec:
                         subPath: chown
                 - name: web
                   image: ghcr.io/mtrnord/mailman-web:rolling
+                  imagePullPolicy: Always
                   ports:
                       - name: http
                         containerPort: 8000
