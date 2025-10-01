@@ -177,8 +177,8 @@ spec:
                         subPath: chown
             volumes:
                 - name: mailman-extra
-                  configMap:
-                      name: mailman-extra
+                  secret:
+                      secretName: mailman-extra
                       defaultMode: 0555
     volumeClaimTemplates:
         - apiVersion: v1
