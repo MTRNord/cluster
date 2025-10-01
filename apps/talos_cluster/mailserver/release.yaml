@@ -317,6 +317,12 @@ spec:
                     {{- if .Values.proxyProtocol.enabled }}
                         postscreen_cache_map = proxy:btree:$data_directory/postscreen_12525_cache
                     {{- end }}
+                    owner_request_special = no
+                    transport_maps = hash:/etc/postfix/transport_maps regexp:/etc/postfix/mailman/postfix_lmtp
+                    local_recipient_maps = proxy:unix:passwd.byname $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
+                    virtual_mailbox_maps = texthash:/etc/postfix/vmailbox regexp:/etc/postfix/mailman/postfix_lmtp
+                    # postfix warning: 'do not list the domain example.com in BOTH virtual_mailbox_domains and relay_domains'
+                    #relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} regexp:/etc/postfix/mailman/postfix_domains
             user-patches.sh:
                 create: true
                 path: user-patches.sh
@@ -339,6 +345,9 @@ spec:
                     # Enable PROXY Protocol support (different setting as port 25 is handled via postscreen), optionally configure a `syslog_name` to distinguish in logs:
                     postconf -P 12525/inet/postscreen_upstream_proxy_protocol=haproxy 12525/inet/postscreen_cache_map=proxy:btree:\$data_directory/postscreen_12525_cache 12525/inet/syslog_name=postfix/smtpd-proxyprotocol
                     {{- end }}
+                    echo "10.0.0.0/8
+                    172.16.0.0/12
+                    192.168.0.0/16" >> /etc/opendkim/TrustedHosts
             custom-commands.conf:
                 create: true
                 path: rspamd/custom-commands.conf
@@ -361,3 +370,12 @@ spec:
                             selector = "mail";
                         }
                     }
+        extraVolumeMounts:
+            - name: mailman-opt
+              mountPath: /etc/postfix/mailman
+              subPath: var/data
+              readOnly: true
+        extraVolumes:
+            - name: mailman-opt
+              persistentVolumeClaim:
+                  claimName: mailman-opt-mailman-0

@@ -8,11 +8,13 @@ resources:
     - release.yaml
     - routing.yaml
     - mta-sts-deployment.yaml
+    - mailman-secrets.yaml
+    - mailman.yaml
 configMapGenerator:
     - name: mta-sts-content
       namespace: mailserver
       files:
-        - mta-sts.txt=mta-sts.txt
+          - mta-sts.txt=mta-sts.txt
       options:
-        labels:
-            app: mta-sts-server
+          labels:
+              app: mta-sts-server
