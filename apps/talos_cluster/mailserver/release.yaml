@@ -171,6 +171,15 @@ spec:
                     cpu: 249m
                     memory: 294Mi
                 limits: {}
+            extraVolumeMounts:
+                - name: mailman-opt
+                  mountPath: /etc/postfix/mailman
+                  subPath: var/data
+                  readOnly: true
+            extraVolumes:
+                - name: mailman-opt
+                  persistentVolumeClaim:
+                    claimName: mailman-opt-mailman-0
         service:
             #annotations:
             #    external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
@@ -317,6 +326,12 @@ spec:
                     {{- if .Values.proxyProtocol.enabled }}
                         postscreen_cache_map = proxy:btree:$data_directory/postscreen_12525_cache
                     {{- end }}
+                    recipient_delimiter = +
+                    unknown_local_recipient_reject_code = 550
+                    owner_request_special = no
+                    transport_maps = hash:/etc/postfix/transport_maps regexp:/etc/postfix/mailman/postfix_lmtp
+                    local_recipient_maps = proxy:unix:passwd.byname $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
+                    virtual_mailbox_domains = texthash:/etc/postfix/vmailbox regexp:/etc/postfix/mailman/postfix_lmtp
             user-patches.sh:
                 create: true
                 path: user-patches.sh
@@ -365,12 +380,3 @@ spec:
                             selector = "mail";
                         }
                     }
-        extraVolumeMounts:
-            - name: mailman-opt
-              mountPath: /etc/postfix/mailman
-              subPath: var/data
-              readOnly: true
-        extraVolumes:
-            - name: mailman-opt
-              persistentVolumeClaim:
-                claimName: mailman-opt-mailman-0
