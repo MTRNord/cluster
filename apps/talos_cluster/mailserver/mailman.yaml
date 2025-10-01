@@ -189,6 +189,9 @@ spec:
                       httpGet:
                           path: /mailman3/lists/
                           port: 9090
+                          httpHeaders:
+                            - name: Host
+                              value: lists.midnightthoughts.space
                       initialDelaySeconds: 30
                       periodSeconds: 10
                       timeoutSeconds: 5
@@ -197,6 +200,9 @@ spec:
                       httpGet:
                           path: /mailman3/lists/
                           port: 9090
+                          httpHeaders:
+                            - name: Host
+                              value: lists.midnightthoughts.space
                       periodSeconds: 30
                       timeoutSeconds: 5
                       failureThreshold: 3
@@ -204,6 +210,9 @@ spec:
                       httpGet:
                           path: /mailman3/lists/
                           port: 9090
+                          httpHeaders:
+                            - name: Host
+                              value: lists.midnightthoughts.space
                       periodSeconds: 10
                       timeoutSeconds: 3
                       failureThreshold: 3
