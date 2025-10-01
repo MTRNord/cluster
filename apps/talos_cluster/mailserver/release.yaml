@@ -321,8 +321,6 @@ spec:
                     transport_maps = hash:/etc/postfix/transport_maps regexp:/etc/postfix/mailman/postfix_lmtp
                     local_recipient_maps = proxy:unix:passwd.byname $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
                     virtual_mailbox_maps = texthash:/etc/postfix/vmailbox regexp:/etc/postfix/mailman/postfix_lmtp
-                    # postfix warning: 'do not list the domain example.com in BOTH virtual_mailbox_domains and relay_domains'
-                    #relay_domains = ${{$compatibility_level} < {2} ? {$mydestination} : {}} regexp:/etc/postfix/mailman/postfix_domains
             user-patches.sh:
                 create: true
                 path: user-patches.sh
