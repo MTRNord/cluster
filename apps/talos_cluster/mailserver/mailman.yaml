@@ -24,7 +24,7 @@ spec:
                       - mailman-web
             containers:
                 - name: core
-                  image: mtrnord/mailman-core:rolling
+                  image: ghcr.io/mtrnord/mailman-core:rolling
                   ports:
                       - name: api
                         containerPort: 8001
@@ -84,7 +84,7 @@ spec:
                         mountPath: /usr/bin/chown
                         subPath: chown
                 - name: web
-                  image: mtrnord/mailman-web:rolling
+                  image: ghcr.io/mtrnord/mailman-web:rolling
                   ports:
                       - name: http
                         containerPort: 8000
