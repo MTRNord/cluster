@@ -1,11 +1,41 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    labels:
+        app: mailman
+    name: mailman-opt-mailman-0
+    namespace: mailserver
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 10Gi
+    storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    labels:
+        app: mailman
+    name: mailman-web-mailman-0
+    namespace: mailserver
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 10Gi
+    storageClassName: longhorn
+---
 # https://github.com/maxking/docker-mailman
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
     name: mailman
     namespace: mailserver
 spec:
-    serviceName: mailman
     replicas: 1
     selector:
         matchLabels:
@@ -300,31 +330,12 @@ spec:
                   emptyDir: {}
                 - name: redis-data
                   emptyDir: {}
-    volumeClaimTemplates:
-        - apiVersion: v1
-          kind: PersistentVolumeClaim
-          metadata:
-              name: mailman-opt
-              namespace: mailserver
-          spec:
-              storageClassName: longhorn
-              accessModes:
-                  - ReadWriteMany
-              resources:
-                  requests:
-                      storage: 10Gi
-        - apiVersion: v1
-          kind: PersistentVolumeClaim
-          metadata:
-              name: mailman-web
-              namespace: mailserver
-          spec:
-              storageClassName: longhorn
-              accessModes:
-                  - ReadWriteMany
-              resources:
-                  requests:
-                      storage: 10Gi
+                - name: mailman-opt
+                  persistentVolumeClaim:
+                      claimName: mailman-opt-mailman-0 # Existing PVC from StatefulSet
+                - name: mailman-web
+                  persistentVolumeClaim:
+                      claimName: mailman-web-mailman-0 # Existing PVC from StatefulSet
 ---
 apiVersion: v1
 kind: Service
