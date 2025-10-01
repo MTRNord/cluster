@@ -61,6 +61,13 @@ spec:
                         containerPort: 8001
                       - name: lmtp
                         containerPort: 8024
+                  resources:
+                      requests:
+                          memory: "256Mi"
+                          cpu: "100m"
+                      limits:
+                          memory: "512Mi"
+                          cpu: "500m"
                   env:
                       - name: DATABASE_URL
                         valueFrom:
@@ -127,6 +134,13 @@ spec:
                         containerPort: 8000
                       - name: uwsgi
                         containerPort: 8080
+                  resources:
+                      requests:
+                          memory: "512Mi"
+                          cpu: "200m"
+                      limits:
+                          memory: "1Gi"
+                          cpu: "1000m"
                   #command:
                   #  - tail
                   #args:
@@ -212,6 +226,10 @@ spec:
                       - name: mailman-extra
                         mountPath: /usr/bin/chown
                         subPath: chown
+                      - name: django-cache
+                        mountPath: /opt/mailman-web-data/diskcache
+                      - name: static-cache
+                        mountPath: /opt/mailman-web-data/static/CACHE
                 - name: redis
                   image: redis:7-alpine
                   imagePullPolicy: IfNotPresent
@@ -252,6 +270,13 @@ spec:
                   ports:
                       - name: http
                         containerPort: 9090
+                  resources:
+                      requests:
+                          memory: "64Mi"
+                          cpu: "50m"
+                      limits:
+                          memory: "256Mi"
+                          cpu: "200m"
                   startupProbe:
                       httpGet:
                           path: /mailman3/lists/
@@ -286,6 +311,9 @@ spec:
                   volumeMounts:
                       - name: mailman-web
                         mountPath: /opt/mailman-web-data
+                        readOnly: true
+                      - name: static-cache
+                        mountPath: /opt/mailman-web-data/static/CACHE
                         readOnly: true
                       - name: nginx-config
                         mountPath: /etc/nginx/nginx.conf
@@ -329,6 +357,10 @@ spec:
                 - name: tmp-proxy
                   emptyDir: {}
                 - name: redis-data
+                  emptyDir: {}
+                - name: django-cache
+                  emptyDir: {}
+                - name: static-cache
                   emptyDir: {}
                 - name: mailman-opt
                   persistentVolumeClaim:
