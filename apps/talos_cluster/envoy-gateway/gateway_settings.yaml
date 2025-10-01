@@ -423,6 +423,18 @@ spec:
             certificateRefs:
                 - kind: Secret
                   name: mta-sts.midnightthoughts.space
+        - name: https-midnightthoughts-lists
+          protocol: HTTPS
+          hostname: "lists.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+            namespaces:
+                from: "All"
+          tls:
+            mode: Terminate
+            certificateRefs:
+                - kind: Secret
+                  name: lists.midnightthoughts.space
         - name: http
           protocol: HTTP
           port: 80

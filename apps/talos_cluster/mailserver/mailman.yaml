@@ -265,3 +265,24 @@ spec:
           port: 8000
         - name: uwsgi
           port: 8080
+        - name: nginx
+          port: 9090
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: mailman
+    namespace: mailserver
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - lists.midnightthoughts.space
+    rules:
+        - backendRefs:
+              - name: mailman
+                port: 9090
+          timeouts:
+              request: 240s
+              backendRequest: 0s
