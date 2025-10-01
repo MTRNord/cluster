@@ -24,7 +24,7 @@ spec:
                       - mailman-web
             containers:
                 - name: core
-                  image: maxking/mailman-core:0.4
+                  image: mtrnord/mailman-core:0.5
                   ports:
                       - name: api
                         containerPort: 8001
@@ -84,7 +84,7 @@ spec:
                         mountPath: /usr/bin/chown
                         subPath: chown
                 - name: web
-                  image: maxking/mailman-web:0.4
+                  image: mtrnord/mailman-web:0.5
                   ports:
                       - name: http
                         containerPort: 8000
