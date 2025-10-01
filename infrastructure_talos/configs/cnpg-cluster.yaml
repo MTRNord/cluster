@@ -236,12 +236,6 @@ spec:
               superuser: false
               passwordSecret:
                   name: grafana-ro
-            - name: harbor
-              ensure: absent
-              login: true
-              superuser: false
-              passwordSecret:
-                  name: harbor
             - name: mailman
               ensure: present
               login: true
@@ -414,18 +408,6 @@ spec:
     name: gotosocial
     owner: gotosocial
     ensure: present
-    cluster:
-        name: pg-cluster-v2
----
-apiVersion: postgresql.cnpg.io/v1
-kind: Database
-metadata:
-    name: harbor
-    namespace: postgres-cluster
-spec:
-    name: harbor
-    owner: harbor
-    ensure: absent
     cluster:
         name: pg-cluster-v2
 ---
