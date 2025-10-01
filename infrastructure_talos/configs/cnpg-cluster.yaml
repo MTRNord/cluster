@@ -237,11 +237,17 @@ spec:
               passwordSecret:
                   name: grafana-ro
             - name: harbor
-              ensure: present
+              ensure: absent
               login: true
               superuser: false
               passwordSecret:
                   name: harbor
+            - name: mailman
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: mailman
     storage:
         storageClass: hcloud-volumes
         size: 15Gi
@@ -419,6 +425,18 @@ metadata:
 spec:
     name: harbor
     owner: harbor
+    ensure: absent
+    cluster:
+        name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: mailman
+    namespace: postgres-cluster
+spec:
+    name: mailman
+    owner: mailman
     ensure: present
     cluster:
         name: pg-cluster-v2
