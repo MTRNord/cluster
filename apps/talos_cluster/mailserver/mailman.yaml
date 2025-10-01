@@ -181,8 +181,11 @@ spec:
                       name: mailman-extra
                       defaultMode: 0555
     volumeClaimTemplates:
-        - metadata:
+        - apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
               name: mailman-opt
+              namespace: mailserver
           spec:
               volumeName: mailman-opt
               storageClassName: longhorn
@@ -191,8 +194,11 @@ spec:
               resources:
                   requests:
                       storage: 10Gi
-        - metadata:
+        - apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
               name: mailman-web
+              namespace: mailserver
           spec:
               volumeName: mailman-web
               storageClassName: longhorn
