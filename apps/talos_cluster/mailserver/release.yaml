@@ -329,8 +329,8 @@ spec:
                         recipient_delimiter = +
                         unknown_local_recipient_reject_code = 550
                         owner_request_special = no
-                        transport_maps = hash:/etc/postfix/transport_maps regexp:/etc/postfix/mailman/postfix_lmtp
-                        local_recipient_maps = proxy:unix:passwd.byname $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
+                        transport_maps = regexp:/etc/postfix/mailman/postfix_lmtp
+                        local_recipient_maps = $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
                         virtual_mailbox_domains = texthash:/etc/postfix/vmailbox regexp:/etc/postfix/mailman/postfix_lmtp
             user-patches.sh:
                 create: true
