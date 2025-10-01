@@ -164,6 +164,8 @@ spec:
                             secretKeyRef:
                                 name: mailman-passwords
                                 key: smtp_password
+                      - name: UWSGI_STATIC_MAP
+                        value: /static=/opt/mailman-web-data/static
                       # otherwise django cannot find the mysql driver.
                       #- name: DYLD_LIBRARY_PATH
                       #  value: /usr/local/mysql/lib/
