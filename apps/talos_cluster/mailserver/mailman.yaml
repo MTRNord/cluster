@@ -177,11 +177,29 @@ spec:
                       - name: mailman-extra
                         mountPath: /usr/bin/chown
                         subPath: chown
+                - name: nginx
+                  image: ghcr.io/nginx/nginx-unprivileged:stable-alpine
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                      - name: http
+                        containerPort: 9090
+                  volumeMounts:
+                      - name: mailman-web
+                        mountPath: /opt/mailman-web-data
+                        readOnly: true
+                      - name: nginx-config
+                        mountPath: /etc/nginx/nginx.conf
+                        subPath: nginx.conf
+                        readOnly: true
+
             volumes:
                 - name: mailman-extra
                   secret:
                       secretName: mailman-extra
                       defaultMode: 0555
+                - name: nginx-config
+                  configMap:
+                      name: mailman-nginx
     volumeClaimTemplates:
         - apiVersion: v1
           kind: PersistentVolumeClaim

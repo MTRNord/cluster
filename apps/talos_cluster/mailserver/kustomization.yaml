@@ -18,3 +18,10 @@ configMapGenerator:
       options:
           labels:
               app: mta-sts-server
+    - name: mailman-nginx
+      namespace: mailserver
+      files:
+          - nginx.conf=mailman-nginx.conf
+      options:
+          labels:
+              app: mailman
