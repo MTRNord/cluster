@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: cgit
+    namespace: git
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: cgit
+    namespace: git
+    labels:
+        app.kubernetes.io/name: cgit
+spec:
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    selector:
+        matchLabels:
+            app: cgit
+    template:
+        metadata:
+            labels:
+                app: cgit
+                app.kubernetes.io/name: cgit
+        spec:
+            imagePullSecrets:
+                - name: ghcr-pull
+            containers:
+                - name: cgit
+                  image: ghcr.io/mtrnord/cgit-docker:main
+                  imagePullPolicy: Always
+                  resources:
+                      limits: {}
+                      requests:
+                          memory: "344Mi"
+                          cpu: "252m"
+                  ports:
+                      - containerPort: 8080
+                        name: http
+                        protocol: TCP
+                      - containerPort: 2222
+                        name: ssh
+                        protocol: TCP
+                  volumeMounts:
+                      - mountPath: /var/lib/gitolite3
+                        name: storage
+                      - mountPath: /tmp
+                        name: tmp
+                      - mountPath: /var/lib/git/.ssh/admin.pub
+                        name: ssh-keys
+                        subPath: admin.pub
+                        readOnly: true
+                      - mountPath: /etc/ssh/ssh_host_rsa_key
+                        name: ssh-keys
+                        subPath: ssh_host_rsa_key
+                        readOnly: true
+                      - mountPath: /etc/ssh/ssh_host_rsa_key.pub
+                        name: ssh-keys
+                        subPath: ssh_host_rsa_key.pub
+                        readOnly: true
+                      - mountPath: /etc/ssh/ssh_host_ecdsa_key
+                        name: ssh-keys
+                        subPath: ssh_host_ecdsa_key
+                        readOnly: true
+                      - mountPath: /etc/ssh/ssh_host_ecdsa_key.pub
+                        name: ssh-keys
+                        subPath: ssh_host_ecdsa_key.pub
+                        readOnly: true
+                      - mountPath: /etc/ssh/ssh_host_ed25519_key
+                        name: ssh-keys
+                        subPath: ssh_host_ed25519_key
+                        readOnly: true
+                      - mountPath: /etc/ssh/ssh_host_ed25519_key.pub
+                        name: ssh-keys
+                        subPath: ssh_host_ed25519_key.pub
+                        readOnly: true
+                  livenessProbe:
+                      httpGet:
+                          path: /healthz
+                          port: http
+                          scheme: HTTP
+                      initialDelaySeconds: 15
+                      periodSeconds: 10
+                  startupProbe:
+                      httpGet:
+                          path: /healthz
+                          port: http
+                      initialDelaySeconds: 15
+                      failureThreshold: 30
+                      periodSeconds: 10
+            volumes:
+                - name: storage
+                  persistentVolumeClaim:
+                      claimName: cgit
+                - name: tmp
+                  emptyDir:
+                      sizeLimit: 2048Mi
+                - name: ssh-keys
+                  secret:
+                      secretName: cgit-ssh-keys
