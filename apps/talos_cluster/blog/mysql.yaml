@@ -38,6 +38,8 @@ spec:
                             secretKeyRef:
                                 name: mysql-cred
                                 key: db-name
+                      - name: MYSQL_ROOT_HOST
+                        value: "%"
                   volumeMounts:
                       - name: mysql-volume
                         mountPath: /var/lib/mysql
