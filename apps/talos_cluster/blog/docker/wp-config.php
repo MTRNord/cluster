@@ -1,4 +1,5 @@
 <?php
+define('WP_CACHE', true);
 define( 'DB_NAME', '${DB_NAME}' );
 define( 'DB_USER', '${DB_USER}' );
 define( 'DB_PASSWORD', '${DB_PASSWORD}' );
@@ -64,6 +65,7 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 }
 define('WP_HOME', 'https://mtrnord.blog');
 define('WP_SITEURL', 'https://mtrnord.blog');
+define( 'DISABLE_WP_CRON', true );
 
 /* That's all, stop editing! Happy publishing. */
     
