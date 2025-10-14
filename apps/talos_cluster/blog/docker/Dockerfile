@@ -44,7 +44,7 @@ COPY wellknown/support.json /var/www/html/well-known/support.json
 RUN rm /var/www/html/wordpress/wp-config-sample.php
 ADD wp-config.php /var/www/html/wordpress/wp-config.php
 ADD advanced-cache.php /var/www/html/wordpress/wp-content/advanced-cache.php
-
+ADD wp-cache-config.php /var/www/html/wordpress/wp-content/wp-cache-config.php
 # Change the user and Permission of WordPress root directory
 RUN chown -R www-data:www-data /var/www/html/wordpress \
     && chmod -R 755 /var/www/html/wordpress
