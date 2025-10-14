@@ -33,6 +33,10 @@ RUN rm /etc/nginx/sites-enabled/default
 ADD wordpress.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/wordpress.conf /etc/nginx/sites-enabled/
 
+COPY wellknown/client.json /var/www/html/well-known/client
+COPY wellknown/server.json /var/www/html/well-known/server
+COPY wellknown/support.json /var/www/html/well-known/support.json
+
 # Add WordPress config file
 RUN rm /var/www/html/wordpress/wp-config-sample.php
 ADD wp-config.php /var/www/html/wordpress/wp-config.php
@@ -40,6 +44,8 @@ ADD wp-config.php /var/www/html/wordpress/wp-config.php
 # Change the user and Permission of WordPress root directory
 RUN chown -R www-data:www-data /var/www/html/wordpress \
     && chmod -R 755 /var/www/html/wordpress
+RUN chown -R www-data:www-data /var/www/html/well-known \
+    && chmod -R 755 /var/www/html/well-known
 
 # Exposing container to port 8080
 EXPOSE 8080
