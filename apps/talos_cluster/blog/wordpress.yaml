@@ -141,22 +141,22 @@ spec:
           protocol: TCP
           port: 8080
           targetPort: 8080
-# ---
-# apiVersion: gateway.networking.k8s.io/v1
-# kind: HTTPRoute
-# metadata:
-#     name: blog
-#     namespace: blog
-# spec:
-#     parentRefs:
-#         - name: envoy-gateway
-#           namespace: envoy-gateway
-#     hostnames:
-#         - mtrnord.blog
-#     rules:
-#         - backendRefs:
-#               - name: wordpress-service
-#                 port: 8080
-#           timeouts:
-#               request: 240s
-#               backendRequest: 0s
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: blog
+    namespace: blog
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - mtrnord.blog
+    rules:
+        - backendRefs:
+              - name: wordpress-service
+                port: 8080
+          timeouts:
+              request: 240s
+              backendRequest: 0s
