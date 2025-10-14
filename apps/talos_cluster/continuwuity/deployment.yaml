@@ -18,44 +18,45 @@ spec:
             containers:
                 - name: continuwuity
                   resources:
-                    limits: {}
-                    requests:
-                        memory: "100Mi"
-                        cpu: "28m"
-                  image: forgejo.ellis.link/continuwuation/continuwuity:main
+                      limits: {}
+                      requests:
+                          memory: "100Mi"
+                          cpu: "28m"
+                  #image: forgejo.ellis.link/continuwuation/continuwuity:main
+                  image: forgejo.ellis.link/continuwuation/continuwuity:pr-1099-head
                   imagePullPolicy: Always
                   ports:
-                    - containerPort: 8448
+                      - containerPort: 8448
                   # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
                   volumeMounts:
-                    - name: continuwuity-config
-                      mountPath: /etc/conduwuit
-                      readOnly: true
-                    - name: continuwuity-data
-                      mountPath: /var/lib/continuwuity
+                      - name: continuwuity-config
+                        mountPath: /etc/conduwuit
+                        readOnly: true
+                      - name: continuwuity-data
+                        mountPath: /var/lib/continuwuity
                   env:
-                    - name: CONTINUWUITY_CONFIG
-                      value: /etc/conduwuit/conduwuit.toml
+                      - name: CONTINUWUITY_CONFIG
+                        value: /etc/conduwuit/conduwuit.toml
                   livenessProbe:
-                    httpGet:
-                        path: /_matrix/client/versions
-                        port: 8448
-                    initialDelaySeconds: 10
-                    timeoutSeconds: 5
+                      httpGet:
+                          path: /_matrix/client/versions
+                          port: 8448
+                      initialDelaySeconds: 10
+                      timeoutSeconds: 5
                   readinessProbe:
-                    httpGet:
-                        path: /_matrix/client/versions
-                        port: 8448
-                    initialDelaySeconds: 10
-                    timeoutSeconds: 5
+                      httpGet:
+                          path: /_matrix/client/versions
+                          port: 8448
+                      initialDelaySeconds: 10
+                      timeoutSeconds: 5
             # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
             volumes:
                 - name: continuwuity-config
                   secret:
-                    secretName: continuwuity-config
+                      secretName: continuwuity-config
                 - name: continuwuity-data
                   persistentVolumeClaim:
-                    claimName: continuwuity
+                      claimName: continuwuity
 ---
 apiVersion: v1
 kind: Service
@@ -85,40 +86,40 @@ spec:
         # Client traffic (sync, login, media, etc.)
         - name: client-traffic
           matches:
-            - path:
-                type: PathPrefix
-                value: /_matrix/client
+              - path:
+                    type: PathPrefix
+                    value: /_matrix/client
           backendRefs:
-            - name: continuwuity
-              port: 8448
+              - name: continuwuity
+                port: 8448
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
         - name: media-traffic
           matches:
-            - path:
-                type: PathPrefix
-                value: /_matrix/media
+              - path:
+                    type: PathPrefix
+                    value: /_matrix/media
           backendRefs:
-            - name: continuwuity
-              port: 8448
+              - name: continuwuity
+                port: 8448
         # Federation traffic
         - name: federation-traffic
           matches:
-            - path:
-                type: PathPrefix
-                value: /_matrix/federation
+              - path:
+                    type: PathPrefix
+                    value: /_matrix/federation
           backendRefs:
-            - name: continuwuity
-              port: 8448
+              - name: continuwuity
+                port: 8448
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
         # Fallback (anything else Matrix-y)
         - name: fallback
           backendRefs:
-            - name: continuwuity
-              port: 8448
+              - name: continuwuity
+                port: 8448
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
