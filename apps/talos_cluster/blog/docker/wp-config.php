@@ -1,4 +1,5 @@
 <?php
+define( 'WPCACHEHOME', '/var/www/html/wordpress/wp-content/plugins/wp-super-cache/' );
 define('WP_CACHE', true);
 define( 'DB_NAME', '${DB_NAME}' );
 define( 'DB_USER', '${DB_USER}' );
