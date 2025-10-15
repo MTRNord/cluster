@@ -8,3 +8,21 @@ data:
         CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
         GRANT ALL PRIVILEGES ON '$MYSQL_DATABASE'.* TO '$MYSQL_USER'@'%';
         FLUSH PRIVILEGES;
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: mysql-config
+    namespace: blog
+data:
+    performance.cnf: |
+        [mysqld]
+        innodb_buffer_pool_size=1G
+        innodb_log_file_size = 512M
+        thread_cache_size = 16
+        query_cache_size = 128M
+        query_cache_type = 1
+        table_open_cache = 4096
+
+        max_connections = 500
+        max_user_connections = 50

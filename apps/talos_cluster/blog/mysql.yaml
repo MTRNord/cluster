@@ -43,8 +43,10 @@ spec:
                   volumeMounts:
                       - name: mysql-volume
                         mountPath: /var/lib/mysql
-                      - name: mysql-config
+                      - name: mysql-configmap
                         mountPath: /docker-entrypoint-initdb.d
+                      - name: mysql-config
+                        mountPath: /etc/mysql/conf.d
                   resources:
                       requests:
                           memory: "256Mi"
@@ -69,9 +71,12 @@ spec:
                       successThreshold: 1
                       failureThreshold: 3
             volumes:
-                - name: mysql-config
+                - name: mysql-configmap
                   configMap:
                       name: mysql-configmap
+                - name: mysql-config
+                  configMap:
+                      name: mysql-config
     volumeClaimTemplates:
         - metadata:
               name: mysql-volume
