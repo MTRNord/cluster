@@ -17,11 +17,12 @@ RUN apt-get update && apt-get install -y \
 # Add PHP repository
 # RUN sudo add-apt-repository ppa:ondrej/php
 
-# Install PHP and required modules
 RUN apt-get update && apt-get install -y \
     php8.4 php8.4-fpm php8.4-mysql php8.4-cli php8.4-gd \
-    php8.4-curl php8.4-dom php8.4-imagick php8.4-mbstring php8.4-zip php8.4-intl cron \
+    php8.4-curl php8.4-dom php8.4-imagick php8.4-mbstring php8.4-zip php8.4-intl \
+    php8.4-redis redis-server cron \
     && rm -rf /var/lib/apt/lists/*
+RUN phpenmod redis
 ADD php.ini /etc/php/8.4/nginx/
 COPY 10-opcache.ini /etc/php/8.4/mods-available/opcache.ini
 COPY www.conf /etc/php/8.4/fpm/pool.d/www.conf
@@ -31,10 +32,14 @@ RUN wget https://wordpress.org/latest.zip \
     && unzip latest.zip -d /var/www/html/ \
     && rm latest.zip
 
+
 # Add Nginx config file
 RUN rm /etc/nginx/sites-enabled/default
 ADD wordpress.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/wordpress.conf /etc/nginx/sites-enabled/
+
+# Copy redis.conf for redis-server
+COPY redis.conf /redis.conf
 
 COPY wellknown/client.json /var/www/html/well-known/client
 COPY wellknown/server.json /var/www/html/well-known/server
@@ -45,6 +50,7 @@ RUN rm /var/www/html/wordpress/wp-config-sample.php
 ADD wp-config.php /var/www/html/wordpress/wp-config.php
 ADD advanced-cache.php /var/www/html/wordpress/wp-content/advanced-cache.php
 ADD wp-cache-config.php /var/www/html/wordpress/wp-content/wp-cache-config.php
+ADD object-cache.php /var/www/html/wordpress/wp-content/object-cache.php
 # Change the user and Permission of WordPress root directory
 RUN chown -R www-data:www-data /var/www/html/wordpress \
     && chmod -R 755 /var/www/html/wordpress
@@ -59,7 +65,7 @@ COPY startup.sh /usr/local/bin/startup.sh
 RUN chmod +x /usr/local/bin/startup.sh
 
 # Add cronjob: every 10 minutes, run wp-cron.php via curl
-RUN echo '*/10 * * * * curl --resolve "mtrnord.blog:443:127.0.0.1" https://mtrnord.blog/wp-cron.php > /dev/null 2>&1' > /etc/cron.d/wp-cron
+RUN echo '*/10 * * * * curl https://mtrnord.blog/wp-cron.php > /dev/null 2>&1' > /etc/cron.d/wp-cron
 RUN chmod 0644 /etc/cron.d/wp-cron && crontab /etc/cron.d/wp-cron
 
 # Ensure cron runs in the background with the app (use printf for cross-arch compatibility)

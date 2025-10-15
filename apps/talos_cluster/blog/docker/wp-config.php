@@ -7,6 +7,9 @@ define( 'DB_PASSWORD', '${DB_PASSWORD}' );
 define( 'DB_HOST', '${DB_HOST}' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
+define('WP_MEMORY_LIMIT', '256M');
+define('ACTIVITYPUB_AUTHORIZED_FETCH', true);
+define( 'ACTIVITYPUB_SEND_VARY_HEADER', true );
 
 /**#@+
  * Authentication unique keys and salts.
