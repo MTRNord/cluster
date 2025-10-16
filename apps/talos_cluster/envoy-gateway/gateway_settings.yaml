@@ -455,6 +455,18 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: git.midnightthoughts.space
+        - name: https-midnightthoughts-plausible
+          protocol: HTTPS
+          hostname: "plausible.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: plausible.midnightthoughts.space
         - name: http
           protocol: HTTP
           port: 80
