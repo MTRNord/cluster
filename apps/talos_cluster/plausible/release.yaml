@@ -1,0 +1,67 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+    name: plausible
+    namespace: blog
+spec:
+    chart:
+        spec:
+            chart: plausible-analytics
+            sourceRef:
+                kind: HelmRepository
+                name: plausible
+    interval: 60m
+    timeout: 10m
+    install:
+        timeout: 10m
+        remediation:
+            retries: 3
+    values:
+        baseURL: https://plausible.midnightthoughts.space
+        disableRegistration: true
+        totpVaultKey: ENC[AES256_GCM,data:tXOL3fSg2Xu5IgqVofgBvZGTODK7uDjzIK2HR4SqGHm3gFAaXkpxTBb1OMI=,iv:PXGHz5SGzqS7SvkTqjTPya+2ieF5cwLJw0DfA/Vtf0I=,tag:mEUJLEEF+qxwC/IPeJO61Q==,type:str]
+        clickhouseDatabaseURL: ENC[AES256_GCM,data:RvSx+1Ym/oJEBbLXLn8bHWLMWFDPPUTBh8IObyuJGUWlzg4X1UbKLIuAi5YeNB2yrZBVfM9ELVZsCJApONOrZG26525+kou0f4DmRiFxKSgT+eH/x3Mb1hc/yv5/h0Kkx4PTrzNhUvyFLqywNQEFiwyMhYAbEsuUm8j8cJm08l9RFc5xX6gXcXutZDGzdzaS/dqWYbxs3kIHqkqI,iv:kG9aJnbc4PEYBjK8CeAVKbnKH03eA88Cg5dss8CjEdA=,tag:nU3flOIwns07SFe49sedcQ==,type:str]
+        databaseURL: ENC[AES256_GCM,data:J5RmR4sJJZ1iKNDbQRA4UNNmk8UJMzzaZqU6b9xOHOvZjdj+bYVs3dD3gLKHpPdKp55c6WZV505f0C9eeo+FEapM3ipxzsNRcbOrF7zFpwVSQr0FG1OeJ/RY25SDuTwPve/nGQL5DZgyQvSQA/zomiFudkMszRXeUwhpKavE6jmxSZ9bIG6jbBpXNr87QMktuDirtYJmSJO72eU6ZQCCy5E=,iv:INaiWi1e69POVtfAVgjnh4Bsd1zmblRp5Y/Rm/W9vDE=,tag:hkDNpamNk+jYZl4x6vq4pQ==,type:str]
+        mailer:
+            # TODO: Set up mailer
+            enabled: false
+        postgresql:
+            enabled: false
+        clickhouse:
+            auth:
+                password: ENC[AES256_GCM,data:bN5kN21E9bpF8DMoXmvYbjPl+mqEwxTdGZuNME/F6SAkDEJCWa8vOuciIX6OPTw79IJ0hnpFhfUnnzSkIGWS9g==,iv:VqL5Ser0rTYU6WUMmNKTJtZChAZtK+nsnLV3U9FgCuQ=,tag:EiHbI5S/0ef9XX0ccTuP7Q==,type:str]
+            persistence:
+                storageClass: longhorn
+                enabled: true
+                size: 8Gi
+        ingress:
+            enabled: false
+            annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-dns
+            hosts:
+                - plausible.midnightthoughts.space
+            path: /
+            tls:
+                - secretName: plausible.midnightthoughts.space-tls
+                  hosts:
+                    - plausible.midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCMkRvUTB3L2xpcFJNaTZn
+            R054UkJYRjRqWUdkS0szN25PRTZDclFMQWxVCnBzSWhDOWhvUEszUUhSNjNWdENi
+            VmsyWU5zRk1GeEE2dm1aekl3LzVWL2MKLS0tIHZWRHZONmFuaTdrcFMxUmVrK3BS
+            SDd4ekJjbTdtTVlONWdPM3pRK015MUEKIEXHPt2qVOuLZgOJxDj0WIdHLIlFri2z
+            5/eK6C8eNEhbntLmrKCpHgIQDN1Z59nHsqWG4iGOxwq8MO5yTd4d5Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-10-16T20:16:27Z"
+    mac: ENC[AES256_GCM,data:fTG04BZQa6prIdD4N4pRJfwBOIZAW0qOYgZGK2SIKHTryD6A50X3mY2h8nnyQnLD58mxGtADzkkkoTf9rQ3rGUK/lR5zyfxTGZ+cn3XGB7VZJMRWOZI/nMGMcHpohIReNIXPlhZ1icrpkVGe26pb/yIIfoXdomoXx4SAq7GQ9+g=,iv:ezgggADwhOWMNwzorvhoRigZAdhIFF7wUEHfmSn3pHk=,tag:Dtq51OLXR9TqUXoMgPiagg==,type:str]
+    pgp: []
+    encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+    version: 3.9.1

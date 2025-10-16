@@ -113,6 +113,21 @@ RUN wget -q https://downloads.wordpress.org/plugin/wp-mail-smtp.4.6.0.zip \
     && unzip -q wp-mail-smtp.4.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm wp-mail-smtp.4.6.0.zip
 
+# Install Simply Gallery Block
+RUN wget -q https://downloads.wordpress.org/plugin/simply-gallery-block.3.2.7.zip \
+    && unzip -q simply-gallery-block.3.2.7.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm simply-gallery-block.3.2.7.zip
+
+# Install Table of Contents Block
+RUN wget -q https://downloads.wordpress.org/plugin/table-of-content-block.1.0.6.zip \
+    && unzip -q table-of-content-block.1.0.6.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm table-of-content-block.1.0.6.zip
+
+# Install Plausible Analytics
+RUN wget -q https://downloads.wordpress.org/plugin/plausible-analytics.latest-stable.zip \
+    && unzip -q plausible-analytics.latest-stable.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm plausible-analytics.latest-stable.zip
+
 # Install twenty-twenty-five theme
 RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
     && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
