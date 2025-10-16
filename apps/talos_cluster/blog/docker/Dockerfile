@@ -56,10 +56,72 @@ COPY php.ini /etc/php/8.4/fpm/php.ini
 RUN wget -q https://wordpress.org/latest.zip \
     && unzip -q latest.zip -d /var/www/html/ \
     && rm latest.zip
+# Install WP Super Cache plugin
+RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.0.2.zip \
+    && unzip -q wp-super-cache.3.0.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm wp-super-cache.3.0.2.zip
+# Install Redis Object Cache plugin
+RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
+    && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm redis-cache.2.7.0.zip
+# Install ActivityPub plugin
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.5.0.zip \
+    && unzip -q activitypub.7.5.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.7.5.0.zip
+# Install Embed Optimizer
+RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta2.zip \
+    && unzip -q embed-optimizer.1.0.0-beta2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm embed-optimizer.1.0.0-beta2.zip
+# Install Enhanced Responsive Images
+RUN wget -q https://downloads.wordpress.org/plugin/auto-sizes.1.7.0.zip \
+    && unzip -q auto-sizes.1.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm auto-sizes.1.7.0.zip
+# Install Friends
+RUN wget -q https://downloads.wordpress.org/plugin/friends.3.6.0.zip \
+    && unzip -q friends.3.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm friends.3.6.0.zip
+# Install Image Placeholders
+RUN wget -q https://downloads.wordpress.org/plugin/dominant-color-images.1.2.0.zip \
+    && unzip -q dominant-color-images.1.2.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm dominant-color-images.1.2.0.zip
+# Install Image Prioritizer
+RUN wget -q https://downloads.wordpress.org/plugin/image-prioritizer.1.0.0-beta2.zip \
+    && unzip -q image-prioritizer.1.0.0-beta2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm image-prioritizer.1.0.0-beta2.zip
+# Install Index WP MySQL For Speed
+RUN wget -q https://downloads.wordpress.org/plugin/index-wp-mysql-for-speed.1.5.4.zip \
+    && unzip -q index-wp-mysql-for-speed.1.5.4.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm index-wp-mysql-for-speed.1.5.4.zip
+# Install Modern Image Formats
+RUN wget -q https://downloads.wordpress.org/plugin/webp-uploads.2.6.0.zip \
+    && unzip -q webp-uploads.2.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm webp-uploads.2.6.0.zip
+# Install Optimization Detective
+RUN wget -q https://downloads.wordpress.org/plugin/optimization-detective.1.0.0-beta3.zip \
+    && unzip -q optimization-detective.1.0.0-beta3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm optimization-detective.1.0.0-beta3.zip
+# Install Performance Lab
+RUN wget -q https://downloads.wordpress.org/plugin/performance-lab.4.0.0.zip \
+    && unzip -q performance-lab.4.0.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm performance-lab.4.0.0.zip
+# Install Speculative Loading
+RUN wget -q https://downloads.wordpress.org/plugin/speculation-rules.1.6.0.zip \
+    && unzip -q speculation-rules.1.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm speculation-rules.1.6.0.zip
+# Install WP Mail SMTP
+RUN wget -q https://downloads.wordpress.org/plugin/wp-mail-smtp.4.6.0.zip \
+    && unzip -q wp-mail-smtp.4.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm wp-mail-smtp.4.6.0.zip
+
+# Install twenty-twenty-five theme
+RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
+    && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
+    && rm twentytwentyfive.1.3.zip
 
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default
 COPY wordpress.conf /etc/nginx/sites-available/wordpress.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 RUN ln -s /etc/nginx/sites-available/wordpress.conf /etc/nginx/sites-enabled/wordpress.conf
 
 # Copy redis config and well-known files
@@ -75,6 +137,7 @@ COPY wp-config.php /var/www/html/wordpress/wp-config.php
 COPY advanced-cache.php /var/www/html/wordpress/wp-content/advanced-cache.php
 COPY wp-cache-config.php /var/www/html/wordpress/wp-content/wp-cache-config.php
 COPY object-cache.php /var/www/html/wordpress/wp-content/object-cache.php
+COPY opcache-preload.php /var/www/html/wordpress/opcache-preload.php
 
 # Fix permissions for the webroot
 RUN chown -R www-data:www-data /var/www/ \

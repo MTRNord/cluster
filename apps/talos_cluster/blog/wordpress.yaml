@@ -103,12 +103,12 @@ spec:
                       - name: wordpress-persistent-storage
                         mountPath: /var/www/html/wordpress/wp-content/uploads
                         subPath: uploads
-                      - name: wordpress-persistent-storage
-                        mountPath: /var/www/html/wordpress/wp-content/plugins
-                        subPath: plugins
-                      - name: wordpress-persistent-storage
-                        mountPath: /var/www/html/wordpress/wp-content/themes
-                        subPath: themes
+                      #- name: wordpress-persistent-storage
+                      #  mountPath: /var/www/html/wordpress/wp-content/plugins
+                      #  subPath: plugins
+                      #- name: wordpress-persistent-storage
+                      #  mountPath: /var/www/html/wordpress/wp-content/themes
+                      #  subPath: themes
                   readinessProbe:
                       httpGet:
                           path: /wp-login.php
