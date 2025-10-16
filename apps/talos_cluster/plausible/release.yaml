@@ -19,17 +19,18 @@ spec:
     values:
         baseURL: https://plausible.midnightthoughts.space
         disableRegistration: true
-        totpVaultKey: ENC[AES256_GCM,data:rdtRMp5Kax9plEAW0pbd+hsxNmk4NjRT2ljMlz22h8RYShJZkmzaV+sCC8s=,iv:do/+dTGXs65dKuj6cYiDzmErEzWGDvE6NGxBCJ2g6Yg=,tag:1BtwCKkKRUzlulGRfpf9Gg==,type:str]
-        clickhouseDatabaseURL: ENC[AES256_GCM,data:VNVLLO1NLylc+XXnsLzU268cq9uQjjXpcroxB6uKoBrHi0krfhrkn3yXMdEU4A4m5w9TI8JkdFEeVyD5u9r9eqfa//RKGVYINLdGbbFaQDj+Ctkq68j8kGwlMspffspP3sF+Bjb0LMgUC32b15m1Hd8Ccc2Hy4DQc40371I/sOjCF/pTNiml6iB5EjyipIMnwJxSWAO9Gg==,iv:BpWucD4yczLbgRZkeZCxybK1gNfNAN7s9E2xRcYX6oc=,tag:4PYNRFOR63grZG2P/MIGkQ==,type:str]
-        databaseURL: ENC[AES256_GCM,data:bOO7J8PRjO5wNQSJcbEbWvpn1TnRz+Pn3nzmHIXqJdvUb7vEZ0JPU2r09h1bxv/scm++xTLZpw1hxHrI/41xahz1sI1jhlPbqnaPiU5uoHJ1CcaHHV7R0mKCPyz87uyq/aFtlqzMX9HKEUKNZVw5YkRxKXreR39an/fhuA/SJ5T6N3ZsoXWgUD02tgHQKOxXxEdOcXKLmD8=,iv:1Zo5WKdvM1Epq5kVP8xsVBN7yvQowSbni4FmHnuhZPo=,tag:wJeoOTB1gamE+8GS83OxWQ==,type:str]
+        totpVaultKey: ENC[AES256_GCM,data:phs59t5MNsWT5TAMc5cLymzTgiQx54t9ZsfJSFjt7IZd0E8Z736Ju7a3SkY=,iv:K6kqKAw2GgPCvUkAq6QXDg9ieUq0OlYGVvx4zt9hCLw=,tag:bC14dw+jDTY5JlqImT7E1w==,type:str]
+        clickhouseDatabaseURL: ENC[AES256_GCM,data:vgjEEUhMNOvTZyqsG1ZVUT7eckPvNcpTRkOd/n1poE5H3phWuh4i3vRx6/zausguEtkTiQUD0e2aegOJQX/W4K/fjjONEp+jVMQy9LW7DbLDb2fD70Grw+ur6uyYOQTfxu2tMdZCCsKyWDedV692+//irTENNUkSn+Z1CzwhrDIoKc7ffB8BEUlDSCRbApFM/YcLMesSbw==,iv:yVhoQ9RzG+PYanwcsd5G82W5tCJMJ6hjSyiCtVOLFuA=,tag:4OxQavM/TCx6SbdyPC6JCw==,type:str]
+        databaseURL: ENC[AES256_GCM,data:VTrWTnwACJmZTmTQGypSVfT2Z/cmkdQc8URzvo+3egnMXiCVGCFwjV1GqaijmlN9Bg1fjoCqZCKTl4jLHMdIjLItaWgYPCZYy+uRBYfwsdgSXyGRTFibhieFDEilyTG9Sa9MCfqNQ0LQ5mDE8hplxi4SxHh9n8PaD7CEcYiDVaTGSPN+S2/Bkpb6w+NHeE8HEyvqMz37A4Q=,iv:XQwZe1lv5rbvhk7M7YGO50Yhre96dfc0H7bW3zNtYTE=,tag:KKOJ8yrRiyS8IpMT6gyYBQ==,type:str]
         mailer:
             # TODO: Set up mailer
             enabled: false
         postgresql:
             enabled: false
         clickhouse:
+            resourcesPreset: medium
             auth:
-                password: ENC[AES256_GCM,data:CgyjAblaS5JfAD2HMuGRguGgvu1W7Qn72+2Ye+Q4mURGL58mkguwvicovSPaF3G+TP5/0TE+onnY4x+I3EaPzw==,iv:54oYzwlbRycDMDQY9bizatc85Ib0HBa5OOQgyMNWLJ4=,tag:OzkAgCnZIGDF4ltg0710OQ==,type:str]
+                password: ENC[AES256_GCM,data:ofv7d+L4BNn/sstMOMAqpOAnb4W+jEAVQn5iZZ32OsukIdNCxwHF7liE0sRltf5lEGESCrOJeLGXDO9V01pjZw==,iv:SP5bCrvWOJs2Pq1NGqwI62j88qKNOMBLucFGU4Y6GQs=,tag:6mh6/ExzttY5gI/5evLJEQ==,type:str]
             persistence:
                 storageClass: longhorn
                 enabled: true
@@ -54,14 +55,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDUU52eUU0dXExY0t0MW1h
-            dTNWOGNWVkFpQ296VE00UXlsZEFIdXVCclNrCncwL0FJRjBXa3VvYjhRajdUdUgy
-            Zk45NEg0VmZsU2RmeTBNTHE3YWVpWUkKLS0tIElPZ0dxNTFDb0Yzb21iNjFBalRB
-            elZhcElrRWxzT1hmQjdQTTNxdXNtUGMK6K2S6nKyEbre0XzWvPzjGA5uq6HQGnka
-            oXs60HkVQsqNpdJziMB2LJ2qZQB9Tq7cemxauUCNMvimft2N78Mu4A==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhZTNIOHBYWXlZSmRDNGN5
+            Yyt5amFxQmQ1K2pOQXI5bERpWkVzdzhEVkRBCkE3aEZ4ekpiLzV4dUVDQm14MVhz
+            ajVRTlREbUdrMDA3STB1eXprNzcwODQKLS0tIFJmbmdybyt5bFNzVVFTQVUvS2dn
+            M1JsK3R5L2Z1TFJyMzBSZVpxTko3RFEKiyLPXRSN6ATgYdauO52LAskukc+DXUFE
+            a8rZF5ULJdbyLqbizs0cJyhKp6vVVAOuDpQjRR1PBTH4sIjk+q/mAA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-16T20:30:17Z"
-    mac: ENC[AES256_GCM,data:HgYHFzl23CaWt/AOhc578AkXxh9XIC2SEei0Y0UHmBjBDykMUJXZ3pJoZVYhWSSbSFcpP3aBuWkvaGdBRXfKlkKYS9YYzUwdgqKkPu7C/OHzoSZ+LCUlONkHWIol7X2CWm6EHxjEuoynv898GseEAaxUC+ukDgrSqGxcdV4iFco=,iv:s/xOgjdoQH4GiJKHEu8u6uH/xyoXPvUoTRZtRiUju0s=,tag:pN5bwKeVZdrRUCNRir7tLg==,type:str]
+    lastmodified: "2025-10-16T20:52:32Z"
+    mac: ENC[AES256_GCM,data:6HtvMkIGXipyBc4RXAdX8wHGHdUCcIBq+gzcyE2Kbg7+boWUjmGgnAoJcv0wwvuOXI0ek1rlI/A9iOTz1NUxDxOzAAsZ6YmD/WVGA8bZbKEMMFnGfWvyQ9TAiEwJoeCrA0427WaPHo3DipOsukfBF/nry3nEVySmdLe4QCuFFSM=,iv:edQHGQn+cnxMpWljUkTgy2bVdW31VzqrU5yDoAsIhI0=,tag:IurbLTXrDMRZqsR9EnruRA==,type:str]
     pgp: []
     encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
     version: 3.9.1
