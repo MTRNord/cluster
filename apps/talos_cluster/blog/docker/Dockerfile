@@ -128,6 +128,21 @@ RUN wget -q https://downloads.wordpress.org/plugin/plausible-analytics.latest-st
     && unzip -q plausible-analytics.latest-stable.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm plausible-analytics.latest-stable.zip
 
+# Install Public Post Preview
+RUN wget -q https://downloads.wordpress.org/plugin/public-post-preview.3.0.1.zip \
+    && unzip -q public-post-preview.3.0.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm public-post-preview.3.0.1.zip
+
+# Install Opengraph plugin
+RUN wget -q https://downloads.wordpress.org/plugin/opengraph.2.0.2.zip \
+    && unzip -q opengraph.2.0.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm opengraph.2.0.2.zip
+
+# Install surveyjs plugin
+RUN wget -q https://downloads.wordpress.org/plugin/surveyjs.zip \
+    && unzip -q surveyjs.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm surveyjs.zip
+
 # Install twenty-twenty-five theme
 RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
     && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
