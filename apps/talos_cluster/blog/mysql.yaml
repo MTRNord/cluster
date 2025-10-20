@@ -18,74 +18,74 @@ spec:
                 - name: mysql
                   image: mariadb:12.0
                   env:
-                      - name: MARIADB_ROOT_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: admin-password
-                      - name: MARIADB_USER
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: username
-                      - name: MARIADB_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: password
-                      - name: MARIADB_DATABASE
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: db-name
-                      - name: MYSQL_ROOT_HOST
-                        value: "%"
+                    - name: MARIADB_ROOT_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: admin-password
+                    - name: MARIADB_USER
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: username
+                    - name: MARIADB_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: password
+                    - name: MARIADB_DATABASE
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: db-name
+                    - name: MYSQL_ROOT_HOST
+                      value: "%"
                   volumeMounts:
-                      - name: mysql-volume
-                        mountPath: /var/lib/mysql
-                      - name: mysql-configmap
-                        mountPath: /docker-entrypoint-initdb.d
-                      - name: mysql-config
-                        mountPath: /etc/mysql/conf.d
+                    - name: mysql-volume
+                      mountPath: /var/lib/mysql
+                    - name: mysql-configmap
+                      mountPath: /docker-entrypoint-initdb.d
+                    - name: mysql-config
+                      mountPath: /etc/mysql/conf.d
                   resources:
-                      requests:
-                          memory: "256Mi"
-                          cpu: "100m"
-                      limits:
-                          memory: "1024Mi"
-                          cpu: "600m"
+                    requests:
+                        memory: "256Mi"
+                        cpu: "100m"
+                    limits:
+                        memory: "1024Mi"
+                        cpu: "600m"
                   livenessProbe:
-                      tcpSocket:
-                          port: 3306
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                      timeoutSeconds: 5
-                      successThreshold: 1
-                      failureThreshold: 3
+                    tcpSocket:
+                        port: 3306
+                    initialDelaySeconds: 30
+                    periodSeconds: 10
+                    timeoutSeconds: 5
+                    successThreshold: 1
+                    failureThreshold: 3
                   readinessProbe:
-                      tcpSocket:
-                          port: 3306
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                      timeoutSeconds: 5
-                      successThreshold: 1
-                      failureThreshold: 3
+                    tcpSocket:
+                        port: 3306
+                    initialDelaySeconds: 30
+                    periodSeconds: 10
+                    timeoutSeconds: 5
+                    successThreshold: 1
+                    failureThreshold: 3
             volumes:
                 - name: mysql-configmap
                   configMap:
-                      name: mysql-configmap
+                    name: mysql-configmap
                 - name: mysql-config
                   configMap:
-                      name: mysql-config
+                    name: mysql-config
     volumeClaimTemplates:
         - metadata:
-              name: mysql-volume
+            name: mysql-volume
           spec:
-              accessModes: ["ReadWriteOnce"]
-              storageClassName: "longhorn"
-              resources:
-                  requests:
-                      storage: 2Gi
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: "longhorn"
+            resources:
+                requests:
+                    storage: 2Gi
 ---
 apiVersion: v1
 kind: Service

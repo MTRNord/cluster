@@ -36,6 +36,50 @@ spec:
             imagePullSecrets:
                 - name: ghcr-pull
             containers:
+                - name: anubis
+                  image: ghcr.io/techarohq/anubis:latest
+                  imagePullPolicy: Always
+                  env:
+                      - name: "BIND"
+                        value: ":8081"
+                      - name: "DIFFICULTY"
+                        value: "4"
+                      - name: ED25519_PRIVATE_KEY_HEX
+                        valueFrom:
+                            secretKeyRef:
+                                name: anubis-key
+                                key: ED25519_PRIVATE_KEY_HEX
+                      - name: "METRICS_BIND"
+                        value: ":9090"
+                      - name: "SERVE_ROBOTS_TXT"
+                        value: "true"
+                      - name: "TARGET"
+                        value: "http://localhost:8080"
+                      - name: "OG_PASSTHROUGH"
+                        value: "false"
+                      - name: "OG_EXPIRY_TIME"
+                        value: "24h"
+                  resources:
+                      limits:
+                          cpu: 750m
+                          memory: 256Mi
+                      requests:
+                          cpu: 250m
+                          memory: 256Mi
+                  ports:
+                      - containerPort: 8081
+                        name: anubis
+                        protocol: TCP
+                  securityContext:
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      runAsNonRoot: true
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                          drop:
+                              - ALL
+                      seccompProfile:
+                          type: RuntimeDefault
                 - name: cgit
                   image: ghcr.io/mtrnord/cgit-docker:main
                   imagePullPolicy: Always

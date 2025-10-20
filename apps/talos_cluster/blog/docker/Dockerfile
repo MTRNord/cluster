@@ -114,9 +114,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/wp-mail-smtp.4.6.0.zip \
     && rm wp-mail-smtp.4.6.0.zip
 
 # Install Simply Gallery Block
-RUN wget -q https://downloads.wordpress.org/plugin/simply-gallery-block.3.2.7.zip \
-    && unzip -q simply-gallery-block.3.2.7.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm simply-gallery-block.3.2.7.zip
+RUN wget -q https://downloads.wordpress.org/plugin/simply-gallery-block.3.2.8.zip \
+    && unzip -q simply-gallery-block.3.2.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm simply-gallery-block.3.2.8.zip
 
 # Install Table of Contents Block
 RUN wget -q https://downloads.wordpress.org/plugin/table-of-content-block.1.0.6.zip \

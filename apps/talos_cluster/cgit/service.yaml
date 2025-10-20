@@ -13,6 +13,10 @@ spec:
           targetPort: http
           protocol: TCP
           name: http
+        - port: 8081
+          targetPort: anubis
+          protocol: TCP
+          name: anubis
         - port: 2222
           targetPort: ssh
           protocol: TCP
@@ -32,7 +36,7 @@ spec:
     rules:
         - backendRefs:
               - name: cgit
-                port: 8080
+                port: 8081
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
