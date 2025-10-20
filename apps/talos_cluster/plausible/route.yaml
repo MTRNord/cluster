@@ -14,3 +14,17 @@ spec:
         - backendRefs:
               - name: plausible-plausible-analytics
                 port: 80
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+    name: plausible-compression
+    namespace: blog
+spec:
+    targetRef:
+        group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        name: plausible
+    compression:
+        - type: Gzip
+        - type: Brotli
