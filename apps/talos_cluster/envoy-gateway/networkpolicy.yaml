@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+    name: ingress
+    namespace: envoy-gateway
+spec:
+    endpointSelector: {}
+    ingress:
+        - fromCIDRSet:
+              - cidr: 0.0.0.0/0
+                except:
+                    - 52.230.152.1/24
+                    - 20.171.206.1/24
+                    - 20.171.207.1/24
+                    - 4.227.36.1/24
+                    - 20.125.66.80/32
+                    - 172.182.204.1/24
+                    - 172.182.214.1/24
+                    - 172.182.215.1/24
+                    - 132.196.86.1/24
+                    - 172.182.202.1/24
+                    - 172.182.207.1/24
+                    - 74.7.227.128/32
+                    - 74.7.227.1/24
+                    - 74.7.230.1/24
+                    - 74.7.228.1/24
+        - fromEndpoints:
+              - {}
+        - fromEntities:
+              - cluster
