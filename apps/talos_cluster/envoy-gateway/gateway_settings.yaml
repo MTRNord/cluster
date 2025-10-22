@@ -110,7 +110,10 @@ spec:
               kinds:
                   - kind: TCPRoute
               namespaces:
-                  from: All
+                  from: Selector
+                  selector:
+                      matchLabels:
+                          app: cgit
         - name: https-talos-midnightthoughts
           protocol: HTTPS
           hostname: "talos.midnightthoughts.space"
@@ -238,7 +241,10 @@ spec:
               kinds:
                   - kind: TCPRoute
               namespaces:
-                  from: All
+                  from: Selector
+                  selector:
+                      matchLabels:
+                          app: authentik
         - name: https-mtrnord-blog-gts
           protocol: HTTPS
           hostname: "gts.mtrnord.blog"
