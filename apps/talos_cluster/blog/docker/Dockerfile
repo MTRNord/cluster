@@ -148,6 +148,11 @@ RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
     && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
     && rm twentytwentyfive.1.3.zip
 
+# Install Stop User Enumeration plugin
+RUN wget -q https://downloads.wordpress.org/plugin/stop-user-enumeration.1.7.5.zip \
+    && unzip -q stop-user-enumeration.1.7.5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm stop-user-enumeration.1.7.5.zip
+
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default
 COPY wordpress.conf /etc/nginx/sites-available/wordpress.conf
