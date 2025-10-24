@@ -42,18 +42,18 @@ spec:
                 podAntiAffinity:
                     requiredDuringSchedulingIgnoredDuringExecution:
                         - labelSelector:
-                            matchExpressions:
-                                - key: app
-                                  operator: In
-                                  values:
-                                    - draupnir4all
+                              matchExpressions:
+                                  - key: app
+                                    operator: In
+                                    values:
+                                        - draupnir4all
                           topologyKey: "kubernetes.io/hostname"
             containers:
                 - name: draupnir4all
                   #image: gnuxie/draupnir:develop
                   #imagePullPolicy: Always
                   #image: ghcr.io/mtrnord/draupnir:latest
-                  image: gnuxie/draupnir:v2.6.1
+                  image: gnuxie/draupnir:v2.7.1
                   imagePullPolicy: IfNotPresent
                   #   env:
                   #     - name: TRACING_ENABLED
@@ -67,97 +67,107 @@ spec:
                   #     - name: TRACING_METRIC_URL
                   #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/metrics
                   env:
-                    - name: NODE_OPTIONS
-                      value: "--trace-warnings"
+                      - name: NODE_OPTIONS
+                        value: "--trace-warnings"
                   command: ["./draupnir-entrypoint.sh"]
-                  args: ["appservice", "-c", "/data/config/config.appservice.yaml", "-f", "/data/config/draupnir-registration.yaml",
-                    "--draupnir-config", "/data/config/draupnir-config.yaml", "-p", "9000"]
+                  args:
+                      [
+                          "appservice",
+                          "-c",
+                          "/data/config/config.appservice.yaml",
+                          "-f",
+                          "/data/config/draupnir-registration.yaml",
+                          "--draupnir-config",
+                          "/data/config/draupnir-config.yaml",
+                          "-p",
+                          "9000",
+                      ]
                   resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
+                      limits: {}
+                      requests:
+                          memory: "344Mi"
+                          cpu: "252m"
                   securityContext:
-                    runAsUser: 1000
-                    runAsGroup: 1000
-                    readOnlyRootFilesystem: true
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      readOnlyRootFilesystem: true
                   ports:
-                    - containerPort: 9001
-                      name: api
-                      protocol: TCP
-                    - containerPort: 9000
-                      name: appservice
-                      protocol: TCP
+                      - containerPort: 9001
+                        name: api
+                        protocol: TCP
+                      - containerPort: 9000
+                        name: appservice
+                        protocol: TCP
                   volumeMounts:
-                    - name: configs
-                      mountPath: "/data/config"
-                      readOnly: true
-                    - mountPath: /data/storage
-                      name: storage
-                    - mountPath: /tmp
-                      name: tmp
+                      - name: configs
+                        mountPath: "/data/config"
+                        readOnly: true
+                      - mountPath: /data/storage
+                        name: storage
+                      - mountPath: /tmp
+                        name: tmp
                   livenessProbe:
-                    httpGet:
-                        path: /healthz
-                        port: appservice
-                        scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
+                      httpGet:
+                          path: /healthz
+                          port: appservice
+                          scheme: HTTP
+                      initialDelaySeconds: 15
+                      periodSeconds: 10
                   startupProbe:
-                    httpGet:
-                        path: /healthz
-                        port: appservice
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
-                    # - name: draupnir4all-web
-                    #   image: ghcr.io/mtrnord/draupnir4all-web:latest
-                    #   imagePullPolicy: Always
-                    #   env:
-                    #     - name: SESSION_SECRET
-                    #       valueFrom:
-                    #         secretKeyRef:
-                    #             name: draupnir4all-web
-                    #             key: session-secret
-                    #     - name: D4ALL_INSTANCE_ADDRESS
-                    #       value: "http://localhost:9001"
-                    #   resources:
-                    #     limits: {}
-                    #     requests:
-                    #         memory: "344Mi"
-                    #         cpu: "252m"
-                    #   securityContext:
-                    #     runAsUser: 1000
-                    #     runAsGroup: 1000
-                    #     readOnlyRootFilesystem: true
-                    #   ports:
-                    #     - containerPort: 3000
-                    #       name: web
-                    #       protocol: TCP
-                    #   volumeMounts:
-                    #     - mountPath: /tmp
-                    #       name: tmp
-                    #   livenessProbe:
-                    #     httpGet:
-                    #         path: /
-                    #         port: web
-                    #         scheme: HTTP
-                    #     initialDelaySeconds: 15
-                    #     periodSeconds: 10
-                    #   startupProbe:
-                    #     httpGet:
-                    #         path: /
-                    #         port: web
-                    #     initialDelaySeconds: 15
-                    #     failureThreshold: 30
-                    #     periodSeconds: 10
+                      httpGet:
+                          path: /healthz
+                          port: appservice
+                      initialDelaySeconds: 15
+                      failureThreshold: 30
+                      periodSeconds: 10
+                      # - name: draupnir4all-web
+                      #   image: ghcr.io/mtrnord/draupnir4all-web:latest
+                      #   imagePullPolicy: Always
+                      #   env:
+                      #     - name: SESSION_SECRET
+                      #       valueFrom:
+                      #         secretKeyRef:
+                      #             name: draupnir4all-web
+                      #             key: session-secret
+                      #     - name: D4ALL_INSTANCE_ADDRESS
+                      #       value: "http://localhost:9001"
+                      #   resources:
+                      #     limits: {}
+                      #     requests:
+                      #         memory: "344Mi"
+                      #         cpu: "252m"
+                      #   securityContext:
+                      #     runAsUser: 1000
+                      #     runAsGroup: 1000
+                      #     readOnlyRootFilesystem: true
+                      #   ports:
+                      #     - containerPort: 3000
+                      #       name: web
+                      #       protocol: TCP
+                      #   volumeMounts:
+                      #     - mountPath: /tmp
+                      #       name: tmp
+                      #   livenessProbe:
+                      #     httpGet:
+                      #         path: /
+                      #         port: web
+                      #         scheme: HTTP
+                      #     initialDelaySeconds: 15
+                      #     periodSeconds: 10
+                      #   startupProbe:
+                      #     httpGet:
+                      #         path: /
+                      #         port: web
+                      #     initialDelaySeconds: 15
+                      #     failureThreshold: 30
+                      #     periodSeconds: 10
             volumes:
                 - name: configs
                   secret:
-                    secretName: draupnir-appservice
+                      secretName: draupnir-appservice
                 - name: storage
                   persistentVolumeClaim:
-                    claimName: d4all-persistent-storage
+                      claimName: d4all-persistent-storage
                 - name: tmp
                   emptyDir:
-                    sizeLimit: 2048Mi
+                      sizeLimit: 2048Mi
