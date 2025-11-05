@@ -69,7 +69,17 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 }
 define('WP_HOME', 'https://mtrnord.blog');
 define('WP_SITEURL', 'https://mtrnord.blog');
-define( 'DISABLE_WP_CRON', true );
+// define( 'DISABLE_WP_CRON', true );
+define( 'SMTP_USER',   'support@midnightthoughts.space' );    // Benutzername für die SMTP-Authentifizierung
+// Get password from environment variable
+define( 'SMTP_PASS',    getenv('SMTP_PASS') );    // Passwort für die SMTP-Authentifizierung
+define( 'SMTP_HOST',   'mail.midnightthoughts.space' );    // Der Hostname des Mailservers
+define( 'SMTP_FROM',   'support@midnightthoughts.space' ); // SMTP Von E-Mail-Adresse
+define( 'SMTP_NAME',   'MTRNords Blog' );    // SMTP Von Name
+define( 'SMTP_PORT',   '465' );                  // SMTP-Portnummer - wahrscheinlich 25, 465 oder 587
+define( 'SMTP_SECURE', 'ssl' );                 // Zu verwendendes Verschlüsselungssystem - ssl oder tls
+define( 'SMTP_AUTH',    true );                 // SMTP-Authentifizierung verwenden (true|false)
+define( 'SMTP_DEBUG',   0 );                    // nur für Debugging-Zwecke auf 1 oder 2 setzen
 
 /* That's all, stop editing! Happy publishing. */
     

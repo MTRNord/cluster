@@ -56,6 +56,12 @@ COPY php.ini /etc/php/8.4/fpm/php.ini
 RUN wget -q https://wordpress.org/latest.zip \
     && unzip -q latest.zip -d /var/www/html/ \
     && rm latest.zip
+
+# Install twenty-twenty-five theme
+RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
+    && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
+    && rm twentytwentyfive.1.3.zip
+
 # Install WP Super Cache plugin
 RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.0.2.zip \
     && unzip -q wp-super-cache.3.0.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -118,11 +124,6 @@ RUN wget -q https://downloads.wordpress.org/plugin/simply-gallery-block.3.2.8.zi
     && unzip -q simply-gallery-block.3.2.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm simply-gallery-block.3.2.8.zip
 
-# Install Table of Contents Block
-RUN wget -q https://downloads.wordpress.org/plugin/table-of-content-block.1.0.6.zip \
-    && unzip -q table-of-content-block.1.0.6.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm table-of-content-block.1.0.6.zip
-
 # Install Plausible Analytics
 RUN wget -q https://downloads.wordpress.org/plugin/plausible-analytics.latest-stable.zip \
     && unzip -q plausible-analytics.latest-stable.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -143,15 +144,15 @@ RUN wget -q https://downloads.wordpress.org/plugin/surveyjs.zip \
     && unzip -q surveyjs.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm surveyjs.zip
 
-# Install twenty-twenty-five theme
-RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
-    && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
-    && rm twentytwentyfive.1.3.zip
-
 # Install Stop User Enumeration plugin
-RUN wget -q https://downloads.wordpress.org/plugin/stop-user-enumeration.1.7.5.zip \
-    && unzip -q stop-user-enumeration.1.7.5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm stop-user-enumeration.1.7.5.zip
+#RUN wget -q https://downloads.wordpress.org/plugin/stop-user-enumeration.1.7.5.zip \
+#    && unzip -q stop-user-enumeration.1.7.5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+#    && rm stop-user-enumeration.1.7.5.zip
+
+# Install Antispam Bee plugin
+RUN wget -q https://downloads.wordpress.org/plugin/antispam-bee.2.11.8.zip \
+    && unzip -q antispam-bee.2.11.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm antispam-bee.2.11.8.zip
 
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default
