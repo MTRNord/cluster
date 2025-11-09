@@ -6,12 +6,13 @@ resources:
     - staging_deployment.yaml
     - deployment.yaml
     - service.yaml
+    - tester-v2.yaml
 configMapGenerator:
     - name: connectivity-tester-config
       namespace: matrix
       files:
-        - config.json=config.json
+          - config.json=config.json
     - name: connectivity-tester-stage-config
       namespace: matrix
       files:
-        - config.json=staging_config.json
+          - config.json=staging_config.json

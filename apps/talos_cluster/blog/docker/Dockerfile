@@ -115,14 +115,14 @@ RUN wget -q https://downloads.wordpress.org/plugin/speculation-rules.1.6.0.zip \
     && unzip -q speculation-rules.1.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm speculation-rules.1.6.0.zip
 # Install WP Mail SMTP
-RUN wget -q https://downloads.wordpress.org/plugin/wp-mail-smtp.4.6.0.zip \
-    && unzip -q wp-mail-smtp.4.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm wp-mail-smtp.4.6.0.zip
+#RUN wget -q https://downloads.wordpress.org/plugin/wp-mail-smtp.4.6.0.zip \
+#    && unzip -q wp-mail-smtp.4.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+#    && rm wp-mail-smtp.4.6.0.zip
 
 # Install Simply Gallery Block
-RUN wget -q https://downloads.wordpress.org/plugin/simply-gallery-block.3.2.8.zip \
-    && unzip -q simply-gallery-block.3.2.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm simply-gallery-block.3.2.8.zip
+#RUN wget -q https://downloads.wordpress.org/plugin/simply-gallery-block.3.2.8.zip \
+#    && unzip -q simply-gallery-block.3.2.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+#    && rm simply-gallery-block.3.2.8.zip
 
 # Install Plausible Analytics
 RUN wget -q https://downloads.wordpress.org/plugin/plausible-analytics.latest-stable.zip \
@@ -153,6 +153,11 @@ RUN wget -q https://downloads.wordpress.org/plugin/surveyjs.zip \
 RUN wget -q https://downloads.wordpress.org/plugin/antispam-bee.2.11.8.zip \
     && unzip -q antispam-bee.2.11.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm antispam-bee.2.11.8.zip
+
+# Install Gallery Block Lightbox plugin
+RUN wget -q https://downloads.wordpress.org/plugin/gallery-block-lightbox.zip \
+    && unzip -q gallery-block-lightbox.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm gallery-block-lightbox.zip
 
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default

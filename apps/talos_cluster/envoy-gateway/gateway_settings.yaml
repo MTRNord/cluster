@@ -317,6 +317,18 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: connectivity-tester.mtrnord.blog-tls
+        - name: https-beta-connectivity-tester-mtrnord-blog
+          protocol: HTTPS
+          hostname: "beta.connectivity-tester.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: beta.connectivity-tester.mtrnord.blog-tls
         - name: https-federationtester-mtrnord-blog
           protocol: HTTPS
           hostname: "federationtester.mtrnord.blog"
