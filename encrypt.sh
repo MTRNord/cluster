@@ -6,6 +6,5 @@ sops --age=age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh \
      --in-place "$1"
 
 # Encrypt apps/talos_cluster/externaldns/release.yaml as a whole
-sops --age=age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh \
-     --encrypt \
-     --in-place apps/talos_cluster/externaldns/release.yaml
+#sops encrypt -i --age=age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh \
+#     apps/talos_cluster/externaldns/release2.yaml
