@@ -11,11 +11,6 @@ spec:
         profile: tlsserver
         solvers:
             - dns01:
-                cloudflare:
-                    apiTokenSecretRef:
-                        name: cloudflare-api-token-secret
-                        key: api-token
-            - dns01:
                 webhook:
                     groupName: acme.zacharyseguin.ca
                     solverName: pdns
@@ -24,7 +19,3 @@ spec:
                         apiKeySecretRef:
                             name: pdns-api-key
                             key: key
-              selector:
-                dnsZones:
-                    - "nordgedanken.dev"
-                    - "mtrnord.blog"
