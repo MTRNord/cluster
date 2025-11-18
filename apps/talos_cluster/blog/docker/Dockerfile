@@ -44,7 +44,7 @@ RUN phpenmod -v 8.4 -s fpm \
     redis apcu exif gettext \
     iconv opcache bz2 igbinary curl dom \
     intl gd imagick mbstring zip mysqlnd curl \
-    bcmath calendar ctype posix xmlreader xmlwriter
+    bcmath calendar ctype posix xmlreader xmlwriter sockets ffi xml readline
 
 # Copy PHP ini and extension INI files before enabling them (cache layer friendly)
 COPY 20-apcu.ini /etc/php/8.4/mods-available/20-apcu.ini
@@ -63,17 +63,17 @@ RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
     && rm twentytwentyfive.1.3.zip
 
 # Install WP Super Cache plugin
-RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.0.2.zip \
-    && unzip -q wp-super-cache.3.0.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm wp-super-cache.3.0.2.zip
+RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.0.3.zip \
+    && unzip -q wp-super-cache.3.0.3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm wp-super-cache.3.0.3.zip
 # Install Redis Object Cache plugin
 RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm redis-cache.2.7.0.zip
 # Install ActivityPub plugin
-RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.5.0.zip \
-    && unzip -q activitypub.7.5.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm activitypub.7.5.0.zip
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.6.1.zip \
+    && unzip -q activitypub.7.6.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.7.6.1.zip
 # Install Embed Optimizer
 RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta2.zip \
     && unzip -q embed-optimizer.1.0.0-beta2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -158,6 +158,16 @@ RUN wget -q https://downloads.wordpress.org/plugin/antispam-bee.2.11.8.zip \
 RUN wget -q https://downloads.wordpress.org/plugin/gallery-block-lightbox.zip \
     && unzip -q gallery-block-lightbox.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm gallery-block-lightbox.zip
+
+# Install Complianz
+#RUN wget -q https://downloads.wordpress.org/plugin/complianz-gdpr.7.4.3.zip \
+#    && unzip -q complianz-gdpr.7.4.3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+#    && rm complianz-gdpr.7.4.3.zip
+
+# Install Google XML Sitemaps
+RUN wget -q https://downloads.wordpress.org/plugin/google-sitemap-generator.4.1.21.zip \
+    && unzip -q google-sitemap-generator.4.1.21.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm google-sitemap-generator.4.1.21.zip
 
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default
