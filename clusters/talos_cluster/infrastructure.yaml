@@ -55,14 +55,6 @@ spec:
         name: flux-system
     path: ./infrastructure_talos/configs
     prune: true
-    patches:
-        - patch: |
-            - op: replace
-              path: /spec/acme/server
-              value: https://acme-v02.api.letsencrypt.org/directory
-          target:
-            kind: ClusterIssuer
-            name: letsencrypt-dns
     decryption:
         provider: sops
         secretRef:
