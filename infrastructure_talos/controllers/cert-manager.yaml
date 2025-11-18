@@ -38,6 +38,12 @@ spec:
                 namespace: cert-manager
             interval: 12h
     values:
+        global:
+            priorityClassName: system-cluster-critical
+        replicaCount: 2
+        podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
         installCRDs: true
         enableCertificateOwnerRef: false
         prometheus:
