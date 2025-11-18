@@ -11,19 +11,19 @@ spec:
         profile: tlsserver
         solvers:
             - dns01:
-                  cloudflare:
-                      apiTokenSecretRef:
-                          name: cloudflare-api-token-secret
-                          key: api-token
+                cloudflare:
+                    apiTokenSecretRef:
+                        name: cloudflare-api-token-secret
+                        key: api-token
             - dns01:
-                  webhook:
-                      groupName: acme.zacharyseguin.ca
-                      solverName: pdns
-                      config:
-                          host: http://10.0.64.129:8081
-                          apiKeySecretRef:
-                              name: pdns-api-key
-                              key: key
-                  selector:
-                      dnsZones:
-                          - "nordgedanken.dev"
+                webhook:
+                    groupName: acme.zacharyseguin.ca
+                    solverName: pdns
+                    config:
+                        host: http://10.0.64.129:8081
+                        apiKeySecretRef:
+                            name: pdns-api-key
+                            key: key
+              selector:
+                dnsZones:
+                    - "nordgedanken.dev"

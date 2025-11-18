@@ -16,28 +16,28 @@ spec:
                 - name: connectivity-tester-v2
                   image: ghcr.io/mtrnord/connectivity-tester-v2:latest
                   resources:
-                      limits: {}
-                      requests:
-                          memory: "344Mi"
-                          cpu: "252m"
+                    limits: {}
+                    requests:
+                        memory: "344Mi"
+                        cpu: "252m"
                   ports:
-                      - containerPort: 8000
-                        name: web
-                        protocol: TCP
+                    - containerPort: 8000
+                      name: web
+                      protocol: TCP
                   livenessProbe:
-                      httpGet:
-                          path: /
-                          port: web
-                          scheme: HTTP
+                    httpGet:
+                        path: /
+                        port: web
+                        scheme: HTTP
                   readinessProbe:
-                      httpGet:
-                          path: /
-                          port: web
-                          scheme: HTTP
+                    httpGet:
+                        path: /
+                        port: web
+                        scheme: HTTP
                   startupProbe:
-                      httpGet:
-                          path: /
-                          port: web
+                    httpGet:
+                        path: /
+                        port: web
 ---
 apiVersion: v1
 kind: Service
@@ -65,8 +65,8 @@ spec:
         - beta.connectivity-tester.mtrnord.blog
     rules:
         - backendRefs:
-              - name: connectivity-tester-v2
-                port: 8000
+            - name: connectivity-tester-v2
+              port: 8000
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s

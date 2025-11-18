@@ -7,27 +7,27 @@ configMapGenerator:
     - name: grafana-dashboards-matrix
       namespace: monitoring
       files:
-          #- draupnir4all_status.json=draupnir4all_status.json
-          #- d4all_pg.json=d4all_pg.json
-          - synapse.json=synapse.json
-          - connectivity-tester-dashboard.json=connectivity-tester-dashboard.json
+        #- draupnir4all_status.json=draupnir4all_status.json
+        #- d4all_pg.json=d4all_pg.json
+        - synapse.json=synapse.json
+        - connectivity-tester-dashboard.json=connectivity-tester-dashboard.json
       options:
-          labels:
-              grafana_dashboard: "1"
-          annotations:
-              grafana_folder: Matrix
+        labels:
+            grafana_dashboard: "1"
+        annotations:
+            grafana_folder: Matrix
     - name: grafana-dashboards-flux
       namespace: monitoring
       files:
-          - flux-control-plane-dashboard.json=flux-control-plane-dashboard.json
-          - flux-cluster-dashboard.json=flux-cluster-dashboard.json
-          - flux-logs-dashboard.json=flux-logs-dashboard.json
-          - flagger.json=flagger.json
+        - flux-control-plane-dashboard.json=flux-control-plane-dashboard.json
+        - flux-cluster-dashboard.json=flux-cluster-dashboard.json
+        - flux-logs-dashboard.json=flux-logs-dashboard.json
+        - flagger.json=flagger.json
       options:
-          labels:
-              grafana_dashboard: "1"
-          annotations:
-              grafana_folder: Flux
+        labels:
+            grafana_dashboard: "1"
+        annotations:
+            grafana_folder: Flux
     #- name: grafana-dashboards-ceph
     #  namespace: monitoring
     #  files:
@@ -42,12 +42,12 @@ configMapGenerator:
     - name: grafana-dashboards-envoy
       namespace: monitoring
       files:
-          - envoy-clusters.json=envoy-clusters.json
-          - envoy-gateway-global.json=envoy-gateway-global.json
-          - envoy-proxy-global.json=envoy-proxy-global.json
-          - global-ratelimit.json=global-ratelimit.json
+        - envoy-clusters.json=envoy-clusters.json
+        - envoy-gateway-global.json=envoy-gateway-global.json
+        - envoy-proxy-global.json=envoy-proxy-global.json
+        - global-ratelimit.json=global-ratelimit.json
       options:
-          labels:
-              grafana_dashboard: "1"
-          annotations:
-              grafana_folder: Envoy
+        labels:
+            grafana_dashboard: "1"
+        annotations:
+            grafana_folder: Envoy

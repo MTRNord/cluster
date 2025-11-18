@@ -32,112 +32,112 @@ spec:
                 - name: wordpress
                   image: ghcr.io/mtrnord/blog:latest
                   env:
-                      - name: DB_HOST
-                        value: mysql-service.blog.svc.cluster.local
-                      - name: DB_USER
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: username
-                      - name: DB_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: password
-                      - name: DB_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: db-name
-                      - name: AUTH_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: auth-key
-                      - name: SECURE_AUTH_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: secure-auth-key
-                      - name: LOGGED_IN_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: logged-in-key
-                      - name: NONCE_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: nonce-key
-                      - name: AUTH_SALT
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: auth-salt
-                      - name: SECURE_AUTH_SALT
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: secure-auth-salt
-                      - name: LOGGED_IN_SALT
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: logged-in-salt
-                      - name: NONCE_SALT
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: nonce-salt
-                      - name: SMTP_PASS
-                        valueFrom:
-                            secretKeyRef:
-                                name: mysql-cred
-                                key: smtp-pass
+                    - name: DB_HOST
+                      value: mysql-service.blog.svc.cluster.local
+                    - name: DB_USER
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: username
+                    - name: DB_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: password
+                    - name: DB_NAME
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: db-name
+                    - name: AUTH_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: auth-key
+                    - name: SECURE_AUTH_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: secure-auth-key
+                    - name: LOGGED_IN_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: logged-in-key
+                    - name: NONCE_KEY
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: nonce-key
+                    - name: AUTH_SALT
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: auth-salt
+                    - name: SECURE_AUTH_SALT
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: secure-auth-salt
+                    - name: LOGGED_IN_SALT
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: logged-in-salt
+                    - name: NONCE_SALT
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: nonce-salt
+                    - name: SMTP_PASS
+                      valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: smtp-pass
                   ports:
-                      - containerPort: 8080
-                        name: wordpress
+                    - containerPort: 8080
+                      name: wordpress
                   resources:
-                      requests:
-                          memory: "256Mi"
-                          cpu: "100m"
-                      limits:
-                          memory: "2048Mi"
-                          cpu: "2000m"
+                    requests:
+                        memory: "256Mi"
+                        cpu: "100m"
+                    limits:
+                        memory: "2048Mi"
+                        cpu: "2000m"
                   volumeMounts:
-                      - name: wordpress-persistent-storage
-                        mountPath: /var/www/html/wordpress/wp-content/uploads
-                        subPath: uploads
-                        #- name: wordpress-persistent-storage
-                        #  mountPath: /var/www/html/wordpress/wp-content/plugins
-                        #  subPath: plugins
-                        #- name: wordpress-persistent-storage
-                        #  mountPath: /var/www/html/wordpress/wp-content/themes
-                        #  subPath: themes
+                    - name: wordpress-persistent-storage
+                      mountPath: /var/www/html/wordpress/wp-content/uploads
+                      subPath: uploads
+                      #- name: wordpress-persistent-storage
+                      #  mountPath: /var/www/html/wordpress/wp-content/plugins
+                      #  subPath: plugins
+                      #- name: wordpress-persistent-storage
+                      #  mountPath: /var/www/html/wordpress/wp-content/themes
+                      #  subPath: themes
                   readinessProbe:
-                      httpGet:
-                          path: /wp-login.php
-                          port: 8080
-                          scheme: "HTTP"
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                      timeoutSeconds: 15
-                      successThreshold: 1
-                      failureThreshold: 3
+                    httpGet:
+                        path: /wp-login.php
+                        port: 8080
+                        scheme: "HTTP"
+                    initialDelaySeconds: 30
+                    periodSeconds: 10
+                    timeoutSeconds: 15
+                    successThreshold: 1
+                    failureThreshold: 3
                   livenessProbe:
-                      httpGet:
-                          path: /wp-login.php
-                          port: 8080
-                          scheme: "HTTP"
-                      initialDelaySeconds: 60
-                      periodSeconds: 10
-                      timeoutSeconds: 15
-                      successThreshold: 1
-                      failureThreshold: 3
+                    httpGet:
+                        path: /wp-login.php
+                        port: 8080
+                        scheme: "HTTP"
+                    initialDelaySeconds: 60
+                    periodSeconds: 10
+                    timeoutSeconds: 15
+                    successThreshold: 1
+                    failureThreshold: 3
             volumes:
                 - name: wordpress-persistent-storage
                   persistentVolumeClaim:
-                      claimName: wordpress-pvc
+                    claimName: wordpress-pvc
 ---
 kind: Service
 apiVersion: v1
@@ -167,8 +167,8 @@ spec:
         - mtrnord.blog
     rules:
         - backendRefs:
-              - name: wordpress-service
-                port: 8080
+            - name: wordpress-service
+              port: 8080
           timeouts:
-              request: 240s
-              backendRequest: 0s
+            request: 240s
+            backendRequest: 0s
