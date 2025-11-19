@@ -1,4 +1,4 @@
-apiVersion: notification.toolkit.fluxcd.io/v1beta2
+apiVersion: notification.toolkit.fluxcd.io/v1
 kind: Receiver
 metadata:
     name: gitea-receiver
@@ -11,6 +11,6 @@ spec:
     secretRef:
         name: receiver-token
     resources:
-        - apiVersion: source.toolkit.fluxcd.io/v1beta2
+        - apiVersion: source.toolkit.fluxcd.io/v1
           kind: GitRepository
           name: flux-system

@@ -1,4 +1,4 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
     name: ananace-charts
@@ -16,7 +16,7 @@ spec:
     image: ghcr.io/matrix-org/sliding-sync
     interval: 15m
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
     name: matrix-gateway-api
@@ -27,7 +27,7 @@ spec:
     ref:
         branch: MTRNord/gw-api-version-bumped
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
     name: livekit-nordeck

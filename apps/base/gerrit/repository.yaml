@@ -1,4 +1,4 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
     name: gerrit
@@ -11,7 +11,7 @@ spec:
     ignore: |
         /helm-charts/gerrit-operator/templates/rbac.yaml
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
     name: gerrit-zookeeper
