@@ -19,59 +19,59 @@ spec:
                 - name: nginx
                   image: nginxinc/nginx-unprivileged:1.29-alpine
                   ports:
-                    - containerPort: 8080
-                      name: http
+                      - containerPort: 8080
+                        name: http
                   volumeMounts:
-                    - name: wkd-config
-                      mountPath: /etc/nginx/conf.d
-                      readOnly: true
-                    - name: wkd-content
-                      mountPath: /usr/share/nginx/html/.well-known/openpgpkey/hu/
-                      readOnly: true
-                    - name: wkd-content
-                      mountPath: /usr/share/nginx/html/.well-known/openpgpkey/nordgedanken.dev/hu/
-                      readOnly: true
-                    - name: tmp
-                      mountPath: /tmp
-                    - name: var-cache-nginx
-                      mountPath: /var/cache/nginx
-                    - name: var-run
-                      mountPath: /var/run
+                      - name: wkd-config
+                        mountPath: /etc/nginx/conf.d
+                        readOnly: true
+                      - name: wkd-content
+                        mountPath: /usr/share/nginx/html/.well-known/openpgpkey/hu/
+                        readOnly: true
+                      - name: wkd-content
+                        mountPath: /usr/share/nginx/html/.well-known/openpgpkey/nordgedanken.dev/hu/
+                        readOnly: true
+                      - name: tmp
+                        mountPath: /tmp
+                      - name: var-cache-nginx
+                        mountPath: /var/cache/nginx
+                      - name: var-run
+                        mountPath: /var/run
                   resources:
-                    requests:
-                        memory: "32Mi"
-                        cpu: "10m"
-                    limits:
-                        memory: "64Mi"
-                        cpu: "50m"
+                      requests:
+                          memory: "32Mi"
+                          cpu: "10m"
+                      limits:
+                          memory: "64Mi"
+                          cpu: "50m"
                   livenessProbe:
-                    httpGet:
-                        path: /health
-                        port: 8080
-                    initialDelaySeconds: 10
-                    periodSeconds: 30
+                      httpGet:
+                          path: /health
+                          port: 8080
+                      initialDelaySeconds: 10
+                      periodSeconds: 30
                   readinessProbe:
-                    httpGet:
-                        path: /health
-                        port: 8080
-                    initialDelaySeconds: 5
-                    periodSeconds: 10
+                      httpGet:
+                          path: /health
+                          port: 8080
+                      initialDelaySeconds: 5
+                      periodSeconds: 10
                   securityContext:
-                    allowPrivilegeEscalation: false
-                    readOnlyRootFilesystem: true
-                    runAsNonRoot: true
-                    runAsUser: 101
-                    runAsGroup: 101
-                    capabilities:
-                        drop:
-                            - ALL
+                      allowPrivilegeEscalation: false
+                      readOnlyRootFilesystem: true
+                      runAsNonRoot: true
+                      runAsUser: 101
+                      runAsGroup: 101
+                      capabilities:
+                          drop:
+                              - ALL
             volumes:
                 - name: wkd-config
                   configMap:
-                    name: wkd-nginx-config
+                      name: wkd-nginx-config
                 - name: wkd-content
                   configMap:
-                    name: wkd-content
+                      name: wkd-content
                 - name: tmp
                   emptyDir: {}
                 - name: var-cache-nginx
@@ -80,25 +80,6 @@ spec:
                   emptyDir: {}
             securityContext:
                 fsGroup: 101
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: wkd-nginx-config
-    namespace: mailserver
-data:
-    default.conf: "server {\n    listen 8080;\n    server_name _;\n    \n    root /usr/share/nginx/html;\n    index index.html;\n\n
-        \   # Security headers\n    add_header X-Content-Type-Options nosniff;\n    add_header X-Frame-Options DENY;\n    add_header
-        X-XSS-Protection \"1; mode=block\";\n\n    # wkd specific configuration\n    location /.well-known/openpgpkey/hu/p6d5q6ozbrkcy3cnexq8s8uzh1rk9fbs
-        {\n        add_header Content-Type \"application/octet-stream; charset=utf-8\";\n        add_header Cache-Control
-        \"max-age=604800\";\n        try_files $uri =404;\n    }\n    location /.well-known/openpgpkey/nordgedanken.dev/hu/p6d5q6ozbrkcy3cnexq8s8uzh1rk9fbs
-        {\n        add_header Content-Type \"application/octet-stream; charset=utf-8\";\n        add_header Cache-Control
-        \"max-age=604800\";\n        try_files $uri =404;\n    }\n    location /.well-known/openpgpkey/policy {\n        return
-        200 \"\";\n        add_header Content-Type text/plain;\n    }\n    location / {\n        return 200 \"OK\\n\";\n        add_header
-        Content-Type text/plain;\n    }\n\n    # Tell synapse to not look for a matrix server here\n    location /.well-known/matrix/server
-        {\n        return 410;\n    }\n    location /_matrix {\n        return 410;\n    }\n\n    # Health check endpoint\n
-        \   location /health {\n        access_log off;\n        return 200 \"healthy\\n\";\n        add_header Content-Type
-        text/plain;\n    }\n\n    # Disable server tokens\n    server_tokens off;\n}\n"
 ---
 apiVersion: v1
 kind: Service
@@ -131,8 +112,8 @@ spec:
         - openpgpkey.nordgedanken.dev
     rules:
         - backendRefs:
-            - name: wkd-server
-              port: 8080
+              - name: wkd-server
+                port: 8080
           timeouts:
-            request: 240s
-            backendRequest: 0s
+              request: 240s
+              backendRequest: 0s
