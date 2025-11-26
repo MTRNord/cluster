@@ -38,6 +38,15 @@ spec:
                     httpGet:
                         path: /
                         port: web
+                  volumeMounts:
+                    - name: configs
+                      mountPath: "/app/_fresh/client/config.json"
+                      subPath: config.json
+                      readOnly: true
+            volumes:
+                - name: configs
+                  configMap:
+                    name: connectivity-tester-config
 ---
 apiVersion: v1
 kind: Service

@@ -95,9 +95,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/image-prioritizer.1.0.0-beta2
     && unzip -q image-prioritizer.1.0.0-beta2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm image-prioritizer.1.0.0-beta2.zip
 # Install Index WP MySQL For Speed
-RUN wget -q https://downloads.wordpress.org/plugin/index-wp-mysql-for-speed.1.5.4.zip \
-    && unzip -q index-wp-mysql-for-speed.1.5.4.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm index-wp-mysql-for-speed.1.5.4.zip
+RUN wget -q https://downloads.wordpress.org/plugin/index-wp-mysql-for-speed.1.5.6.zip \
+    && unzip -q index-wp-mysql-for-speed.1.5.6.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm index-wp-mysql-for-speed.1.5.6.zip
 # Install Modern Image Formats
 RUN wget -q https://downloads.wordpress.org/plugin/webp-uploads.2.6.0.zip \
     && unzip -q webp-uploads.2.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -168,6 +168,11 @@ RUN wget -q https://downloads.wordpress.org/plugin/gallery-block-lightbox.zip \
 RUN wget -q https://downloads.wordpress.org/plugin/google-sitemap-generator.4.1.21.zip \
     && unzip -q google-sitemap-generator.4.1.21.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm google-sitemap-generator.4.1.21.zip
+
+# Install Akismet
+RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
+    && unzip -q -o akismet.5.6.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm akismet.5.6.zip
 
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default
