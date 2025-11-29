@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: bookwyrm
+    labels:
+        app: bookwyrm
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: bookwyrm
+    strategy:
+        type: "Recreate"
+    template:
+        metadata:
+            labels:
+                app: bookwyrm
+        spec:
+            automountServiceAccountToken: false
+            securityContext:
+                fsGroup: 1000
+            initContainers:
+                - name: bookwyrm-update
+                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  command: ["bash"]
+                  args:
+                      - /hl/bookwyrm.sh
+                      - update
+                  volumeMounts:
+                      - name: bookwyrm-script
+                        mountPath: /hl
+                        readOnly: true
+                  env:
+            containers:
+                - name: bookwyrm-web
+                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  command: ["python"]
+                  args:
+                      - "manage.py"
+                      - "runserver"
+                      - "0.0.0.0:8080"
+                  resources:
+                      requests:
+                          cpu: 200m
+                          memory: 500Mi
+                  env:
+                  livenessProbe:
+                      httpGet:
+                          port: 8080
+                          path: "/"
+                      initialDelaySeconds: 15
+                      periodSeconds: 30
+                  ports:
+                      - name: bookwyrm-http
+                        containerPort: 8080
+                        protocol: TCP
+                - name: bookwyrm-celery-worker
+                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  command: ["celery"]
+                  args:
+                      - "-A"
+                      - "celerywyrm"
+                      - "worker"
+                      - "-l"
+                      - "info"
+                      - "-Q"
+                      - "high_priority,medium_priority,low_priority,streams,images,suggested_users,email,connectors,lists,inbox,imports,import_triggered,broadcast,misc"
+                  resources:
+                      requests:
+                          cpu: 200m
+                          memory: 200Mi
+                  env:
+                - name: bookwyrm-celery-beat
+                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  command: ["celery"]
+                  args:
+                      - "-A"
+                      - "celerywyrm"
+                      - "beat"
+                      - "-l"
+                      - "INFO"
+                      - "--scheduler"
+                      - "django_celery_beat.schedulers:DatabaseScheduler"
+                  resources:
+                      requests:
+                          cpu: 200m
+                          memory: 200Mi
+                  env:
+                - name: bookwyrm-flower
+                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  command: ["celery"]
+                  args:
+                      - "-A"
+                      - "celerywyrm"
+                      - "flower"
+                      - "--url_prefix=flower"
+                  resources:
+                      requests:
+                          cpu: 200m
+                          memory: 200Mi
+                  env:
+                  ports:
+                      - name: flower-http
+                        containerPort: 5555
+                        protocol: TCP

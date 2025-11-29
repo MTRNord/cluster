@@ -1,0 +1,116 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: bookwyrm-init
+    labels:
+        app: bookwyrm
+spec:
+    template:
+        metadata:
+            name: bookwyrm-init
+            labels:
+                app: bookwyrm
+        spec:
+            restartPolicy: Never
+            containers:
+                - name: init-script
+                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  command: ["bash"]
+                  args:
+                      - /hl/bookwyrm.sh
+                      - init
+                  volumeMounts:
+                      - name: bookwyrm-script
+                        mountPath: /hl
+                        readOnly: true
+                  env:
+                      - name: POD_IP
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: status.podIP
+                      - name: DEBUG
+                        value: "false"
+                      - name: ALLOWED_HOSTS
+                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
+                      - name: SECRET_KEY
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: SECRET_KEY
+                      - name: DOMAIN
+                        value: "books.mtrnord.blog"
+                      - name: USE_HTTPS
+                        value: "true"
+                      - name: PGPORT
+                        value: "5432"
+                      - name: POSTGRES_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: POSTGRES_PASSWORD
+                      - name: POSTGRES_USER
+                        value: "bookwyrm"
+                      - name: POSTGRES_DB
+                        value: "bookwyrm"
+                      - name: POSTGRES_HOST
+                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+                      # TODO: Setup Redis
+                      - name: REDIS_ACTIVITY_URL
+                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+                      - name: REDIS_BROKER_URL
+                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+                      - name: FLOWER_USER
+                        value: "bookwyrm"
+                      - name: FLOWER_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: FLOWER_PASSWORD
+                      - name: FLOWER_BASIC_AUTH
+                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+                      - name: FLOWER_PORT
+                        value: "5555"
+                      - name: EMAIL_HOST
+                        value: "mail.midnightthoughts.space"
+                      - name: EMAIL_PORT
+                        value: "465"
+                      - name: EMAIL_HOST_USER
+                        value: "support@midnightthoughts.space"
+                      - name: EMAIL_HOST_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: EMAIL_HOST_PASSWORD
+                      - name: USE_S3
+                        value: "false"
+                      - name: AWS_ACCESS_KEY_ID
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: AWS_ACCESS_KEY_ID
+                      - name: AWS_SECRET_ACCESS_KEY
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: AWS_SECRET_ACCESS_KEY
+                      - name: AWS_STORAGE_BUCKET_NAME
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: AWS_STORAGE_BUCKET_NAME
+                      - name: AWS_S3_CUSTOM_DOMAIN
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: AWS_S3_CUSTOM_DOMAIN
+                      - name: AWS_S3_ENDPOINT_URL
+                        valueFrom:
+                            secretKeyRef:
+                                name: bookwyrm-secrets
+                                key: AWS_S3_ENDPOINT_URL
+                      - name: ENABLETHUMBNAIL_GENERATION
+                        value: "true"
+            volumes:
+                - name: bookwyrm-script
+                  configMap:
+                      name: bookwyrm-script
