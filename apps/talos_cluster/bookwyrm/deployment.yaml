@@ -154,9 +154,9 @@ spec:
                       - name: ENABLE_THUMBNAIL_GENERATION
                         value: "true"
                       - name: STATIC_ROOT
-                        value: "/app/static"
+                        value: "static/"
                       - name: MEDIA_ROOT
-                        value: "/app/images"
+                        value: "images/"
             containers:
                 - name: bookwyrm-web
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
@@ -272,9 +272,9 @@ spec:
                       - name: ENABLE_THUMBNAIL_GENERATION
                         value: "true"
                       - name: STATIC_ROOT
-                        value: "/app/static"
+                        value: "static/"
                       - name: MEDIA_ROOT
-                        value: "/app/images"
+                        value: "images/"
                   livenessProbe:
                       httpGet:
                           port: 8080
@@ -403,9 +403,9 @@ spec:
                       - name: ENABLE_THUMBNAIL_GENERATION
                         value: "true"
                       - name: STATIC_ROOT
-                        value: "/app/static"
+                        value: "static/"
                       - name: MEDIA_ROOT
-                        value: "/app/images"
+                        value: "images/"
                 - name: bookwyrm-celery-beat
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
                   imagePullPolicy: Always
@@ -524,9 +524,9 @@ spec:
                       - name: ENABLE_THUMBNAIL_GENERATION
                         value: "true"
                       - name: STATIC_ROOT
-                        value: "/app/static"
+                        value: "static/"
                       - name: MEDIA_ROOT
-                        value: "/app/images"
+                        value: "images/"
                 - name: bookwyrm-flower
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
                   imagePullPolicy: Always
@@ -642,9 +642,9 @@ spec:
                       - name: ENABLE_THUMBNAIL_GENERATION
                         value: "true"
                       - name: STATIC_ROOT
-                        value: "/app/static"
+                        value: "static/"
                       - name: MEDIA_ROOT
-                        value: "/app/images"
+                        value: "images/"
                   ports:
                       - name: flower-http
                         containerPort: 5555
