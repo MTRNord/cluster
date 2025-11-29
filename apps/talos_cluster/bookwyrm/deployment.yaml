@@ -41,6 +41,9 @@ spec:
                 - name: bookwyrm-data
                   persistentVolumeClaim:
                       claimName: bookwyrm-pvc
+                - name: nginx-config
+                  configMap:
+                      name: nginx
             initContainers:
                 - name: bookwyrm-update
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
@@ -158,15 +161,49 @@ spec:
                       - name: MEDIA_ROOT
                         value: "images/"
             containers:
+                - name: nginx
+                  image: nginx:latest
+                  volumeMounts:
+                      - name: bookwyrm-data
+                        mountPath: /app/static
+                        subPath: static
+                      - name: bookwyrm-data
+                        mountPath: /app/media
+                        subPath: media
+                      - name: bookwyrm-data
+                        mountPath: /app/exports
+                        subPath: exports
+                      - name: nginx-config
+                        mountPath: /etc/nginx/templates/default.conf.template
+                        subPath: reverse_proxy.conf
+                        readOnly: true
+                      - name: nginx-config
+                        mountPath: /etc/nginx/templates/server_config.template
+                        subPath: server_config
+                        readOnly: true
+                      - name: nginx-config
+                        mountPath: /etc/nginx/conf.d/locations
+                        subPath: locations
+                        readOnly: true
+                      - name: nginx-config
+                        mountPath: /etc/nginx/conf.d/server_name
+                        subPath: server_name
+                        readOnly: true
+                  livenessProbe:
+                      httpGet:
+                          port: 8080
+                          path: "/"
+                      initialDelaySeconds: 15
+                      periodSeconds: 30
+                  ports:
+                      - name: bookwyrm-nginx
+                        containerPort: 8080
+                        protocol: TCP
                 - name: bookwyrm-web
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
                   imagePullPolicy: Always
                   command: ["gunicorn"]
                   args:
-                      #- "manage.py"
-                      #- "runserver"
-                      #- "0.0.0.0:8000"
-                      #- "gunicorn"
                       - "bookwyrm.wsgi:application"
                   resources:
                       requests:
@@ -665,8 +702,8 @@ spec:
     ports:
         - name: http
           protocol: TCP
-          port: 8000
-          targetPort: 8000
+          port: 8080
+          targetPort: 8080
 ---
 # HTTPRoute for BookWyrm
 apiVersion: gateway.networking.k8s.io/v1
@@ -688,7 +725,7 @@ spec:
                     value: /
           backendRefs:
               - name: bookwyrm
-                port: 8000
+                port: 8080
           timeouts:
               request: 240s
               backendRequest: 0s

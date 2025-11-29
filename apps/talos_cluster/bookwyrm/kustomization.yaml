@@ -9,7 +9,17 @@ configMapGenerator:
     - name: bookwyrm-script
       namespace: mailserver
       files:
-        - bookwyrm.sh=bookwyrm.sh
+          - bookwyrm.sh=bookwyrm.sh
       options:
-        labels:
-            app: bookwyrm
+          labels:
+              app: bookwyrm
+    - name: nginx
+      namespace: bookwyrm
+      files:
+          - locations=nginx/locations
+          - reverse_proxy.conf=nginx/reverse_proxy.conf
+          - server_config=nginx/server_config
+          - server_name=nginx/server_name
+      options:
+          labels:
+              app: bookwyrm
