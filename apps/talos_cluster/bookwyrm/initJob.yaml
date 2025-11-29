@@ -17,6 +17,7 @@ spec:
             containers:
                 - name: init-script
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  imagePullPolicy: Always
                   command: ["bash"]
                   args:
                       - /hl/bookwyrm.sh

@@ -45,6 +45,7 @@ spec:
             initContainers:
                 - name: bookwyrm-update
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  imagePullPolicy: Always
                   command: ["bash"]
                   args:
                       - /hl/bookwyrm.sh
@@ -66,6 +67,7 @@ spec:
             containers:
                 - name: bookwyrm-web
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  imagePullPolicy: Always
                   command: ["python"]
                   args:
                       - "manage.py"
@@ -98,6 +100,7 @@ spec:
                         protocol: TCP
                 - name: bookwyrm-celery-worker
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  imagePullPolicy: Always
                   command: ["celery"]
                   args:
                       - "-A"
@@ -124,6 +127,7 @@ spec:
                   env:
                 - name: bookwyrm-celery-beat
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  imagePullPolicy: Always
                   command: ["celery"]
                   args:
                       - "-A"
@@ -150,6 +154,7 @@ spec:
                   env:
                 - name: bookwyrm-flower
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+                  imagePullPolicy: Always
                   command: ["celery"]
                   args:
                       - "-A"
