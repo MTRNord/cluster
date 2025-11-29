@@ -2,12 +2,14 @@ apiVersion: batch/v1
 kind: Job
 metadata:
     name: bookwyrm-init
+    namespace: bookwyrm
     labels:
         app: bookwyrm
 spec:
     template:
         metadata:
             name: bookwyrm-init
+            namespace: bookwyrm
             labels:
                 app: bookwyrm
         spec:
@@ -113,4 +115,4 @@ spec:
             volumes:
                 - name: bookwyrm-script
                   configMap:
-                      name: bookwyrm-script
+                      name: bookwyrm-script-d4kgf6b8fg

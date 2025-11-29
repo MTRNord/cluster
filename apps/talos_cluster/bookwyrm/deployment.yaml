@@ -1,3 +1,19 @@
+---
+# Persistent Volume Claim for BookWyrm static, exports and media files
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: bookwyrm-pvc
+    labels:
+        app: bookwyrm
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 5Gi
+    storageClassName: longhorn
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +35,13 @@ spec:
             automountServiceAccountToken: false
             securityContext:
                 fsGroup: 1000
+            volumes:
+                - name: bookwyrm-script
+                  configMap:
+                      name: bookwyrm-script
+                - name: bookwyrm-data
+                  persistentVolumeClaim:
+                      claimName: bookwyrm-pvc
             initContainers:
                 - name: bookwyrm-update
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
@@ -30,6 +53,15 @@ spec:
                       - name: bookwyrm-script
                         mountPath: /hl
                         readOnly: true
+                      - name: bookwyrm-data
+                        mountPath: /app/static
+                        subPath: static
+                      - name: bookwyrm-data
+                        mountPath: /app/media
+                        subPath: media
+                      - name: bookwyrm-data
+                        mountPath: /app/exports
+                        subPath: exports
                   env:
             containers:
                 - name: bookwyrm-web
@@ -43,6 +75,16 @@ spec:
                       requests:
                           cpu: 200m
                           memory: 500Mi
+                  volumeMounts:
+                      - name: bookwyrm-data
+                        mountPath: /app/static
+                        subPath: static
+                      - name: bookwyrm-data
+                        mountPath: /app/media
+                        subPath: media
+                      - name: bookwyrm-data
+                        mountPath: /app/exports
+                        subPath: exports
                   env:
                   livenessProbe:
                       httpGet:
@@ -69,6 +111,16 @@ spec:
                       requests:
                           cpu: 200m
                           memory: 200Mi
+                  volumeMounts:
+                      - name: bookwyrm-data
+                        mountPath: /app/static
+                        subPath: static
+                      - name: bookwyrm-data
+                        mountPath: /app/media
+                        subPath: media
+                      - name: bookwyrm-data
+                        mountPath: /app/exports
+                        subPath: exports
                   env:
                 - name: bookwyrm-celery-beat
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
@@ -85,6 +137,16 @@ spec:
                       requests:
                           cpu: 200m
                           memory: 200Mi
+                  volumeMounts:
+                      - name: bookwyrm-data
+                        mountPath: /app/static
+                        subPath: static
+                      - name: bookwyrm-data
+                        mountPath: /app/media
+                        subPath: media
+                      - name: bookwyrm-data
+                        mountPath: /app/exports
+                        subPath: exports
                   env:
                 - name: bookwyrm-flower
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
@@ -98,6 +160,16 @@ spec:
                       requests:
                           cpu: 200m
                           memory: 200Mi
+                  volumeMounts:
+                      - name: bookwyrm-data
+                        mountPath: /app/static
+                        subPath: static
+                      - name: bookwyrm-data
+                        mountPath: /app/media
+                        subPath: media
+                      - name: bookwyrm-data
+                        mountPath: /app/exports
+                        subPath: exports
                   env:
                   ports:
                       - name: flower-http
