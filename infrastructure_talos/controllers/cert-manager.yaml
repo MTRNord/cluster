@@ -20,7 +20,6 @@ metadata:
 spec:
     interval: 24h
     url: https://zachomedia.github.io/cert-manager-webhook-pdns
-
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageRepository
@@ -126,8 +125,8 @@ spec:
             acme.cert-manager.io/http01-solver: "true"
     ingress:
         - ports:
-              - protocol: TCP
-                port: 8089
+            - protocol: TCP
+              port: 8089
     policyTypes:
         - Ingress
 ---

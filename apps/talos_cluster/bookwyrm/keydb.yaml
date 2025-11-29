@@ -19,12 +19,12 @@ spec:
                   command: ["keydb-server"]
                   args: ["/etc/keydb/keydb.conf", "--protected-mode", "no"]
                   ports:
-                      - containerPort: 6379
+                    - containerPort: 6379
                   resources:
-                      requests:
-                          memory: "128Mi"
-                          cpu: "100m"
-                      limits: {}
+                    requests:
+                        memory: "128Mi"
+                        cpu: "100m"
+                    limits: {}
             tolerations:
                 - key: arch
                   operator: Equal
