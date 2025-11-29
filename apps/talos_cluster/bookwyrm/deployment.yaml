@@ -163,9 +163,11 @@ spec:
                   imagePullPolicy: Always
                   command: ["python"]
                   args:
-                      - "manage.py"
-                      - "runserver"
-                      - "0.0.0.0:8080"
+                      #- "manage.py"
+                      #- "runserver"
+                      #- "0.0.0.0:8000"
+                      - "gunicorn"
+                      - "bookwyrm.wsgi:application"
                   resources:
                       requests:
                           cpu: 200m
@@ -277,13 +279,13 @@ spec:
                         value: "images/"
                   livenessProbe:
                       httpGet:
-                          port: 8080
+                          port: 8000
                           path: "/"
                       initialDelaySeconds: 15
                       periodSeconds: 30
                   ports:
                       - name: bookwyrm-http
-                        containerPort: 8080
+                        containerPort: 8000
                         protocol: TCP
                 - name: bookwyrm-celery-worker
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
@@ -663,8 +665,8 @@ spec:
     ports:
         - name: http
           protocol: TCP
-          port: 8080
-          targetPort: 8080
+          port: 8000
+          targetPort: 8000
 ---
 # HTTPRoute for BookWyrm
 apiVersion: gateway.networking.k8s.io/v1
@@ -686,7 +688,7 @@ spec:
                     value: /
           backendRefs:
               - name: bookwyrm
-                port: 8080
+                port: 8000
           timeouts:
               request: 240s
               backendRequest: 0s
