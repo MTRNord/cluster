@@ -175,3 +175,44 @@ spec:
                       - name: flower-http
                         containerPort: 5555
                         protocol: TCP
+---
+# Service for BookWyrm
+apiVersion: v1
+kind: Service
+metadata:
+    name: bookwyrm
+    labels:
+        app: bookwyrm
+spec:
+    selector:
+        app: bookwyrm
+    ports:
+        - name: http
+          protocol: TCP
+          port: 8080
+          targetPort: 8080
+---
+# HTTPRoute for BookWyrm
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: bookwyrm
+    namespace: bookwyrm
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - books.mtrnord.blog
+    rules:
+        - name: bookwyrm-traffic
+          matches:
+              - path:
+                    type: PathPrefix
+                    value: /
+          backendRefs:
+              - name: bookwyrm
+                port: 8080
+          timeouts:
+              request: 240s
+              backendRequest: 0s
