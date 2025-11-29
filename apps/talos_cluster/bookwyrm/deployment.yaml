@@ -161,12 +161,12 @@ spec:
                 - name: bookwyrm-web
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
                   imagePullPolicy: Always
-                  command: ["python"]
+                  command: ["gunicorn"]
                   args:
                       #- "manage.py"
                       #- "runserver"
                       #- "0.0.0.0:8000"
-                      - "gunicorn"
+                      #- "gunicorn"
                       - "bookwyrm.wsgi:application"
                   resources:
                       requests:
