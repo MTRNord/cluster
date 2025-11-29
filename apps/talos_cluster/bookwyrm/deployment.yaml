@@ -160,6 +160,10 @@ spec:
                         value: "static/"
                       - name: MEDIA_ROOT
                         value: "images/"
+                      - name: MAX_UPLOAD_MiB
+                        value: "100"
+                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
+                        value: "100"
             containers:
                 - name: nginx
                   image: nginx:latest
@@ -284,6 +288,10 @@ spec:
                         value: "static/"
                       - name: MEDIA_ROOT
                         value: "images/"
+                      - name: MAX_UPLOAD_MiB
+                        value: "100"
+                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
+                        value: "100"
                   livenessProbe:
                       httpGet:
                           port: 8080
@@ -409,6 +417,10 @@ spec:
                         value: "static/"
                       - name: MEDIA_ROOT
                         value: "images/"
+                      - name: MAX_UPLOAD_MiB
+                        value: "100"
+                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
+                        value: "100"
                   livenessProbe:
                       httpGet:
                           port: 8000
@@ -540,6 +552,10 @@ spec:
                         value: "static/"
                       - name: MEDIA_ROOT
                         value: "images/"
+                      - name: MAX_UPLOAD_MiB
+                        value: "100"
+                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
+                        value: "100"
                 - name: bookwyrm-celery-beat
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
                   imagePullPolicy: Always
@@ -661,6 +677,10 @@ spec:
                         value: "static/"
                       - name: MEDIA_ROOT
                         value: "images/"
+                      - name: MAX_UPLOAD_MiB
+                        value: "100"
+                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
+                        value: "100"
                 - name: bookwyrm-flower
                   image: ghcr.io/mtrnord/bookwyrm:v0.8.2
                   imagePullPolicy: Always
@@ -779,6 +799,10 @@ spec:
                         value: "static/"
                       - name: MEDIA_ROOT
                         value: "images/"
+                      - name: MAX_UPLOAD_MiB
+                        value: "100"
+                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
+                        value: "100"
                   ports:
                       - name: flower-http
                         containerPort: 5555
