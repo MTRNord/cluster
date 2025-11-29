@@ -117,6 +117,10 @@ spec:
                                 key: AWS_S3_ENDPOINT_URL
                       - name: ENABLE_THUMBNAIL_GENERATION
                         value: "true"
+                      - name: STATIC_ROOT
+                        value: "/app/static"
+                      - name: MEDIA_ROOT
+                        value: "/app/images"
             volumes:
                 - name: bookwyrm-script
                   configMap:
