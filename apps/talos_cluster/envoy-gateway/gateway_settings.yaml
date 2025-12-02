@@ -48,42 +48,42 @@ spec:
           protocol: TCP
           port: 25
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: submissions
           protocol: TCP
           port: 465
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: submission
           protocol: TCP
           port: 587
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: imap
           protocol: TCP
           port: 143
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
         - name: imaps
           protocol: TCP
           port: 993
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: All
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: All
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -107,402 +107,414 @@ spec:
           protocol: TCP
           port: 22
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: Selector
-                selector:
-                    matchLabels:
-                        app: cgit
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: Selector
+                  selector:
+                      matchLabels:
+                          app: cgit
         - name: https-talos-midnightthoughts
           protocol: HTTPS
           hostname: "talos.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: talos.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: talos.midnightthoughts.space-tls
         - name: https-nordgedanken.dev
           protocol: HTTPS
           hostname: "nordgedanken.dev"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: nordgedanken.dev-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: nordgedanken.dev-tls
         - name: https-openpgpkey.nordgedanken.dev
           protocol: HTTPS
           hostname: "openpgpkey.nordgedanken.dev"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: openpgpkey.nordgedanken.dev-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: openpgpkey.nordgedanken.dev-tls
         - name: https-midnightthoughts-auth
           protocol: HTTPS
           hostname: "auth.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: auth.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: auth.midnightthoughts.space-tls
         - name: https-midnightthoughts-grafana
           protocol: HTTPS
           hostname: "grafana.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: grafana.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: grafana.midnightthoughts.space-tls
         - name: https-draupnir-midnightthoughts
           protocol: HTTPS
           hostname: "draupnir.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: draupnir.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: draupnir.midnightthoughts.space-tls
         - name: https-matrix-draupnir-midnightthoughts
           protocol: HTTPS
           hostname: "matrix.draupnir.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: matrix.draupnir.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: matrix.draupnir.midnightthoughts.space-tls
         - name: https-midnightthoughts-vault
           protocol: HTTPS
           hostname: "vault.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: vault.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: vault.midnightthoughts.space-tls
         - name: https-midnightthoughts-budget
           protocol: HTTPS
           hostname: "budget.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: budget.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: budget.midnightthoughts.space-tls
         - name: https-midnightthoughts-ldap
           protocol: HTTPS
           hostname: "ldap.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: ldap.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: ldap.midnightthoughts.space-tls
         - name: ldap
           protocol: TCP
           port: 389
           allowedRoutes:
-            kinds:
-                - kind: TCPRoute
-            namespaces:
-                from: Selector
-                selector:
-                    matchLabels:
-                        app: authentik
+              kinds:
+                  - kind: TCPRoute
+              namespaces:
+                  from: Selector
+                  selector:
+                      matchLabels:
+                          app: authentik
         - name: https-mtrnord-blog-gts
           protocol: HTTPS
           hostname: "gts.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: gts.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: gts.mtrnord.blog-tls
         - name: https-mtrnord-blog-books
           protocol: HTTPS
           hostname: "books.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: books.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: books.mtrnord.blog-tls
         - name: https-midnightthoughts-collabora
           protocol: HTTPS
           hostname: "collabora.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: collabora.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: collabora.midnightthoughts.space
         - name: https-midnightthoughts-webhook-kubernetes
           protocol: HTTPS
           hostname: "webhook.kubernetes.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: webhook.kubernetes.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: webhook.kubernetes.midnightthoughts.space-tls
         - name: https-api-connectivity-tester-mtrnord-blog
           protocol: HTTPS
           hostname: "api.connectivity-tester.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: api.connectivity-tester.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: api.connectivity-tester.mtrnord.blog-tls
         - name: https-stage-connectivity-tester-mtrnord-blog
           protocol: HTTPS
           hostname: "stage.connectivity-tester.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: stage.connectivity-tester.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: stage.connectivity-tester.mtrnord.blog-tls
         - name: https-connectivity-tester-mtrnord-blog
           protocol: HTTPS
           hostname: "connectivity-tester.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: connectivity-tester.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: connectivity-tester.mtrnord.blog-tls
         - name: https-beta-connectivity-tester-mtrnord-blog
           protocol: HTTPS
           hostname: "beta.connectivity-tester.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: beta.connectivity-tester.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: beta.connectivity-tester.mtrnord.blog-tls
         - name: https-federationtester-mtrnord-blog
           protocol: HTTPS
           hostname: "federationtester.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: federationtester.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: federationtester.mtrnord.blog-tls
         - name: https-mtrnord-blog-root
           protocol: HTTPS
           hostname: "mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mtrnord.blog-tls
         - name: https-mtrnord-blog-matrix
           protocol: HTTPS
           hostname: "matrix.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: matrix.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: matrix.mtrnord.blog-tls
         - name: https-rss-mtrnord-blog
           protocol: HTTPS
           hostname: "rss.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: rss.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rss.mtrnord.blog-tls
         - name: https-notify-mtrnord-blog
           protocol: HTTPS
           hostname: "notify.mtrnord.blog"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: notify.mtrnord.blog-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: notify.mtrnord.blog-tls
         - name: https-midnightthoughts-rspamd
           protocol: HTTPS
           hostname: "rspamd.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: rspamd.midnightthoughts.space-tls
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: rspamd.midnightthoughts.space-tls
         - name: https-midnightthoughts-plane
           protocol: HTTPS
           hostname: "plane.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: plane.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: plane.midnightthoughts.space
         - name: https-midnightthoughts-kimai
           protocol: HTTPS
           hostname: "kimai.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: kimai.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: kimai.midnightthoughts.space
         - name: https-midnightthoughts-morg-statistics
           protocol: HTTPS
           hostname: "morg-statistics.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: morg-statistics.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: morg-statistics.midnightthoughts.space
         - name: https-midnightthoughts-mta-sts
           protocol: HTTPS
           hostname: "mta-sts.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: mta-sts.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: mta-sts.midnightthoughts.space
         - name: https-midnightthoughts-lists
           protocol: HTTPS
           hostname: "lists.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: lists.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: lists.midnightthoughts.space
         - name: https-midnightthoughts-git
           protocol: HTTPS
           hostname: "git.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: git.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: git.midnightthoughts.space
         - name: https-midnightthoughts-plausible
           protocol: HTTPS
           hostname: "plausible.midnightthoughts.space"
           port: 443
           allowedRoutes:
-            namespaces:
-                from: "All"
+              namespaces:
+                  from: "All"
           tls:
-            mode: Terminate
-            certificateRefs:
-                - kind: Secret
-                  name: plausible.midnightthoughts.space
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: plausible.midnightthoughts.space
+        - name: https-midnightthoughts-miro
+          protocol: HTTPS
+          hostname: "miro-export.neoboard.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: miro-export.neoboard.midnightthoughts.space
         - name: http
           protocol: HTTP
           port: 80
           allowedRoutes:
-            namespaces:
-                from: "Same"
+              namespaces:
+                  from: "Same"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -515,10 +527,10 @@ spec:
           sectionName: http
     rules:
         - filters:
-            - type: RequestRedirect
-              requestRedirect:
-                scheme: https
-                statusCode: 301
+              - type: RequestRedirect
+                requestRedirect:
+                    scheme: https
+                    statusCode: 301
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
