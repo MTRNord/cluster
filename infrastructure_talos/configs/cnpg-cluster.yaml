@@ -86,8 +86,8 @@ spec:
             track_wal_io_timing: "on"
             maintenance_io_concurrency: "150"
             wal_recycle: "on"
-            # #pg_hba:
-            # #    - host all bugzilla all md5
+            pg_hba:
+                - host concourse concourse all md5
     # backup:
     #     target: prefer-standby
     #     retentionPolicy: 30d
