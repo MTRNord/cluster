@@ -8,35 +8,35 @@ ENV TZ=UTC
 # Install common packages, nginx, php and tools in a single layer for smaller image
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        gnupg \
-        lsb-release \
-        nginx \
-        curl \
-        wget \
-        unzip \
-        sudo \
-        imagemagick \
-        php8.4 \
-        php8.4-fpm \
-        #php8.4-mysql \
-        php8.4-mysqlnd \
-        php8.4-cli \
-        php8.4-opcache \
-        php8.4-exif \
-        php8.4-gd \
-        php8.4-curl \
-        php8.4-dom \
-        php8.4-imagick \
-        php8.4-mbstring \
-        php8.4-igbinary \
-        php8.4-zip \
-        php8.4-intl \
-        php8.4-bz2 \
-        php8.4-redis \
-        php8.4-apcu \
-        php8.4-bcmath \
-        redis-server cron less nano \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    nginx \
+    curl \
+    wget \
+    unzip \
+    sudo \
+    imagemagick \
+    php8.4 \
+    php8.4-fpm \
+    #php8.4-mysql \
+    php8.4-mysqlnd \
+    php8.4-cli \
+    php8.4-opcache \
+    php8.4-exif \
+    php8.4-gd \
+    php8.4-curl \
+    php8.4-dom \
+    php8.4-imagick \
+    php8.4-mbstring \
+    php8.4-igbinary \
+    php8.4-zip \
+    php8.4-intl \
+    php8.4-bz2 \
+    php8.4-redis \
+    php8.4-apcu \
+    php8.4-bcmath \
+    redis-server cron less nano \
     && rm -rf /var/lib/apt/lists/*
 
 # Enable PHP extensions
@@ -58,9 +58,9 @@ RUN wget -q https://wordpress.org/latest.zip \
     && rm latest.zip
 
 # Install twenty-twenty-five theme
-RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.3.zip \
-    && unzip -q -o twentytwentyfive.1.3.zip -d /var/www/html/wordpress/wp-content/themes/ \
-    && rm twentytwentyfive.1.3.zip
+RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.4.zip \
+    && unzip -q -o twentytwentyfive.1.4.zip -d /var/www/html/wordpress/wp-content/themes/ \
+    && rm twentytwentyfive.1.4.zip
 
 # Install WP Super Cache plugin
 RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.0.3.zip \
@@ -71,9 +71,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm redis-cache.2.7.0.zip
 # Install ActivityPub plugin
-RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.6.1.zip \
-    && unzip -q activitypub.7.6.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm activitypub.7.6.1.zip
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.7.1.zip \
+    && unzip -q activitypub.7.7.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.7.7.1.zip
 # Install Embed Optimizer
 RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta2.zip \
     && unzip -q embed-optimizer.1.0.0-beta2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
