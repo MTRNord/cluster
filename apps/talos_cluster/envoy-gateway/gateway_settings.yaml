@@ -485,6 +485,18 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: git.midnightthoughts.space
+        - name: https-midnightthoughts-git-ci
+          protocol: HTTPS
+          hostname: "ci.git.midnightthoughts.space"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: ci.git.midnightthoughts.space
         - name: https-midnightthoughts-plausible
           protocol: HTTPS
           hostname: "plausible.midnightthoughts.space"
