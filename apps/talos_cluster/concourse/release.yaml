@@ -38,12 +38,14 @@ spec:
                                       users: ["MTRNord"]
                         localUser: "concourse"
                         oidc:
-                            enabled: true
-                            displayName: "Midnightthoughts SSO"
-                            issuer: https://auth.midnightthoughts.space/application/o/concourse/.well-known/openid-configuration
-                            userNameKey: preferred_username
-                            groupsKey: groups
-                            skipEmailVerifiedValidation: true
+                            group: "Concourse"
+                    oidc:
+                        enabled: true
+                        displayName: "Midnightthoughts SSO"
+                        issuer: https://auth.midnightthoughts.space/application/o/concourse/.well-known/openid-configuration
+                        userNameKey: preferred_username
+                        groupsKey: groups
+                        skipEmailVerifiedValidation: true
         secrets:
             create: false
         persistence:
