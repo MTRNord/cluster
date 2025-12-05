@@ -254,6 +254,12 @@ spec:
               superuser: false
               passwordSecret:
                   name: concourse
+            - name: weblate
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                  name: weblate
     storage:
         storageClass: hcloud-volumes
         size: 15Gi
@@ -467,6 +473,18 @@ metadata:
 spec:
     name: concourse
     owner: concourse
+    ensure: present
+    cluster:
+        name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+    name: weblate
+    namespace: postgres-cluster
+spec:
+    name: weblate
+    owner: weblate
     ensure: present
     cluster:
         name: pg-cluster-v2

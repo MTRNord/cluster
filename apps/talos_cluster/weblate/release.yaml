@@ -1,0 +1,64 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+    name: weblate
+    namespace: weblate
+spec:
+    releaseName: weblate
+    interval: 60m
+    chart:
+        spec:
+            chart: weblate
+            sourceRef:
+                kind: HelmRepository
+                name: weblate
+    values:
+        adminEmail: ENC[AES256_GCM,data:x58wfTUPTU/rIacdaH11epgpzqwWu/nW,iv:RYagUij45debclQo/64uCfchf3DMsV6q9g4sXCpadMs=,tag:X6z+aUGJ8dC4LVH/+ZZE2w==,type:str]
+        adminUsername: ENC[AES256_GCM,data:RkuiUY8i+g==,iv:O4u5OmctEuyWDckpG6IS7DLvdfBHLDt9xuDyH0SYJTU=,tag:1vqzcQYhW2YahGo78m0Y7Q==,type:str]
+        adminPassword: ENC[AES256_GCM,data:SmK5AFVUqNbk,iv:FDnxU22uWAf6xd6PKZX3OWjRT2hxryTkfs3XVm/PhvI=,tag:AvVih2dSxfPhqpzOUckMTw==,type:str]
+        siteDomain: weblate.mtrnord.blog
+        emailHost: mail.midnightthoughts.space
+        emailPort: 587
+        emailTLS: true
+        emailSSL: false
+        emailUser: support@midnightthoughts.space
+        emailPassword: ENC[AES256_GCM,data:5ZmpgYWPthzRoJ4AP08bbMdfko6Z9fCry2gBCDJ/nIVlOQ0+n06bgugw46qpr9n4WP0Ojc32tsSpkPhx2sHe8w==,iv:/uzrF7qtGNDmq8fAFUY1hwySfCw/4FGZMoCOwYjzE1Y=,tag:dMp8+x1JYaoRlrIUriUeUw==,type:str]
+        serverEmail: support@midnightthoughts.space
+        defaultFromEmail: support@midnightthoughts.space
+        persistence:
+            enabled: true
+            storageClass: longhorn
+            accessMode: ReadWriteMany
+            size: 5Gi
+            filestore_dir: /app/data
+        postgresql:
+            enabled: false
+            postgresqlHost: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+            auth:
+                userName: weblate
+                postgresPassword: ENC[AES256_GCM,data:VllDB8QFcbgVMQ6+GoCa9ORlMNw/3AcmdfdyeJafFposze9vnXTuLWHA3W4yz7s5dB1GX8utA9f3XjPiSrDP+Q==,iv:ALDjTswJzEmt6kg09Ogvxx6iOoI8+TcmmMM1IYvlHSo=,tag:/+wgar/hoTaHTQ1U2qiTSw==,type:str]
+        redis:
+            enabled: true
+            auth:
+                enabled: true
+                password: ENC[AES256_GCM,data:cTYTyfIKZinpgNp93mVHZpRVAbdHXHRbm5+PlGjmUf/91sPh84WFxqfWFYbiFBZvvQ2ukciQwWDBk93WUi+6nQ==,iv:/8tKZUZZJxfp5YDTNYZScPabjwIKBi82aipaM8Af58w=,tag:Xe8CwxBjiEhxj/EiyHm36Q==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkdVpKOG05eTZKNTI4NnZp
+            UVdzb1RMYU0wZm1yWmpuQWwvMVNwOTZveTFzCjRINlpNN0tVOFNiZTZ0S2VvOXBF
+            bFhZUGk0dFJxSjVpYUxnSFFXZTQ5L1UKLS0tIE1pMVFDK3piZnpkOXAzelBWcWpE
+            Q09oUVV0ekEwMFgydmVmazBWWkg0Zm8KCpgtL5lcuGvmIpOy4hrb8DOcCh578vwL
+            YJt+S4LuRclHAWjqQstAitL66Y4Lnr1NTEVq40GCTtA2uGjtLJbZ9w==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-12-05T13:58:00Z"
+    mac: ENC[AES256_GCM,data:ldjaAIA1xeU37DhPW0fLP0ZXEQ/gNcXc0rT2wGAlIuuX0b+KQsZaqGX2woIUDE+vrTD4HuoEQE1LA4EfB1G83DhS1M9S+OdP9y7nNC2CJkAleE1QpoM8kISo/Gwq4KoNiOwwQ6VF90zh+WeyRbB39zsSOpZRfIaltdQR7pDyNw0=,iv:T5IPMR8cceoTTmSrKvWu5q/xP0GbLQ2qSWp02OSeQN4=,tag:HET8CQjDQhMOw52DdpRL7Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUsername|adminEmail|emailPassword)$
+    version: 3.9.1
