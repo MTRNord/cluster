@@ -13,21 +13,21 @@ spec:
                 kind: HelmRepository
                 name: weblate
     values:
-        adminEmail: ENC[AES256_GCM,data:OMSBKRuK3btp2/A0XegG+sSfg7x4fkR7,iv:jHsRtA0vCZ2X5lzWc083I4BUpU8PdzQdec0NWPCVkd0=,tag:GugMTQWNE3NrcBhM5hpSeQ==,type:str]
-        adminUsername: ENC[AES256_GCM,data:CoeG1GeXGQ==,iv:fS7UXcKZ5Ss9vpGHUKBYEI0C90rycjrwCHW8FGz2/gw=,tag:/Hj1i0cEmd9fdV99Ooq1pA==,type:str]
-        adminPassword: ENC[AES256_GCM,data:XkuLjkTXHWE0,iv:k6eLo9L9bYyAwyFAARpHCGAvguZe4FKolYsyvSm4ffI=,tag:cMfZRMbyxERV5c/Y1atqjQ==,type:str]
+        adminEmail: ENC[AES256_GCM,data:mfMJlVWPjihqtfm9D2CM9rjdpP9P3eNt,iv:htDuxeNVXkVKaPJRFgtvWStSri3d3LOsnuEMc5+xfRQ=,tag:vRnHqFv9HM/Jbk/54RdbFw==,type:str]
+        adminUser: ENC[AES256_GCM,data:r7Y0S4v/2Q==,iv:Rr0XLte1TiiywzrCbapV0xtlxdUFnPP3fxh5X1ErU4A=,tag:B5bAqjYali4sYPX27mGCmw==,type:str]
+        adminPassword: ENC[AES256_GCM,data:/sC5QrWb4svo,iv:CRd65lDCw2pew3e2D1MXnY88Ivbj8dNO1u69yJUhy5I=,tag:G7I2/v4og91zdmUaiN7lug==,type:str]
         siteDomain: weblate.mtrnord.blog
         emailHost: mail.midnightthoughts.space
         emailPort: 587
         emailTLS: true
         emailSSL: false
         emailUser: support@midnightthoughts.space
-        emailPassword: ENC[AES256_GCM,data:RrtIZh1EvhPke7g5ay6X9Uo3OVl5dV9MPkWRIdFcs+M+c9HrPR57Q9QwjT9mVZUSUdXs8ZNovvms6eY8kZW6Gg==,iv:Fq3CBM4MoT3cfKwux8CIZbpZH3dSlQ19HG4Ds1zyyew=,tag:D0tq3K7/W3K/TjC4caIwjw==,type:str]
+        emailPassword: ENC[AES256_GCM,data:OS7yumZWe+RyASQJ3ZD++xvJ/rcyVED6z8h5WvfWcp6ZoUpYmOwF0nggr3Z+2dj/NDKhOOi0BAptECAySccPtg==,iv:SnxTavt8NtLdWcH+PTf1NpsoySnHK+hWkmA3XsrOF4k=,tag:TlbrM6a8QOZN2MDBiMT53A==,type:str]
         serverEmail: support@midnightthoughts.space
         defaultFromEmail: support@midnightthoughts.space
         extraConfig:
-            WEBLATE_IP_PROXY_HEADER: "HTTP_X_FORWARDED_FOR"
-            WEBLATE_SECURE_PROXY_SSL_HEADER: "HTTP_X_FORWARDED_PROTO,https"
+            WEBLATE_IP_PROXY_HEADER: HTTP_X_FORWARDED_FOR
+            WEBLATE_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
             WEBLATE_ENABLE_HTTPS: "1"
         persistence:
             enabled: true
@@ -40,12 +40,12 @@ spec:
             postgresqlHost: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
             auth:
                 userName: weblate
-                postgresPassword: ENC[AES256_GCM,data:/ap7xAnghJJjVKCdcL9Of7+kiDKSsQ/zm00ezNaRJKEyn+lB8WM9dxrPgJ5Slh8z60SHp8ei45fWCFwVYQ2MUg==,iv:PfaXckj9NpJGY8GdSw24Pm63qSfoHNMZDphBJYhmCnY=,tag:+Y/FuGzVb98vNfGWifzCzQ==,type:str]
+                postgresPassword: ENC[AES256_GCM,data:Iu/6ImbpFeoxiQ+1VOuN7bd//ynNU60ISsHFgmO3tORScQCfhYDFQwrlxftUGb0jJXqeBCc2IIBBIA278Glu+A==,iv:eEjm+iRyYMgdUK6ohYvy7dnDops/uVrx8hd5iCAFZg4=,tag:tSETavDwx9ThdNWl8tmfIg==,type:str]
         redis:
             enabled: true
             auth:
                 enabled: true
-                password: ENC[AES256_GCM,data:8+05s+QDUdQgP/VE6CDU3pFL9e1L+++/FFPjrn1iDIG29EMlxoPhrLmq14DdooAg6JBi5GMQpkKZmh1vRu5QWA==,iv:UwfAuvhUt4F6YXuUIl25dE96uEDDj35yP+tMbfIIRBg=,tag:eFdt9fpc6K4vWD+MGfwhKg==,type:str]
+                password: ENC[AES256_GCM,data:SHnPzs97u9EcykMKuEHllUf1E0gdKdNa+/BUOm8mqjoMI2zLidEJIlRHkNNHy40RVWeb9hXJztxETodlbFLgjA==,iv:tW4A4WQ6nmd9Zsi3dwiQHOzJGIZYGXsFSb0/4yzgpYw=,tag:PeSmR/vA2AbWR/T0a89egw==,type:str]
             master:
                 persistence:
                     enabled: true
@@ -64,15 +64,15 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBRUt6bFl0Qi9LbElxT3d5
-              enhwRkE4R3VZeDdmMHozQktaNk5KZU1VZVFFClVhQ2ZIdVlzSTlaU3VadVpXSWFR
-              U2h3cFVpNEc0Y3JLandweWkzc3Y3N2sKLS0tIDFCU3JQZzdzcWo2Mnl1YnpFQm5N
-              VHBXNGt6TVRLOU5RTE1NbU1YamRiTUEKQ3R8eXgJc7BO5ytsCuKDGU6ZOCkRHhe7
-              Sew0uWdNAOPBP0Jrn9SBPqDHXZNX2JOKwxHRU2rB/l5oTdfqVJ+svQ==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-05T14:07:09Z"
-    mac: ENC[AES256_GCM,data:zv0gIz/72yb0YsCOqZg4/AAlpFBbk3azK1iWipHEM4HIOjnSnllzhwYXiHo2H097sogLqEMZuFuSAftn1Zo2jSYmmvvsnHgfAKcsBXshOaVePG4OJad4iJc0mOO5H1R67RqhOVDngan6Sa0xxx+4jXlkpvVCKZkry70K/W571dA=,iv:/zzhKgJ56TToGJ+HuAiYGL5xescPh213B7NJenwAPJI=,tag:LA7zIezQgW7I0NAH/y3Pxg==,type:str]
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBYc2NTYmtQMUZ3ZVBpYjRS
+            UzJrQzhNL3E3bHd3aG4zL0RzaU80ZU02OGcwCkpJQnBianVHVklrKzZFNVlwUFB2
+            Und6SnNNNWxtTGVvcWhtd0g3Slh6dG8KLS0tIGNXb2JzcVQwN2hFZFVsUERCaXM5
+            a1hWVFZEVGlDeXFraXpPNXVXQnFrL1UKP9c6+zwepJQQU4LUwC1E+JHGH9P7ROK2
+            FHBjO/pJUZzISBEZmrJWH2kALGnmL41ZtvPnhAo8AoN+TVb0ADUaLw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-12-05T14:42:35Z"
+    mac: ENC[AES256_GCM,data:3lMfKPfnK4gB8JMJQSz1Nuo7QfCas8GzoBxkdOsVFJjueEul8O2RIx7EhiLIBLGeAOka/w2Jq+16/2FF7ESm2Ue1urq6XZQLkshPTTRPDs9aQlww9GMp5qDAIb9g18yPiSDHjTRGRuO+LPrqQF2YdIEqg4s3typh8LR2yGAg+3U=,iv:f3mL6uAw/LBQAqcGrDeoPClJTSWECK0aeSoh4n3q48I=,tag:1PcEjhacn9LgH5+3SsmG7g==,type:str]
     pgp: []
-    encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUsername|adminEmail|emailPassword)$
+    encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword)$
     version: 3.9.1
