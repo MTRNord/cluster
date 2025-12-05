@@ -25,6 +25,10 @@ spec:
         emailPassword: ENC[AES256_GCM,data:RrtIZh1EvhPke7g5ay6X9Uo3OVl5dV9MPkWRIdFcs+M+c9HrPR57Q9QwjT9mVZUSUdXs8ZNovvms6eY8kZW6Gg==,iv:Fq3CBM4MoT3cfKwux8CIZbpZH3dSlQ19HG4Ds1zyyew=,tag:D0tq3K7/W3K/TjC4caIwjw==,type:str]
         serverEmail: support@midnightthoughts.space
         defaultFromEmail: support@midnightthoughts.space
+        extraConfig:
+            WEBLATE_IP_PROXY_HEADER: HTTP_X_FORWARDED_FOR
+            WEBLATE_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
+            WEBLATE_ENABLE_HTTPS: 1
         persistence:
             enabled: true
             storageClass: longhorn
@@ -60,13 +64,13 @@ sops:
     age:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBRUt6bFl0Qi9LbElxT3d5
-            enhwRkE4R3VZeDdmMHozQktaNk5KZU1VZVFFClVhQ2ZIdVlzSTlaU3VadVpXSWFR
-            U2h3cFVpNEc0Y3JLandweWkzc3Y3N2sKLS0tIDFCU3JQZzdzcWo2Mnl1YnpFQm5N
-            VHBXNGt6TVRLOU5RTE1NbU1YamRiTUEKQ3R8eXgJc7BO5ytsCuKDGU6ZOCkRHhe7
-            Sew0uWdNAOPBP0Jrn9SBPqDHXZNX2JOKwxHRU2rB/l5oTdfqVJ+svQ==
-            -----END AGE ENCRYPTED FILE-----
+              -----BEGIN AGE ENCRYPTED FILE-----
+              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBRUt6bFl0Qi9LbElxT3d5
+              enhwRkE4R3VZeDdmMHozQktaNk5KZU1VZVFFClVhQ2ZIdVlzSTlaU3VadVpXSWFR
+              U2h3cFVpNEc0Y3JLandweWkzc3Y3N2sKLS0tIDFCU3JQZzdzcWo2Mnl1YnpFQm5N
+              VHBXNGt6TVRLOU5RTE1NbU1YamRiTUEKQ3R8eXgJc7BO5ytsCuKDGU6ZOCkRHhe7
+              Sew0uWdNAOPBP0Jrn9SBPqDHXZNX2JOKwxHRU2rB/l5oTdfqVJ+svQ==
+              -----END AGE ENCRYPTED FILE-----
     lastmodified: "2025-12-05T14:07:09Z"
     mac: ENC[AES256_GCM,data:zv0gIz/72yb0YsCOqZg4/AAlpFBbk3azK1iWipHEM4HIOjnSnllzhwYXiHo2H097sogLqEMZuFuSAftn1Zo2jSYmmvvsnHgfAKcsBXshOaVePG4OJad4iJc0mOO5H1R67RqhOVDngan6Sa0xxx+4jXlkpvVCKZkry70K/W571dA=,iv:/zzhKgJ56TToGJ+HuAiYGL5xescPh213B7NJenwAPJI=,tag:LA7zIezQgW7I0NAH/y3Pxg==,type:str]
     pgp: []
