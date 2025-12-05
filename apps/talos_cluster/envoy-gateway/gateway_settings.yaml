@@ -353,6 +353,18 @@ spec:
               certificateRefs:
                   - kind: Secret
                     name: federationtester.mtrnord.blog-tls
+        - name: https-weblate-mtrnord-blog
+          protocol: HTTPS
+          hostname: "weblate.mtrnord.blog"
+          port: 443
+          allowedRoutes:
+              namespaces:
+                  from: "All"
+          tls:
+              mode: Terminate
+              certificateRefs:
+                  - kind: Secret
+                    name: weblate.mtrnord.blog-tls
         - name: https-mtrnord-blog-root
           protocol: HTTPS
           hostname: "mtrnord.blog"
