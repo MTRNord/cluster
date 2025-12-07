@@ -1,40 +1,49 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "config:base",
+        "config:recommended",
         ":dependencyDashboard",
         ":semanticCommits",
         ":separateMultipleMinorReleases"
     ],
     "prConcurrentLimit": 4,
     "prHourlyLimit": 5,
-    "suppressNotifications": ["prIgnoreNotification"],
+    "suppressNotifications": [
+        "prIgnoreNotification"
+    ],
     "rebaseWhen": "conflicted",
-    "enabledManagers": ["github-actions", "helm-values", "helmv3", "flux"],
+    "enabledManagers": [
+        "github-actions",
+        "helm-values",
+        "helmv3",
+        "flux"
+    ],
     "flux": {
-        "fileMatch": [
-            "(^|/)clusters/.+\\.ya?ml$",
-            "(^|/)infrastructure_talos/.+\\.ya?ml$",
-            "(^|/)apps/.+\\.ya?ml$"
+        "managerFilePatterns": [
+            "/(^|/)clusters/.+\\.ya?ml$/",
+            "/(^|/)infrastructure_talos/.+\\.ya?ml$/",
+            "/(^|/)apps/.+\\.ya?ml$/"
         ]
     },
     "helm-values": {
-        "fileMatch": [
-            "(^|/)apps/.+/values\\.ya?ml$",
-            "(^|/)infrastructure_talos/.+/values\\.ya?ml$"
+        "managerFilePatterns": [
+            "/(^|/)apps/.+/values\\.ya?ml$/",
+            "/(^|/)infrastructure_talos/.+/values\\.ya?ml$/"
         ]
     },
     "kubernetes": {
-        "fileMatch": [
-            "(^|/)clusters/.+\\.ya?ml$",
-            "(^|/)infrastructure_talos/.+\\.ya?ml$",
-            "(^|/)apps/.+\\.ya?ml$"
+        "managerFilePatterns": [
+            "/(^|/)clusters/.+\\.ya?ml$/",
+            "/(^|/)infrastructure_talos/.+\\.ya?ml$/",
+            "/(^|/)apps/.+\\.ya?ml$/"
         ]
     },
     "packageRules": [
         {
             "description": "Auto-merge patch updates",
-            "matchUpdateTypes": ["patch"],
+            "matchUpdateTypes": [
+                "patch"
+            ],
             "matchCurrentVersion": "!/^0/",
             "automerge": true,
             "automergeType": "pr",
@@ -42,82 +51,122 @@
         },
         {
             "description": "Auto-merge minor updates for non-breaking changes",
-            "matchUpdateTypes": ["minor"],
+            "matchUpdateTypes": [
+                "minor"
+            ],
             "matchCurrentVersion": "!/^0/",
             "automerge": false,
             "groupName": "minor-updates"
         },
         {
             "description": "Group Flux component updates",
-            "matchDatasources": ["docker", "github-releases"],
-            "matchPackagePatterns": ["^fluxcd/"],
+            "matchDatasources": [
+                "docker",
+                "github-releases"
+            ],
             "groupName": "flux-components",
-            "automerge": false
+            "automerge": false,
+            "matchPackageNames": [
+                "/^fluxcd//"
+            ]
         },
         {
             "description": "Group cert-manager updates",
-            "matchDatasources": ["docker", "helm"],
-            "matchPackagePatterns": ["cert-manager"],
+            "matchDatasources": [
+                "docker",
+                "helm"
+            ],
             "groupName": "cert-manager",
-            "automerge": false
+            "automerge": false,
+            "matchPackageNames": [
+                "/cert-manager/"
+            ]
         },
         {
             "description": "Group monitoring stack updates",
-            "matchDatasources": ["docker", "helm"],
-            "matchPackagePatterns": [
-                "prometheus",
-                "grafana",
-                "alertmanager",
-                "kube-state-metrics",
-                "node-exporter"
+            "matchDatasources": [
+                "docker",
+                "helm"
             ],
             "groupName": "monitoring-stack",
-            "automerge": false
+            "automerge": false,
+            "matchPackageNames": [
+                "/prometheus/",
+                "/grafana/",
+                "/alertmanager/",
+                "/kube-state-metrics/",
+                "/node-exporter/"
+            ]
         },
         {
             "description": "Group security updates and auto-merge",
-            "matchDatasources": ["docker"],
-            "matchUpdateTypes": ["patch"],
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchUpdateTypes": [
+                "patch"
+            ],
             "vulnerabilityAlerts": {
                 "enabled": true
             },
             "groupName": "security-updates",
             "automerge": true,
-            "schedule": ["at any time"]
+            "schedule": [
+                "at any time"
+            ]
         },
         {
             "description": "Pin GitHub Actions digests",
-            "matchManagers": ["github-actions"],
+            "matchManagers": [
+                "github-actions"
+            ],
             "pinDigests": true
         },
         {
             "description": "Group GitHub Actions updates",
-            "matchManagers": ["github-actions"],
+            "matchManagers": [
+                "github-actions"
+            ],
             "groupName": "github-actions",
             "automerge": true,
             "automergeType": "pr"
         },
         {
             "description": "Separate major updates",
-            "matchUpdateTypes": ["major"],
+            "matchUpdateTypes": [
+                "major"
+            ],
             "automerge": false,
-            "labels": ["type/major-update"]
+            "labels": [
+                "type/major-update"
+            ]
         },
         {
             "description": "Label minor updates",
-            "matchUpdateTypes": ["minor"],
-            "labels": ["type/minor-update"]
+            "matchUpdateTypes": [
+                "minor"
+            ],
+            "labels": [
+                "type/minor-update"
+            ]
         },
         {
             "description": "Label patch updates",
-            "matchUpdateTypes": ["patch"],
-            "labels": ["type/patch-update"]
+            "matchUpdateTypes": [
+                "patch"
+            ],
+            "labels": [
+                "type/patch-update"
+            ]
         }
     ],
-    "regexManagers": [
+    "customManagers": [
         {
+            "customType": "regex",
             "description": "Update _VERSION variables in shell scripts",
-            "fileMatch": ["\\.sh$"],
+            "managerFilePatterns": [
+                "/\\.sh$/"
+            ],
             "matchStrings": [
                 "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?_VERSION=\"(?<currentValue>.*)\""
             ]
@@ -125,6 +174,9 @@
     ],
     "vulnerabilityAlerts": {
         "enabled": true,
-        "labels": ["security", "type/security-update"]
+        "labels": [
+            "security",
+            "type/security-update"
+        ]
     }
 }
