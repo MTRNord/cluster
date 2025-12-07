@@ -1,11 +1,130 @@
 {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:base",
+        ":dependencyDashboard",
+        ":semanticCommits",
+        ":separateMultipleMinorReleases"
+    ],
     "prConcurrentLimit": 4,
     "prHourlyLimit": 5,
-    "semanticCommits": "enabled",
-    "enabledManagers": [
-        "github-actions",
-        "helm-values",
-        "helmv3",
-        "flux"
-    ]
+    "suppressNotifications": ["prIgnoreNotification"],
+    "rebaseWhen": "conflicted",
+    "enabledManagers": ["github-actions", "helm-values", "helmv3", "flux"],
+    "flux": {
+        "fileMatch": [
+            "(^|/)clusters/.+\\.ya?ml$",
+            "(^|/)infrastructure_talos/.+\\.ya?ml$",
+            "(^|/)apps/.+\\.ya?ml$"
+        ]
+    },
+    "helm-values": {
+        "fileMatch": [
+            "(^|/)apps/.+/values\\.ya?ml$",
+            "(^|/)infrastructure_talos/.+/values\\.ya?ml$"
+        ]
+    },
+    "kubernetes": {
+        "fileMatch": [
+            "(^|/)clusters/.+\\.ya?ml$",
+            "(^|/)infrastructure_talos/.+\\.ya?ml$",
+            "(^|/)apps/.+\\.ya?ml$"
+        ]
+    },
+    "packageRules": [
+        {
+            "description": "Auto-merge patch updates",
+            "matchUpdateTypes": ["patch"],
+            "matchCurrentVersion": "!/^0/",
+            "automerge": true,
+            "automergeType": "pr",
+            "platformAutomerge": true
+        },
+        {
+            "description": "Auto-merge minor updates for non-breaking changes",
+            "matchUpdateTypes": ["minor"],
+            "matchCurrentVersion": "!/^0/",
+            "automerge": false,
+            "groupName": "minor-updates"
+        },
+        {
+            "description": "Group Flux component updates",
+            "matchDatasources": ["docker", "github-releases"],
+            "matchPackagePatterns": ["^fluxcd/"],
+            "groupName": "flux-components",
+            "automerge": false
+        },
+        {
+            "description": "Group cert-manager updates",
+            "matchDatasources": ["docker", "helm"],
+            "matchPackagePatterns": ["cert-manager"],
+            "groupName": "cert-manager",
+            "automerge": false
+        },
+        {
+            "description": "Group monitoring stack updates",
+            "matchDatasources": ["docker", "helm"],
+            "matchPackagePatterns": [
+                "prometheus",
+                "grafana",
+                "alertmanager",
+                "kube-state-metrics",
+                "node-exporter"
+            ],
+            "groupName": "monitoring-stack",
+            "automerge": false
+        },
+        {
+            "description": "Group security updates and auto-merge",
+            "matchDatasources": ["docker"],
+            "matchUpdateTypes": ["patch"],
+            "vulnerabilityAlerts": {
+                "enabled": true
+            },
+            "groupName": "security-updates",
+            "automerge": true,
+            "schedule": ["at any time"]
+        },
+        {
+            "description": "Pin GitHub Actions digests",
+            "matchManagers": ["github-actions"],
+            "pinDigests": true
+        },
+        {
+            "description": "Group GitHub Actions updates",
+            "matchManagers": ["github-actions"],
+            "groupName": "github-actions",
+            "automerge": true,
+            "automergeType": "pr"
+        },
+        {
+            "description": "Separate major updates",
+            "matchUpdateTypes": ["major"],
+            "automerge": false,
+            "labels": ["type/major-update"]
+        },
+        {
+            "description": "Label minor updates",
+            "matchUpdateTypes": ["minor"],
+            "labels": ["type/minor-update"]
+        },
+        {
+            "description": "Label patch updates",
+            "matchUpdateTypes": ["patch"],
+            "labels": ["type/patch-update"]
+        }
+    ],
+    "regexManagers": [
+        {
+            "description": "Update _VERSION variables in shell scripts",
+            "fileMatch": ["\\.sh$"],
+            "matchStrings": [
+                "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?_VERSION=\"(?<currentValue>.*)\""
+            ]
+        }
+    ],
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "labels": ["security", "type/security-update"]
+    }
 }

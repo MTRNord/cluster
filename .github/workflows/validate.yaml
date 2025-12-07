@@ -1,0 +1,191 @@
+---
+name: Validate GitOps Manifests
+
+on:
+  pull_request:
+    branches: ["*"]
+    paths:
+      - "apps/**"
+      - "clusters/**"
+      - "infrastructure_talos/**"
+      - "scripts/validate.sh"
+  push:
+    branches: ["main"]
+    paths:
+      - "apps/**"
+      - "clusters/**"
+      - "infrastructure_talos/**"
+      - "scripts/validate.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-manifests:
+    name: Validate Kubernetes Manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+
+      - name: Setup tools
+        run: |
+          # Install yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          # Install kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+          # Install kubeconform
+          curl -LO https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar xzf kubeconform-linux-amd64.tar.gz
+          sudo mv kubeconform /usr/local/bin/
+
+          # Verify installations
+          yq --version
+          kustomize version
+          kubeconform -v
+
+      - name: Run validation script
+        run: |
+          chmod +x scripts/validate.sh
+          ./scripts/validate.sh
+
+      - name: Validate Flux sources
+        run: |
+          flux check --pre
+
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup tools for manifest extraction
+        run: |
+          # Install yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          # Install kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Extract container images
+        id: extract-images
+        run: |
+          set +e
+          mkdir -p /tmp/manifests
+
+          # Build all kustomizations and extract images
+          find . -type f -name 'kustomization.yaml' | while read -r file; do
+            dir=$(dirname "$file")
+            echo "Building $dir"
+            kustomize build "$dir" --load-restrictor=LoadRestrictionsNone > /tmp/manifests/$(echo "$dir" | tr '/' '_').yaml 2>/dev/null || true
+          done
+
+          # Extract unique images
+          cat /tmp/manifests/*.yaml | yq eval 'select(.spec.template.spec.containers != null) | .spec.template.spec.containers[].image' - 2>/dev/null | sort -u > /tmp/images.txt || true
+          cat /tmp/manifests/*.yaml | yq eval 'select(.spec.template.spec.initContainers != null) | .spec.template.spec.initContainers[].image' - 2>/dev/null | sort -u >> /tmp/images.txt || true
+
+          # Extract images from HelmRelease values
+          find . -type f -name '*.yaml' -exec grep -l "kind: HelmRelease" {} \; | while read -r file; do
+            yq eval '.spec.values | .. | select(. == "*image*" or . == "*repository*") | select(type == "!!str")' "$file" 2>/dev/null || true
+          done >> /tmp/images.txt || true
+
+          sort -u /tmp/images.txt > /tmp/images_final.txt
+
+          echo "Found images:"
+          cat /tmp/images_final.txt
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  kubeaudit:
+    name: Kubernetes Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup tools
+        run: |
+          # Install kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+          # Install kubeaudit
+          curl -LO https://github.com/Shopify/kubeaudit/releases/latest/download/kubeaudit_linux_amd64.tar.gz
+          tar xzf kubeaudit_linux_amd64.tar.gz
+          sudo mv kubeaudit /usr/local/bin/
+
+      - name: Run kubeaudit
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/manifests
+
+          # Build all kustomizations
+          find . -type f -name 'kustomization.yaml' | while read -r file; do
+            dir=$(dirname "$file")
+            echo "Building $dir"
+            kustomize build "$dir" --load-restrictor=LoadRestrictionsNone > /tmp/manifests/$(echo "$dir" | tr '/' '_').yaml 2>/dev/null || true
+          done
+
+          # Run kubeaudit on each manifest
+          for manifest in /tmp/manifests/*.yaml; do
+            echo "Auditing $manifest"
+            if [ -f kubeaudit-config.yml ]; then
+              kubeaudit all -f "$manifest" --minseverity warning -c kubeaudit-config.yml || true
+            else
+              kubeaudit all -f "$manifest" --minseverity warning || true
+            fi
+          done
+
+  lint:
+    name: Lint YAML Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: YAML Lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_data: |
+            extends: default
+            rules:
+              line-length:
+                max: 120
+                level: warning
+              document-start: disable
+              truthy:
+                check-keys: false
