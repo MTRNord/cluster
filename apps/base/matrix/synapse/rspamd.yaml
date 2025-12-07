@@ -1,172 +1,172 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: rspamd-matrix
-    namespace: matrix
+  name: rspamd-matrix
+  namespace: matrix
 spec:
-    resources:
-        requests:
-            storage: 1Gi
-    storageClassName: ceph-filesystem
-    volumeMode: Filesystem
-    accessModes:
-        - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ceph-filesystem
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: rspamd-clamav
-    namespace: matrix
+  name: rspamd-clamav
+  namespace: matrix
 spec:
-    resources:
-        requests:
-            storage: 1Gi
-    storageClassName: ceph-filesystem
-    volumeMode: Filesystem
-    accessModes:
-        - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ceph-filesystem
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: rspamd-matrix
-    namespace: matrix
+  name: rspamd-matrix
+  namespace: matrix
 spec:
-    selector:
-        matchLabels:
-            app: rspamd-matrix
-    template:
-        metadata:
-            labels:
-                app: rspamd-matrix
-        spec:
-            containers:
-                - name: rspamd-clamav
-                  image: clamav/clamav-debian:1.4_base
-                  resources:
-                    requests:
-                        memory: "1000Mi"
-                        cpu: "500m"
-                    limits:
-                        memory: "4000Mi"
-                        cpu: "500m"
-                  ports:
-                    - containerPort: 3310
-                      name: clamav
-                  volumeMounts:
-                    - name: run-clamav
-                      mountPath: /run/clamav
-                    - name: rspamd-clamav
-                      mountPath: /var/lib/clamav
-                  env:
-                    - name: CLAMAV_NO_MILTERD
-                      value: "true"
-                  readinessProbe:
-                    exec:
-                        command:
-                            - "/usr/local/bin/clamdcheck.sh"
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
-                    failureThreshold: 10
-                  livenessProbe:
-                    exec:
-                        command:
-                            - "/usr/local/bin/clamdcheck.sh"
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
-                    failureThreshold: 10
-                - name: rspamd-matrix
-                  image: ghcr.io/rspamd/rspamd-docker:latest
-                  resources:
-                    limits:
-                        memory: "1000Mi"
-                        cpu: "500m"
-                  ports:
-                    - containerPort: 11333
-                      name: normal-worker
-                    - containerPort: 11334
-                      name: control-worker
-                  volumeMounts:
-                    - name: rspamd-matrix
-                      mountPath: /var/lib/rspamd
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/actions.conf
-                      subPath: actions.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/antivirus.conf
-                      subPath: antivirus.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/classifier-bayes.conf
-                      subPath: classifier-bayes.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/dmarc.conf
-                      subPath: dmarc.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/greylist.conf
-                      subPath: greylist.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/hfilter.conf
-                      subPath: hfilter.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/history_redis.conf
-                      subPath: history_redis.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/logging.inc
-                      subPath: logging.inc
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/options.inc
-                      subPath: options.inc
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/phishing.conf
-                      subPath: phishing.conf
-                    - name: rspamd-config
-                      mountPath: /etc/rspamd/local.d/worker-controller.inc
-                      subPath: worker-controller.inc
-            volumes:
-                - name: rspamd-matrix
-                  persistentVolumeClaim:
-                    claimName: rspamd-matrix
-                - name: rspamd-clamav
-                  persistentVolumeClaim:
-                    claimName: rspamd-clamav
-                - name: rspamd-config
-                  configMap:
-                    name: rspamd-config
-                - name: run-clamav
-                  emptyDir: {}
+  selector:
+    matchLabels:
+      app: rspamd-matrix
+  template:
+    metadata:
+      labels:
+        app: rspamd-matrix
+    spec:
+      containers:
+        - name: rspamd-clamav
+          image: clamav/clamav-debian:1.4_base
+          resources:
+            requests:
+              memory: "1000Mi"
+              cpu: "500m"
+            limits:
+              memory: "4000Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3310
+              name: clamav
+          volumeMounts:
+            - name: run-clamav
+              mountPath: /run/clamav
+            - name: rspamd-clamav
+              mountPath: /var/lib/clamav
+          env:
+            - name: CLAMAV_NO_MILTERD
+              value: "true"
+          readinessProbe:
+            exec:
+              command:
+                - "/usr/local/bin/clamdcheck.sh"
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 10
+          livenessProbe:
+            exec:
+              command:
+                - "/usr/local/bin/clamdcheck.sh"
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 10
+        - name: rspamd-matrix
+          image: ghcr.io/rspamd/rspamd-docker:latest
+          resources:
+            limits:
+              memory: "1000Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 11333
+              name: normal-worker
+            - containerPort: 11334
+              name: control-worker
+          volumeMounts:
+            - name: rspamd-matrix
+              mountPath: /var/lib/rspamd
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/actions.conf
+              subPath: actions.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/antivirus.conf
+              subPath: antivirus.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/classifier-bayes.conf
+              subPath: classifier-bayes.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/dmarc.conf
+              subPath: dmarc.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/greylist.conf
+              subPath: greylist.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/hfilter.conf
+              subPath: hfilter.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/history_redis.conf
+              subPath: history_redis.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/logging.inc
+              subPath: logging.inc
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/options.inc
+              subPath: options.inc
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/phishing.conf
+              subPath: phishing.conf
+            - name: rspamd-config
+              mountPath: /etc/rspamd/local.d/worker-controller.inc
+              subPath: worker-controller.inc
+      volumes:
+        - name: rspamd-matrix
+          persistentVolumeClaim:
+            claimName: rspamd-matrix
+        - name: rspamd-clamav
+          persistentVolumeClaim:
+            claimName: rspamd-clamav
+        - name: rspamd-config
+          configMap:
+            name: rspamd-config
+        - name: run-clamav
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: rspamd-matrix
-    namespace: matrix
+  name: rspamd-matrix
+  namespace: matrix
 spec:
-    selector:
-        app: rspamd-matrix
-    ports:
-        - port: 11333
-          targetPort: 11333
-          name: normal-worker
-        - port: 11334
-          targetPort: 11334
-          name: control-worker
-    type: ClusterIP
+  selector:
+    app: rspamd-matrix
+  ports:
+    - port: 11333
+      targetPort: 11333
+      name: normal-worker
+    - port: 11334
+      targetPort: 11334
+      name: control-worker
+  type: ClusterIP
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: rspamd-matrix
-    namespace: matrix
+  name: rspamd-matrix
+  namespace: matrix
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - rspamd.matrix.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: rspamd-matrix
-              port: 11334
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - rspamd.matrix.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: rspamd-matrix
+          port: 11334
+      timeouts:
+        request: 240s
+        backendRequest: 0s

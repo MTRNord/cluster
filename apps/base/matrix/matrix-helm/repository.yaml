@@ -1,39 +1,39 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-    name: ananace-charts
-    namespace: matrix
+  name: ananace-charts
+  namespace: matrix
 spec:
-    interval: 5m
-    url: https://ananace.gitlab.io/charts
+  interval: 5m
+  url: https://ananace.gitlab.io/charts
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageRepository
 metadata:
-    name: sliding-proxy
-    namespace: matrix
+  name: sliding-proxy
+  namespace: matrix
 spec:
-    image: ghcr.io/matrix-org/sliding-sync
-    interval: 15m
+  image: ghcr.io/matrix-org/sliding-sync
+  interval: 15m
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-    name: matrix-gateway-api
-    namespace: matrix
+  name: matrix-gateway-api
+  namespace: matrix
 spec:
-    interval: 1h
-    url: https://gitlab.com/MTRNord/ananace-personal-charts.git
-    ref:
-        branch: MTRNord/gw-api-version-bumped
+  interval: 1h
+  url: https://gitlab.com/MTRNord/ananace-personal-charts.git
+  ref:
+    branch: MTRNord/gw-api-version-bumped
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-    name: livekit-nordeck
-    namespace: matrix
+  name: livekit-nordeck
+  namespace: matrix
 spec:
-    interval: 1h
-    url: https://github.com/nordeck/livekit-helm.git
-    ref:
-        branch: nic/feat/NEO-1240
+  interval: 1h
+  url: https://github.com/nordeck/livekit-helm.git
+  ref:
+    branch: nic/feat/NEO-1240

@@ -1,111 +1,111 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: ntfy
+  name: ntfy
 spec:
-    selector:
-        matchLabels:
-            app: ntfy
-    template:
-        metadata:
-            labels:
-                app: ntfy
-        spec:
-            securityContext:
-                runAsUser: 1000
-                runAsGroup: 1000
-                fsGroup: 1000
-            initContainers:
-                - name: fix-permissions
-                  image: busybox
-                  securityContext:
-                    runAsUser: 0
-                    runAsGroup: 0
-                    allowPrivilegeEscalation: true
-                  command: ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
-                  volumeMounts:
-                    - name: ntfy-cache
-                      mountPath: /opt/docker/ntfy/cache
-                    - name: ntfy-data
-                      mountPath: /etc/ntfy
-                    - name: ntfy-cache-2
-                      mountPath: /var/cache/ntfy
-            containers:
-                - name: ntfy
-                  securityContext:
-                    allowPrivilegeEscalation: false
-                    runAsUser: 1000
-                    runAsGroup: 1000
-                    readOnlyRootFilesystem: true
-                  image: binwiederhier/ntfy
-                  args: ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
-                  env:
-                    - name: TZ
-                      value: "Europe/Berlin"
-                  resources:
-                    limits:
-                        memory: "256Mi"
-                        cpu: "700m"
-                    requests:
-                        memory: "128Mi"
-                        cpu: "500m"
-                  ports:
-                    - containerPort: 8080
-                      name: http
-                  volumeMounts:
-                    - name: ntfy-config
-                      mountPath: /opt/docker/ntfy/config
-                    - name: ntfy-cache
-                      mountPath: /opt/docker/ntfy/cache
-                    - name: ntfy-data
-                      mountPath: /etc/ntfy
-                    - name: ntfy-cache-2
-                      mountPath: /var/cache/ntfy
-            probes:
-                livenessProbe:
-                    httpGet:
-                        path: /v1/health
-                        port: 8080
-                readinessProbe:
-                    httpGet:
-                        path: /v1/health
-                        port: 8080
-            volumes:
-                - name: ntfy-config
-                  configMap:
-                    name: ntfy-config
-                - name: ntfy-cache
-                  emptyDir: {}
-                - name: ntfy-cache-2
-                  emptyDir: {}
-                - name: ntfy-data
-                  persistentVolumeClaim:
-                    claimName: ntfy-data
+  selector:
+    matchLabels:
+      app: ntfy
+  template:
+    metadata:
+      labels:
+        app: ntfy
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: true
+          command: ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
+          volumeMounts:
+            - name: ntfy-cache
+              mountPath: /opt/docker/ntfy/cache
+            - name: ntfy-data
+              mountPath: /etc/ntfy
+            - name: ntfy-cache-2
+              mountPath: /var/cache/ntfy
+      containers:
+        - name: ntfy
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+          image: binwiederhier/ntfy
+          args: ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
+          env:
+            - name: TZ
+              value: "Europe/Berlin"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "700m"
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: ntfy-config
+              mountPath: /opt/docker/ntfy/config
+            - name: ntfy-cache
+              mountPath: /opt/docker/ntfy/cache
+            - name: ntfy-data
+              mountPath: /etc/ntfy
+            - name: ntfy-cache-2
+              mountPath: /var/cache/ntfy
+      probes:
+        livenessProbe:
+          httpGet:
+            path: /v1/health
+            port: 8080
+        readinessProbe:
+          httpGet:
+            path: /v1/health
+            port: 8080
+      volumes:
+        - name: ntfy-config
+          configMap:
+            name: ntfy-config
+        - name: ntfy-cache
+          emptyDir: {}
+        - name: ntfy-cache-2
+          emptyDir: {}
+        - name: ntfy-data
+          persistentVolumeClaim:
+            claimName: ntfy-data
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: ntfy-service
-    namespace: ntfy
+  name: ntfy-service
+  namespace: ntfy
 spec:
-    selector:
-        app: ntfy
-    ports:
-        - port: 8080
-          targetPort: 8080
+  selector:
+    app: ntfy
+  ports:
+    - port: 8080
+      targetPort: 8080
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: ntfy
-    namespace: ntfy
+  name: ntfy
+  namespace: ntfy
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - notify.mtrnord.blog
-    rules:
-        - backendRefs:
-            - name: ntfy-service
-              port: 8080
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - notify.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: ntfy-service
+          port: 8080

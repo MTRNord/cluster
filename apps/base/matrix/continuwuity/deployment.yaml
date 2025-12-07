@@ -1,103 +1,103 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: continuwuity
+  name: continuwuity
 spec:
-    resources:
-        requests:
-            storage: 5Gi
-    storageClassName: ceph-filesystem
-    volumeMode: Filesystem
-    accessModes:
-        - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ceph-filesystem
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: continuwuity
+  name: continuwuity
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: continuwuity
-    strategy:
-        type: Recreate
-    template:
-        metadata:
-            labels:
-                app: continuwuity
-        spec:
-            enableServiceLinks: false
-            containers:
-                - name: continuwuity
-                  resources:
-                    limits: {}
-                    requests:
-                        memory: "100Mi"
-                        cpu: "28m"
-                  image: forgejo.ellis.link/continuwuation/continuwuity:main
-                  imagePullPolicy: Always
-                  ports:
-                    - containerPort: 8448
-                  # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
-                  volumeMounts:
-                    - name: continuwuity-config
-                      mountPath: /etc/conduwuit
-                      readOnly: true
-                    - name: continuwuity-data
-                      mountPath: /var/lib/continuwuity
-                  env:
-                    - name: CONTINUWUITY_CONFIG
-                      value: /etc/conduwuit/conduwuit.toml
-            livenessProbe:
-                httpGet:
-                    path: /_matrix/client/versions
-                    port: 8448
-                initialDelaySeconds: 10
-                timeoutSeconds: 5
-            readinessProbe:
-                httpGet:
-                    path: /_matrix/client/versions
-                    port: 8448
-                initialDelaySeconds: 10
-                timeoutSeconds: 5
-            # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
-            volumes:
-                - name: continuwuity-config
-                  secret:
-                    secretName: continuwuity-config
-                - name: continuwuity-data
-                  persistentVolumeClaim:
-                    claimName: continuwuity
+  replicas: 1
+  selector:
+    matchLabels:
+      app: continuwuity
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: continuwuity
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: continuwuity
+          resources:
+            limits: {}
+            requests:
+              memory: "100Mi"
+              cpu: "28m"
+          image: forgejo.ellis.link/continuwuation/continuwuity:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8448
+          # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
+          volumeMounts:
+            - name: continuwuity-config
+              mountPath: /etc/conduwuit
+              readOnly: true
+            - name: continuwuity-data
+              mountPath: /var/lib/continuwuity
+          env:
+            - name: CONTINUWUITY_CONFIG
+              value: /etc/conduwuit/conduwuit.toml
+      livenessProbe:
+        httpGet:
+          path: /_matrix/client/versions
+          port: 8448
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: /_matrix/client/versions
+          port: 8448
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
+      # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
+      volumes:
+        - name: continuwuity-config
+          secret:
+            secretName: continuwuity-config
+        - name: continuwuity-data
+          persistentVolumeClaim:
+            claimName: continuwuity
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: continuwuity
+  name: continuwuity
 spec:
-    selector:
-        app: continuwuity
-    ports:
-        - name: http
-          protocol: TCP
-          port: 8448
-          targetPort: 8448
+  selector:
+    app: continuwuity
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8448
+      targetPort: 8448
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: continuwuity
-    namespace: matrix
+  name: continuwuity
+  namespace: matrix
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - matrix.mtrnord.blog
-    rules:
-        - backendRefs:
-            - name: continuwuity
-              port: 8448
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - matrix.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: continuwuity
+          port: 8448
+      timeouts:
+        request: 240s
+        backendRequest: 0s

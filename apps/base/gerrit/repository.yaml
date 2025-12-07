@@ -1,23 +1,23 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-    name: gerrit
-    namespace: gerrit
+  name: gerrit
+  namespace: gerrit
 spec:
-    interval: 8h
-    url: https://gerrit.googlesource.com/k8s-gerrit
-    ref:
-        branch: master
-    ignore: |
-        /helm-charts/gerrit-operator/templates/rbac.yaml
+  interval: 8h
+  url: https://gerrit.googlesource.com/k8s-gerrit
+  ref:
+    branch: master
+  ignore: |
+    /helm-charts/gerrit-operator/templates/rbac.yaml
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-    name: gerrit-zookeeper
-    namespace: gerrit
+  name: gerrit-zookeeper
+  namespace: gerrit
 spec:
-    interval: 10m
-    url: oci://registry-1.docker.io/bitnamicharts/zookeeper
-    ref:
-        semver: ">=13.7.1"
+  interval: 10m
+  url: oci://registry-1.docker.io/bitnamicharts/zookeeper
+  ref:
+    semver: ">=13.7.1"

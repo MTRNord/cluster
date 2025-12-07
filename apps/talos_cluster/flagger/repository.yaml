@@ -1,22 +1,22 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-    name: flagger
-    namespace: flagger-system
+  name: flagger
+  namespace: flagger-system
 spec:
-    interval: 1h
-    url: oci://ghcr.io/fluxcd/charts
-    type: oci
+  interval: 1h
+  url: oci://ghcr.io/fluxcd/charts
+  type: oci
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-    name: flagger-loadtester
-    namespace: flagger-system
+  name: flagger-loadtester
+  namespace: flagger-system
 spec:
-    interval: 6h # scan for new versions every six hours
-    url: oci://ghcr.io/fluxcd/flagger-manifests
-    ref:
-        semver: 1.x # update to the latest version
-    verify: # verify the artifact signature with Cosign keyless
-        provider: cosign
+  interval: 6h # scan for new versions every six hours
+  url: oci://ghcr.io/fluxcd/flagger-manifests
+  ref:
+    semver: 1.x # update to the latest version
+  verify: # verify the artifact signature with Cosign keyless
+    provider: cosign

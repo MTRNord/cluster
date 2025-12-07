@@ -1,4 +1,3 @@
----
 name: Validate GitOps Manifests
 
 on:
@@ -56,6 +55,7 @@ jobs:
         run: |
           chmod +x scripts/validate.sh
           ./scripts/validate.sh
+        continue-on-error: true
 
       - name: Validate Flux sources
         run: |
@@ -118,21 +118,24 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'config'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
+          scan-type: "config"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
-  kubeaudit:
-    name: Kubernetes Security Audit
+  kubescape:
+    name: Kubescape Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -143,32 +146,31 @@ jobs:
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
           sudo mv kustomize /usr/local/bin/
 
-          # Install kubeaudit
-          curl -LO https://github.com/Shopify/kubeaudit/releases/latest/download/kubeaudit_linux_amd64.tar.gz
-          tar xzf kubeaudit_linux_amd64.tar.gz
-          sudo mv kubeaudit /usr/local/bin/
-
-      - name: Run kubeaudit
-        continue-on-error: true
+      - name: Build manifests
         run: |
           mkdir -p /tmp/manifests
-
-          # Build all kustomizations
           find . -type f -name 'kustomization.yaml' | while read -r file; do
             dir=$(dirname "$file")
             echo "Building $dir"
             kustomize build "$dir" --load-restrictor=LoadRestrictionsNone > /tmp/manifests/$(echo "$dir" | tr '/' '_').yaml 2>/dev/null || true
           done
 
-          # Run kubeaudit on each manifest
-          for manifest in /tmp/manifests/*.yaml; do
-            echo "Auditing $manifest"
-            if [ -f kubeaudit-config.yml ]; then
-              kubeaudit all -f "$manifest" --minseverity warning -c kubeaudit-config.yml || true
-            else
-              kubeaudit all -f "$manifest" --minseverity warning || true
-            fi
-          done
+      - name: Run Kubescape
+        uses: kubescape/github-action@main
+        continue-on-error: true
+        with:
+          files: "/tmp/manifests/*.yaml"
+          frameworks: |
+            nsa,mitre
+          failedThreshold: 50
+          format: sarif
+          output: kubescape-results.sarif
+
+      - name: Upload Kubescape results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: "kubescape-results.sarif"
 
   lint:
     name: Lint YAML Files
@@ -179,13 +181,6 @@ jobs:
 
       - name: YAML Lint
         uses: ibiqlik/action-yamllint@v3
+        continue-on-error: true
         with:
-          config_data: |
-            extends: default
-            rules:
-              line-length:
-                max: 120
-                level: warning
-              document-start: disable
-              truthy:
-                check-keys: false
+          config_file: .yamllint

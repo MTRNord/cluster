@@ -1,154 +1,154 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-    namespace: irc
-    name: irc.midnightthoughts.space
+  namespace: irc
+  name: irc.midnightthoughts.space
 spec:
-    secretName: irc-certs
-    dnsNames:
-        - irc.midnightthoughts.space
-    issuerRef:
-        name: letsencrypt-dns
-        kind: ClusterIssuer
+  secretName: irc-certs
+  dnsNames:
+    - irc.midnightthoughts.space
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: solanum
-    labels:
-        app: solanum
+  name: solanum
+  labels:
+    app: solanum
 spec:
-    replicas: 1
-    strategy:
-        type: RollingUpdate
-    selector:
-        matchLabels:
-            app: solanum
-    template:
-        metadata:
-            labels:
-                app: solanum
-        spec:
-            initContainers:
-                - name: fix-permissions
-                  image: alpine:latest
-                  command:
-                    - chown
-                    - -R
-                    - 10000:10000
-                    - /atheme/etc
-                  volumeMounts:
-                    - name: atheme-pvc
-                      mountPath: /atheme/etc
-            containers:
-                - name: solanum
-                  image: ghcr.io/mtrnord/solanum:latest
-                  imagePullPolicy: Always
-                  ports:
-                    - containerPort: 6697
-                      name: ircs
-                      protocol: TCP
-                    - containerPort: 6667
-                      name: irc
-                      protocol: TCP
-                    - containerPort: 6666
-                      name: atheme
-                      protocol: TCP
-                  volumeMounts:
-                    - mountPath: /ircd/etc/ircd.conf
-                      name: solanum-config
-                      subPath: ircd.conf
-                      readOnly: true
-                    - mountPath: /ircd/etc/ircd.motd
-                      name: solanum-config
-                      subPath: ircd.motd
-                      readOnly: true
-                    - mountPath: /ircd/certs
-                      name: irc-certs
-                      readOnly: true
-                    - mountPath: /usr/local/logs
-                      name: logs
-                - name: atheme
-                  image: ghcr.io/mtrnord/atheme:contrib
-                  imagePullPolicy: Always
-                  volumeMounts:
-                    - mountPath: /atheme/etc/atheme.conf
-                      name: atheme-secrets
-                      subPath: atheme.conf
-                      readOnly: true
-                    - mountPath: /atheme/etc/atheme.motd
-                      name: atheme-secrets
-                      subPath: atheme.motd
-                      readOnly: true
-                    - mountPath: /etc/msmtprc
-                      name: atheme-secrets
-                      subPath: msmtprc
-                      readOnly: true
-                    - mountPath: /atheme/etc
-                      name: atheme-pvc
-                  securityContext:
-                    allowPrivilegeEscalation: false
-            volumes:
-                - name: solanum-config
-                  secret:
-                    secretName: solanum-config
-                - name: irc-certs
-                  secret:
-                    secretName: irc-certs
-                - name: logs
-                  emptyDir: {}
-                - name: atheme-secrets
-                  secret:
-                    secretName: atheme-secrets
-                - name: atheme-pvc
-                  persistentVolumeClaim:
-                    claimName: atheme-db
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: solanum
+  template:
+    metadata:
+      labels:
+        app: solanum
+    spec:
+      initContainers:
+        - name: fix-permissions
+          image: alpine:latest
+          command:
+            - chown
+            - -R
+            - 10000:10000
+            - /atheme/etc
+          volumeMounts:
+            - name: atheme-pvc
+              mountPath: /atheme/etc
+      containers:
+        - name: solanum
+          image: ghcr.io/mtrnord/solanum:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6697
+              name: ircs
+              protocol: TCP
+            - containerPort: 6667
+              name: irc
+              protocol: TCP
+            - containerPort: 6666
+              name: atheme
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /ircd/etc/ircd.conf
+              name: solanum-config
+              subPath: ircd.conf
+              readOnly: true
+            - mountPath: /ircd/etc/ircd.motd
+              name: solanum-config
+              subPath: ircd.motd
+              readOnly: true
+            - mountPath: /ircd/certs
+              name: irc-certs
+              readOnly: true
+            - mountPath: /usr/local/logs
+              name: logs
+        - name: atheme
+          image: ghcr.io/mtrnord/atheme:contrib
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /atheme/etc/atheme.conf
+              name: atheme-secrets
+              subPath: atheme.conf
+              readOnly: true
+            - mountPath: /atheme/etc/atheme.motd
+              name: atheme-secrets
+              subPath: atheme.motd
+              readOnly: true
+            - mountPath: /etc/msmtprc
+              name: atheme-secrets
+              subPath: msmtprc
+              readOnly: true
+            - mountPath: /atheme/etc
+              name: atheme-pvc
+          securityContext:
+            allowPrivilegeEscalation: false
+      volumes:
+        - name: solanum-config
+          secret:
+            secretName: solanum-config
+        - name: irc-certs
+          secret:
+            secretName: irc-certs
+        - name: logs
+          emptyDir: {}
+        - name: atheme-secrets
+          secret:
+            secretName: atheme-secrets
+        - name: atheme-pvc
+          persistentVolumeClaim:
+            claimName: atheme-db
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: solanum
-    labels:
-        app: solanum
+  name: solanum
+  labels:
+    app: solanum
 spec:
-    type: ClusterIP
-    ports:
-        - name: ircs
-          port: 6697
-          targetPort: 6697
-        - name: irc
-          port: 6667
-          targetPort: 6667
-    selector:
-        app: solanum
+  type: ClusterIP
+  ports:
+    - name: ircs
+      port: 6697
+      targetPort: 6697
+    - name: irc
+      port: 6667
+      targetPort: 6667
+  selector:
+    app: solanum
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
 metadata:
-    name: ircs
-    namespace: irc
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: irc.midnightthoughts.space
+  name: ircs
+  namespace: irc
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: irc.midnightthoughts.space
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-          sectionName: ircs
-    rules:
-        - backendRefs:
-            - name: solanum
-              port: 6697
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: ircs
+  rules:
+    - backendRefs:
+        - name: solanum
+          port: 6697
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: atheme-db
-    labels:
-        app: atheme
+  name: atheme-db
+  labels:
+    app: atheme
 spec:
-    storageClassName: ceph-filesystem
-    accessModes:
-        - ReadWriteMany
-    resources:
-        requests:
-            storage: 1Gi
+  storageClassName: ceph-filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

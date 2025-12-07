@@ -1,153 +1,153 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-    name: cert-manager
+  name: cert-manager
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-    name: cert-manager
-    namespace: cert-manager
+  name: cert-manager
+  namespace: cert-manager
 spec:
-    interval: 24h
-    url: https://charts.jetstack.io
+  interval: 24h
+  url: https://charts.jetstack.io
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-    name: cert-manager-pdns
-    namespace: cert-manager
+  name: cert-manager-pdns
+  namespace: cert-manager
 spec:
-    interval: 24h
-    url: https://zachomedia.github.io/cert-manager-webhook-pdns
+  interval: 24h
+  url: https://zachomedia.github.io/cert-manager-webhook-pdns
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageRepository
 metadata:
-    name: cert-manager
-    namespace: cert-manager
+  name: cert-manager
+  namespace: cert-manager
 spec:
-    image: quay.io/jetstack/cert-manager-controller
-    interval: 5h
+  image: quay.io/jetstack/cert-manager-controller
+  interval: 5h
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImagePolicy
 metadata:
-    name: cert-manager
-    namespace: cert-manager
+  name: cert-manager
+  namespace: cert-manager
 spec:
-    imageRepositoryRef:
-        name: cert-manager
-    policy:
-        semver:
-            range: ">=v1.19.0 <v2.0.0"
+  imageRepositoryRef:
+    name: cert-manager
+  policy:
+    semver:
+      range: ">=v1.19.0 <v2.0.0"
 ---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
-    name: cert-manager
-    namespace: cert-manager
+  name: cert-manager
+  namespace: cert-manager
 spec:
-    interval: 30m
-    sourceRef:
-        kind: GitRepository
-        name: flux-system
-        namespace: flux-system
-    git:
-        commit:
-            author:
-                email: fluxcdbot@users.noreply.github.com
-                name: fluxcdbot
-        push:
-            branch: main
-    update:
-        path: ./
+  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  git:
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+    push:
+      branch: main
+  update:
+    path: ./
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: cert-manager
-    namespace: cert-manager
+  name: cert-manager
+  namespace: cert-manager
 spec:
-    interval: 30m
-    chart:
-        spec:
-            chart: cert-manager
-            version: "1.x"
-            sourceRef:
-                kind: HelmRepository
-                name: cert-manager
-                namespace: cert-manager
-            interval: 12h
-    values:
-        global:
-            priorityClassName: system-cluster-critical
-        replicaCount: 2
-        podDisruptionBudget:
-            enabled: true
-            minAvailable: 1
-        installCRDs: true
-        enableCertificateOwnerRef: false
-        prometheus:
-            enabled: true
-            podmonitor:
-                enabled: false
-        image:
-            tag: v1.19.1
-        webhook:
-            image:
-                tag: v1.19.1
-        cainjector:
-            image:
-                tag: v1.19.1
-        acmesolver:
-            image:
-                tag: v1.19.1
-        startupapicheck:
-            image:
-                tag: v1.19.1
-        config:
-            apiVersion: controller.config.cert-manager.io/v1alpha1
-            kind: ControllerConfiguration
-            enableGatewayAPI: true
-            featureGates:
-                AdditionalCertificateOutputFormats: true
-                ExperimentalGatewayAPISupport: true
+  interval: 30m
+  chart:
+    spec:
+      chart: cert-manager
+      version: "1.x"
+      sourceRef:
+        kind: HelmRepository
+        name: cert-manager
+        namespace: cert-manager
+      interval: 12h
+  values:
+    global:
+      priorityClassName: system-cluster-critical
+    replicaCount: 2
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    installCRDs: true
+    enableCertificateOwnerRef: false
+    prometheus:
+      enabled: true
+      podmonitor:
+        enabled: false
+    image:
+      tag: v1.19.1
+    webhook:
+      image:
+        tag: v1.19.1
+    cainjector:
+      image:
+        tag: v1.19.1
+    acmesolver:
+      image:
+        tag: v1.19.1
+    startupapicheck:
+      image:
+        tag: v1.19.1
+    config:
+      apiVersion: controller.config.cert-manager.io/v1alpha1
+      kind: ControllerConfiguration
+      enableGatewayAPI: true
+      featureGates:
+        AdditionalCertificateOutputFormats: true
+        ExperimentalGatewayAPISupport: true
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-    name: allow-certmanager-ingress
-    namespace: flux-system
+  name: allow-certmanager-ingress
+  namespace: flux-system
 spec:
-    podSelector:
-        matchLabels:
-            acme.cert-manager.io/http01-solver: "true"
-    ingress:
-        - ports:
-            - protocol: TCP
-              port: 8089
-    policyTypes:
-        - Ingress
+  podSelector:
+    matchLabels:
+      acme.cert-manager.io/http01-solver: "true"
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8089
+  policyTypes:
+    - Ingress
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: cert-manager-pdns
-    namespace: cert-manager
+  name: cert-manager-pdns
+  namespace: cert-manager
 spec:
-    interval: 30m
-    chart:
-        spec:
-            chart: cert-manager-webhook-pdns
-            version: "1.x"
-            sourceRef:
-                kind: HelmRepository
-                name: cert-manager-pdns
-                namespace: cert-manager
-            interval: 12h
-    values:
-        image:
-            repository: ghcr.io/mtrnord/cert-manager-webhook-pdns
-            pullPolicy: Always
-            tag: latest
+  interval: 30m
+  chart:
+    spec:
+      chart: cert-manager-webhook-pdns
+      version: "1.x"
+      sourceRef:
+        kind: HelmRepository
+        name: cert-manager-pdns
+        namespace: cert-manager
+      interval: 12h
+  values:
+    image:
+      repository: ghcr.io/mtrnord/cert-manager-webhook-pdns
+      pullPolicy: Always
+      tag: latest

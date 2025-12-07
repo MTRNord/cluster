@@ -1,128 +1,128 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: m-org-statistics-persistent-storage
-    namespace: statistics
+  name: m-org-statistics-persistent-storage
+  namespace: statistics
 spec:
-    accessModes:
-        - ReadWriteMany
-    resources:
-        requests:
-            storage: 4Gi
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 4Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: morg-statistics
-    namespace: statistics
+  name: morg-statistics
+  namespace: statistics
 spec:
-    strategy:
-        rollingUpdate:
-            maxSurge: 25%
-            maxUnavailable: 25%
-        type: RollingUpdate
-    selector:
-        matchLabels:
-            app: morg-statistics
-    template:
-        metadata:
-            labels:
-                app: morg-statistics
-        spec:
-            imagePullSecrets:
-                - name: ghcr-pull
-            containers:
-                - name: morg-statistics
-                  image: ghcr.io/mtrnord/matrix-org-statistics:latest
-                  imagePullPolicy: Always
-                  env:
-                    - name: CACHE_DIR
-                      value: "/data"
-                  resources:
-                    limits:
-                        memory: "1Gi"
-                        cpu: "1"
-                    requests:
-                        memory: "500Mi"
-                        cpu: "250m"
-                  securityContext:
-                    runAsUser: 999
-                    runAsGroup: 999
-                    readOnlyRootFilesystem: false
-                  ports:
-                    - containerPort: 8080
-                      name: http
-                      protocol: TCP
-                  volumeMounts:
-                    - mountPath: /data
-                      name: storage
-                    - mountPath: /tmp
-                      name: tmp
-                    - mountPath: /var/log/shiny-server/
-                      name: tmp-log
-                    - mountPath: /var/lib/shiny-server/bookmarks
-                      name: tmp-bookmarks
-                    - mountPath: /home/shiny/.cache
-                      name: tmp-cache
-                  livenessProbe:
-                    httpGet:
-                        path: /
-                        port: http
-                        scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
-                  startupProbe:
-                    httpGet:
-                        path: /
-                        port: http
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
-            volumes:
-                - name: storage
-                  persistentVolumeClaim:
-                    claimName: m-org-statistics-persistent-storage
-                - name: tmp
-                  emptyDir:
-                    sizeLimit: 2048Mi
-                - name: tmp-log
-                  emptyDir:
-                    sizeLimit: 2048Mi
-                - name: tmp-bookmarks
-                  emptyDir:
-                    sizeLimit: 2048Mi
-                - name: tmp-cache
-                  emptyDir:
-                    sizeLimit: 2048Mi
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: morg-statistics
+  template:
+    metadata:
+      labels:
+        app: morg-statistics
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: morg-statistics
+          image: ghcr.io/mtrnord/matrix-org-statistics:latest
+          imagePullPolicy: Always
+          env:
+            - name: CACHE_DIR
+              value: "/data"
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+            requests:
+              memory: "500Mi"
+              cpu: "250m"
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+            readOnlyRootFilesystem: false
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: storage
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /var/log/shiny-server/
+              name: tmp-log
+            - mountPath: /var/lib/shiny-server/bookmarks
+              name: tmp-bookmarks
+            - mountPath: /home/shiny/.cache
+              name: tmp-cache
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            failureThreshold: 30
+            periodSeconds: 10
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: m-org-statistics-persistent-storage
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: tmp-log
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: tmp-bookmarks
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: tmp-cache
+          emptyDir:
+            sizeLimit: 2048Mi
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: morg-statistics
-    namespace: statistics
-    labels:
-        app: morg-statistics
+  name: morg-statistics
+  namespace: statistics
+  labels:
+    app: morg-statistics
 spec:
-    selector:
-        app: morg-statistics
-    ports:
-        - port: 8080
-          targetPort: http
-          protocol: TCP
-          name: http
+  selector:
+    app: morg-statistics
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: morg-statistics
-    namespace: statistics
+  name: morg-statistics
+  namespace: statistics
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - morg-statistics.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: morg-statistics
-              port: 8080
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - morg-statistics.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: morg-statistics
+          port: 8080

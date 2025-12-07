@@ -1,16 +1,16 @@
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
 metadata:
-    name: authentik-ldap
-    namespace: authentik
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: ldap.midnightthoughts.space
+  name: authentik-ldap
+  namespace: authentik
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: ldap.midnightthoughts.space
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-          sectionName: ldap
-    rules:
-        - backendRefs:
-            - name: ak-outpost-ldap
-              port: 389
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: ldap
+  rules:
+    - backendRefs:
+        - name: ak-outpost-ldap
+          port: 389

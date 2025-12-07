@@ -1,19 +1,19 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-    name: ldap-authentik
-    namespace: authentik
+  name: ldap-authentik
+  namespace: authentik
 spec:
-    secretName: ldap-authentik
-    privateKey:
-        rotationPolicy: Always
-    issuerRef:
-        name: letsencrypt-dns
-        kind: ClusterIssuer
-    commonName: "ldap.midnightthoughts.space"
-    dnsNames:
-        - "auth.midnightthoughts.space"
-        - "ldap.midnightthoughts.space"
-    additionalOutputFormats:
-        - type: CombinedPEM
-        - type: DER
+  secretName: ldap-authentik
+  privateKey:
+    rotationPolicy: Always
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  commonName: "ldap.midnightthoughts.space"
+  dnsNames:
+    - "auth.midnightthoughts.space"
+    - "ldap.midnightthoughts.space"
+  additionalOutputFormats:
+    - type: CombinedPEM
+    - type: DER

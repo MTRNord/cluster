@@ -1,73 +1,73 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-http
-        traefik.ingress.kubernetes.io/router.middlewares: default-redirect-media-midnightthoughts@kubernetescrd,default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd,default-body-limit@kubernetescrd
-    namespace: matrix
-    name: matrix-media-repo-midnightthoughts
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-media-midnightthoughts@kubernetescrd,default-hsts@kubernetescrd,default-compress@kubernetescrd,default-redirect-https@kubernetescrd,default-body-limit@kubernetescrd
+  namespace: matrix
+  name: matrix-media-repo-midnightthoughts
 spec:
-    ingressClassName: traefik
-    rules:
-        - host: matrix.midnightthoughts.space
-          http:
-            paths:
-                - backend:
-                    service:
-                        name: matrix-media-repo
-                        port:
-                            number: 80
-                  path: /_matrix/media
-                  pathType: ImplementationSpecific
-        - host: midnightthoughts.space
-          http:
-            paths:
-                - backend:
-                    service:
-                        name: matrix-media-repo
-                        port:
-                            number: 80
-                  path: /_matrix/media
-                  pathType: ImplementationSpecific
-    tls:
-        - hosts:
-            - matrix.midnightthoughts.space
-            - midnightthoughts.space
-          secretName: midnightthoughts-tls-secret
+  ingressClassName: traefik
+  rules:
+    - host: matrix.midnightthoughts.space
+      http:
+        paths:
+          - backend:
+              service:
+                name: matrix-media-repo
+                port:
+                  number: 80
+            path: /_matrix/media
+            pathType: ImplementationSpecific
+    - host: midnightthoughts.space
+      http:
+        paths:
+          - backend:
+              service:
+                name: matrix-media-repo
+                port:
+                  number: 80
+            path: /_matrix/media
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - matrix.midnightthoughts.space
+        - midnightthoughts.space
+      secretName: midnightthoughts-tls-secret
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-http
-        traefik.ingress.kubernetes.io/router.middlewares: default-redirect-media-art-midnightthoughts@kubernetescrd,default-compress@kubernetescrd,default-hsts@kubernetescrd,default-redirect-https@kubernetescrd,default-body-limit@kubernetescrd
-    namespace: matrix
-    name: matrix-media-repo-art-midnightthoughts
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-http
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-media-art-midnightthoughts@kubernetescrd,default-compress@kubernetescrd,default-hsts@kubernetescrd,default-redirect-https@kubernetescrd,default-body-limit@kubernetescrd
+  namespace: matrix
+  name: matrix-media-repo-art-midnightthoughts
 spec:
-    ingressClassName: traefik
-    rules:
-        - host: matrix.art.midnightthoughts.space
-          http:
-            paths:
-                - backend:
-                    service:
-                        name: matrix-media-repo
-                        port:
-                            number: 80
-                  path: /_matrix/media
-                  pathType: ImplementationSpecific
-        - host: art.midnightthoughts.space
-          http:
-            paths:
-                - backend:
-                    service:
-                        name: matrix-media-repo
-                        port:
-                            number: 80
-                  path: /_matrix/media
-                  pathType: ImplementationSpecific
-    tls:
-        - hosts:
-            - matrix.art.midnightthoughts.space
-            - art.midnightthoughts.space
-          secretName: art.midnightthoughts-tls-secret
+  ingressClassName: traefik
+  rules:
+    - host: matrix.art.midnightthoughts.space
+      http:
+        paths:
+          - backend:
+              service:
+                name: matrix-media-repo
+                port:
+                  number: 80
+            path: /_matrix/media
+            pathType: ImplementationSpecific
+    - host: art.midnightthoughts.space
+      http:
+        paths:
+          - backend:
+              service:
+                name: matrix-media-repo
+                port:
+                  number: 80
+            path: /_matrix/media
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - matrix.art.midnightthoughts.space
+        - art.midnightthoughts.space
+      secretName: art.midnightthoughts-tls-secret

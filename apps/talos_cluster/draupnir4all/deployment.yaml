@@ -1,163 +1,162 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: d4all-persistent-storage
-    namespace: matrix
+  name: d4all-persistent-storage
+  namespace: matrix
 spec:
-    accessModes:
-        - ReadWriteMany
-    resources:
-        requests:
-            storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: draupnir4all
-    namespace: matrix
-    labels:
+  name: draupnir4all
+  namespace: matrix
+  labels:
+    app.kubernetes.io/component: appservice
+    app.kubernetes.io/instance: main-process
+    app.kubernetes.io/name: draupnir4all
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: draupnir4all
+  template:
+    metadata:
+      labels:
+        app: draupnir4all
         app.kubernetes.io/component: appservice
         app.kubernetes.io/instance: main-process
         app.kubernetes.io/name: draupnir4all
-spec:
-    strategy:
-        rollingUpdate:
-            maxSurge: 25%
-            maxUnavailable: 25%
-        type: RollingUpdate
-    selector:
-        matchLabels:
-            app: draupnir4all
-    template:
-        metadata:
-            labels:
-                app: draupnir4all
-                app.kubernetes.io/component: appservice
-                app.kubernetes.io/instance: main-process
-                app.kubernetes.io/name: draupnir4all
-        spec:
-            imagePullSecrets:
-                - name: ghcr-pull
-            affinity:
-                podAntiAffinity:
-                    requiredDuringSchedulingIgnoredDuringExecution:
-                        - labelSelector:
-                            matchExpressions:
-                                - key: app
-                                  operator: In
-                                  values:
-                                    - draupnir4all
-                          topologyKey: "kubernetes.io/hostname"
-            containers:
-                - name: draupnir4all
-                  #image: gnuxie/draupnir:develop
-                  #imagePullPolicy: Always
-                  #image: ghcr.io/mtrnord/draupnir:latest
-                  image: gnuxie/draupnir:v2.7.1
-                  imagePullPolicy: IfNotPresent
-                  #   env:
-                  #     - name: TRACING_ENABLED
-                  #       value: "true"
-                  #     - name: TRACING_DIAG_ENABLED
-                  #       value: "false"
-                  #     - name: TRACING_DIAG_VERBOSE
-                  #       value: "true"
-                  #     - name: TRACING_TRACE_URL
-                  #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
-                  #     - name: TRACING_METRIC_URL
-                  #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/metrics
-                  env:
-                    - name: NODE_OPTIONS
-                      value: "--trace-warnings"
-                  command: ["./draupnir-entrypoint.sh"]
-                  args: ["appservice", "-c", "/data/config/config.appservice.yaml", "-f", "/data/config/draupnir-registration.yaml",
-                    "--draupnir-config", "/data/config/draupnir-config.yaml", "-p", "9000"]
-                  resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
-                  securityContext:
-                    runAsUser: 1000
-                    runAsGroup: 1000
-                    readOnlyRootFilesystem: true
-                  ports:
-                    - containerPort: 9001
-                      name: api
-                      protocol: TCP
-                    - containerPort: 9000
-                      name: appservice
-                      protocol: TCP
-                  volumeMounts:
-                    - name: configs
-                      mountPath: "/data/config"
-                      readOnly: true
-                    - mountPath: /data/storage
-                      name: storage
-                    - mountPath: /tmp
-                      name: tmp
-                  livenessProbe:
-                    httpGet:
-                        path: /healthz
-                        port: appservice
-                        scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
-                  startupProbe:
-                    httpGet:
-                        path: /healthz
-                        port: appservice
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
-                    # - name: draupnir4all-web
-                    #   image: ghcr.io/mtrnord/draupnir4all-web:latest
-                    #   imagePullPolicy: Always
-                    #   env:
-                    #     - name: SESSION_SECRET
-                    #       valueFrom:
-                    #         secretKeyRef:
-                    #             name: draupnir4all-web
-                    #             key: session-secret
-                    #     - name: D4ALL_INSTANCE_ADDRESS
-                    #       value: "http://localhost:9001"
-                    #   resources:
-                    #     limits: {}
-                    #     requests:
-                    #         memory: "344Mi"
-                    #         cpu: "252m"
-                    #   securityContext:
-                    #     runAsUser: 1000
-                    #     runAsGroup: 1000
-                    #     readOnlyRootFilesystem: true
-                    #   ports:
-                    #     - containerPort: 3000
-                    #       name: web
-                    #       protocol: TCP
-                    #   volumeMounts:
-                    #     - mountPath: /tmp
-                    #       name: tmp
-                    #   livenessProbe:
-                    #     httpGet:
-                    #         path: /
-                    #         port: web
-                    #         scheme: HTTP
-                    #     initialDelaySeconds: 15
-                    #     periodSeconds: 10
-                    #   startupProbe:
-                    #     httpGet:
-                    #         path: /
-                    #         port: web
-                    #     initialDelaySeconds: 15
-                    #     failureThreshold: 30
-                    #     periodSeconds: 10
-            volumes:
-                - name: configs
-                  secret:
-                    secretName: draupnir-appservice
-                - name: storage
-                  persistentVolumeClaim:
-                    claimName: d4all-persistent-storage
-                - name: tmp
-                  emptyDir:
-                    sizeLimit: 2048Mi
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - draupnir4all
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: draupnir4all
+          #image: gnuxie/draupnir:develop
+          #imagePullPolicy: Always
+          #image: ghcr.io/mtrnord/draupnir:latest
+          image: gnuxie/draupnir:v2.7.1
+          imagePullPolicy: IfNotPresent
+          #   env:
+          #     - name: TRACING_ENABLED
+          #       value: "true"
+          #     - name: TRACING_DIAG_ENABLED
+          #       value: "false"
+          #     - name: TRACING_DIAG_VERBOSE
+          #       value: "true"
+          #     - name: TRACING_TRACE_URL
+          #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
+          #     - name: TRACING_METRIC_URL
+          #       value: http://tempo.monitoring.svc.cluster.local:4318/v1/metrics
+          env:
+            - name: NODE_OPTIONS
+              value: "--trace-warnings"
+          command: ["./draupnir-entrypoint.sh"]
+          args: ["appservice", "-c", "/data/config/config.appservice.yaml", "-f", "/data/config/draupnir-registration.yaml", "--draupnir-config", "/data/config/draupnir-config.yaml", "-p", "9000"]
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+          ports:
+            - containerPort: 9001
+              name: api
+              protocol: TCP
+            - containerPort: 9000
+              name: appservice
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: "/data/config"
+              readOnly: true
+            - mountPath: /data/storage
+              name: storage
+            - mountPath: /tmp
+              name: tmp
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: appservice
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: appservice
+            initialDelaySeconds: 15
+            failureThreshold: 30
+            periodSeconds: 10
+            # - name: draupnir4all-web
+            #   image: ghcr.io/mtrnord/draupnir4all-web:latest
+            #   imagePullPolicy: Always
+            #   env:
+            #     - name: SESSION_SECRET
+            #       valueFrom:
+            #         secretKeyRef:
+            #             name: draupnir4all-web
+            #             key: session-secret
+            #     - name: D4ALL_INSTANCE_ADDRESS
+            #       value: "http://localhost:9001"
+            #   resources:
+            #     limits: {}
+            #     requests:
+            #         memory: "344Mi"
+            #         cpu: "252m"
+            #   securityContext:
+            #     runAsUser: 1000
+            #     runAsGroup: 1000
+            #     readOnlyRootFilesystem: true
+            #   ports:
+            #     - containerPort: 3000
+            #       name: web
+            #       protocol: TCP
+            #   volumeMounts:
+            #     - mountPath: /tmp
+            #       name: tmp
+            #   livenessProbe:
+            #     httpGet:
+            #         path: /
+            #         port: web
+            #         scheme: HTTP
+            #     initialDelaySeconds: 15
+            #     periodSeconds: 10
+            #   startupProbe:
+            #     httpGet:
+            #         path: /
+            #         port: web
+            #     initialDelaySeconds: 15
+            #     failureThreshold: 30
+            #     periodSeconds: 10
+      volumes:
+        - name: configs
+          secret:
+            secretName: draupnir-appservice
+        - name: storage
+          persistentVolumeClaim:
+            claimName: d4all-persistent-storage
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi

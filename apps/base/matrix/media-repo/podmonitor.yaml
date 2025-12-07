@@ -1,18 +1,18 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-    name: matrix-media-repo
-    labels:
-        instance: midnightthoughts
-    namespace: matrix
+  name: matrix-media-repo
+  labels:
+    instance: midnightthoughts
+  namespace: matrix
 spec:
-    namespaceSelector:
-        matchNames:
-            - "matrix"
-    podMetricsEndpoints:
-        - interval: 5s
-          path: /metrics
-          port: monitoring
-    selector:
-        matchLabels:
-            app.kubernetes.io/name: matrix-media-repo
+  namespaceSelector:
+    matchNames:
+      - "matrix"
+  podMetricsEndpoints:
+    - interval: 5s
+      path: /metrics
+      port: monitoring
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: matrix-media-repo

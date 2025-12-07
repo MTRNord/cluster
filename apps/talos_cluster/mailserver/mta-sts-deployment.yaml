@@ -1,129 +1,127 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: mta-sts-server
-    namespace: mailserver
-    labels:
-        app: mta-sts-server
+  name: mta-sts-server
+  namespace: mailserver
+  labels:
+    app: mta-sts-server
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: mta-sts-server
-    template:
-        metadata:
-            labels:
-                app: mta-sts-server
-        spec:
-            containers:
-                - name: nginx
-                  image: nginxinc/nginx-unprivileged:1.25-alpine
-                  ports:
-                    - containerPort: 8080
-                      name: http
-                  volumeMounts:
-                    - name: mta-sts-config
-                      mountPath: /etc/nginx/conf.d
-                      readOnly: true
-                    - name: mta-sts-content
-                      mountPath: /usr/share/nginx/html/.well-known
-                      readOnly: true
-                    - name: tmp
-                      mountPath: /tmp
-                    - name: var-cache-nginx
-                      mountPath: /var/cache/nginx
-                    - name: var-run
-                      mountPath: /var/run
-                  resources:
-                    requests:
-                        memory: "32Mi"
-                        cpu: "10m"
-                    limits:
-                        memory: "64Mi"
-                        cpu: "50m"
-                  livenessProbe:
-                    httpGet:
-                        path: /health
-                        port: 8080
-                    initialDelaySeconds: 10
-                    periodSeconds: 30
-                  readinessProbe:
-                    httpGet:
-                        path: /health
-                        port: 8080
-                    initialDelaySeconds: 5
-                    periodSeconds: 10
-                  securityContext:
-                    allowPrivilegeEscalation: false
-                    readOnlyRootFilesystem: true
-                    runAsNonRoot: true
-                    runAsUser: 101
-                    runAsGroup: 101
-                    capabilities:
-                        drop:
-                            - ALL
-            volumes:
-                - name: mta-sts-config
-                  configMap:
-                    name: mta-sts-nginx-config
-                - name: mta-sts-content
-                  configMap:
-                    name: mta-sts-content
-                - name: tmp
-                  emptyDir: {}
-                - name: var-cache-nginx
-                  emptyDir: {}
-                - name: var-run
-                  emptyDir: {}
-            securityContext:
-                fsGroup: 101
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mta-sts-server
+  template:
+    metadata:
+      labels:
+        app: mta-sts-server
+    spec:
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.25-alpine
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: mta-sts-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            - name: mta-sts-content
+              mountPath: /usr/share/nginx/html/.well-known
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+            - name: var-cache-nginx
+              mountPath: /var/cache/nginx
+            - name: var-run
+              mountPath: /var/run
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: mta-sts-config
+          configMap:
+            name: mta-sts-nginx-config
+        - name: mta-sts-content
+          configMap:
+            name: mta-sts-content
+        - name: tmp
+          emptyDir: {}
+        - name: var-cache-nginx
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
+      securityContext:
+        fsGroup: 101
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: mta-sts-nginx-config
-    namespace: mailserver
+  name: mta-sts-nginx-config
+  namespace: mailserver
 data:
-    default.conf: "server {\n    listen 8080;\n    server_name _;\n    \n    root /usr/share/nginx/html;\n    index index.html;\n\n
-        \   # Security headers\n    add_header X-Content-Type-Options nosniff;\n    add_header X-Frame-Options DENY;\n    add_header
-        X-XSS-Protection \"1; mode=block\";\n\n    # MTA-STS specific configuration\n    location /.well-known/mta-sts.txt
-        {\n        add_header Content-Type \"text/plain; charset=utf-8\";\n        add_header Cache-Control \"max-age=604800\";\n
-        \       try_files $uri =404;\n    }\n\n    # Health check endpoint\n    location /health {\n        access_log off;\n
-        \       return 200 \"healthy\\n\";\n        add_header Content-Type text/plain;\n    }\n\n    # Deny access to other
-        locations\n    location / {\n        return 404;\n    }\n\n    # Disable server tokens\n    server_tokens off;\n}\n"
+  default.conf: "server {\n    listen 8080;\n    server_name _;\n    \n    root /usr/share/nginx/html;\n    index index.html;\n\n    # Security headers\n    add_header X-Content-Type-Options nosniff;\n
+    \   add_header X-Frame-Options DENY;\n    add_header X-XSS-Protection \"1; mode=block\";\n\n    # MTA-STS specific configuration\n    location /.well-known/mta-sts.txt {\n        add_header Content-Type
+    \"text/plain; charset=utf-8\";\n        add_header Cache-Control \"max-age=604800\";\n        try_files $uri =404;\n    }\n\n    # Health check endpoint\n    location /health {\n        access_log off;\n
+    \       return 200 \"healthy\\n\";\n        add_header Content-Type text/plain;\n    }\n\n    # Deny access to other locations\n    location / {\n        return 404;\n    }\n\n    # Disable server tokens\n
+    \   server_tokens off;\n}\n"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: mta-sts-server
-    namespace: mailserver
-    labels:
-        app: mta-sts-server
+  name: mta-sts-server
+  namespace: mailserver
+  labels:
+    app: mta-sts-server
 spec:
-    selector:
-        app: mta-sts-server
-    ports:
-        - name: http
-          port: 8080
-          targetPort: http
-          protocol: TCP
-    type: ClusterIP
+  selector:
+    app: mta-sts-server
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP
+  type: ClusterIP
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: mailserver-mta-sts
-    namespace: mailserver
+  name: mailserver-mta-sts
+  namespace: mailserver
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - mta-sts.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: mta-sts-server
-              port: 8080
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - mta-sts.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: mta-sts-server
+          port: 8080
+      timeouts:
+        request: 240s
+        backendRequest: 0s

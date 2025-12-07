@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: ntfy-data
-    namespace: ntfy
+  name: ntfy-data
+  namespace: ntfy
 spec:
-    resources:
-        requests:
-            storage: 200Mi
-    volumeMode: Filesystem
-    accessModes:
-        - ReadWriteMany
-    storageClassName: longhorn
+  resources:
+    requests:
+      storage: 200Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  storageClassName: longhorn

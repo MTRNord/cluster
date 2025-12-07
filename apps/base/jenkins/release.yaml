@@ -1,139 +1,139 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: jenkins
-    namespace: jenkins
+  name: jenkins
+  namespace: jenkins
 spec:
-    interval: 1h
-    releaseName: jenkins
-    chart:
-        spec:
-            chart: jenkins
-            sourceRef:
-                kind: HelmRepository
-                name: jenkins
-    values:
-        agent:
-            # -- Resources allocation (Requests and Limits)
-            resources:
-                requests:
-                    cpu: 512m
-                    memory: 512Mi
-                limits:
-                    cpu: 512m
-                    memory: 1024Mi
-            additionalContainers:
-                - sideContainerName: nodejs
-                  image:
-                    repository: node
-                    tag: 23
-                  command: sleep
-                  args: "99999999"
-                  resources:
-                    requests:
-                        cpu: 512m
-                        memory: 512Mi
-                    limits:
-                        cpu: 512m
-                        memory: 1024Mi
-        controller:
-            admin:
-                username: admin
-                password: ENC[AES256_GCM,data:Pm+cj5o1feQBYHcUGcM8ey6N6pewKQ==,iv:zazq+1H9/7n4tDX7W67NHtY2+4jslSRy+KaTreXvIzw=,tag:lfcMNH2bGxSi7x0cL/pGZQ==,type:str]
-            jenkinsAdminEmail: ENC[AES256_GCM,data:VE6MA35EBxdKiJHvCN4GugeqKVogVjtU,iv:GlDis95N+AnbC+BTbyHZL4w0KWtZjTswXXEGCDQq7Uk=,tag:Bogg8hWmFyBQ5YVPEKDZyA==,type:str]
-            installLatestSpecifiedPlugins: true
-            overwritePlugins: true
-            installPlugins:
-                - kubernetes:4313.va_9b_4fe2a_0e34
-                - workflow-aggregator:600.vb_57cdd26fdd7
-                - git:5.7.0
-                - configuration-as-code:1932.v75cb_b_f1b_698d
-                - oic-auth:4.482.v1140b_cf263b_a_ # gitleaks:allow
-                - gerrit-trigger:2.42.0
-                - matrix-auth:3.2.4
-                #- gerrit-checks-api:66.v3ef8b_f08f1f3
-                - coverage:2.1.0
-                - pipeline-graph-view:413.v204a_03785b_92
-                - github:1.42.0
-                - plain-credentials:183.va_de8f1dd5a_2b_
-                - htmlpublisher:1.37
-            JCasC:
-                securityRealm: ENC[AES256_GCM,data:JHm2heYSumTYl/5LGECO5UCSZp+n6SSnwj70RAV+hwpdIuA5LkgNe/hI6eurOAvgiKM5CAD8Y71UlTAoxgkg/ZxHXjmZkj/STKQ0pXCu2PsmcHCBWVdmlcGPF8akcfVl85P9SjEHiSY/IDuPjE7fpHopXyBVFd3zzC5T96WupUpmLJvEr8a7XliuXORh+BVn2z2T+JIbSh1N2mUtzvZTVpCOA8firBE6E83p15s9HVzOWJMEEgKibLiHHh+RGnge8d74VUNVNtBiBdtJi3kIDlK8COTA7URS+jxP3M36EYMxBfPE/1JXOchzUIOYMBokdK0EXqwmViQum7aFaXCxaiQiMnS8IVdlIjMjNwMF/0Zv8/+RWoRd9SE1dHmFp/wGxjKnneSoCS6O6XNjNkyTRmmkHLBsrEOZnKFqRXPYof2XAON8LpOR2+6+lML3bgnNVIpPavsQyxQocg30LWLz2h7mXStM8vhZo15k95WIkISraf9i9hCUo5+5N359eMKAqms5Y2bxtoV2BTz/iRJrbse4N48DOCykUQv31E0+xdIt6l6WXLoBDxJbpsFhQvTRllZWQRQ24dOyTyVcCvNJ6xLSSUNXibXPedAVju97OSdqxO5F9ldJtstUF1FW4izUD/WGpXxCYbRly3DOxfxeAbAagRkiq8+rlcmiTb4ELcCkZgJ9wKhBdGS/7nDrpshYrfkP4xvkrdLKUWe73lTMlEaNPNQOEEbvpsD1ihF6KPgFxQSef2xdBeVSohP4sU421aES7yTs3oKJmfSsz3V+k6H6n2rQl0+nZoMZEZC0PMR71VmGoYKyWg4QpcLxTrYHeyQXCViUljOmo5Xi4G3Rdgia2lDDWUsKjMPTp7AZ,iv:p1i5A13Q/6+tfahE5iPJBLj+ith3HJg4XkKJSRPtHQM=,tag:mW9HVF0XwifDd3DyMTB3hQ==,type:str]
-                authorizationStrategy: |-
-                    loggedInUsersCanDoAnything:
-                        allowAnonymousRead: true
-            ingress:
-                enabled: false
-                apiVersion: networking.k8s.io/v1beta1
-                annotations:
-                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                    cert-manager.io/cluster-issuer: letsencrypt-dns
-                    traefik.ingress.kubernetes.io/router.middlewares: jenkins-jenkins-headers@kubernetescrd
-                hostName: jenkins.midnightthoughts.space
-                tls:
-                    - secretName: jenkins.midnightthoughts.space-tls
-                      hosts:
-                        - jenkins.midnightthoughts.space
-        persistence:
-            enabled: true
-            size: 8Gi
-            accessMode: ReadWriteMany
+  interval: 1h
+  releaseName: jenkins
+  chart:
+    spec:
+      chart: jenkins
+      sourceRef:
+        kind: HelmRepository
+        name: jenkins
+  values:
+    agent:
+      # -- Resources allocation (Requests and Limits)
+      resources:
+        requests:
+          cpu: 512m
+          memory: 512Mi
+        limits:
+          cpu: 512m
+          memory: 1024Mi
+      additionalContainers:
+        - sideContainerName: nodejs
+          image:
+            repository: node
+            tag: 23
+          command: sleep
+          args: "99999999"
+          resources:
+            requests:
+              cpu: 512m
+              memory: 512Mi
+            limits:
+              cpu: 512m
+              memory: 1024Mi
+    controller:
+      admin:
+        username: admin
+        password: ENC[AES256_GCM,data:Pm+cj5o1feQBYHcUGcM8ey6N6pewKQ==,iv:zazq+1H9/7n4tDX7W67NHtY2+4jslSRy+KaTreXvIzw=,tag:lfcMNH2bGxSi7x0cL/pGZQ==,type:str]
+      jenkinsAdminEmail: ENC[AES256_GCM,data:VE6MA35EBxdKiJHvCN4GugeqKVogVjtU,iv:GlDis95N+AnbC+BTbyHZL4w0KWtZjTswXXEGCDQq7Uk=,tag:Bogg8hWmFyBQ5YVPEKDZyA==,type:str]
+      installLatestSpecifiedPlugins: true
+      overwritePlugins: true
+      installPlugins:
+        - kubernetes:4313.va_9b_4fe2a_0e34
+        - workflow-aggregator:600.vb_57cdd26fdd7
+        - git:5.7.0
+        - configuration-as-code:1932.v75cb_b_f1b_698d
+        - oic-auth:4.482.v1140b_cf263b_a_ # gitleaks:allow
+        - gerrit-trigger:2.42.0
+        - matrix-auth:3.2.4
+        #- gerrit-checks-api:66.v3ef8b_f08f1f3
+        - coverage:2.1.0
+        - pipeline-graph-view:413.v204a_03785b_92
+        - github:1.42.0
+        - plain-credentials:183.va_de8f1dd5a_2b_ # gitleaks:allow
+        - htmlpublisher:1.37
+      JCasC:
+        securityRealm: ENC[AES256_GCM,data:JHm2heYSumTYl/5LGECO5UCSZp+n6SSnwj70RAV+hwpdIuA5LkgNe/hI6eurOAvgiKM5CAD8Y71UlTAoxgkg/ZxHXjmZkj/STKQ0pXCu2PsmcHCBWVdmlcGPF8akcfVl85P9SjEHiSY/IDuPjE7fpHopXyBVFd3zzC5T96WupUpmLJvEr8a7XliuXORh+BVn2z2T+JIbSh1N2mUtzvZTVpCOA8firBE6E83p15s9HVzOWJMEEgKibLiHHh+RGnge8d74VUNVNtBiBdtJi3kIDlK8COTA7URS+jxP3M36EYMxBfPE/1JXOchzUIOYMBokdK0EXqwmViQum7aFaXCxaiQiMnS8IVdlIjMjNwMF/0Zv8/+RWoRd9SE1dHmFp/wGxjKnneSoCS6O6XNjNkyTRmmkHLBsrEOZnKFqRXPYof2XAON8LpOR2+6+lML3bgnNVIpPavsQyxQocg30LWLz2h7mXStM8vhZo15k95WIkISraf9i9hCUo5+5N359eMKAqms5Y2bxtoV2BTz/iRJrbse4N48DOCykUQv31E0+xdIt6l6WXLoBDxJbpsFhQvTRllZWQRQ24dOyTyVcCvNJ6xLSSUNXibXPedAVju97OSdqxO5F9ldJtstUF1FW4izUD/WGpXxCYbRly3DOxfxeAbAagRkiq8+rlcmiTb4ELcCkZgJ9wKhBdGS/7nDrpshYrfkP4xvkrdLKUWe73lTMlEaNPNQOEEbvpsD1ihF6KPgFxQSef2xdBeVSohP4sU421aES7yTs3oKJmfSsz3V+k6H6n2rQl0+nZoMZEZC0PMR71VmGoYKyWg4QpcLxTrYHeyQXCViUljOmo5Xi4G3Rdgia2lDDWUsKjMPTp7AZ,iv:p1i5A13Q/6+tfahE5iPJBLj+ith3HJg4XkKJSRPtHQM=,tag:mW9HVF0XwifDd3DyMTB3hQ==,type:str]
+        authorizationStrategy: |-
+          loggedInUsersCanDoAnything:
+              allowAnonymousRead: true
+      ingress:
+        enabled: false
+        apiVersion: networking.k8s.io/v1beta1
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+          cert-manager.io/cluster-issuer: letsencrypt-dns
+          traefik.ingress.kubernetes.io/router.middlewares: jenkins-jenkins-headers@kubernetescrd
+        hostName: jenkins.midnightthoughts.space
+        tls:
+          - secretName: jenkins.midnightthoughts.space-tls
+            hosts:
+              - jenkins.midnightthoughts.space
+    persistence:
+      enabled: true
+      size: 8Gi
+      accessMode: ReadWriteMany
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxWG9vcW9ialpTVDJWMW9y
-            QklMTmZYSmgySVBKcHUwcXAxTXpRUitsVkRRCll1UkZqcXpKZ0EyUUVmSkg1RElo
-            TENGTnJTK2MrTjZGLzFLSEJtWVhyakUKLS0tIFNvUlJzRTdsNG8wWHYyQmVmTUE5
-            RitiT3ZEaWd1K1BBdEJCcEJiTFNjVFEKSw9E+7saeYa9m1yPRatBabnwL10Vdd27
-            lfByKaFdOzbZBtmWKIagbUcLoSG61iOEMXSOODeIz4sUUm9KV8n7QQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-19T17:32:50Z"
-    mac: ENC[AES256_GCM,data:CBrCRHfBSEyjIBW/wLVygPoCThl+Ehhqb851qZAQ/NFCF/0HBvci3r/bveVOvpsQZ36ZsAM4OM6fqaN9tN+uHVjIjmsKwrN+dlWbwkZMvnwS398u0t6+JU0ybsUjnnZOpNh+7AwVJ1d0+2SA6hOoT0Dwm81sGb8AsG7MzliuT8M=,iv:Iv2T87hkpfpEwQtjk/pZ1m/flbug1nqNtN4AuFaUzRI=,tag:CCdDyWOTYpCPaKS4iXnQKQ==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxWG9vcW9ialpTVDJWMW9y
+        QklMTmZYSmgySVBKcHUwcXAxTXpRUitsVkRRCll1UkZqcXpKZ0EyUUVmSkg1RElo
+        TENGTnJTK2MrTjZGLzFLSEJtWVhyakUKLS0tIFNvUlJzRTdsNG8wWHYyQmVmTUE5
+        RitiT3ZEaWd1K1BBdEJCcEJiTFNjVFEKSw9E+7saeYa9m1yPRatBabnwL10Vdd27
+        lfByKaFdOzbZBtmWKIagbUcLoSG61iOEMXSOODeIz4sUUm9KV8n7QQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-19T17:32:50Z"
+  mac: ENC[AES256_GCM,data:CBrCRHfBSEyjIBW/wLVygPoCThl+Ehhqb851qZAQ/NFCF/0HBvci3r/bveVOvpsQZ36ZsAM4OM6fqaN9tN+uHVjIjmsKwrN+dlWbwkZMvnwS398u0t6+JU0ybsUjnnZOpNh+7AwVJ1d0+2SA6hOoT0Dwm81sGb8AsG7MzliuT8M=,iv:Iv2T87hkpfpEwQtjk/pZ1m/flbug1nqNtN4AuFaUzRI=,tag:CCdDyWOTYpCPaKS4iXnQKQ==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: jenkins
-    namespace: jenkins
+  name: jenkins
+  namespace: jenkins
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - jenkins.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: jenkins
-              port: 8080
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - jenkins.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: jenkins
+          port: 8080
+      timeouts:
+        request: 240s
+        backendRequest: 0s
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxWG9vcW9ialpTVDJWMW9y
-            QklMTmZYSmgySVBKcHUwcXAxTXpRUitsVkRRCll1UkZqcXpKZ0EyUUVmSkg1RElo
-            TENGTnJTK2MrTjZGLzFLSEJtWVhyakUKLS0tIFNvUlJzRTdsNG8wWHYyQmVmTUE5
-            RitiT3ZEaWd1K1BBdEJCcEJiTFNjVFEKSw9E+7saeYa9m1yPRatBabnwL10Vdd27
-            lfByKaFdOzbZBtmWKIagbUcLoSG61iOEMXSOODeIz4sUUm9KV8n7QQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-19T17:32:50Z"
-    mac: ENC[AES256_GCM,data:CBrCRHfBSEyjIBW/wLVygPoCThl+Ehhqb851qZAQ/NFCF/0HBvci3r/bveVOvpsQZ36ZsAM4OM6fqaN9tN+uHVjIjmsKwrN+dlWbwkZMvnwS398u0t6+JU0ybsUjnnZOpNh+7AwVJ1d0+2SA6hOoT0Dwm81sGb8AsG7MzliuT8M=,iv:Iv2T87hkpfpEwQtjk/pZ1m/flbug1nqNtN4AuFaUzRI=,tag:CCdDyWOTYpCPaKS4iXnQKQ==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxWG9vcW9ialpTVDJWMW9y
+        QklMTmZYSmgySVBKcHUwcXAxTXpRUitsVkRRCll1UkZqcXpKZ0EyUUVmSkg1RElo
+        TENGTnJTK2MrTjZGLzFLSEJtWVhyakUKLS0tIFNvUlJzRTdsNG8wWHYyQmVmTUE5
+        RitiT3ZEaWd1K1BBdEJCcEJiTFNjVFEKSw9E+7saeYa9m1yPRatBabnwL10Vdd27
+        lfByKaFdOzbZBtmWKIagbUcLoSG61iOEMXSOODeIz4sUUm9KV8n7QQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-19T17:32:50Z"
+  mac: ENC[AES256_GCM,data:CBrCRHfBSEyjIBW/wLVygPoCThl+Ehhqb851qZAQ/NFCF/0HBvci3r/bveVOvpsQZ36ZsAM4OM6fqaN9tN+uHVjIjmsKwrN+dlWbwkZMvnwS398u0t6+JU0ybsUjnnZOpNh+7AwVJ1d0+2SA6hOoT0Dwm81sGb8AsG7MzliuT8M=,iv:Iv2T87hkpfpEwQtjk/pZ1m/flbug1nqNtN4AuFaUzRI=,tag:CCdDyWOTYpCPaKS4iXnQKQ==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

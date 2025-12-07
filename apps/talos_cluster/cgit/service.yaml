@@ -1,56 +1,56 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: cgit
-    namespace: git
-    labels:
-        app: cgit
+  name: cgit
+  namespace: git
+  labels:
+    app: cgit
 spec:
-    selector:
-        app: cgit
-    ports:
-        - port: 8080
-          targetPort: http
-          protocol: TCP
-          name: http
-        - port: 8081
-          targetPort: anubis
-          protocol: TCP
-          name: anubis
-        - port: 2222
-          targetPort: ssh
-          protocol: TCP
-          name: ssh
+  selector:
+    app: cgit
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 8081
+      targetPort: anubis
+      protocol: TCP
+      name: anubis
+    - port: 2222
+      targetPort: ssh
+      protocol: TCP
+      name: ssh
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: cgit
-    namespace: git
+  name: cgit
+  namespace: git
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - git.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: cgit
-              port: 8081
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - git.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: cgit
+          port: 8081
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
 metadata:
-    name: cgit-ssh
-    namespace: git
-    annotations:
-        external-dns.alpha.kubernetes.io/hostname: git.midnightthoughts.space
+  name: cgit-ssh
+  namespace: git
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: git.midnightthoughts.space
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-          sectionName: ssh
-    rules:
-        - backendRefs:
-            - name: cgit
-              port: 2222
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: ssh
+  rules:
+    - backendRefs:
+        - name: cgit
+          port: 2222

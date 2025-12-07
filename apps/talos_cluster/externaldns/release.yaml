@@ -1,65 +1,65 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: external-dns
-    namespace: kube-system
+  name: external-dns
+  namespace: kube-system
 spec:
-    releaseName: external-dns
-    chart:
-        spec:
-            chart: external-dns
-            sourceRef:
-                kind: HelmRepository
-                name: external-dns
-    interval: 50m
-    values:
-        logLevel: debug
-        extraArgs:
-            - --cloudflare-dns-records-per-page=5000
-            - --exclude-target-net=10.0.0.0/8
-        provider:
-            name: cloudflare
-        env:
-            - name: CF_API_TOKEN
-              valueFrom:
-                secretKeyRef:
-                    name: cloudflare-api-token-secret
-                    key: api-token
-        sources:
-            - gateway-httproute
-            - gateway-grpcroute
-            - gateway-tcproute
-            - gateway-tlsroute
-            - gateway-udproute
-            #- service
-        rbac:
-            additionalPermissions:
-                - apiGroups:
-                    - ""
-                  resources:
-                    - namespaces
-                  verbs:
-                    - get
-                    - watch
-                    - list
-                - apiGroups:
-                    - gateway.networking.k8s.io
-                  resources:
-                    - gateways
-                    - httproutes
-                    - grpcroutes
-                    - tlsroutes
-                    - tcproutes
-                    - udproutes
-                  verbs:
-                    - get
-                    - watch
-                    - list
-                - apiGroups:
-                    - ""
-                  resources:
-                    - services
-                  verbs:
-                    - get
-                    - watch
-                    - list
+  releaseName: external-dns
+  chart:
+    spec:
+      chart: external-dns
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+  interval: 50m
+  values:
+    logLevel: debug
+    extraArgs:
+      - --cloudflare-dns-records-per-page=5000
+      - --exclude-target-net=10.0.0.0/8
+    provider:
+      name: cloudflare
+    env:
+      - name: CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-api-token-secret
+            key: api-token
+    sources:
+      - gateway-httproute
+      - gateway-grpcroute
+      - gateway-tcproute
+      - gateway-tlsroute
+      - gateway-udproute
+      #- service
+    rbac:
+      additionalPermissions:
+        - apiGroups:
+            - ""
+          resources:
+            - namespaces
+          verbs:
+            - get
+            - watch
+            - list
+        - apiGroups:
+            - gateway.networking.k8s.io
+          resources:
+            - gateways
+            - httproutes
+            - grpcroutes
+            - tlsroutes
+            - tcproutes
+            - udproutes
+          verbs:
+            - get
+            - watch
+            - list
+        - apiGroups:
+            - ""
+          resources:
+            - services
+          verbs:
+            - get
+            - watch
+            - list

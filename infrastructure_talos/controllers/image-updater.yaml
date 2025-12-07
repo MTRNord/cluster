@@ -1,19 +1,19 @@
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
-    name: flux-system
-    namespace: flux-system
+  name: flux-system
+  namespace: flux-system
 spec:
-    interval: 30m
-    sourceRef:
-        kind: GitRepository
-        name: flux-system
-    git:
-        commit:
-            author:
-                email: fluxcdbot@users.noreply.github.com
-                name: fluxcdbot
-        push:
-            branch: main
-    update:
-        path: ./
+  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+    push:
+      branch: main
+  update:
+    path: ./

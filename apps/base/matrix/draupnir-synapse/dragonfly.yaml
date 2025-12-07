@@ -1,40 +1,40 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: draupnir-dragonfly
-    namespace: matrix
+  name: draupnir-dragonfly
+  namespace: matrix
 spec:
-    chart:
-        spec:
-            chart: helm/dragonfly
-            sourceRef:
-                kind: HelmRepository
-                name: dragonfly
-            version: v1.15.1
-    interval: 50m
-    install:
-        remediation:
-            retries: 3
-    values:
-        podSecurityContext:
-            fsGroup: 2000
-        securityContext:
-            capabilities:
-                drop:
-                    - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-        serviceMonitor:
-            enabled: true
-        prometheusRule:
-            enabled: true
-            spec:
-                - alert: DragonflyMissing
-                  expr: absent(dragonfly_uptime_in_seconds) == 1
-                  for: 0m
-                  labels:
-                    severity: critical
-                  annotations:
-                    summary: Dragonfly is missing
-                    description: "Dragonfly is missing"
+  chart:
+    spec:
+      chart: helm/dragonfly
+      sourceRef:
+        kind: HelmRepository
+        name: dragonfly
+      version: v1.15.1
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    podSecurityContext:
+      fsGroup: 2000
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+    serviceMonitor:
+      enabled: true
+    prometheusRule:
+      enabled: true
+      spec:
+        - alert: DragonflyMissing
+          expr: absent(dragonfly_uptime_in_seconds) == 1
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: Dragonfly is missing
+            description: "Dragonfly is missing"

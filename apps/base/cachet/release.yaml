@@ -1,124 +1,124 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: cachet
-    namespace: cachet
+  name: cachet
+  namespace: cachet
 spec:
-    releaseName: cachet
-    interval: 60m
-    chart:
-        spec:
-            chart: cachet
-            sourceRef:
-                kind: HelmRepository
-                name: cachet
-    values:
-        resources:
-            limits: {}
-            requests:
-                cpu: 41m
-                memory: 100Mi
-        image:
-            repository: ghcr.io/mtrnord/cachet_docker
-            tag: "2.4"
-            pullPolicy: Always
-        ingress:
-            enabled: false
-            annotations:
-                cert-manager.io/cluster-issuer: letsencrypt-dns
-                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-            host: status.midnightthoughts.space
-            tls:
-                - secretName: status-midnightthoughts-space-tls
-                  hosts:
-                    - status.midnightthoughts.space
-        postgresql:
-            enabled: false
-        database:
-            host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
-            port: 5432
-            name: cachet
-            username: cachet
-            password: ENC[AES256_GCM,data:14z62hvPZZvsuBOsuHYgqv1toAHKp9RY/KH0+pJQziegnfZjWAVImKHwvvCic4SxEASBkwNJmqQYjlhEi0hI9K3bd8kZn5JvX8nq5cDP3Hh+r7RwHzHS0g==,iv:PkZzoTFyugQRvFni6ih59iULjZGt7mcJhigitKvpEAY=,tag:OpCEfHI8NZ1rYZ6o9Yezyw==,type:str]
-        env:
-            public:
-                # Application environments
-                APP_DEBUG: false
-                APP_LOG: errorlog
-                DB_DRIVER: pgsql
-                DOCKER: true
-                CACHE_DRIVER: database
-                SESSION_DRIVER: database
-                QUEUE_DRIVER: database
-                CACHET_EMOJI: false
-                CACHET_BEACON: false
-                # Email find them here  https://docs.cachethq.io/docs/configuring-mail
-                MAIL_DRIVER: smtp
-                MAIL_HOST: smtp.fastmail.com
-                MAIL_ADDRESS: ops@nordgedanken.dev
-                MAIL_PORT: 465
-                MAIL_NAME: Midnightthoughts Status Page
-                MAIL_ENCRYPTION: tls
-            private:
-                APP_KEY: ENC[AES256_GCM,data:aDiw4vJtHn4cicl1vXaup4tb8v5vjb3k8dJrbynXArcoopYl78D39W/n/VnrfRfoJQ8m,iv:nn2ZNopZXcHcahV1dIVji72c6Qnz5fYOnV5hceHPtGg=,tag:3BA24E18Sd1k8tKsF47v0w==,type:str]
-                MAIL_USERNAME: mtrnord@nordgedanken.dev
-                MAIL_PASSWORD: ENC[AES256_GCM,data:+Qm6PYaaiVu/P74SMIoFXw==,iv:JnN5Omywf0EqFdAvyJIwxbHpGli7U1cfHdcAY1am7eY=,tag:C7xQTReGlTIs4czULPv+DA==,type:str]
+  releaseName: cachet
+  interval: 60m
+  chart:
+    spec:
+      chart: cachet
+      sourceRef:
+        kind: HelmRepository
+        name: cachet
+  values:
+    resources:
+      limits: {}
+      requests:
+        cpu: 41m
+        memory: 100Mi
+    image:
+      repository: ghcr.io/mtrnord/cachet_docker
+      tag: "2.4"
+      pullPolicy: Always
+    ingress:
+      enabled: false
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+      host: status.midnightthoughts.space
+      tls:
+        - secretName: status-midnightthoughts-space-tls
+          hosts:
+            - status.midnightthoughts.space
+    postgresql:
+      enabled: false
+    database:
+      host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+      port: 5432
+      name: cachet
+      username: cachet
+      password: ENC[AES256_GCM,data:14z62hvPZZvsuBOsuHYgqv1toAHKp9RY/KH0+pJQziegnfZjWAVImKHwvvCic4SxEASBkwNJmqQYjlhEi0hI9K3bd8kZn5JvX8nq5cDP3Hh+r7RwHzHS0g==,iv:PkZzoTFyugQRvFni6ih59iULjZGt7mcJhigitKvpEAY=,tag:OpCEfHI8NZ1rYZ6o9Yezyw==,type:str]
+    env:
+      public:
+        # Application environments
+        APP_DEBUG: false
+        APP_LOG: errorlog
+        DB_DRIVER: pgsql
+        DOCKER: true
+        CACHE_DRIVER: database
+        SESSION_DRIVER: database
+        QUEUE_DRIVER: database
+        CACHET_EMOJI: false
+        CACHET_BEACON: false
+        # Email find them here  https://docs.cachethq.io/docs/configuring-mail
+        MAIL_DRIVER: smtp
+        MAIL_HOST: smtp.fastmail.com
+        MAIL_ADDRESS: ops@nordgedanken.dev
+        MAIL_PORT: 465
+        MAIL_NAME: Midnightthoughts Status Page
+        MAIL_ENCRYPTION: tls
+      private:
+        APP_KEY: ENC[AES256_GCM,data:aDiw4vJtHn4cicl1vXaup4tb8v5vjb3k8dJrbynXArcoopYl78D39W/n/VnrfRfoJQ8m,iv:nn2ZNopZXcHcahV1dIVji72c6Qnz5fYOnV5hceHPtGg=,tag:3BA24E18Sd1k8tKsF47v0w==,type:str]
+        MAIL_USERNAME: mtrnord@nordgedanken.dev
+        MAIL_PASSWORD: ENC[AES256_GCM,data:+Qm6PYaaiVu/P74SMIoFXw==,iv:JnN5Omywf0EqFdAvyJIwxbHpGli7U1cfHdcAY1am7eY=,tag:C7xQTReGlTIs4czULPv+DA==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnVE9ZYm5ZT0tIRUFWeGJL
-            YmpRUTdaY0ZrMm80WUhvUnMyMlpkam1NNVhNClVCa2N4VlVTWDdSMzc2SnZ6aFRp
-            TzlQK25hK1RXQ2V2NWVCN1lLdm5jVlkKLS0tIE5MYkVXVFdQN0hqUkdHc3h5NTNS
-            TWZRTEpERlVwMXh3V0xKN3I5TTZXcmcKUaVzAi37kDrSOmA0Py81pbFiwL5GdUge
-            Ee6wovuBvndz1OEmi8W9rpamT+CEdmXHZTxFMoM4pMOMQayCfQIyYw==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-19T11:07:00Z"
-    mac: ENC[AES256_GCM,data:PzQLmfSOrgNIok67C7FuSBhZ8hMVQumFXvlVIuB+oAD4R7BJ8SDfXY4SCjVLnhQXFineSYdgE1oKURuWDfIo4EjnQh0HQJavUaolOs3TlQrzv1VLXJDbrTm3E1yr+D+pw2yNYhoX7OopjDq+z/QjOMJ2M4XLqmvL1nFOQZC06rE=,iv:VDWtReujwXKyVwc/fuzWFLNBPL8edNzBYJpCmhCDTRs=,tag:jwnzwquRrKqLEEcqkLYV5Q==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnVE9ZYm5ZT0tIRUFWeGJL
+        YmpRUTdaY0ZrMm80WUhvUnMyMlpkam1NNVhNClVCa2N4VlVTWDdSMzc2SnZ6aFRp
+        TzlQK25hK1RXQ2V2NWVCN1lLdm5jVlkKLS0tIE5MYkVXVFdQN0hqUkdHc3h5NTNS
+        TWZRTEpERlVwMXh3V0xKN3I5TTZXcmcKUaVzAi37kDrSOmA0Py81pbFiwL5GdUge
+        Ee6wovuBvndz1OEmi8W9rpamT+CEdmXHZTxFMoM4pMOMQayCfQIyYw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-19T11:07:00Z"
+  mac: ENC[AES256_GCM,data:PzQLmfSOrgNIok67C7FuSBhZ8hMVQumFXvlVIuB+oAD4R7BJ8SDfXY4SCjVLnhQXFineSYdgE1oKURuWDfIo4EjnQh0HQJavUaolOs3TlQrzv1VLXJDbrTm3E1yr+D+pw2yNYhoX7OopjDq+z/QjOMJ2M4XLqmvL1nFOQZC06rE=,iv:VDWtReujwXKyVwc/fuzWFLNBPL8edNzBYJpCmhCDTRs=,tag:jwnzwquRrKqLEEcqkLYV5Q==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: cachet
-    namespace: cachet
+  name: cachet
+  namespace: cachet
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - status.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: cachet
-              port: 80
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - status.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: cachet
+          port: 80
+      timeouts:
+        request: 240s
+        backendRequest: 0s
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnVE9ZYm5ZT0tIRUFWeGJL
-            YmpRUTdaY0ZrMm80WUhvUnMyMlpkam1NNVhNClVCa2N4VlVTWDdSMzc2SnZ6aFRp
-            TzlQK25hK1RXQ2V2NWVCN1lLdm5jVlkKLS0tIE5MYkVXVFdQN0hqUkdHc3h5NTNS
-            TWZRTEpERlVwMXh3V0xKN3I5TTZXcmcKUaVzAi37kDrSOmA0Py81pbFiwL5GdUge
-            Ee6wovuBvndz1OEmi8W9rpamT+CEdmXHZTxFMoM4pMOMQayCfQIyYw==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-19T11:07:00Z"
-    mac: ENC[AES256_GCM,data:PzQLmfSOrgNIok67C7FuSBhZ8hMVQumFXvlVIuB+oAD4R7BJ8SDfXY4SCjVLnhQXFineSYdgE1oKURuWDfIo4EjnQh0HQJavUaolOs3TlQrzv1VLXJDbrTm3E1yr+D+pw2yNYhoX7OopjDq+z/QjOMJ2M4XLqmvL1nFOQZC06rE=,iv:VDWtReujwXKyVwc/fuzWFLNBPL8edNzBYJpCmhCDTRs=,tag:jwnzwquRrKqLEEcqkLYV5Q==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnVE9ZYm5ZT0tIRUFWeGJL
+        YmpRUTdaY0ZrMm80WUhvUnMyMlpkam1NNVhNClVCa2N4VlVTWDdSMzc2SnZ6aFRp
+        TzlQK25hK1RXQ2V2NWVCN1lLdm5jVlkKLS0tIE5MYkVXVFdQN0hqUkdHc3h5NTNS
+        TWZRTEpERlVwMXh3V0xKN3I5TTZXcmcKUaVzAi37kDrSOmA0Py81pbFiwL5GdUge
+        Ee6wovuBvndz1OEmi8W9rpamT+CEdmXHZTxFMoM4pMOMQayCfQIyYw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-19T11:07:00Z"
+  mac: ENC[AES256_GCM,data:PzQLmfSOrgNIok67C7FuSBhZ8hMVQumFXvlVIuB+oAD4R7BJ8SDfXY4SCjVLnhQXFineSYdgE1oKURuWDfIo4EjnQh0HQJavUaolOs3TlQrzv1VLXJDbrTm3E1yr+D+pw2yNYhoX7OopjDq+z/QjOMJ2M4XLqmvL1nFOQZC06rE=,iv:VDWtReujwXKyVwc/fuzWFLNBPL8edNzBYJpCmhCDTRs=,tag:jwnzwquRrKqLEEcqkLYV5Q==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

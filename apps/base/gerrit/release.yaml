@@ -1,20 +1,20 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: gerrit
-    namespace: gerrit
+  name: gerrit
+  namespace: gerrit
 spec:
-    interval: 1h
-    releaseName: gerrit
-    chart:
-        spec:
-            chart: ./helm-charts/gerrit-operator/
-            sourceRef:
-                kind: GitRepository
-                name: gerrit
-                namespace: gerrit
-    values:
-        ingress:
-            type: INGRESS
-        image:
-            repository: ghcr.io/mtrnord/gerrit_operator
+  interval: 1h
+  releaseName: gerrit
+  chart:
+    spec:
+      chart: ./helm-charts/gerrit-operator/
+      sourceRef:
+        kind: GitRepository
+        name: gerrit
+        namespace: gerrit
+  values:
+    ingress:
+      type: INGRESS
+    image:
+      repository: ghcr.io/mtrnord/gerrit_operator

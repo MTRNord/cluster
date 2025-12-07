@@ -1,51 +1,51 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: mailserver-docker-mailserver-mail-config
-    namespace: mailserver
+  name: mailserver-docker-mailserver-mail-config
+  namespace: mailserver
 spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Mi
-    storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: mailserver-docker-mailserver-mail-data
-    namespace: mailserver
+  name: mailserver-docker-mailserver-mail-data
+  namespace: mailserver
 spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 10Gi
-    storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: mailserver-docker-mailserver-mail-log
-    namespace: mailserver
+  name: mailserver-docker-mailserver-mail-log
+  namespace: mailserver
 spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Gi
-    storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: mailserver-docker-mailserver-mail-state
-    namespace: mailserver
+  name: mailserver-docker-mailserver-mail-state
+  namespace: mailserver
 spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Gi
-    storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn

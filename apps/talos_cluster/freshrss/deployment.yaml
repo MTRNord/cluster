@@ -1,97 +1,97 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: freshrss
-    namespace: freshrss
+  name: freshrss
+  namespace: freshrss
 spec:
-    progressDeadlineSeconds: 120
-    strategy:
-        rollingUpdate:
-            maxUnavailable: 0
-        type: RollingUpdate
-    selector:
-        matchLabels:
-            app: freshrss
-    template:
-        metadata:
-            labels:
-                app: freshrss
-        spec:
-            containers:
-                - name: freshrss
-                  image: freshrss/freshrss:latest
-                  env:
-                    - name: TZ
-                      value: "Europe/Berlin"
-                    - name: CRON_MIN
-                      value: "1,31"
-                    - name: TRUSTED_PROXY_IP
-                      value: 100.64.0.0/10
-                    - name: LISTEN
-                      value: "0.0.0.0:8080"
-                  resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
-                  ports:
-                    - containerPort: 8080
-                      name: web
-                      protocol: TCP
-                  volumeMounts:
-                    - name: data
-                      mountPath: "/var/www/FreshRSS/data"
-                    - mountPath: /tmp
-                      name: tmp
-                  livenessProbe:
-                    httpGet:
-                        path: /
-                        port: web
-                        scheme: HTTP
-                  readinessProbe:
-                    httpGet:
-                        path: /
-                        port: web
-                        scheme: HTTP
-                  startupProbe:
-                    httpGet:
-                        path: /
-                        port: web
-            volumes:
-                - name: tmp
-                  emptyDir:
-                    sizeLimit: 2048Mi
-                - name: data
-                  persistentVolumeClaim:
-                    claimName: freshrss-data
+  progressDeadlineSeconds: 120
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: freshrss
+  template:
+    metadata:
+      labels:
+        app: freshrss
+    spec:
+      containers:
+        - name: freshrss
+          image: freshrss/freshrss:latest
+          env:
+            - name: TZ
+              value: "Europe/Berlin"
+            - name: CRON_MIN
+              value: "1,31"
+            - name: TRUSTED_PROXY_IP
+              value: 100.64.0.0/10
+            - name: LISTEN
+              value: "0.0.0.0:8080"
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: "/var/www/FreshRSS/data"
+            - mountPath: /tmp
+              name: tmp
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web
+              scheme: HTTP
+          startupProbe:
+            httpGet:
+              path: /
+              port: web
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: data
+          persistentVolumeClaim:
+            claimName: freshrss-data
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: freshrss
+  name: freshrss
 spec:
-    selector:
-        app: freshrss
-    ports:
-        - name: web
-          port: 8080
-          targetPort: 8080
+  selector:
+    app: freshrss
+  ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: freshrss
-    namespace: freshrss
+  name: freshrss
+  namespace: freshrss
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - rss.mtrnord.blog
-    rules:
-        - backendRefs:
-            - name: freshrss
-              port: 8080
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - rss.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: freshrss
+          port: 8080
+      timeouts:
+        request: 240s
+        backendRequest: 0s

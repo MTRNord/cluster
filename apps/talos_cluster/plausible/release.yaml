@@ -1,76 +1,76 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: plausible
-    namespace: blog
+  name: plausible
+  namespace: blog
 spec:
-    chart:
-        spec:
-            chart: plausible-analytics
-            sourceRef:
-                kind: HelmRepository
-                name: plausible
-    interval: 60m
+  chart:
+    spec:
+      chart: plausible-analytics
+      sourceRef:
+        kind: HelmRepository
+        name: plausible
+  interval: 60m
+  timeout: 10m
+  install:
     timeout: 10m
-    install:
-        timeout: 10m
-        remediation:
-            retries: 3
-    values:
-        baseURL: https://plausible.midnightthoughts.space
-        disableRegistration: true
-        totpVaultKey: ENC[AES256_GCM,data:jAhS4XwSI9oPefYTrrTu6hfG5cwlFiNYvRa8xEPFxqRpbvWIFrUCb1pMGlw=,iv:a4Fk/imuYGjg4SNcBWbzNEn+ze5eOmQwCT2ZiD6SaCw=,tag:NvfDNmvkL6flKTpT8bhrYw==,type:str]
-        clickhouseDatabaseURL: ENC[AES256_GCM,data:akWXYnF/GJhf4eDEUuutctdnZ1y0LHCK0bmzQga4tFjN7xa+vsUjGQ1U18kzhAhzjpv27WXbr/3eEzJT2hA5Z0KxnrCAdgdMk/spVgZTvQ9S/1XzYTUJs8JwLQIQKsrosLHE75qXn/rhAYxLIWKpFwFo29UpCCDZz0mbmrbbwHhykV9rj+nl9IOSjOZPOhEHrkucBjoSqA==,iv:XJFR2F4dXIk/bCwT5q6N379+gO9LA3sRY1BuZjXcs9M=,tag:nEOXRLSmCb09Z+hY6YFYnw==,type:str]
-        databaseURL: ENC[AES256_GCM,data:lJbA8rQxd57teRts7hxUu/pRp7PQnNjKguIWRjhjYJ7M56eAqZFr/ttO5PVWOsrQlhgTgh0e3ZukvRxqE3H9kiUQ4KwO/NiyDdRVoqwlAJrlDKQVv+8mdFmX5O9leEX/2ofkBZ6/K23ooMjW0w55B5C0pOmpizjBQaluSmpF+cKhbn7iRNZM6YKpNVy47e2TOGdJaFaorl4=,iv:00kjchDqdpDOPq0o0Vz1D8O2+/3A9jZrL0pnY/ljCaM=,tag:WbzyQO0BkI+MHukx1z/7yg==,type:str]
-        mailer:
-            enabled: true
-            adapter: Bamboo.Mua
-            email: support@midnightthoughts.space
-            smtp:
-                host: mail.midnightthoughts.space
-                port: 465
-                auth: true
-                username: support@midnightthoughts.space
-                password: ENC[AES256_GCM,data:FE2jvrVfKlTsY80RB+cBgu76SNqiOEVC0EVJLWtB//ZoGkEDG/L74a6jtR+nkKDyLGnXbsHCxq8yTI0KdBRVdw==,iv:R81vX/J3Ncx7ympt7draf6+G06qJrJx/Cy78ktYQIU8=,tag:ruzRv3NXkvJ37H1VbX/hBw==,type:str]
-                ssl: true
-        postgresql:
-            enabled: false
-        clickhouse:
-            resourcesPreset: xlarge
-            auth:
-                password: ENC[AES256_GCM,data:lq8eoP60dLokL9IUubVQ2OYPG065qJrQch2nROYSXTZW08Y+7Nq/6mQNqRLnJv2dlosHlc/J8QcwDzksQfBvcA==,iv:XJOoLx/ssCuQ/rlVZZQqPhuAA+s2QQF4h5a5UV7gvi8=,tag:IaZU8+WyuKn6jGeES3YO3A==,type:str]
-            persistence:
-                storageClass: longhorn
-                enabled: true
-                size: 8Gi
-        ingress:
-            enabled: false
-            annotations:
-                cert-manager.io/cluster-issuer: letsencrypt-dns
-            hosts:
-                - plausible.midnightthoughts.space
-            path: /
-            tls:
-                - secretName: plausible.midnightthoughts.space-tls
-                  hosts:
-                    - plausible.midnightthoughts.space
+    remediation:
+      retries: 3
+  values:
+    baseURL: https://plausible.midnightthoughts.space
+    disableRegistration: true
+    totpVaultKey: ENC[AES256_GCM,data:jAhS4XwSI9oPefYTrrTu6hfG5cwlFiNYvRa8xEPFxqRpbvWIFrUCb1pMGlw=,iv:a4Fk/imuYGjg4SNcBWbzNEn+ze5eOmQwCT2ZiD6SaCw=,tag:NvfDNmvkL6flKTpT8bhrYw==,type:str]
+    clickhouseDatabaseURL: ENC[AES256_GCM,data:akWXYnF/GJhf4eDEUuutctdnZ1y0LHCK0bmzQga4tFjN7xa+vsUjGQ1U18kzhAhzjpv27WXbr/3eEzJT2hA5Z0KxnrCAdgdMk/spVgZTvQ9S/1XzYTUJs8JwLQIQKsrosLHE75qXn/rhAYxLIWKpFwFo29UpCCDZz0mbmrbbwHhykV9rj+nl9IOSjOZPOhEHrkucBjoSqA==,iv:XJFR2F4dXIk/bCwT5q6N379+gO9LA3sRY1BuZjXcs9M=,tag:nEOXRLSmCb09Z+hY6YFYnw==,type:str]
+    databaseURL: ENC[AES256_GCM,data:lJbA8rQxd57teRts7hxUu/pRp7PQnNjKguIWRjhjYJ7M56eAqZFr/ttO5PVWOsrQlhgTgh0e3ZukvRxqE3H9kiUQ4KwO/NiyDdRVoqwlAJrlDKQVv+8mdFmX5O9leEX/2ofkBZ6/K23ooMjW0w55B5C0pOmpizjBQaluSmpF+cKhbn7iRNZM6YKpNVy47e2TOGdJaFaorl4=,iv:00kjchDqdpDOPq0o0Vz1D8O2+/3A9jZrL0pnY/ljCaM=,tag:WbzyQO0BkI+MHukx1z/7yg==,type:str]
+    mailer:
+      enabled: true
+      adapter: Bamboo.Mua
+      email: support@midnightthoughts.space
+      smtp:
+        host: mail.midnightthoughts.space
+        port: 465
+        auth: true
+        username: support@midnightthoughts.space
+        password: ENC[AES256_GCM,data:FE2jvrVfKlTsY80RB+cBgu76SNqiOEVC0EVJLWtB//ZoGkEDG/L74a6jtR+nkKDyLGnXbsHCxq8yTI0KdBRVdw==,iv:R81vX/J3Ncx7ympt7draf6+G06qJrJx/Cy78ktYQIU8=,tag:ruzRv3NXkvJ37H1VbX/hBw==,type:str]
+        ssl: true
+    postgresql:
+      enabled: false
+    clickhouse:
+      resourcesPreset: xlarge
+      auth:
+        password: ENC[AES256_GCM,data:lq8eoP60dLokL9IUubVQ2OYPG065qJrQch2nROYSXTZW08Y+7Nq/6mQNqRLnJv2dlosHlc/J8QcwDzksQfBvcA==,iv:XJOoLx/ssCuQ/rlVZZQqPhuAA+s2QQF4h5a5UV7gvi8=,tag:IaZU8+WyuKn6jGeES3YO3A==,type:str]
+      persistence:
+        storageClass: longhorn
+        enabled: true
+        size: 8Gi
+    ingress:
+      enabled: false
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+      hosts:
+        - plausible.midnightthoughts.space
+      path: /
+      tls:
+        - secretName: plausible.midnightthoughts.space-tls
+          hosts:
+            - plausible.midnightthoughts.space
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBsMTlGbFBDRHRKTStDem9P
-            YzkyMkpCU0dUY3JxcVh5U0pNQ0c1Nk51QWxFCkpaREg3VmFzZUpDWWx1aWx4S3ph
-            R0xFZW5mZmdrYVNUTkZ5cmR6OGZVekUKLS0tIEpQcGZwdlBpU2ZzM3RyOFg2cEEr
-            WmsxdDBKazdGU1prc0J3Sm5KNkFIZ2cKmLPkcujA43iuZKbztxKccV5jLLSrkh9D
-            kySjfHTy9HHCEJLxGfZ+iEpeMEF4x91GF6wIPXTyD4XqamsbvYdlcA==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-16T21:00:15Z"
-    mac: ENC[AES256_GCM,data:qsQNsaocKZ1DTIGjgK0uD2T5kpE+odfSXKD2dxB5QhpREIeORJIIB3kHPr7JYJMFPFbpfNzUXnqQymjPEbU8FfsMKtB4RhkdSzxGiLEztjnw65MufTTBF4Suur1874O7XgVcJAIOniw1Cpgj2pqBw89V1hwg+kK2uph1iSfS45U=,iv:4xWH8uaaF6Uckg7oDUyJkBFm9OeA86XWvwQDObwc5yE=,tag:6Q5rJrTs8EPlQ5VDyVUmkg==,type:str]
-    pgp: []
-    encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBsMTlGbFBDRHRKTStDem9P
+        YzkyMkpCU0dUY3JxcVh5U0pNQ0c1Nk51QWxFCkpaREg3VmFzZUpDWWx1aWx4S3ph
+        R0xFZW5mZmdrYVNUTkZ5cmR6OGZVekUKLS0tIEpQcGZwdlBpU2ZzM3RyOFg2cEEr
+        WmsxdDBKazdGU1prc0J3Sm5KNkFIZ2cKmLPkcujA43iuZKbztxKccV5jLLSrkh9D
+        kySjfHTy9HHCEJLxGfZ+iEpeMEF4x91GF6wIPXTyD4XqamsbvYdlcA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-10-16T21:00:15Z"
+  mac: ENC[AES256_GCM,data:qsQNsaocKZ1DTIGjgK0uD2T5kpE+odfSXKD2dxB5QhpREIeORJIIB3kHPr7JYJMFPFbpfNzUXnqQymjPEbU8FfsMKtB4RhkdSzxGiLEztjnw65MufTTBF4Suur1874O7XgVcJAIOniw1Cpgj2pqBw89V1hwg+kK2uph1iSfS45U=,iv:4xWH8uaaF6Uckg7oDUyJkBFm9OeA86XWvwQDObwc5yE=,tag:6Q5rJrTs8EPlQ5VDyVUmkg==,type:str]
+  pgp: []
+  encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

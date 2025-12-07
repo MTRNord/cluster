@@ -1,17 +1,17 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-    name: jenkins-headers
-    namespace: jenkins
+  name: jenkins-headers
+  namespace: jenkins
 spec:
-    headers:
-        accessControlAllowMethods:
-            - "GET"
-            - "OPTIONS"
-        accessControlAllowHeaders:
-            - "*"
-        accessControlAllowOriginList:
-            - "https://gerrit.midnightthoughts.space"
-            - "https://jenkins.midnightthoughts.space"
-        addVaryHeader: true
-        accessControlAllowCredentials: true
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "OPTIONS"
+    accessControlAllowHeaders:
+      - "*"
+    accessControlAllowOriginList:
+      - "https://gerrit.midnightthoughts.space"
+      - "https://jenkins.midnightthoughts.space"
+    addVaryHeader: true
+    accessControlAllowCredentials: true

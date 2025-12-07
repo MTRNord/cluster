@@ -2,891 +2,891 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: bookwyrm-pvc
-    labels:
-        app: bookwyrm
+  name: bookwyrm-pvc
+  labels:
+    app: bookwyrm
 spec:
-    accessModes:
-        - ReadWriteMany
-    resources:
-        requests:
-            storage: 5Gi
-    storageClassName: longhorn
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: bookwyrm
-    labels:
-        app: bookwyrm
+  name: bookwyrm
+  labels:
+    app: bookwyrm
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: bookwyrm
-    strategy:
-        type: "Recreate"
-    template:
-        metadata:
-            labels:
-                app: bookwyrm
-        spec:
-            automountServiceAccountToken: false
-            securityContext:
-                fsGroup: 1000
-            volumes:
-                - name: bookwyrm-script
-                  configMap:
-                      name: bookwyrm-script
-                - name: bookwyrm-data
-                  persistentVolumeClaim:
-                      claimName: bookwyrm-pvc
-                - name: nginx-config
-                  configMap:
-                      name: nginx
-            initContainers:
-                - name: bookwyrm-update
-                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
-                  imagePullPolicy: Always
-                  command: ["bash"]
-                  args:
-                      - /hl/bookwyrm.sh
-                      - update
-                  volumeMounts:
-                      - name: bookwyrm-script
-                        mountPath: /hl
-                        readOnly: true
-                      - name: bookwyrm-data
-                        mountPath: /app/static
-                        subPath: static
-                      - name: bookwyrm-data
-                        mountPath: /app/media
-                        subPath: media
-                      - name: bookwyrm-data
-                        mountPath: /app/exports
-                        subPath: exports
-                      - name: bookwyrm-data
-                        mountPath: /app/images
-                        subPath: images
-                  env:
-                      - name: POD_IP
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: status.podIP
-                      - name: DEBUG
-                        value: "false"
-                      - name: ALLOWED_HOSTS
-                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: SECRET_KEY
-                      - name: DOMAIN
-                        value: "books.mtrnord.blog"
-                      - name: USE_HTTPS
-                        value: "true"
-                      - name: PGPORT
-                        value: "5432"
-                      - name: POSTGRES_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: POSTGRES_PASSWORD
-                      - name: POSTGRES_USER
-                        value: "bookwyrm"
-                      - name: POSTGRES_DB
-                        value: "bookwyrm"
-                      - name: POSTGRES_HOST
-                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
-                      # TODO: Setup Redis
-                      - name: REDIS_ACTIVITY_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
-                      - name: REDIS_BROKER_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
-                      - name: FLOWER_USER
-                        value: "bookwyrm"
-                      - name: FLOWER_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: FLOWER_PASSWORD
-                      - name: FLOWER_BASIC_AUTH
-                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
-                      - name: FLOWER_PORT
-                        value: "5555"
-                      - name: EMAIL_HOST
-                        value: "mail.midnightthoughts.space"
-                      - name: EMAIL_PORT
-                        value: "465"
-                      - name: EMAIL_USE_TLS
-                        value: "false"
-                      - name: EMAIL_USE_SSL
-                        value: "true"
-                      - name: EMAIL_HOST_USER
-                        value: "support@midnightthoughts.space"
-                      - name: EMAIL_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: EMAIL_HOST_PASSWORD
-                      - name: EMAIL_SENDER_NAME
-                        value: "support"
-                      - name: EMAIL_SENDER_DOMAIN
-                        value: "midnightthoughts.space"
-                      - name: USE_S3
-                        value: "false"
-                      - name: AWS_ACCESS_KEY_ID
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_ACCESS_KEY_ID
-                      - name: AWS_SECRET_ACCESS_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_SECRET_ACCESS_KEY
-                      - name: AWS_STORAGE_BUCKET_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_STORAGE_BUCKET_NAME
-                      - name: AWS_S3_CUSTOM_DOMAIN
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_CUSTOM_DOMAIN
-                      - name: AWS_S3_ENDPOINT_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_ENDPOINT_URL
-                      - name: ENABLE_THUMBNAIL_GENERATION
-                        value: "true"
-                      - name: STATIC_ROOT
-                        value: "static/"
-                      - name: MEDIA_ROOT
-                        value: "images/"
-                      - name: MAX_UPLOAD_MiB
-                        value: "100"
-                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
-                        value: "100"
-            containers:
-                - name: nginx
-                  image: nginx:latest
-                  volumeMounts:
-                      - name: bookwyrm-data
-                        mountPath: /app/static
-                        subPath: static
-                      - name: bookwyrm-data
-                        mountPath: /app/media
-                        subPath: media
-                      - name: bookwyrm-data
-                        mountPath: /app/exports
-                        subPath: exports
-                      - name: bookwyrm-data
-                        mountPath: /app/images
-                        subPath: images
-                      - name: nginx-config
-                        mountPath: /etc/nginx/templates/default.conf.template
-                        subPath: reverse_proxy.conf
-                        readOnly: true
-                      - name: nginx-config
-                        mountPath: /etc/nginx/templates/server_config.template
-                        subPath: server_config
-                        readOnly: true
-                      - name: nginx-config
-                        mountPath: /etc/nginx/conf.d/locations
-                        subPath: locations
-                        readOnly: true
-                      - name: nginx-config
-                        mountPath: /etc/nginx/conf.d/server_name
-                        subPath: server_name
-                        readOnly: true
-                  env:
-                      - name: POD_IP
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: status.podIP
-                      - name: DEBUG
-                        value: "false"
-                      - name: ALLOWED_HOSTS
-                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: SECRET_KEY
-                      - name: DOMAIN
-                        value: "books.mtrnord.blog"
-                      - name: USE_HTTPS
-                        value: "true"
-                      - name: PGPORT
-                        value: "5432"
-                      - name: POSTGRES_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: POSTGRES_PASSWORD
-                      - name: POSTGRES_USER
-                        value: "bookwyrm"
-                      - name: POSTGRES_DB
-                        value: "bookwyrm"
-                      - name: POSTGRES_HOST
-                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
-                      # TODO: Setup Redis
-                      - name: REDIS_ACTIVITY_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
-                      - name: REDIS_BROKER_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
-                      - name: FLOWER_USER
-                        value: "bookwyrm"
-                      - name: FLOWER_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: FLOWER_PASSWORD
-                      - name: FLOWER_BASIC_AUTH
-                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
-                      - name: FLOWER_PORT
-                        value: "5555"
-                      - name: EMAIL_HOST
-                        value: "mail.midnightthoughts.space"
-                      - name: EMAIL_PORT
-                        value: "465"
-                      - name: EMAIL_USE_TLS
-                        value: "false"
-                      - name: EMAIL_USE_SSL
-                        value: "true"
-                      - name: EMAIL_HOST_USER
-                        value: "support@midnightthoughts.space"
-                      - name: EMAIL_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: EMAIL_HOST_PASSWORD
-                      - name: EMAIL_SENDER_NAME
-                        value: "support"
-                      - name: EMAIL_SENDER_DOMAIN
-                        value: "midnightthoughts.space"
-                      - name: USE_S3
-                        value: "false"
-                      - name: AWS_ACCESS_KEY_ID
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_ACCESS_KEY_ID
-                      - name: AWS_SECRET_ACCESS_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_SECRET_ACCESS_KEY
-                      - name: AWS_STORAGE_BUCKET_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_STORAGE_BUCKET_NAME
-                      - name: AWS_S3_CUSTOM_DOMAIN
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_CUSTOM_DOMAIN
-                      - name: AWS_S3_ENDPOINT_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_ENDPOINT_URL
-                      - name: ENABLE_THUMBNAIL_GENERATION
-                        value: "true"
-                      - name: STATIC_ROOT
-                        value: "static/"
-                      - name: MEDIA_ROOT
-                        value: "images/"
-                      - name: MAX_UPLOAD_MiB
-                        value: "100"
-                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
-                        value: "100"
-                  livenessProbe:
-                      httpGet:
-                          port: 8080
-                          path: "/"
-                      initialDelaySeconds: 15
-                      periodSeconds: 30
-                  ports:
-                      - name: bookwyrm-nginx
-                        containerPort: 8080
-                        protocol: TCP
-                - name: bookwyrm-web
-                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
-                  imagePullPolicy: Always
-                  command: ["gunicorn"]
-                  args:
-                      - "bookwyrm.wsgi:application"
-                  resources:
-                      requests:
-                          cpu: 200m
-                          memory: 500Mi
-                  volumeMounts:
-                      - name: bookwyrm-data
-                        mountPath: /app/static
-                        subPath: static
-                      - name: bookwyrm-data
-                        mountPath: /app/media
-                        subPath: media
-                      - name: bookwyrm-data
-                        mountPath: /app/exports
-                        subPath: exports
-                      - name: bookwyrm-data
-                        mountPath: /app/images
-                        subPath: images
-                  env:
-                      - name: POD_IP
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: status.podIP
-                      - name: DEBUG
-                        value: "false"
-                      - name: ALLOWED_HOSTS
-                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: SECRET_KEY
-                      - name: DOMAIN
-                        value: "books.mtrnord.blog"
-                      - name: USE_HTTPS
-                        value: "true"
-                      - name: PGPORT
-                        value: "5432"
-                      - name: POSTGRES_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: POSTGRES_PASSWORD
-                      - name: POSTGRES_USER
-                        value: "bookwyrm"
-                      - name: POSTGRES_DB
-                        value: "bookwyrm"
-                      - name: POSTGRES_HOST
-                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
-                      # TODO: Setup Redis
-                      - name: REDIS_ACTIVITY_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
-                      - name: REDIS_BROKER_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
-                      - name: FLOWER_USER
-                        value: "bookwyrm"
-                      - name: FLOWER_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: FLOWER_PASSWORD
-                      - name: FLOWER_BASIC_AUTH
-                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
-                      - name: FLOWER_PORT
-                        value: "5555"
-                      - name: EMAIL_HOST
-                        value: "mail.midnightthoughts.space"
-                      - name: EMAIL_PORT
-                        value: "465"
-                      - name: EMAIL_USE_TLS
-                        value: "false"
-                      - name: EMAIL_USE_SSL
-                        value: "true"
-                      - name: EMAIL_HOST_USER
-                        value: "support@midnightthoughts.space"
-                      - name: EMAIL_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: EMAIL_HOST_PASSWORD
-                      - name: EMAIL_SENDER_NAME
-                        value: "support"
-                      - name: EMAIL_SENDER_DOMAIN
-                        value: "midnightthoughts.space"
-                      - name: USE_S3
-                        value: "false"
-                      - name: AWS_ACCESS_KEY_ID
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_ACCESS_KEY_ID
-                      - name: AWS_SECRET_ACCESS_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_SECRET_ACCESS_KEY
-                      - name: AWS_STORAGE_BUCKET_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_STORAGE_BUCKET_NAME
-                      - name: AWS_S3_CUSTOM_DOMAIN
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_CUSTOM_DOMAIN
-                      - name: AWS_S3_ENDPOINT_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_ENDPOINT_URL
-                      - name: ENABLE_THUMBNAIL_GENERATION
-                        value: "true"
-                      - name: STATIC_ROOT
-                        value: "static/"
-                      - name: MEDIA_ROOT
-                        value: "images/"
-                      - name: MAX_UPLOAD_MiB
-                        value: "100"
-                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
-                        value: "100"
-                  livenessProbe:
-                      httpGet:
-                          port: 8000
-                          path: "/"
-                      initialDelaySeconds: 15
-                      periodSeconds: 30
-                  ports:
-                      - name: bookwyrm-http
-                        containerPort: 8000
-                        protocol: TCP
-                - name: bookwyrm-celery-worker
-                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
-                  imagePullPolicy: Always
-                  command: ["celery"]
-                  args:
-                      - "-A"
-                      - "celerywyrm"
-                      - "worker"
-                      - "-l"
-                      - "info"
-                      - "-Q"
-                      - "high_priority,medium_priority,low_priority,streams,images,suggested_users,email,connectors,lists,inbox,imports,import_triggered,broadcast,misc"
-                  resources:
-                      requests:
-                          cpu: 200m
-                          memory: 200Mi
-                  volumeMounts:
-                      - name: bookwyrm-data
-                        mountPath: /app/static
-                        subPath: static
-                      - name: bookwyrm-data
-                        mountPath: /app/media
-                        subPath: media
-                      - name: bookwyrm-data
-                        mountPath: /app/exports
-                        subPath: exports
-                      - name: bookwyrm-data
-                        mountPath: /app/images
-                        subPath: images
-                  env:
-                      - name: POD_IP
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: status.podIP
-                      - name: DEBUG
-                        value: "false"
-                      - name: ALLOWED_HOSTS
-                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: SECRET_KEY
-                      - name: DOMAIN
-                        value: "books.mtrnord.blog"
-                      - name: USE_HTTPS
-                        value: "true"
-                      - name: PGPORT
-                        value: "5432"
-                      - name: POSTGRES_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: POSTGRES_PASSWORD
-                      - name: POSTGRES_USER
-                        value: "bookwyrm"
-                      - name: POSTGRES_DB
-                        value: "bookwyrm"
-                      - name: POSTGRES_HOST
-                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
-                      # TODO: Setup Redis
-                      - name: REDIS_ACTIVITY_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
-                      - name: REDIS_BROKER_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
-                      - name: FLOWER_USER
-                        value: "bookwyrm"
-                      - name: FLOWER_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: FLOWER_PASSWORD
-                      - name: FLOWER_BASIC_AUTH
-                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
-                      - name: FLOWER_PORT
-                        value: "5555"
-                      - name: EMAIL_HOST
-                        value: "mail.midnightthoughts.space"
-                      - name: EMAIL_PORT
-                        value: "465"
-                      - name: EMAIL_USE_TLS
-                        value: "false"
-                      - name: EMAIL_USE_SSL
-                        value: "true"
-                      - name: EMAIL_HOST_USER
-                        value: "support@midnightthoughts.space"
-                      - name: EMAIL_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: EMAIL_HOST_PASSWORD
-                      - name: EMAIL_SENDER_NAME
-                        value: "support"
-                      - name: EMAIL_SENDER_DOMAIN
-                        value: "midnightthoughts.space"
-                      - name: USE_S3
-                        value: "false"
-                      - name: AWS_ACCESS_KEY_ID
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_ACCESS_KEY_ID
-                      - name: AWS_SECRET_ACCESS_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_SECRET_ACCESS_KEY
-                      - name: AWS_STORAGE_BUCKET_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_STORAGE_BUCKET_NAME
-                      - name: AWS_S3_CUSTOM_DOMAIN
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_CUSTOM_DOMAIN
-                      - name: AWS_S3_ENDPOINT_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_ENDPOINT_URL
-                      - name: ENABLE_THUMBNAIL_GENERATION
-                        value: "true"
-                      - name: STATIC_ROOT
-                        value: "static/"
-                      - name: MEDIA_ROOT
-                        value: "images/"
-                      - name: MAX_UPLOAD_MiB
-                        value: "100"
-                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
-                        value: "100"
-                - name: bookwyrm-celery-beat
-                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
-                  imagePullPolicy: Always
-                  command: ["celery"]
-                  args:
-                      - "-A"
-                      - "celerywyrm"
-                      - "beat"
-                      - "-l"
-                      - "INFO"
-                      - "--scheduler"
-                      - "django_celery_beat.schedulers:DatabaseScheduler"
-                  resources:
-                      requests:
-                          cpu: 200m
-                          memory: 200Mi
-                  volumeMounts:
-                      - name: bookwyrm-data
-                        mountPath: /app/static
-                        subPath: static
-                      - name: bookwyrm-data
-                        mountPath: /app/media
-                        subPath: media
-                      - name: bookwyrm-data
-                        mountPath: /app/exports
-                        subPath: exports
-                      - name: bookwyrm-data
-                        mountPath: /app/images
-                        subPath: images
-                  env:
-                      - name: POD_IP
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: status.podIP
-                      - name: DEBUG
-                        value: "false"
-                      - name: ALLOWED_HOSTS
-                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: SECRET_KEY
-                      - name: DOMAIN
-                        value: "books.mtrnord.blog"
-                      - name: USE_HTTPS
-                        value: "true"
-                      - name: PGPORT
-                        value: "5432"
-                      - name: POSTGRES_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: POSTGRES_PASSWORD
-                      - name: POSTGRES_USER
-                        value: "bookwyrm"
-                      - name: POSTGRES_DB
-                        value: "bookwyrm"
-                      - name: POSTGRES_HOST
-                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
-                      # TODO: Setup Redis
-                      - name: REDIS_ACTIVITY_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
-                      - name: REDIS_BROKER_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
-                      - name: FLOWER_USER
-                        value: "bookwyrm"
-                      - name: FLOWER_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: FLOWER_PASSWORD
-                      - name: FLOWER_BASIC_AUTH
-                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
-                      - name: FLOWER_PORT
-                        value: "5555"
-                      - name: EMAIL_HOST
-                        value: "mail.midnightthoughts.space"
-                      - name: EMAIL_PORT
-                        value: "465"
-                      - name: EMAIL_USE_TLS
-                        value: "false"
-                      - name: EMAIL_USE_SSL
-                        value: "true"
-                      - name: EMAIL_HOST_USER
-                        value: "support@midnightthoughts.space"
-                      - name: EMAIL_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: EMAIL_HOST_PASSWORD
-                      - name: EMAIL_SENDER_NAME
-                        value: "support"
-                      - name: EMAIL_SENDER_DOMAIN
-                        value: "midnightthoughts.space"
-                      - name: USE_S3
-                        value: "false"
-                      - name: AWS_ACCESS_KEY_ID
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_ACCESS_KEY_ID
-                      - name: AWS_SECRET_ACCESS_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_SECRET_ACCESS_KEY
-                      - name: AWS_STORAGE_BUCKET_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_STORAGE_BUCKET_NAME
-                      - name: AWS_S3_CUSTOM_DOMAIN
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_CUSTOM_DOMAIN
-                      - name: AWS_S3_ENDPOINT_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_ENDPOINT_URL
-                      - name: ENABLE_THUMBNAIL_GENERATION
-                        value: "true"
-                      - name: STATIC_ROOT
-                        value: "static/"
-                      - name: MEDIA_ROOT
-                        value: "images/"
-                      - name: MAX_UPLOAD_MiB
-                        value: "100"
-                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
-                        value: "100"
-                - name: bookwyrm-flower
-                  image: ghcr.io/mtrnord/bookwyrm:v0.8.2
-                  imagePullPolicy: Always
-                  command: ["celery"]
-                  args:
-                      - "-A"
-                      - "celerywyrm"
-                      - "flower"
-                      - "--url_prefix=flower"
-                  resources:
-                      requests:
-                          cpu: 200m
-                          memory: 200Mi
-                  volumeMounts:
-                      - name: bookwyrm-data
-                        mountPath: /app/static
-                        subPath: static
-                      - name: bookwyrm-data
-                        mountPath: /app/media
-                        subPath: media
-                      - name: bookwyrm-data
-                        mountPath: /app/exports
-                        subPath: exports
-                      - name: bookwyrm-data
-                        mountPath: /app/images
-                        subPath: images
-                  env:
-                      - name: POD_IP
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: status.podIP
-                      - name: DEBUG
-                        value: "false"
-                      - name: ALLOWED_HOSTS
-                        value: "books.mtrnord.blog,localhost,$(POD_IP)"
-                      - name: SECRET_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: SECRET_KEY
-                      - name: DOMAIN
-                        value: "books.mtrnord.blog"
-                      - name: USE_HTTPS
-                        value: "true"
-                      - name: PGPORT
-                        value: "5432"
-                      - name: POSTGRES_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: POSTGRES_PASSWORD
-                      - name: POSTGRES_USER
-                        value: "bookwyrm"
-                      - name: POSTGRES_DB
-                        value: "bookwyrm"
-                      - name: POSTGRES_HOST
-                        value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
-                      # TODO: Setup Redis
-                      - name: REDIS_ACTIVITY_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
-                      - name: REDIS_BROKER_URL
-                        value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
-                      - name: FLOWER_USER
-                        value: "bookwyrm"
-                      - name: FLOWER_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: FLOWER_PASSWORD
-                      - name: FLOWER_BASIC_AUTH
-                        value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
-                      - name: FLOWER_PORT
-                        value: "5555"
-                      - name: EMAIL_HOST
-                        value: "mail.midnightthoughts.space"
-                      - name: EMAIL_PORT
-                        value: "465"
-                      - name: EMAIL_USE_TLS
-                        value: "false"
-                      - name: EMAIL_USE_SSL
-                        value: "true"
-                      - name: EMAIL_HOST_USER
-                        value: "support@midnightthoughts.space"
-                      - name: EMAIL_HOST_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: EMAIL_HOST_PASSWORD
-                      - name: EMAIL_SENDER_NAME
-                        value: "support"
-                      - name: EMAIL_SENDER_DOMAIN
-                        value: "midnightthoughts.space"
-                      - name: USE_S3
-                        value: "false"
-                      - name: AWS_ACCESS_KEY_ID
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_ACCESS_KEY_ID
-                      - name: AWS_SECRET_ACCESS_KEY
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_SECRET_ACCESS_KEY
-                      - name: AWS_STORAGE_BUCKET_NAME
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_STORAGE_BUCKET_NAME
-                      - name: AWS_S3_CUSTOM_DOMAIN
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_CUSTOM_DOMAIN
-                      - name: AWS_S3_ENDPOINT_URL
-                        valueFrom:
-                            secretKeyRef:
-                                name: bookwyrm-secrets
-                                key: AWS_S3_ENDPOINT_URL
-                      - name: ENABLE_THUMBNAIL_GENERATION
-                        value: "true"
-                      - name: STATIC_ROOT
-                        value: "static/"
-                      - name: MEDIA_ROOT
-                        value: "images/"
-                      - name: MAX_UPLOAD_MiB
-                        value: "100"
-                      - name: DATA_UPLOAD_MAX_MEMORY_MiB
-                        value: "100"
-                  ports:
-                      - name: flower-http
-                        containerPort: 5555
-                        protocol: TCP
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookwyrm
+  strategy:
+    type: "Recreate"
+  template:
+    metadata:
+      labels:
+        app: bookwyrm
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
+      volumes:
+        - name: bookwyrm-script
+          configMap:
+            name: bookwyrm-script
+        - name: bookwyrm-data
+          persistentVolumeClaim:
+            claimName: bookwyrm-pvc
+        - name: nginx-config
+          configMap:
+            name: nginx
+      initContainers:
+        - name: bookwyrm-update
+          image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+          imagePullPolicy: Always
+          command: ["bash"]
+          args:
+            - /hl/bookwyrm.sh
+            - update
+          volumeMounts:
+            - name: bookwyrm-script
+              mountPath: /hl
+              readOnly: true
+            - name: bookwyrm-data
+              mountPath: /app/static
+              subPath: static
+            - name: bookwyrm-data
+              mountPath: /app/media
+              subPath: media
+            - name: bookwyrm-data
+              mountPath: /app/exports
+              subPath: exports
+            - name: bookwyrm-data
+              mountPath: /app/images
+              subPath: images
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEBUG
+              value: "false"
+            - name: ALLOWED_HOSTS
+              value: "books.mtrnord.blog,localhost,$(POD_IP)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: SECRET_KEY
+            - name: DOMAIN
+              value: "books.mtrnord.blog"
+            - name: USE_HTTPS
+              value: "true"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              value: "bookwyrm"
+            - name: POSTGRES_DB
+              value: "bookwyrm"
+            - name: POSTGRES_HOST
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            # TODO: Setup Redis
+            - name: REDIS_ACTIVITY_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+            - name: REDIS_BROKER_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+            - name: FLOWER_USER
+              value: "bookwyrm"
+            - name: FLOWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: FLOWER_PASSWORD
+            - name: FLOWER_BASIC_AUTH
+              value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+            - name: FLOWER_PORT
+              value: "5555"
+            - name: EMAIL_HOST
+              value: "mail.midnightthoughts.space"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_USE_TLS
+              value: "false"
+            - name: EMAIL_USE_SSL
+              value: "true"
+            - name: EMAIL_HOST_USER
+              value: "support@midnightthoughts.space"
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_SENDER_NAME
+              value: "support"
+            - name: EMAIL_SENDER_DOMAIN
+              value: "midnightthoughts.space"
+            - name: USE_S3
+              value: "false"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_CUSTOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_CUSTOM_DOMAIN
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_ENDPOINT_URL
+            - name: ENABLE_THUMBNAIL_GENERATION
+              value: "true"
+            - name: STATIC_ROOT
+              value: "static/"
+            - name: MEDIA_ROOT
+              value: "images/"
+            - name: MAX_UPLOAD_MiB
+              value: "100"
+            - name: DATA_UPLOAD_MAX_MEMORY_MiB
+              value: "100"
+      containers:
+        - name: nginx
+          image: nginx:latest
+          volumeMounts:
+            - name: bookwyrm-data
+              mountPath: /app/static
+              subPath: static
+            - name: bookwyrm-data
+              mountPath: /app/media
+              subPath: media
+            - name: bookwyrm-data
+              mountPath: /app/exports
+              subPath: exports
+            - name: bookwyrm-data
+              mountPath: /app/images
+              subPath: images
+            - name: nginx-config
+              mountPath: /etc/nginx/templates/default.conf.template
+              subPath: reverse_proxy.conf
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/templates/server_config.template
+              subPath: server_config
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/locations
+              subPath: locations
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/server_name
+              subPath: server_name
+              readOnly: true
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEBUG
+              value: "false"
+            - name: ALLOWED_HOSTS
+              value: "books.mtrnord.blog,localhost,$(POD_IP)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: SECRET_KEY
+            - name: DOMAIN
+              value: "books.mtrnord.blog"
+            - name: USE_HTTPS
+              value: "true"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              value: "bookwyrm"
+            - name: POSTGRES_DB
+              value: "bookwyrm"
+            - name: POSTGRES_HOST
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            # TODO: Setup Redis
+            - name: REDIS_ACTIVITY_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+            - name: REDIS_BROKER_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+            - name: FLOWER_USER
+              value: "bookwyrm"
+            - name: FLOWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: FLOWER_PASSWORD
+            - name: FLOWER_BASIC_AUTH
+              value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+            - name: FLOWER_PORT
+              value: "5555"
+            - name: EMAIL_HOST
+              value: "mail.midnightthoughts.space"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_USE_TLS
+              value: "false"
+            - name: EMAIL_USE_SSL
+              value: "true"
+            - name: EMAIL_HOST_USER
+              value: "support@midnightthoughts.space"
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_SENDER_NAME
+              value: "support"
+            - name: EMAIL_SENDER_DOMAIN
+              value: "midnightthoughts.space"
+            - name: USE_S3
+              value: "false"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_CUSTOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_CUSTOM_DOMAIN
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_ENDPOINT_URL
+            - name: ENABLE_THUMBNAIL_GENERATION
+              value: "true"
+            - name: STATIC_ROOT
+              value: "static/"
+            - name: MEDIA_ROOT
+              value: "images/"
+            - name: MAX_UPLOAD_MiB
+              value: "100"
+            - name: DATA_UPLOAD_MAX_MEMORY_MiB
+              value: "100"
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: "/"
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          ports:
+            - name: bookwyrm-nginx
+              containerPort: 8080
+              protocol: TCP
+        - name: bookwyrm-web
+          image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+          imagePullPolicy: Always
+          command: ["gunicorn"]
+          args:
+            - "bookwyrm.wsgi:application"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 500Mi
+          volumeMounts:
+            - name: bookwyrm-data
+              mountPath: /app/static
+              subPath: static
+            - name: bookwyrm-data
+              mountPath: /app/media
+              subPath: media
+            - name: bookwyrm-data
+              mountPath: /app/exports
+              subPath: exports
+            - name: bookwyrm-data
+              mountPath: /app/images
+              subPath: images
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEBUG
+              value: "false"
+            - name: ALLOWED_HOSTS
+              value: "books.mtrnord.blog,localhost,$(POD_IP)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: SECRET_KEY
+            - name: DOMAIN
+              value: "books.mtrnord.blog"
+            - name: USE_HTTPS
+              value: "true"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              value: "bookwyrm"
+            - name: POSTGRES_DB
+              value: "bookwyrm"
+            - name: POSTGRES_HOST
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            # TODO: Setup Redis
+            - name: REDIS_ACTIVITY_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+            - name: REDIS_BROKER_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+            - name: FLOWER_USER
+              value: "bookwyrm"
+            - name: FLOWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: FLOWER_PASSWORD
+            - name: FLOWER_BASIC_AUTH
+              value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+            - name: FLOWER_PORT
+              value: "5555"
+            - name: EMAIL_HOST
+              value: "mail.midnightthoughts.space"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_USE_TLS
+              value: "false"
+            - name: EMAIL_USE_SSL
+              value: "true"
+            - name: EMAIL_HOST_USER
+              value: "support@midnightthoughts.space"
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_SENDER_NAME
+              value: "support"
+            - name: EMAIL_SENDER_DOMAIN
+              value: "midnightthoughts.space"
+            - name: USE_S3
+              value: "false"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_CUSTOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_CUSTOM_DOMAIN
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_ENDPOINT_URL
+            - name: ENABLE_THUMBNAIL_GENERATION
+              value: "true"
+            - name: STATIC_ROOT
+              value: "static/"
+            - name: MEDIA_ROOT
+              value: "images/"
+            - name: MAX_UPLOAD_MiB
+              value: "100"
+            - name: DATA_UPLOAD_MAX_MEMORY_MiB
+              value: "100"
+          livenessProbe:
+            httpGet:
+              port: 8000
+              path: "/"
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          ports:
+            - name: bookwyrm-http
+              containerPort: 8000
+              protocol: TCP
+        - name: bookwyrm-celery-worker
+          image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+          imagePullPolicy: Always
+          command: ["celery"]
+          args:
+            - "-A"
+            - "celerywyrm"
+            - "worker"
+            - "-l"
+            - "info"
+            - "-Q"
+            - "high_priority,medium_priority,low_priority,streams,images,suggested_users,email,connectors,lists,inbox,imports,import_triggered,broadcast,misc"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: bookwyrm-data
+              mountPath: /app/static
+              subPath: static
+            - name: bookwyrm-data
+              mountPath: /app/media
+              subPath: media
+            - name: bookwyrm-data
+              mountPath: /app/exports
+              subPath: exports
+            - name: bookwyrm-data
+              mountPath: /app/images
+              subPath: images
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEBUG
+              value: "false"
+            - name: ALLOWED_HOSTS
+              value: "books.mtrnord.blog,localhost,$(POD_IP)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: SECRET_KEY
+            - name: DOMAIN
+              value: "books.mtrnord.blog"
+            - name: USE_HTTPS
+              value: "true"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              value: "bookwyrm"
+            - name: POSTGRES_DB
+              value: "bookwyrm"
+            - name: POSTGRES_HOST
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            # TODO: Setup Redis
+            - name: REDIS_ACTIVITY_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+            - name: REDIS_BROKER_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+            - name: FLOWER_USER
+              value: "bookwyrm"
+            - name: FLOWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: FLOWER_PASSWORD
+            - name: FLOWER_BASIC_AUTH
+              value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+            - name: FLOWER_PORT
+              value: "5555"
+            - name: EMAIL_HOST
+              value: "mail.midnightthoughts.space"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_USE_TLS
+              value: "false"
+            - name: EMAIL_USE_SSL
+              value: "true"
+            - name: EMAIL_HOST_USER
+              value: "support@midnightthoughts.space"
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_SENDER_NAME
+              value: "support"
+            - name: EMAIL_SENDER_DOMAIN
+              value: "midnightthoughts.space"
+            - name: USE_S3
+              value: "false"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_CUSTOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_CUSTOM_DOMAIN
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_ENDPOINT_URL
+            - name: ENABLE_THUMBNAIL_GENERATION
+              value: "true"
+            - name: STATIC_ROOT
+              value: "static/"
+            - name: MEDIA_ROOT
+              value: "images/"
+            - name: MAX_UPLOAD_MiB
+              value: "100"
+            - name: DATA_UPLOAD_MAX_MEMORY_MiB
+              value: "100"
+        - name: bookwyrm-celery-beat
+          image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+          imagePullPolicy: Always
+          command: ["celery"]
+          args:
+            - "-A"
+            - "celerywyrm"
+            - "beat"
+            - "-l"
+            - "INFO"
+            - "--scheduler"
+            - "django_celery_beat.schedulers:DatabaseScheduler"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: bookwyrm-data
+              mountPath: /app/static
+              subPath: static
+            - name: bookwyrm-data
+              mountPath: /app/media
+              subPath: media
+            - name: bookwyrm-data
+              mountPath: /app/exports
+              subPath: exports
+            - name: bookwyrm-data
+              mountPath: /app/images
+              subPath: images
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEBUG
+              value: "false"
+            - name: ALLOWED_HOSTS
+              value: "books.mtrnord.blog,localhost,$(POD_IP)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: SECRET_KEY
+            - name: DOMAIN
+              value: "books.mtrnord.blog"
+            - name: USE_HTTPS
+              value: "true"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              value: "bookwyrm"
+            - name: POSTGRES_DB
+              value: "bookwyrm"
+            - name: POSTGRES_HOST
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            # TODO: Setup Redis
+            - name: REDIS_ACTIVITY_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+            - name: REDIS_BROKER_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+            - name: FLOWER_USER
+              value: "bookwyrm"
+            - name: FLOWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: FLOWER_PASSWORD
+            - name: FLOWER_BASIC_AUTH
+              value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+            - name: FLOWER_PORT
+              value: "5555"
+            - name: EMAIL_HOST
+              value: "mail.midnightthoughts.space"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_USE_TLS
+              value: "false"
+            - name: EMAIL_USE_SSL
+              value: "true"
+            - name: EMAIL_HOST_USER
+              value: "support@midnightthoughts.space"
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_SENDER_NAME
+              value: "support"
+            - name: EMAIL_SENDER_DOMAIN
+              value: "midnightthoughts.space"
+            - name: USE_S3
+              value: "false"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_CUSTOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_CUSTOM_DOMAIN
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_ENDPOINT_URL
+            - name: ENABLE_THUMBNAIL_GENERATION
+              value: "true"
+            - name: STATIC_ROOT
+              value: "static/"
+            - name: MEDIA_ROOT
+              value: "images/"
+            - name: MAX_UPLOAD_MiB
+              value: "100"
+            - name: DATA_UPLOAD_MAX_MEMORY_MiB
+              value: "100"
+        - name: bookwyrm-flower
+          image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+          imagePullPolicy: Always
+          command: ["celery"]
+          args:
+            - "-A"
+            - "celerywyrm"
+            - "flower"
+            - "--url_prefix=flower"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - name: bookwyrm-data
+              mountPath: /app/static
+              subPath: static
+            - name: bookwyrm-data
+              mountPath: /app/media
+              subPath: media
+            - name: bookwyrm-data
+              mountPath: /app/exports
+              subPath: exports
+            - name: bookwyrm-data
+              mountPath: /app/images
+              subPath: images
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DEBUG
+              value: "false"
+            - name: ALLOWED_HOSTS
+              value: "books.mtrnord.blog,localhost,$(POD_IP)"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: SECRET_KEY
+            - name: DOMAIN
+              value: "books.mtrnord.blog"
+            - name: USE_HTTPS
+              value: "true"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              value: "bookwyrm"
+            - name: POSTGRES_DB
+              value: "bookwyrm"
+            - name: POSTGRES_HOST
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            # TODO: Setup Redis
+            - name: REDIS_ACTIVITY_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/0"
+            - name: REDIS_BROKER_URL
+              value: "redis://bookwyrm-keydb.bookwyrm.svc.cluster.local:6379/1"
+            - name: FLOWER_USER
+              value: "bookwyrm"
+            - name: FLOWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: FLOWER_PASSWORD
+            - name: FLOWER_BASIC_AUTH
+              value: "$(FLOWER_USER):$(FLOWER_PASSWORD)"
+            - name: FLOWER_PORT
+              value: "5555"
+            - name: EMAIL_HOST
+              value: "mail.midnightthoughts.space"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_USE_TLS
+              value: "false"
+            - name: EMAIL_USE_SSL
+              value: "true"
+            - name: EMAIL_HOST_USER
+              value: "support@midnightthoughts.space"
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: EMAIL_HOST_PASSWORD
+            - name: EMAIL_SENDER_NAME
+              value: "support"
+            - name: EMAIL_SENDER_DOMAIN
+              value: "midnightthoughts.space"
+            - name: USE_S3
+              value: "false"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_CUSTOM_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_CUSTOM_DOMAIN
+            - name: AWS_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bookwyrm-secrets
+                  key: AWS_S3_ENDPOINT_URL
+            - name: ENABLE_THUMBNAIL_GENERATION
+              value: "true"
+            - name: STATIC_ROOT
+              value: "static/"
+            - name: MEDIA_ROOT
+              value: "images/"
+            - name: MAX_UPLOAD_MiB
+              value: "100"
+            - name: DATA_UPLOAD_MAX_MEMORY_MiB
+              value: "100"
+          ports:
+            - name: flower-http
+              containerPort: 5555
+              protocol: TCP
 ---
 # Service for BookWyrm
 apiVersion: v1
 kind: Service
 metadata:
-    name: bookwyrm
-    labels:
-        app: bookwyrm
+  name: bookwyrm
+  labels:
+    app: bookwyrm
 spec:
-    selector:
-        app: bookwyrm
-    ports:
-        - name: http
-          protocol: TCP
-          port: 8080
-          targetPort: 8080
+  selector:
+    app: bookwyrm
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
 ---
 # HTTPRoute for BookWyrm
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: bookwyrm
-    namespace: bookwyrm
+  name: bookwyrm
+  namespace: bookwyrm
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - books.mtrnord.blog
-    rules:
-        - name: bookwyrm-traffic
-          matches:
-              - path:
-                    type: PathPrefix
-                    value: /
-          backendRefs:
-              - name: bookwyrm
-                port: 8080
-          timeouts:
-              request: 240s
-              backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - books.mtrnord.blog
+  rules:
+    - name: bookwyrm-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: bookwyrm
+          port: 8080
+      timeouts:
+        request: 240s
+        backendRequest: 0s

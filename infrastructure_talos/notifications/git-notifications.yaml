@@ -1,23 +1,23 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
-    name: flux-system-github
-    namespace: flux-system
+  name: flux-system-github
+  namespace: flux-system
 spec:
-    type: github
-    address: https://github.com/MTRNord/cluster
-    secretRef:
-        name: github
+  type: github
+  address: https://github.com/MTRNord/cluster
+  secretRef:
+    name: github
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
-    name: deployment-status-github
-    namespace: flux-system
+  name: deployment-status-github
+  namespace: flux-system
 spec:
-    providerRef:
-        name: flux-system-github
-    eventSeverity: info
-    eventSources:
-        - kind: Kustomization
-          name: "*"
+  providerRef:
+    name: flux-system-github
+  eventSeverity: info
+  eventSources:
+    - kind: Kustomization
+      name: "*"

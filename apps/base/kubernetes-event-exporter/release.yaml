@@ -1,41 +1,41 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: kubernetes-event-exporter
-    namespace: monitoring
+  name: kubernetes-event-exporter
+  namespace: monitoring
 spec:
-    interval: 30m
-    releaseName: kubernetes-event-exporter
-    chartRef:
-        kind: OCIRepository
-        name: kubernetes-event-exporter
-    values:
-        config:
-            logLevel: debug
-            logFormat: json
-            route:
-                routes:
-                    - match:
-                        - receiver: "loki"
-            receivers:
-                - name: "loki"
-                  loki:
-                    url: http://loki-stack:3100/loki/api/v1/push
-                    # headers:
-                    #     Content-Type: application/json
-                    #     User-Agent: "kube-event-exporter"
-                    streamLabels:
-                        app: kube-event-exporter
-                    layout:
-                        app: kube-api
-                        source: event-exporter
-                        message: "{{ .Message }}"
-                        reason: "{{ .Reason }}"
-                        type: "{{ .Type }}"
-                        count: "{{ .Count }}"
-                        kind: "{{ .InvolvedObject.Kind }}"
-                        name: "{{ .InvolvedObject.Name }}"
-                        namespace: "{{ .Namespace }}"
-                        component: "{{ .Source.Component }}"
-                        host: "{{ .Source.Host }}"
-                        labels: "{{ toJson .InvolvedObject.Labels}}"
+  interval: 30m
+  releaseName: kubernetes-event-exporter
+  chartRef:
+    kind: OCIRepository
+    name: kubernetes-event-exporter
+  values:
+    config:
+      logLevel: debug
+      logFormat: json
+      route:
+        routes:
+          - match:
+              - receiver: "loki"
+      receivers:
+        - name: "loki"
+          loki:
+            url: http://loki-stack:3100/loki/api/v1/push
+            # headers:
+            #     Content-Type: application/json
+            #     User-Agent: "kube-event-exporter"
+            streamLabels:
+              app: kube-event-exporter
+            layout:
+              app: kube-api
+              source: event-exporter
+              message: "{{ .Message }}"
+              reason: "{{ .Reason }}"
+              type: "{{ .Type }}"
+              count: "{{ .Count }}"
+              kind: "{{ .InvolvedObject.Kind }}"
+              name: "{{ .InvolvedObject.Name }}"
+              namespace: "{{ .Namespace }}"
+              component: "{{ .Source.Component }}"
+              host: "{{ .Source.Host }}"
+              labels: "{{ toJson .InvolvedObject.Labels}}"

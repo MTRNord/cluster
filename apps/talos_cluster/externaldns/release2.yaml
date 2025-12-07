@@ -1,80 +1,80 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: external-dns-pdns
-    namespace: kube-system
+  name: external-dns-pdns
+  namespace: kube-system
 spec:
-    releaseName: external-dns-pdns
-    chart:
-        spec:
-            chart: external-dns
-            sourceRef:
-                kind: HelmRepository
-                name: external-dns
-    interval: 50m
-    values:
-        logLevel: debug
-        extraArgs:
-            - ENC[AES256_GCM,data:gq62c+D+QKc6Yih8nLC/DjKaJpwnsH7XYx5oeJo8kikBgDKgIQ==,iv:EoRMQgmZBkaC3+KhHPGh+pkYx29P47SpM9wr1l9+1xo=,tag:FPqYQ9FxxkWXeDf9jdoqJQ==,type:str]
-            - ENC[AES256_GCM,data:6szm6kCZsJP7YTIqWbxM3USyT/JPgvpOzzqjj4XrcFOX9xwbcHvI/6BCB8hQPNGVeDEN5YllKMxl5O9kIAJswaOFJ3BSrta8sDCldcwdfw==,iv:WrgOzTPjAqnjJuvOH0Hw09QcfiICsJ11U03sI9oVdH8=,tag:SzknV3BFt8xUs5CkCfuqtA==,type:str]
-            - ENC[AES256_GCM,data:fJoZyefyEkaRSQJtmcWh00BJmO5JnrmUQvG6hh7J1w==,iv:dvzSvR3uvhrrAA9+Js68m3bp3mHz35q6CMtMaLqWj7A=,tag:hRdOFYYwGzLhAuLDUtovvg==,type:str]
-        provider:
-            name: pdns
-        sources:
-            - gateway-httproute
-            - gateway-grpcroute
-            - gateway-tcproute
-            - gateway-tlsroute
-            - gateway-udproute
-            #- service
-        rbac:
-            additionalPermissions:
-                - apiGroups:
-                    - ""
-                  resources:
-                    - namespaces
-                  verbs:
-                    - get
-                    - watch
-                    - list
-                - apiGroups:
-                    - gateway.networking.k8s.io
-                  resources:
-                    - gateways
-                    - httproutes
-                    - grpcroutes
-                    - tlsroutes
-                    - tcproutes
-                    - udproutes
-                  verbs:
-                    - get
-                    - watch
-                    - list
-                - apiGroups:
-                    - ""
-                  resources:
-                    - services
-                  verbs:
-                    - get
-                    - watch
-                    - list
+  releaseName: external-dns-pdns
+  chart:
+    spec:
+      chart: external-dns
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+  interval: 50m
+  values:
+    logLevel: debug
+    extraArgs:
+      - ENC[AES256_GCM,data:gq62c+D+QKc6Yih8nLC/DjKaJpwnsH7XYx5oeJo8kikBgDKgIQ==,iv:EoRMQgmZBkaC3+KhHPGh+pkYx29P47SpM9wr1l9+1xo=,tag:FPqYQ9FxxkWXeDf9jdoqJQ==,type:str]
+      - ENC[AES256_GCM,data:6szm6kCZsJP7YTIqWbxM3USyT/JPgvpOzzqjj4XrcFOX9xwbcHvI/6BCB8hQPNGVeDEN5YllKMxl5O9kIAJswaOFJ3BSrta8sDCldcwdfw==,iv:WrgOzTPjAqnjJuvOH0Hw09QcfiICsJ11U03sI9oVdH8=,tag:SzknV3BFt8xUs5CkCfuqtA==,type:str]
+      - ENC[AES256_GCM,data:fJoZyefyEkaRSQJtmcWh00BJmO5JnrmUQvG6hh7J1w==,iv:dvzSvR3uvhrrAA9+Js68m3bp3mHz35q6CMtMaLqWj7A=,tag:hRdOFYYwGzLhAuLDUtovvg==,type:str]
+    provider:
+      name: pdns
+    sources:
+      - gateway-httproute
+      - gateway-grpcroute
+      - gateway-tcproute
+      - gateway-tlsroute
+      - gateway-udproute
+      #- service
+    rbac:
+      additionalPermissions:
+        - apiGroups:
+            - ""
+          resources:
+            - namespaces
+          verbs:
+            - get
+            - watch
+            - list
+        - apiGroups:
+            - gateway.networking.k8s.io
+          resources:
+            - gateways
+            - httproutes
+            - grpcroutes
+            - tlsroutes
+            - tcproutes
+            - udproutes
+          verbs:
+            - get
+            - watch
+            - list
+        - apiGroups:
+            - ""
+          resources:
+            - services
+          verbs:
+            - get
+            - watch
+            - list
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnNXFoaE55UUl3V1RpMjI4
-            SkJuRXZDTkNSd3c4MU56WTMraFBpcUcxYjJZClhrdGJHM2RUMURmZnd6cE5SVGtx
-            THZyUlVwQnM3dFE5blR2MVlHQ0tCYkEKLS0tIGRaMEhKWktCNHAzTzByUlRRaWNx
-            NmJrTHRkd3ZSYmozaWx3NnN4blhuWkUK0gHw8+6g+fxsD5hNcQmPFFEG/YBBfzsx
-            qMLOzKx3Ph7AbelMzkJcMSqKz6eqz8uETscv8lDUCyD7cWq9UbzJkg==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-18T14:37:05Z"
-    mac: ENC[AES256_GCM,data:dD3ss+HxuIGZqFb9VTaD2yUbC0HMUptETG/pi1SiwCzoM5YRpcuBzfPN/dm9rwE8X7ihGp1z9JOWsXOp2DSQDZF/hCAZiVHRnU4Esx7GCgDV41x/HlcsMZlEGwNhvqBgBTjyehgpkQ8hz8MRqXj5xsBey9l4/dDuGS0JHLnZong=,iv:Jp3R03iGP8Q13o/L/EkCHWmUoc+kQRJxTA2bG32Rxto=,tag:V2iANOtO5GM6cGHdPa/J9w==,type:str]
-    pgp: []
-    encrypted_regex: ^(extraArgs|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnNXFoaE55UUl3V1RpMjI4
+        SkJuRXZDTkNSd3c4MU56WTMraFBpcUcxYjJZClhrdGJHM2RUMURmZnd6cE5SVGtx
+        THZyUlVwQnM3dFE5blR2MVlHQ0tCYkEKLS0tIGRaMEhKWktCNHAzTzByUlRRaWNx
+        NmJrTHRkd3ZSYmozaWx3NnN4blhuWkUK0gHw8+6g+fxsD5hNcQmPFFEG/YBBfzsx
+        qMLOzKx3Ph7AbelMzkJcMSqKz6eqz8uETscv8lDUCyD7cWq9UbzJkg==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-11-18T14:37:05Z"
+  mac: ENC[AES256_GCM,data:dD3ss+HxuIGZqFb9VTaD2yUbC0HMUptETG/pi1SiwCzoM5YRpcuBzfPN/dm9rwE8X7ihGp1z9JOWsXOp2DSQDZF/hCAZiVHRnU4Esx7GCgDV41x/HlcsMZlEGwNhvqBgBTjyehgpkQ8hz8MRqXj5xsBey9l4/dDuGS0JHLnZong=,iv:Jp3R03iGP8Q13o/L/EkCHWmUoc+kQRJxTA2bG32Rxto=,tag:V2iANOtO5GM6cGHdPa/J9w==,type:str]
+  pgp: []
+  encrypted_regex: ^(extraArgs|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

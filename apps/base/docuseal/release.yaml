@@ -1,108 +1,108 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: docuseal
-    namespace: docuseal
+  name: docuseal
+  namespace: docuseal
 spec:
-    releaseName: docuseal
-    interval: 60m
-    chart:
-        spec:
-            chart: docuseal
-            sourceRef:
-                kind: HelmRepository
-                name: docuseal
-    values:
-        ingress:
-            main:
-                enabled: false
-                annotations:
-                    cert-manager.io/cluster-issuer: letsencrypt-dns
-                    external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                hosts:
-                    - host: docuseal.midnightthoughts.space
-                      paths:
-                        - path: /
-                          pathType: Prefix
-                          backend:
-                            service:
-                                name: docuseal
-                                port: 3000
-                tls:
-                    - secretName: docuseal-midnightthoughts-space-tls
-                      hosts:
-                        - docuseal.midnightthoughts.space
-        persistence:
-            data:
-                enabled: ENC[AES256_GCM,data:GJM4Uw==,iv:18583JXCtan4bNqVTqeYitzL/fb7BH3YUU2YttDc7Mw=,tag:8X1wTtBCgZBxeQ56nENu3w==,type:bool]
-                size: ENC[AES256_GCM,data:uSsiIVs=,iv:wTSIk0UCdZgAbHCK/FcecipeIG7RQa2ED/nQZSj3Ii0=,tag:fplOP8MKuZtsbvMqn+3fzg==,type:str]
-                accessMode: ENC[AES256_GCM,data:4XvPju09xbz63oE7Eg==,iv:Mt/LqAtnnyopwOVjVv2lNKFbwMxmqjEhq5PyFEZeqEg=,tag:matijltWjNlnIEKRGyuyBA==,type:str]
-                existingClaim: ENC[AES256_GCM,data:C+Eki8aCDsMSJqzZhaOdHg==,iv:X8RiuXDsTXZZ1Y9NcjaIPkz8A2XNFqHMeZPxDsG41Kw=,tag:JQokzJNMAGuzgR/cMG0jvQ==,type:str]
-        env:
-            SECRET_KEY_BASE: ENC[AES256_GCM,data:OEScFIXcsplWfy7dO+dZr2vZyvIxErTb0jbCEPXBYHjBTdOsfLgkA2rEQFtMoW9g7D7s44rfN2m5NytWs75Wegp0pA3e+LQwxhUxlj5+YAiSL+GlOuClYJms/GK5MslV54aCN9EU4jHF24ssM3ELX/E8zeiDYfyF4n4dGctya10=,iv:vf3rTtnHSV4biD6Pr4NuZrHbO0V17A0npq1+ljLn9To=,tag:Hv1TbZRH3BTqO4D/eTYrXA==,type:str]
-            SMTP_USERNAME: mtrnord@nordgedanken.dev
-            SMTP_ADDRESS: smtp.fastmail.com
-            SMTP_PORT: 465
-            SMTP_PASSWORD: ENC[AES256_GCM,data:Ere40Q1+7V5sZ80yuM7dVg==,iv:0Ih7G1XryAoPMt9WV58Zc9efMG7WZrN5sP4RtGyptKs=,tag:HhmzxZdPdoGG4DkKr3dVtA==,type:str]
-            SMTP_FROM: ops@nordgedanken.dev
-            HOST: docuseal.midnightthoughts.space
-            DATABASE_URL: ENC[AES256_GCM,data:49DPLX/Qy8lgIYzr4GnFuf965IjxZI20ES7jSFmkPr6q5euFYHsHGOeY7/QTjJ14HFQ5D/EnFfLdXt6pQVaDnWRSKquFuJOw/gpEo5DwLB3VOLvj80W/AhzgZoO6xVdaRlJ8EGikx24c0wkboObwoMauycTYlsdlvO1YNfAdaSZfb5AhxyJQRhkE1Q7BCwuVXhR5C0lrAMZ1iPsifKMIB/4We0QKtlM=,iv:YUEVBfxFRNDy9Jkvdg47rJO0A6ApWtMEkwx7sXJlzRM=,tag:tyl0X/yDhl0JwnUwV9Of3A==,type:str]
+  releaseName: docuseal
+  interval: 60m
+  chart:
+    spec:
+      chart: docuseal
+      sourceRef:
+        kind: HelmRepository
+        name: docuseal
+  values:
+    ingress:
+      main:
+        enabled: false
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-dns
+          external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+        hosts:
+          - host: docuseal.midnightthoughts.space
+            paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                    name: docuseal
+                    port: 3000
+        tls:
+          - secretName: docuseal-midnightthoughts-space-tls
+            hosts:
+              - docuseal.midnightthoughts.space
+    persistence:
+      data:
+        enabled: ENC[AES256_GCM,data:GJM4Uw==,iv:18583JXCtan4bNqVTqeYitzL/fb7BH3YUU2YttDc7Mw=,tag:8X1wTtBCgZBxeQ56nENu3w==,type:bool]
+        size: ENC[AES256_GCM,data:uSsiIVs=,iv:wTSIk0UCdZgAbHCK/FcecipeIG7RQa2ED/nQZSj3Ii0=,tag:fplOP8MKuZtsbvMqn+3fzg==,type:str]
+        accessMode: ENC[AES256_GCM,data:4XvPju09xbz63oE7Eg==,iv:Mt/LqAtnnyopwOVjVv2lNKFbwMxmqjEhq5PyFEZeqEg=,tag:matijltWjNlnIEKRGyuyBA==,type:str]
+        existingClaim: ENC[AES256_GCM,data:C+Eki8aCDsMSJqzZhaOdHg==,iv:X8RiuXDsTXZZ1Y9NcjaIPkz8A2XNFqHMeZPxDsG41Kw=,tag:JQokzJNMAGuzgR/cMG0jvQ==,type:str]
+    env:
+      SECRET_KEY_BASE: ENC[AES256_GCM,data:OEScFIXcsplWfy7dO+dZr2vZyvIxErTb0jbCEPXBYHjBTdOsfLgkA2rEQFtMoW9g7D7s44rfN2m5NytWs75Wegp0pA3e+LQwxhUxlj5+YAiSL+GlOuClYJms/GK5MslV54aCN9EU4jHF24ssM3ELX/E8zeiDYfyF4n4dGctya10=,iv:vf3rTtnHSV4biD6Pr4NuZrHbO0V17A0npq1+ljLn9To=,tag:Hv1TbZRH3BTqO4D/eTYrXA==,type:str]
+      SMTP_USERNAME: mtrnord@nordgedanken.dev
+      SMTP_ADDRESS: smtp.fastmail.com
+      SMTP_PORT: 465
+      SMTP_PASSWORD: ENC[AES256_GCM,data:Ere40Q1+7V5sZ80yuM7dVg==,iv:0Ih7G1XryAoPMt9WV58Zc9efMG7WZrN5sP4RtGyptKs=,tag:HhmzxZdPdoGG4DkKr3dVtA==,type:str]
+      SMTP_FROM: ops@nordgedanken.dev
+      HOST: docuseal.midnightthoughts.space
+      DATABASE_URL: ENC[AES256_GCM,data:49DPLX/Qy8lgIYzr4GnFuf965IjxZI20ES7jSFmkPr6q5euFYHsHGOeY7/QTjJ14HFQ5D/EnFfLdXt6pQVaDnWRSKquFuJOw/gpEo5DwLB3VOLvj80W/AhzgZoO6xVdaRlJ8EGikx24c0wkboObwoMauycTYlsdlvO1YNfAdaSZfb5AhxyJQRhkE1Q7BCwuVXhR5C0lrAMZ1iPsifKMIB/4We0QKtlM=,iv:YUEVBfxFRNDy9Jkvdg47rJO0A6ApWtMEkwx7sXJlzRM=,tag:tyl0X/yDhl0JwnUwV9Of3A==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6cVhIdzlyb0FPQm1ucUh2
-            ZGtrNHcvSVloUjNSYlNPRUhOYnR1TVFUdlVNCkQ3eTBpTVA1a0FiK2tqeWljQmVW
-            UXpBU2tpTytNbUtseDgza3FzbGtxRjgKLS0tIEdwck5leXlCcVZyc2IvRE5QT0tB
-            enhsM00vaS8zVEs1MnNralEyL29IczgKhj26BISy0KHbkI40lUd/A1jwyXgPQxic
-            9gyVmy41ARJaZyYRdXncmbDCQY9jOr+QjElLT/LNgBDhVE4wGG6aRQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-22T17:07:47Z"
-    mac: ENC[AES256_GCM,data:5N/IPtLZWbS2F4sNgF1T8BKaqtiUbS5Zunoay3u7WQyL9hPM6ApTjeUwl8WK8W6I7yqsKCmHtdpx1ZXVbIdZKAOXmXjCCgHj3ofRRMG6JCMF0WHgUMX87bM/Am9BP2GE2B5XdhGL8Zrp+wYJMB/D1fQRP8nv49N4bLByAGzpyEU=,iv:xHc3kra4zVESdc05PIYQ/fV3PvdtICbpSpO/VGSezdw=,tag:vNH7hbq/hlhplRbwrSN8tw==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6cVhIdzlyb0FPQm1ucUh2
+        ZGtrNHcvSVloUjNSYlNPRUhOYnR1TVFUdlVNCkQ3eTBpTVA1a0FiK2tqeWljQmVW
+        UXpBU2tpTytNbUtseDgza3FzbGtxRjgKLS0tIEdwck5leXlCcVZyc2IvRE5QT0tB
+        enhsM00vaS8zVEs1MnNralEyL29IczgKhj26BISy0KHbkI40lUd/A1jwyXgPQxic
+        9gyVmy41ARJaZyYRdXncmbDCQY9jOr+QjElLT/LNgBDhVE4wGG6aRQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-22T17:07:47Z"
+  mac: ENC[AES256_GCM,data:5N/IPtLZWbS2F4sNgF1T8BKaqtiUbS5Zunoay3u7WQyL9hPM6ApTjeUwl8WK8W6I7yqsKCmHtdpx1ZXVbIdZKAOXmXjCCgHj3ofRRMG6JCMF0WHgUMX87bM/Am9BP2GE2B5XdhGL8Zrp+wYJMB/D1fQRP8nv49N4bLByAGzpyEU=,iv:xHc3kra4zVESdc05PIYQ/fV3PvdtICbpSpO/VGSezdw=,tag:vNH7hbq/hlhplRbwrSN8tw==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: docuseal-route
-    namespace: docuseal
+  name: docuseal-route
+  namespace: docuseal
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - docuseal.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: docuseal
-              port: 3000
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - docuseal.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: docuseal
+          port: 3000
+      timeouts:
+        request: 240s
+        backendRequest: 0s
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6cVhIdzlyb0FPQm1ucUh2
-            ZGtrNHcvSVloUjNSYlNPRUhOYnR1TVFUdlVNCkQ3eTBpTVA1a0FiK2tqeWljQmVW
-            UXpBU2tpTytNbUtseDgza3FzbGtxRjgKLS0tIEdwck5leXlCcVZyc2IvRE5QT0tB
-            enhsM00vaS8zVEs1MnNralEyL29IczgKhj26BISy0KHbkI40lUd/A1jwyXgPQxic
-            9gyVmy41ARJaZyYRdXncmbDCQY9jOr+QjElLT/LNgBDhVE4wGG6aRQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-22T17:07:47Z"
-    mac: ENC[AES256_GCM,data:5N/IPtLZWbS2F4sNgF1T8BKaqtiUbS5Zunoay3u7WQyL9hPM6ApTjeUwl8WK8W6I7yqsKCmHtdpx1ZXVbIdZKAOXmXjCCgHj3ofRRMG6JCMF0WHgUMX87bM/Am9BP2GE2B5XdhGL8Zrp+wYJMB/D1fQRP8nv49N4bLByAGzpyEU=,iv:xHc3kra4zVESdc05PIYQ/fV3PvdtICbpSpO/VGSezdw=,tag:vNH7hbq/hlhplRbwrSN8tw==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6cVhIdzlyb0FPQm1ucUh2
+        ZGtrNHcvSVloUjNSYlNPRUhOYnR1TVFUdlVNCkQ3eTBpTVA1a0FiK2tqeWljQmVW
+        UXpBU2tpTytNbUtseDgza3FzbGtxRjgKLS0tIEdwck5leXlCcVZyc2IvRE5QT0tB
+        enhsM00vaS8zVEs1MnNralEyL29IczgKhj26BISy0KHbkI40lUd/A1jwyXgPQxic
+        9gyVmy41ARJaZyYRdXncmbDCQY9jOr+QjElLT/LNgBDhVE4wGG6aRQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-22T17:07:47Z"
+  mac: ENC[AES256_GCM,data:5N/IPtLZWbS2F4sNgF1T8BKaqtiUbS5Zunoay3u7WQyL9hPM6ApTjeUwl8WK8W6I7yqsKCmHtdpx1ZXVbIdZKAOXmXjCCgHj3ofRRMG6JCMF0WHgUMX87bM/Am9BP2GE2B5XdhGL8Zrp+wYJMB/D1fQRP8nv49N4bLByAGzpyEU=,iv:xHc3kra4zVESdc05PIYQ/fV3PvdtICbpSpO/VGSezdw=,tag:vNH7hbq/hlhplRbwrSN8tw==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

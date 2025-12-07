@@ -1,21 +1,21 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-    name: letsencrypt-dns
+  name: letsencrypt-dns
 spec:
-    acme:
-        email: mtrnord@nordgedanken.dev
-        server: https://acme-v02.api.letsencrypt.org./directory
-        privateKeySecretRef:
-            name: letsencrypt-dns-account-key
-        profile: tlsserver
-        solvers:
-            - dns01:
-                webhook:
-                    groupName: acme.zacharyseguin.ca
-                    solverName: pdns
-                    config:
-                        host: http://10.0.64.129:8081
-                        apiKeySecretRef:
-                            name: pdns-api-key
-                            key: key
+  acme:
+    email: mtrnord@nordgedanken.dev
+    server: https://acme-v02.api.letsencrypt.org./directory
+    privateKeySecretRef:
+      name: letsencrypt-dns-account-key
+    profile: tlsserver
+    solvers:
+      - dns01:
+          webhook:
+            groupName: acme.zacharyseguin.ca
+            solverName: pdns
+            config:
+              host: http://10.0.64.129:8081
+              apiKeySecretRef:
+                name: pdns-api-key
+                key: key

@@ -1,126 +1,126 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: gotosocial
-    namespace: gotosocial
+  name: gotosocial
+  namespace: gotosocial
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: gotosocial
-    template:
-        metadata:
-            labels:
-                app: gotosocial
-        spec:
-            containers:
-                - name: gotosocial
-                  image: docker.io/superseriousbusiness/gotosocial:latest
-                  imagePullPolicy: Always
-                  resources:
-                    limits:
-                        cpu: 1000m
-                        memory: 1Gi
-                    requests:
-                        cpu: 100m
-                        memory: 128Mi
-                  env:
-                    - name: GTS_HOST
-                      value: gts.mtrnord.blog
-                    - name: GTS_DB_TYPE
-                      value: postgres
-                    - name: GTS_DB_ADDRESS
-                      value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
-                    - name: GTS_DB_USER
-                      value: gotosocial
-                    - name: GTS_DB_PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: gotosocial-secret
-                            key: db_password
-                    - name: GTS_DB_TLS_MODE
-                      value: enable
-                    - name: GTS_LETSENCRYPT_ENABLED
-                      value: "false"
-                    - name: GTS_WAZERO_COMPILATION_CACHE
-                      value: /gotosocial/.cache
-                    - name: GTS_TRUSTED_PROXIES
-                      value: 10.0.0.0/8
-                    - name: TZ
-                      value: Europe/Berlin
-                    - name: GTS_SMTP_HOST
-                      value: mail.midnightthoughts.space
-                    - name: GTS_SMTP_PORT
-                      value: "587"
-                    - name: GTS_SMTP_USERNAME
-                      value: "ops@midnightthoughts.space"
-                    - name: GTS_SMTP_PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: gotosocial-secret
-                            key: smtp_password
-                    - name: GTS_SMTP_FROM
-                      value: "noreply@midnightthoughts.space"
-                  ports:
-                    - containerPort: 8080
-                  livenessProbe:
-                    httpGet:
-                        path: /livez
-                        port: 8080
-                    initialDelaySeconds: 30
-                    periodSeconds: 10
-                    timeoutSeconds: 5
-                    successThreshold: 1
-                    failureThreshold: 3
-                  readinessProbe:
-                    httpGet:
-                        path: /readyz
-                        port: 8080
-                    initialDelaySeconds: 30
-                    periodSeconds: 10
-                    timeoutSeconds: 5
-                    successThreshold: 1
-                    failureThreshold: 3
-                  volumeMounts:
-                    - name: gotosocial
-                      mountPath: /gotosocial/storage
-                      subPath: storage
-                    - name: gotosocial
-                      mountPath: /gotosocial/.cache
-                      subPath: .cache
-            volumes:
-                - name: gotosocial
-                  persistentVolumeClaim:
-                    claimName: gotosocial
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gotosocial
+  template:
+    metadata:
+      labels:
+        app: gotosocial
+    spec:
+      containers:
+        - name: gotosocial
+          image: docker.io/superseriousbusiness/gotosocial:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: GTS_HOST
+              value: gts.mtrnord.blog
+            - name: GTS_DB_TYPE
+              value: postgres
+            - name: GTS_DB_ADDRESS
+              value: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+            - name: GTS_DB_USER
+              value: gotosocial
+            - name: GTS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gotosocial-secret
+                  key: db_password
+            - name: GTS_DB_TLS_MODE
+              value: enable
+            - name: GTS_LETSENCRYPT_ENABLED
+              value: "false"
+            - name: GTS_WAZERO_COMPILATION_CACHE
+              value: /gotosocial/.cache
+            - name: GTS_TRUSTED_PROXIES
+              value: 10.0.0.0/8
+            - name: TZ
+              value: Europe/Berlin
+            - name: GTS_SMTP_HOST
+              value: mail.midnightthoughts.space
+            - name: GTS_SMTP_PORT
+              value: "587"
+            - name: GTS_SMTP_USERNAME
+              value: "ops@midnightthoughts.space"
+            - name: GTS_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gotosocial-secret
+                  key: smtp_password
+            - name: GTS_SMTP_FROM
+              value: "noreply@midnightthoughts.space"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: gotosocial
+              mountPath: /gotosocial/storage
+              subPath: storage
+            - name: gotosocial
+              mountPath: /gotosocial/.cache
+              subPath: .cache
+      volumes:
+        - name: gotosocial
+          persistentVolumeClaim:
+            claimName: gotosocial
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: gotosocial-service
-    namespace: gotosocial
+  name: gotosocial-service
+  namespace: gotosocial
 spec:
-    selector:
-        app: gotosocial
-    ports:
-        - protocol: TCP
-          port: 8080
-          targetPort: 8080
+  selector:
+    app: gotosocial
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: gotosocial
-    namespace: gotosocial
+  name: gotosocial
+  namespace: gotosocial
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - gts.mtrnord.blog
-    rules:
-        - backendRefs:
-            - name: gotosocial-service
-              port: 8080
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - gts.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: gotosocial-service
+          port: 8080
+      timeouts:
+        request: 240s
+        backendRequest: 0s

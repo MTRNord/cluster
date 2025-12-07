@@ -1,179 +1,179 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: authentik
-    namespace: authentik
+  name: authentik
+  namespace: authentik
 spec:
-    releaseName: authentik
-    chart:
-        spec:
-            chart: authentik
-            version: "2025.10.2"
-            sourceRef:
-                kind: HelmRepository
-                name: authentik
-    interval: 60m
+  releaseName: authentik
+  chart:
+    spec:
+      chart: authentik
+      version: "2025.10.2"
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+  interval: 60m
+  timeout: 25m
+  install:
     timeout: 25m
-    install:
-        timeout: 25m
-        remediation:
-            retries: 3
-    values:
-        #global:
-        #image:
-        #pullPolicy: Always
-        # https://github.com/goauthentik/authentik/issues/12464
-        #repository: ghcr.io/goauthentik/dev-server
-        #tag: gh-version-2024.12-arm64
-        authentik:
-            secret_key: ENC[AES256_GCM,data:Qq1S+Kk6yb//WVc1sTmoIu1DO4ejWlVpg4mqYCA8+kNuc/KloUUQP33tXRGYQIlePE6ykyeqctje9h1CHND9QQ==,iv:KjCWOBFelR08Bm4n8f7FsicFNBw7gzZ1MQ9yLwh6j0s=,tag:93XCTQjxJu28uhpSayM1EQ==,type:str]
-            # This sends anonymous usage-data, stack traces on errors and
-            # performance data to sentry.io, and is fully opt-in
-            error_reporting:
-                enabled: true
-            postgresql:
-                host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
-                name: authentik
-                user: authentik
-                password: ENC[AES256_GCM,data:7qmIA2GYyHyR8/aFK75qvDb1Ndd+OfHwGfAQP/XLCEm8/6ocrVQhotkfS3XX5JIStZXRsvohZD5VZ9j1ShYILA==,iv:bwNic3q8ZW1oMhmL80Dg7KdZ59bdu/tQvIRiwvZZ2m0=,tag:TAFMjzlJnyKS/drf69EMOA==,type:str]
-            email:
-                # -- SMTP Server emails are sent from, fully optional
-                host: mail.nordgedanken.dev
-                port: 465
-                # -- SMTP credentials, when left empty, no authentication will be done
-                username: support@nordgedanken.dev
-                # -- SMTP credentials, when left empty, no authentication will be done
-                password: ENC[AES256_GCM,data:ShLG8GLcWjiA,iv:Pb2jXjIqlELaCFshqscNGsXUCp056sZbfCvc3jEOJwc=,tag:kg4PWpf5nOtzI+2R9ahV2Q==,type:str]
-                # -- Enable either use_tls or use_ssl, they can't be enabled at the same time.
-                use_tls: true
-                # -- Enable either use_tls or use_ssl, they can't be enabled at the same time.
-                use_ssl: false
-                # -- Connection timeout
-                timeout: 30
-                # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
-                from: ops@nordgedanken.dev
-        worker:
-            replicas: 2
-            resources:
-                limits: {}
-                requests:
-                    cpu: 107m
-                    memory: 578Mi
-            deploymentStrategy:
-                type: RollingUpdate
-                rollingUpdate:
-                    maxSurge: 25%
-                    maxUnavailable: 25%
-            # Mount the ldap certificate to /certs
-            volumes:
-                - name: ldap-cert
-                  secret:
-                      secretName: ENC[AES256_GCM,data:gkdJ6ufGzmE8UIrtR/Y=,iv:ajE/NG7B17OqHu5PVtI+STkiJQA2ZTv14yfWe9TZlNw=,tag:Pyz5nG4skc/vgMl5gg+83g==,type:str]
-            # Mount the ldap certificate to /certs
-            volumeMounts:
-                - name: ldap-cert
-                  mountPath: /certs/ldap
-        server:
-            # Mount the ldap certificate to /certs
-            volumes:
-                - name: ldap-cert
-                  secret:
-                      secretName: ENC[AES256_GCM,data:UU2WJB3n7WzQRX5OEIk=,iv:YjPGIgu7UWhMEdAH/LJSHdDkin4tMMY2ZzBOguT9VQU=,tag:ryzrMsKoaViRmpx7URHhVw==,type:str]
-            # Mount the ldap certificate to /certs
-            volumeMounts:
-                - name: ldap-cert
-                  mountPath: /certs/ldap
-            replicas: 2
-            deploymentStrategy:
-                type: RollingUpdate
-                rollingUpdate:
-                    maxSurge: 25%
-                    maxUnavailable: 25%
-            resources:
-                limits: {}
-                requests:
-                    cpu: 181m
-                    memory: 628Mi
-            env:
-                - name: AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS
-                  value: 127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fe80::/10,::1/128,10.244.0.0/16,fc00:0::/96,fd00::/7
-            ingress:
-                annotations:
-                    cert-manager.io/cluster-issuer: letsencrypt-dns
-                    external-dns.alpha.kubernetes.io/hostname: auth.midnightthoughts.space
-                enabled: false
-                hosts:
-                    - auth.midnightthoughts.space
-                    - ldap.midnightthoughts.space
-                paths:
-                    - /
-                pathType: Prefix
-                tls:
-                    - hosts:
-                          - auth.midnightthoughts.space
-                          - ldap.midnightthoughts.space
-                      secretName: auth-midnightthoughts-tls-secret
-        postgresql:
-            enabled: false
-        redis:
-            enabled: true
+    remediation:
+      retries: 3
+  values:
+    #global:
+    #image:
+    #pullPolicy: Always
+    # https://github.com/goauthentik/authentik/issues/12464
+    #repository: ghcr.io/goauthentik/dev-server
+    #tag: gh-version-2024.12-arm64
+    authentik:
+      secret_key: ENC[AES256_GCM,data:Qq1S+Kk6yb//WVc1sTmoIu1DO4ejWlVpg4mqYCA8+kNuc/KloUUQP33tXRGYQIlePE6ykyeqctje9h1CHND9QQ==,iv:KjCWOBFelR08Bm4n8f7FsicFNBw7gzZ1MQ9yLwh6j0s=,tag:93XCTQjxJu28uhpSayM1EQ==,type:str]
+      # This sends anonymous usage-data, stack traces on errors and
+      # performance data to sentry.io, and is fully opt-in
+      error_reporting:
+        enabled: true
+      postgresql:
+        host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+        name: authentik
+        user: authentik
+        password: ENC[AES256_GCM,data:7qmIA2GYyHyR8/aFK75qvDb1Ndd+OfHwGfAQP/XLCEm8/6ocrVQhotkfS3XX5JIStZXRsvohZD5VZ9j1ShYILA==,iv:bwNic3q8ZW1oMhmL80Dg7KdZ59bdu/tQvIRiwvZZ2m0=,tag:TAFMjzlJnyKS/drf69EMOA==,type:str]
+      email:
+        # -- SMTP Server emails are sent from, fully optional
+        host: mail.nordgedanken.dev
+        port: 465
+        # -- SMTP credentials, when left empty, no authentication will be done
+        username: support@nordgedanken.dev
+        # -- SMTP credentials, when left empty, no authentication will be done
+        password: ENC[AES256_GCM,data:ShLG8GLcWjiA,iv:Pb2jXjIqlELaCFshqscNGsXUCp056sZbfCvc3jEOJwc=,tag:kg4PWpf5nOtzI+2R9ahV2Q==,type:str]
+        # -- Enable either use_tls or use_ssl, they can't be enabled at the same time.
+        use_tls: true
+        # -- Enable either use_tls or use_ssl, they can't be enabled at the same time.
+        use_ssl: false
+        # -- Connection timeout
+        timeout: 30
+        # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
+        from: ops@nordgedanken.dev
+    worker:
+      replicas: 2
+      resources:
+        limits: {}
+        requests:
+          cpu: 107m
+          memory: 578Mi
+      deploymentStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+      # Mount the ldap certificate to /certs
+      volumes:
+        - name: ldap-cert
+          secret:
+            secretName: ENC[AES256_GCM,data:gkdJ6ufGzmE8UIrtR/Y=,iv:ajE/NG7B17OqHu5PVtI+STkiJQA2ZTv14yfWe9TZlNw=,tag:Pyz5nG4skc/vgMl5gg+83g==,type:str]
+      # Mount the ldap certificate to /certs
+      volumeMounts:
+        - name: ldap-cert
+          mountPath: /certs/ldap
+    server:
+      # Mount the ldap certificate to /certs
+      volumes:
+        - name: ldap-cert
+          secret:
+            secretName: ENC[AES256_GCM,data:UU2WJB3n7WzQRX5OEIk=,iv:YjPGIgu7UWhMEdAH/LJSHdDkin4tMMY2ZzBOguT9VQU=,tag:ryzrMsKoaViRmpx7URHhVw==,type:str]
+      # Mount the ldap certificate to /certs
+      volumeMounts:
+        - name: ldap-cert
+          mountPath: /certs/ldap
+      replicas: 2
+      deploymentStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+      resources:
+        limits: {}
+        requests:
+          cpu: 181m
+          memory: 628Mi
+      env:
+        - name: AUTHENTIK_LISTEN__TRUSTED_PROXY_CIDRS
+          value: 127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fe80::/10,::1/128,10.244.0.0/16,fc00:0::/96,fd00::/7
+      ingress:
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-dns
+          external-dns.alpha.kubernetes.io/hostname: auth.midnightthoughts.space
+        enabled: false
+        hosts:
+          - auth.midnightthoughts.space
+          - ldap.midnightthoughts.space
+        paths:
+          - /
+        pathType: Prefix
+        tls:
+          - hosts:
+              - auth.midnightthoughts.space
+              - ldap.midnightthoughts.space
+            secretName: auth-midnightthoughts-tls-secret
+    postgresql:
+      enabled: false
+    redis:
+      enabled: true
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
-              TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
-              VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
-              L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
-              LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-02-19T14:22:13Z"
-    mac: ENC[AES256_GCM,data:cVtB9Yn3DtLT7DHh6r4y+Kooap4o3Vllx/nnNc8Zd2S2nQ5gmVSG/RBv88pNwCnybsUyK/Yd+1I1jwTzxIz9ZI1gosL23fLhJ9LK/Yzk3d56Z7krqXGp5IIw7I/lZyzyGlSp8R50KpGhZ8BObUU2C7mU7D+/W7ctnMj1mJLP+xg=,iv:4bdFaUt6lBYog6kpsZiixm6kYkzKRj8hwA335th9GVo=,tag:HorsmiQJ9ttuYC5rkzevCA==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
+        TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
+        VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
+        L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
+        LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-02-19T14:22:13Z"
+  mac: ENC[AES256_GCM,data:cVtB9Yn3DtLT7DHh6r4y+Kooap4o3Vllx/nnNc8Zd2S2nQ5gmVSG/RBv88pNwCnybsUyK/Yd+1I1jwTzxIz9ZI1gosL23fLhJ9LK/Yzk3d56Z7krqXGp5IIw7I/lZyzyGlSp8R50KpGhZ8BObUU2C7mU7D+/W7ctnMj1mJLP+xg=,iv:4bdFaUt6lBYog6kpsZiixm6kYkzKRj8hwA335th9GVo=,tag:HorsmiQJ9ttuYC5rkzevCA==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: authentik
-    namespace: authentik
+  name: authentik
+  namespace: authentik
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - auth.midnightthoughts.space
-        - ldap.midnightthoughts.space
-    rules:
-        - backendRefs:
-              - name: authentik-server
-                port: 80
-          timeouts:
-              request: 240s
-              backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - auth.midnightthoughts.space
+    - ldap.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: authentik-server
+          port: 80
+      timeouts:
+        request: 240s
+        backendRequest: 0s
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-              -----BEGIN AGE ENCRYPTED FILE-----
-              YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
-              TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
-              VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
-              L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
-              LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
-              -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-02-19T14:22:13Z"
-    mac: ENC[AES256_GCM,data:cVtB9Yn3DtLT7DHh6r4y+Kooap4o3Vllx/nnNc8Zd2S2nQ5gmVSG/RBv88pNwCnybsUyK/Yd+1I1jwTzxIz9ZI1gosL23fLhJ9LK/Yzk3d56Z7krqXGp5IIw7I/lZyzyGlSp8R50KpGhZ8BObUU2C7mU7D+/W7ctnMj1mJLP+xg=,iv:4bdFaUt6lBYog6kpsZiixm6kYkzKRj8hwA335th9GVo=,tag:HorsmiQJ9ttuYC5rkzevCA==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2aEZVdzVpbWFYYkxlR1lJ
+        TElyM0tSeDMrQjNXbWIyV0dYcDNJUjFydjF3CmNPb2IzSnRSeFVIaFUzS2dtaktk
+        VXpvV0pGZ2tOdHhBM0hJQjRhWjJaVEUKLS0tIFFNdG5sazIxSkNZUUthT2Mxelo2
+        L2xFMnFYVWpPOFJqbXg1Um56dXZaVlUKlBPL7s2wl2+dJoGiC9b1oXBRvewd9LAe
+        LpuQF38AscU+pkNoi2WBFw2MsvEYF+EtPJczESIwiMetehRj2n4KxQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-02-19T14:22:13Z"
+  mac: ENC[AES256_GCM,data:cVtB9Yn3DtLT7DHh6r4y+Kooap4o3Vllx/nnNc8Zd2S2nQ5gmVSG/RBv88pNwCnybsUyK/Yd+1I1jwTzxIz9ZI1gosL23fLhJ9LK/Yzk3d56Z7krqXGp5IIw7I/lZyzyGlSp8R50KpGhZ8BObUU2C7mU7D+/W7ctnMj1mJLP+xg=,iv:4bdFaUt6lBYog6kpsZiixm6kYkzKRj8hwA335th9GVo=,tag:HorsmiQJ9ttuYC5rkzevCA==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

@@ -1,151 +1,151 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: cgit
-    namespace: git
+  name: cgit
+  namespace: git
 spec:
-    storageClassName: longhorn
-    accessModes:
-        - ReadWriteMany
-    resources:
-        requests:
-            storage: 2Gi
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: cgit
-    namespace: git
-    labels:
-        app.kubernetes.io/name: cgit
+  name: cgit
+  namespace: git
+  labels:
+    app.kubernetes.io/name: cgit
 spec:
-    strategy:
-        rollingUpdate:
-            maxSurge: 25%
-            maxUnavailable: 25%
-        type: RollingUpdate
-    selector:
-        matchLabels:
-            app: cgit
-    template:
-        metadata:
-            labels:
-                app: cgit
-                app.kubernetes.io/name: cgit
-        spec:
-            imagePullSecrets:
-                - name: ghcr-pull
-            containers:
-                - name: anubis
-                  image: ghcr.io/techarohq/anubis:latest
-                  imagePullPolicy: Always
-                  env:
-                    - name: "BIND"
-                      value: ":8081"
-                    - name: "DIFFICULTY"
-                      value: "4"
-                    - name: ED25519_PRIVATE_KEY_HEX
-                      valueFrom:
-                        secretKeyRef:
-                            name: anubis-key
-                            key: ED25519_PRIVATE_KEY_HEX
-                    - name: "METRICS_BIND"
-                      value: ":9090"
-                    - name: "SERVE_ROBOTS_TXT"
-                      value: "true"
-                    - name: "TARGET"
-                      value: "http://localhost:8080"
-                    - name: "OG_PASSTHROUGH"
-                      value: "false"
-                    - name: "OG_EXPIRY_TIME"
-                      value: "24h"
-                  resources:
-                    limits:
-                        cpu: 750m
-                        memory: 256Mi
-                    requests:
-                        cpu: 250m
-                        memory: 256Mi
-                  ports:
-                    - containerPort: 8081
-                      name: anubis
-                      protocol: TCP
-                  securityContext:
-                    runAsUser: 1000
-                    runAsGroup: 1000
-                    runAsNonRoot: true
-                    allowPrivilegeEscalation: false
-                    capabilities:
-                        drop:
-                            - ALL
-                    seccompProfile:
-                        type: RuntimeDefault
-                - name: cgit
-                  image: ghcr.io/mtrnord/cgit-docker:main
-                  imagePullPolicy: Always
-                  resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
-                  ports:
-                    - containerPort: 8080
-                      name: http
-                      protocol: TCP
-                    - containerPort: 2222
-                      name: ssh
-                      protocol: TCP
-                  volumeMounts:
-                    - mountPath: /var/lib/gitolite3
-                      name: storage
-                    - mountPath: /tmp
-                      name: tmp
-                    - mountPath: /etc/ssh/ssh_host_rsa_key
-                      name: ssh-keys
-                      subPath: ssh_host_rsa_key
-                      readOnly: true
-                    - mountPath: /etc/ssh/ssh_host_rsa_key.pub
-                      name: ssh-keys
-                      subPath: ssh_host_rsa_key.pub
-                      readOnly: true
-                    - mountPath: /etc/ssh/ssh_host_ecdsa_key
-                      name: ssh-keys
-                      subPath: ssh_host_ecdsa_key
-                      readOnly: true
-                    - mountPath: /etc/ssh/ssh_host_ecdsa_key.pub
-                      name: ssh-keys
-                      subPath: ssh_host_ecdsa_key.pub
-                      readOnly: true
-                    - mountPath: /etc/ssh/ssh_host_ed25519_key
-                      name: ssh-keys
-                      subPath: ssh_host_ed25519_key
-                      readOnly: true
-                    - mountPath: /etc/ssh/ssh_host_ed25519_key.pub
-                      name: ssh-keys
-                      subPath: ssh_host_ed25519_key.pub
-                      readOnly: true
-                  livenessProbe:
-                    httpGet:
-                        path: /healthz
-                        port: http
-                        scheme: HTTP
-                    initialDelaySeconds: 15
-                    periodSeconds: 10
-                  startupProbe:
-                    httpGet:
-                        path: /healthz
-                        port: http
-                    initialDelaySeconds: 15
-                    failureThreshold: 30
-                    periodSeconds: 10
-            volumes:
-                - name: storage
-                  persistentVolumeClaim:
-                    claimName: cgit
-                - name: tmp
-                  emptyDir:
-                    sizeLimit: 2048Mi
-                - name: ssh-keys
-                  secret:
-                    secretName: cgit-ssh-keys
-                    defaultMode: 0600
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: cgit
+  template:
+    metadata:
+      labels:
+        app: cgit
+        app.kubernetes.io/name: cgit
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: anubis
+          image: ghcr.io/techarohq/anubis:latest
+          imagePullPolicy: Always
+          env:
+            - name: "BIND"
+              value: ":8081"
+            - name: "DIFFICULTY"
+              value: "4"
+            - name: ED25519_PRIVATE_KEY_HEX
+              valueFrom:
+                secretKeyRef:
+                  name: anubis-key
+                  key: ED25519_PRIVATE_KEY_HEX
+            - name: "METRICS_BIND"
+              value: ":9090"
+            - name: "SERVE_ROBOTS_TXT"
+              value: "true"
+            - name: "TARGET"
+              value: "http://localhost:8080"
+            - name: "OG_PASSTHROUGH"
+              value: "false"
+            - name: "OG_EXPIRY_TIME"
+              value: "24h"
+          resources:
+            limits:
+              cpu: 750m
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 8081
+              name: anubis
+              protocol: TCP
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+        - name: cgit
+          image: ghcr.io/mtrnord/cgit-docker:main
+          imagePullPolicy: Always
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 2222
+              name: ssh
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/gitolite3
+              name: storage
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /etc/ssh/ssh_host_rsa_key
+              name: ssh-keys
+              subPath: ssh_host_rsa_key
+              readOnly: true
+            - mountPath: /etc/ssh/ssh_host_rsa_key.pub
+              name: ssh-keys
+              subPath: ssh_host_rsa_key.pub
+              readOnly: true
+            - mountPath: /etc/ssh/ssh_host_ecdsa_key
+              name: ssh-keys
+              subPath: ssh_host_ecdsa_key
+              readOnly: true
+            - mountPath: /etc/ssh/ssh_host_ecdsa_key.pub
+              name: ssh-keys
+              subPath: ssh_host_ecdsa_key.pub
+              readOnly: true
+            - mountPath: /etc/ssh/ssh_host_ed25519_key
+              name: ssh-keys
+              subPath: ssh_host_ed25519_key
+              readOnly: true
+            - mountPath: /etc/ssh/ssh_host_ed25519_key.pub
+              name: ssh-keys
+              subPath: ssh_host_ed25519_key.pub
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            failureThreshold: 30
+            periodSeconds: 10
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: cgit
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: ssh-keys
+          secret:
+            secretName: cgit-ssh-keys
+            defaultMode: 0600

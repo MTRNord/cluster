@@ -1,361 +1,361 @@
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: MariaDB
 metadata:
-    name: mariadb
+  name: mariadb
 spec:
-    rootPasswordSecretKeyRef:
-        name: mariadb-root
-        key: root-password
-        generate: true
-    storage:
-        size: 5Gi
-        storageClassName: hcloud-volumes
-    # Recreate the MariaDB resource and bootstrap from a backup in S3.
-    # bootstrapFrom:
-    #   s3:
-    #     bucket: backups
-    #     prefix: mariadb
-    #     endpoint: minio.minio.svc.cluster.local:9000
-    #     accessKeyIdSecretKeyRef:
-    #       name: minio
-    #       key: access-key-id
-    #     secretAccessKeySecretKeyRef:
-    #       name: minio
-    #       key: secret-access-key
-    #     tls:
-    #       enabled: true
-    #       caSecretKeyRef:
-    #         name: minio-ca
-    #         key: ca.crt
-    #   targetRecoveryTime: 2023-12-19T09:00:00Z
-    #   stagingStorage:
-    #     persistentVolumeClaim:
-    #       resources:
-    #         requests:
-    #           storage: 10Gi
-    #       accessModes:
-    #         - ReadWriteOnce
-    #   restoreJob:
-    #     resources:
-    #       requests:
-    #         cpu: 100m
-    #         memory: 128Mi
-    #       limits:
-    #         memory: 1Gi
+  rootPasswordSecretKeyRef:
+    name: mariadb-root
+    key: root-password
+    generate: true
+  storage:
+    size: 5Gi
+    storageClassName: hcloud-volumes
+  # Recreate the MariaDB resource and bootstrap from a backup in S3.
+  # bootstrapFrom:
+  #   s3:
+  #     bucket: backups
+  #     prefix: mariadb
+  #     endpoint: minio.minio.svc.cluster.local:9000
+  #     accessKeyIdSecretKeyRef:
+  #       name: minio
+  #       key: access-key-id
+  #     secretAccessKeySecretKeyRef:
+  #       name: minio
+  #       key: secret-access-key
+  #     tls:
+  #       enabled: true
+  #       caSecretKeyRef:
+  #         name: minio-ca
+  #         key: ca.crt
+  #   targetRecoveryTime: 2023-12-19T09:00:00Z
+  #   stagingStorage:
+  #     persistentVolumeClaim:
+  #       resources:
+  #         requests:
+  #           storage: 10Gi
+  #       accessModes:
+  #         - ReadWriteOnce
+  #   restoreJob:
+  #     resources:
+  #       requests:
+  #         cpu: 100m
+  #         memory: 128Mi
+  #       limits:
+  #         memory: 1Gi
+  replicas: 3
+  galera:
+    enabled: true
+    config:
+      reuseStorageVolume: true
+  metrics:
+    enabled: true
+  updateStrategy:
+    type: ReplicasFirstPrimaryLast
+    # Pause updates.
+    # type: Never
+    # Update the data-plane after an operator upgrade.
+    autoUpdateDataPlane: true
+  # Configure enough compute resources. This is just an example, take a look at your historic compute metrics to estimate.
+  resources:
+    requests:
+      cpu: 0.25
+      memory: 250Mi
+    limits:
+      memory: 4Gi
+  # Tune your liveness probe accordingly to avoid Pod restarts.
+  livenessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 5
+    timeoutSeconds: 5
+  # Tune your readiness probe accordingly to prevent disruptions in network traffic.
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 5
+    timeoutSeconds: 5
+  # innodb_buffer_pool_size: 80% of memory limits.
+  myCnf: |
+    [mariadb]
+    bind-address=*
+    default_storage_engine=InnoDB
+    binlog_format=row
+    innodb_autoinc_lock_mode=2
+    innodb_buffer_pool_size=3200MB
+    max_allowed_packet=1GB
+    ft_min_word_len=2
+  # Schedule Pods in different Nodes to achieve real HA.
+  affinity:
+    antiAffinityEnabled: true
+  # When draining Nodes, make sure that you have at least 2 Pods available.
+  podDisruptionBudget:
+    maxUnavailable: 66%
+  maxScale:
+    enabled: true
     replicas: 3
-    galera:
-        enabled: true
-        config:
-            reuseStorageVolume: true
-    metrics:
-        enabled: true
     updateStrategy:
-        type: ReplicasFirstPrimaryLast
-        # Pause updates.
-        # type: Never
-        # Update the data-plane after an operator upgrade.
-        autoUpdateDataPlane: true
-    # Configure enough compute resources. This is just an example, take a look at your historic compute metrics to estimate.
-    resources:
-        requests:
-            cpu: 0.25
-            memory: 250Mi
-        limits:
-            memory: 4Gi
-    # Tune your liveness probe accordingly to avoid Pod restarts.
-    livenessProbe:
-        initialDelaySeconds: 20
-        periodSeconds: 5
-        timeoutSeconds: 5
-    # Tune your readiness probe accordingly to prevent disruptions in network traffic.
-    readinessProbe:
-        initialDelaySeconds: 20
-        periodSeconds: 5
-        timeoutSeconds: 5
-    # innodb_buffer_pool_size: 80% of memory limits.
-    myCnf: |
-        [mariadb]
-        bind-address=*
-        default_storage_engine=InnoDB
-        binlog_format=row
-        innodb_autoinc_lock_mode=2
-        innodb_buffer_pool_size=3200MB
-        max_allowed_packet=1GB
-        ft_min_word_len=2
-    # Schedule Pods in different Nodes to achieve real HA.
-    affinity:
-        antiAffinityEnabled: true
-    # When draining Nodes, make sure that you have at least 2 Pods available.
-    podDisruptionBudget:
-        maxUnavailable: 66%
-    maxScale:
-        enabled: true
-        replicas: 3
-        updateStrategy:
-            type: RollingUpdate
-        kubernetesService:
-            type: ClusterIP
+      type: RollingUpdate
+    kubernetesService:
+      type: ClusterIP
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Database
 metadata:
-    name: osticket
+  name: osticket
 spec:
-    mariaDbRef:
-        name: mariadb
-    characterSet: utf8
-    collate: utf8_general_ci
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  mariaDbRef:
+    name: mariadb
+  characterSet: utf8
+  collate: utf8_general_ci
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: User
 metadata:
-    name: osticket
+  name: osticket
 spec:
-    # If you want the user to be created with a different name than the resource name
-    # name: user-custom
-    mariaDbRef:
-        name: mariadb
-    passwordSecretKeyRef:
-        name: mariadb-osticket
-        key: password
-    # This field defaults to 10
-    maxUserConnections: 10
-    host: "%"
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  # If you want the user to be created with a different name than the resource name
+  # name: user-custom
+  mariaDbRef:
+    name: mariadb
+  passwordSecretKeyRef:
+    name: mariadb-osticket
+    key: password
+  # This field defaults to 10
+  maxUserConnections: 10
+  host: "%"
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-osticket
+  name: grant-osticket
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "ALL PRIVILEGES"
-    database: "osticket"
-    table: "*"
-    username: osticket
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "ALL PRIVILEGES"
+  database: "osticket"
+  table: "*"
+  username: osticket
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-osticket-show-db
+  name: grant-osticket-show-db
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "SHOW DATABASES"
-    database: "*"
-    table: "*"
-    username: osticket
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "SHOW DATABASES"
+  database: "*"
+  table: "*"
+  username: osticket
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Database
 metadata:
-    name: hubzilla
+  name: hubzilla
 spec:
-    mariaDbRef:
-        name: mariadb
-    characterSet: utf8
-    collate: utf8_general_ci
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  mariaDbRef:
+    name: mariadb
+  characterSet: utf8
+  collate: utf8_general_ci
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: User
 metadata:
-    name: hubzilla
+  name: hubzilla
 spec:
-    # If you want the user to be created with a different name than the resource name
-    # name: user-custom
-    mariaDbRef:
-        name: mariadb
-    passwordSecretKeyRef:
-        name: mariadb-hubzilla
-        key: password
-    # This field defaults to 10
-    maxUserConnections: 10
-    host: "%"
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  # If you want the user to be created with a different name than the resource name
+  # name: user-custom
+  mariaDbRef:
+    name: mariadb
+  passwordSecretKeyRef:
+    name: mariadb-hubzilla
+    key: password
+  # This field defaults to 10
+  maxUserConnections: 10
+  host: "%"
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-hubzilla
+  name: grant-hubzilla
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "ALL PRIVILEGES"
-    database: "hubzilla"
-    table: "*"
-    username: hubzilla
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "ALL PRIVILEGES"
+  database: "hubzilla"
+  table: "*"
+  username: hubzilla
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-hubzilla-show-db
+  name: grant-hubzilla-show-db
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "SHOW DATABASES"
-    database: "*"
-    table: "*"
-    username: hubzilla
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "SHOW DATABASES"
+  database: "*"
+  table: "*"
+  username: hubzilla
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Database
 metadata:
-    name: bugzilla
+  name: bugzilla
 spec:
-    mariaDbRef:
-        name: mariadb
-    characterSet: utf8
-    collate: utf8_general_ci
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  mariaDbRef:
+    name: mariadb
+  characterSet: utf8
+  collate: utf8_general_ci
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: User
 metadata:
-    name: bugzilla
+  name: bugzilla
 spec:
-    # If you want the user to be created with a different name than the resource name
-    # name: user-custom
-    mariaDbRef:
-        name: mariadb
-    passwordSecretKeyRef:
-        name: mariadb-bugzilla
-        key: password
-    # This field defaults to 10
-    maxUserConnections: 10
-    host: "%"
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  # If you want the user to be created with a different name than the resource name
+  # name: user-custom
+  mariaDbRef:
+    name: mariadb
+  passwordSecretKeyRef:
+    name: mariadb-bugzilla
+    key: password
+  # This field defaults to 10
+  maxUserConnections: 10
+  host: "%"
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-bugzilla
+  name: grant-bugzilla
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "ALL PRIVILEGES"
-    database: "bugzilla"
-    table: "*"
-    username: bugzilla
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "ALL PRIVILEGES"
+  database: "bugzilla"
+  table: "*"
+  username: bugzilla
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-bugzilla-show-db
+  name: grant-bugzilla-show-db
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "SHOW DATABASES"
-    database: "*"
-    table: "*"
-    username: bugzilla
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "SHOW DATABASES"
+  database: "*"
+  table: "*"
+  username: bugzilla
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Database
 metadata:
-    name: irc
+  name: irc
 spec:
-    mariaDbRef:
-        name: mariadb
-    characterSet: utf8
-    collate: utf8_general_ci
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  mariaDbRef:
+    name: mariadb
+  characterSet: utf8
+  collate: utf8_general_ci
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: User
 metadata:
-    name: irc
+  name: irc
 spec:
-    # If you want the user to be created with a different name than the resource name
-    # name: user-custom
-    mariaDbRef:
-        name: mariadb
-    passwordSecretKeyRef:
-        name: mariadb-irc
-        key: password
-    # This field defaults to 10
-    maxUserConnections: 10
-    host: "%"
-    # Delete the resource in the database whenever the CR gets deleted.
-    # Alternatively, you can specify Skip in order to omit deletion.
-    cleanupPolicy: Delete
-    requeueInterval: 30s
-    retryInterval: 5s
+  # If you want the user to be created with a different name than the resource name
+  # name: user-custom
+  mariaDbRef:
+    name: mariadb
+  passwordSecretKeyRef:
+    name: mariadb-irc
+    key: password
+  # This field defaults to 10
+  maxUserConnections: 10
+  host: "%"
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-irc
+  name: grant-irc
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "ALL PRIVILEGES"
-    database: "irc"
-    table: "*"
-    username: irc
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "ALL PRIVILEGES"
+  database: "irc"
+  table: "*"
+  username: irc
+  grantOption: false
+  host: "%"
 ---
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Grant
 metadata:
-    name: grant-irc-show-db
+  name: grant-irc-show-db
 spec:
-    mariaDbRef:
-        name: mariadb
-    privileges:
-        - "SHOW DATABASES"
-    database: "*"
-    table: "*"
-    username: irc
-    grantOption: false
-    host: "%"
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "SHOW DATABASES"
+  database: "*"
+  table: "*"
+  username: irc
+  grantOption: false
+  host: "%"

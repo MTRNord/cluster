@@ -1,50 +1,50 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: synatainer
-    namespace: matrix
+  name: synatainer
+  namespace: matrix
 spec:
-    chart:
-        spec:
-            chart: synatainer
-            sourceRef:
-                kind: HelmRepository
-                name: ananace-charts
-            version: 1.1.5
-    interval: 60m
-    install:
-        remediation:
-            retries: 3
-    values:
-        postgresql:
-            host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
-            port: 5432
-            database: synapse
-            username: synapse
-            password: ENC[AES256_GCM,data:0qH+Gurrsaat7/FjzBj5+vWnH9SUSNL15zsHQTrVIhXBCCyg8veDuLerH1oyrW1aLDAqqXeT7Cojf3NSFwGBsw==,iv:g/26eYJ++NV0aCOTo4dnrcUvfGqbpO1byTTsRMg4D74=,tag:iTi0QxJj8v8gq8R0iIKQ1Q==,type:str]
-        synapse:
-            url: https://matrix.midnightthoughts.space
-            token: ENC[AES256_GCM,data:HFPBpxbVUQqv+PHwB0Sj1RVWdinie2uzr51iCiASa276JLjzigC1qng=,iv:Xt1rbNf+KHi+V0z+MEpbEW2cK6u/e7u7EGbe1KPFjpU=,tag:2LCRxwkKWyZCJL3w5mldeA==,type:str]
-        extraCommands:
-            - ENC[AES256_GCM,data:pQgz5u4s0Q2tHTQQIQ1SRs+pj1QTtLYyhaYueXYCbjFl2FACkHMNQoVW548Uln9ZtZyEBS1zju5Tna5eMAbBeCebE9Xuv50fm2pLI08=,iv:vp+bNC4K1Y09KKzBKQlfNck48N0udSOvliBoy8IeqRM=,tag:IMR2yki4zHQdUOuR3ri/+g==,type:str]
-            - ENC[AES256_GCM,data:k5aarkepKR3WjBdYf//5+GyYfjB2JyJ55v2M12vJ9YU1vsjgZPSToA==,iv:jL02Bk+VAwg48wBC0nHe/biU/raMVMum9geDo9dLCIU=,tag:etkbCC+j1zZXc8OpPf6s4A==,type:str]
+  chart:
+    spec:
+      chart: synatainer
+      sourceRef:
+        kind: HelmRepository
+        name: ananace-charts
+      version: 1.1.5
+  interval: 60m
+  install:
+    remediation:
+      retries: 3
+  values:
+    postgresql:
+      host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+      port: 5432
+      database: synapse
+      username: synapse
+      password: ENC[AES256_GCM,data:0qH+Gurrsaat7/FjzBj5+vWnH9SUSNL15zsHQTrVIhXBCCyg8veDuLerH1oyrW1aLDAqqXeT7Cojf3NSFwGBsw==,iv:g/26eYJ++NV0aCOTo4dnrcUvfGqbpO1byTTsRMg4D74=,tag:iTi0QxJj8v8gq8R0iIKQ1Q==,type:str]
+    synapse:
+      url: https://matrix.midnightthoughts.space
+      token: ENC[AES256_GCM,data:HFPBpxbVUQqv+PHwB0Sj1RVWdinie2uzr51iCiASa276JLjzigC1qng=,iv:Xt1rbNf+KHi+V0z+MEpbEW2cK6u/e7u7EGbe1KPFjpU=,tag:2LCRxwkKWyZCJL3w5mldeA==,type:str]
+    extraCommands:
+      - ENC[AES256_GCM,data:pQgz5u4s0Q2tHTQQIQ1SRs+pj1QTtLYyhaYueXYCbjFl2FACkHMNQoVW548Uln9ZtZyEBS1zju5Tna5eMAbBeCebE9Xuv50fm2pLI08=,iv:vp+bNC4K1Y09KKzBKQlfNck48N0udSOvliBoy8IeqRM=,tag:IMR2yki4zHQdUOuR3ri/+g==,type:str]
+      - ENC[AES256_GCM,data:k5aarkepKR3WjBdYf//5+GyYfjB2JyJ55v2M12vJ9YU1vsjgZPSToA==,iv:jL02Bk+VAwg48wBC0nHe/biU/raMVMum9geDo9dLCIU=,tag:etkbCC+j1zZXc8OpPf6s4A==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3ZjlQVVA4eGZYZWtTbXZM
-            Ujk3a1pISERHVFFtaU5kMk5pOHFGWjVRRWk0CnVpa0dUVGlvMDcyMk1uNEcrSnBL
-            SE9ETEJrU1FKV2t6dFNzcTRnclYrUVkKLS0tIDBUYW9XSkdvaG5ZMlZpYXlTWDdi
-            amd1dkR0d2MvemNHRGw0V3pRS3l0R2sKtSozTqcUw9cZh0DZ2ZnJtA+RXS7l+Elb
-            cD5V+s7TZg2m4X/2mNFSfo+jWxuaYjee9Jn45sd9YJyhxwWaOskYGw==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-26T19:03:16Z"
-    mac: ENC[AES256_GCM,data:4aOUlYDmRiwxcedlMrEDdNmE9hIkMD95ThIbFxgZCpaz6SWZC8rItmvfr9CvU3SuOkJ28rIGCWqCnEWKgYg1X94ZxtbW8oP1ao6n0NPgZApOWBBJ9QBWzpIQF7xmltMnQR17R7LAjlkISmLoOGfLV/6cW4Cl+Nd1y2NajjIZSHg=,iv:329FeviWOj0rjq0HnkjF7i3cGqRMuefhra2jMRLJGAU=,tag:a4KKxaGEyMvTKUVawbf7VQ==,type:str]
-    pgp: []
-    encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3ZjlQVVA4eGZYZWtTbXZM
+        Ujk3a1pISERHVFFtaU5kMk5pOHFGWjVRRWk0CnVpa0dUVGlvMDcyMk1uNEcrSnBL
+        SE9ETEJrU1FKV2t6dFNzcTRnclYrUVkKLS0tIDBUYW9XSkdvaG5ZMlZpYXlTWDdi
+        amd1dkR0d2MvemNHRGw0V3pRS3l0R2sKtSozTqcUw9cZh0DZ2ZnJtA+RXS7l+Elb
+        cD5V+s7TZg2m4X/2mNFSfo+jWxuaYjee9Jn45sd9YJyhxwWaOskYGw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-05-26T19:03:16Z"
+  mac: ENC[AES256_GCM,data:4aOUlYDmRiwxcedlMrEDdNmE9hIkMD95ThIbFxgZCpaz6SWZC8rItmvfr9CvU3SuOkJ28rIGCWqCnEWKgYg1X94ZxtbW8oP1ao6n0NPgZApOWBBJ9QBWzpIQF7xmltMnQR17R7LAjlkISmLoOGfLV/6cW4Cl+Nd1y2NajjIZSHg=,iv:329FeviWOj0rjq0HnkjF7i3cGqRMuefhra2jMRLJGAU=,tag:a4KKxaGEyMvTKUVawbf7VQ==,type:str]
+  pgp: []
+  encrypted_regex: ^(GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

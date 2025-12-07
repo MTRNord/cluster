@@ -1,115 +1,115 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: osticket
-    namespace: osticket
+  name: osticket
+  namespace: osticket
 spec:
-    releaseName: osticket
-    interval: 60m
-    chart:
-        spec:
-            chart: ./charts/osticket
-            sourceRef:
-                kind: GitRepository
-                name: osticket
-                namespace: osticket
-    values:
-        image:
-            repository: ghcr.io/mtrnord/osticket
-            tag: latest
-            pullPolicy: Always
-        ostName: Midnightthoughts osTicket
-        ostEmail: support@midnightthoughts.space
-        adminFirstName: MTR
-        adminLastName: Nord
-        adminEmail: ENC[AES256_GCM,data:6pBqqI0SllylN8mdyOolnGbDLNN9YR+k,iv:iFqlOWV1T4hv6jNWgXEmCOuO0f+OhKUFXz+g4hFFfkw=,tag:Em9yLZnvqC7LJ8ghAJVzOw==,type:str]
-        adminUserName: mtrnord
-        adminPassword: ENC[AES256_GCM,data:yt1OVUcJkmGp,iv:ad5k0Gqmm1Pe+vPcI5gEIhQtwVr1TJ10lT79rtTzLT8=,tag:a4V92ifHtZ6Ou+lMro427Q==,type:str]
-        timezone: Europe/Berlin
+  releaseName: osticket
+  interval: 60m
+  chart:
+    spec:
+      chart: ./charts/osticket
+      sourceRef:
+        kind: GitRepository
+        name: osticket
+        namespace: osticket
+  values:
+    image:
+      repository: ghcr.io/mtrnord/osticket
+      tag: latest
+      pullPolicy: Always
+    ostName: Midnightthoughts osTicket
+    ostEmail: support@midnightthoughts.space
+    adminFirstName: MTR
+    adminLastName: Nord
+    adminEmail: ENC[AES256_GCM,data:6pBqqI0SllylN8mdyOolnGbDLNN9YR+k,iv:iFqlOWV1T4hv6jNWgXEmCOuO0f+OhKUFXz+g4hFFfkw=,tag:Em9yLZnvqC7LJ8ghAJVzOw==,type:str]
+    adminUserName: mtrnord
+    adminPassword: ENC[AES256_GCM,data:yt1OVUcJkmGp,iv:ad5k0Gqmm1Pe+vPcI5gEIhQtwVr1TJ10lT79rtTzLT8=,tag:a4V92ifHtZ6Ou+lMro427Q==,type:str]
+    timezone: Europe/Berlin
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: false
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
+        cert-manager.io/cluster-issuer: letsencrypt-dns
+      hosts:
+        - host: osticket.midnightthoughts.space
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - secretName: osticket.midnightthoughts.space-tls
+          hosts:
+            - osticket.midnightthoughts.space
+    mysql:
+      enabled: false
+      externalAddress: mariadb-maxscale.mariadb-operator.svc.cluster.local
+      primary:
         service:
-            type: ClusterIP
-            port: 80
-        ingress:
-            enabled: false
-            annotations:
-                external-dns.alpha.kubernetes.io/hostname: midnightthoughts.space
-                cert-manager.io/cluster-issuer: letsencrypt-dns
-            hosts:
-                - host: osticket.midnightthoughts.space
-                  paths:
-                    - path: /
-                      pathType: ImplementationSpecific
-            tls:
-                - secretName: osticket.midnightthoughts.space-tls
-                  hosts:
-                    - osticket.midnightthoughts.space
-        mysql:
-            enabled: false
-            externalAddress: mariadb-maxscale.mariadb-operator.svc.cluster.local
-            primary:
-                service:
-                    ports:
-                        mysql: 3306
-            auth:
-                database: osticket
-                username: osticket
-                password: ENC[AES256_GCM,data:AGDniOW4zTNv7bcfqKOt+Ymwl1TSVYw1CrOnGei6zOp1aXN8E25c6CCSsiSM9FPWYFomS9d9hVpvKXuyu1g59Q==,iv:5yTtv8QOYEY6/Oj6FDVlB6EAjfX6GEi2KYDU75bqyEY=,tag:wcdGiXPstHan2XLGM3VfvQ==,type:str]
+          ports:
+            mysql: 3306
+      auth:
+        database: osticket
+        username: osticket
+        password: ENC[AES256_GCM,data:AGDniOW4zTNv7bcfqKOt+Ymwl1TSVYw1CrOnGei6zOp1aXN8E25c6CCSsiSM9FPWYFomS9d9hVpvKXuyu1g59Q==,iv:5yTtv8QOYEY6/Oj6FDVlB6EAjfX6GEi2KYDU75bqyEY=,tag:wcdGiXPstHan2XLGM3VfvQ==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCYW90TnFPNjNSVnh0VCtY
-            TWJpN2xkbzlmdUx3UGF3TDJJVTdId1F2Snk0CkkwYUtCb214RFZIVkJkc1U0dmRC
-            SmlFbE9iMVVSZTR6MVpVUGVyOUJhRWMKLS0tIEpjQm5ZRFZRUkJsTkxpSFRZS3Q3
-            b09aUEw4Q3pTczRUZGV3VUF4U2E5TkUKnSOXjlqDg9Pzo6b9UXRc9T/0LKqxG7D2
-            raQS1jDeX+l1FYLmq6hbCXEFou4zHRYYIWmZCYvNvl1524SMhNzdxA==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-19T13:14:39Z"
-    mac: ENC[AES256_GCM,data:S0gv1Ad1S9GF4aXx2tOI02NUg5gUVabW+Bb06zrsMKQX3rT8XCFuSYCIUObT59xfRny0xSsbNBU0/7yHOkcR5gVogE1DdL3OIxj64DC/zFpLrHQ0WZHdYWDRGjaYvhFvGIvJfLJITKVc/mtqc58NHeG2wK1//dfF/phCyVQe/DY=,iv:nJb9L3B4cbbKZmF0HlT9h3Q0j265lEyKwc/l14OBnW0=,tag:I9nHCUlWgrmmEMAqcLES6w==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCYW90TnFPNjNSVnh0VCtY
+        TWJpN2xkbzlmdUx3UGF3TDJJVTdId1F2Snk0CkkwYUtCb214RFZIVkJkc1U0dmRC
+        SmlFbE9iMVVSZTR6MVpVUGVyOUJhRWMKLS0tIEpjQm5ZRFZRUkJsTkxpSFRZS3Q3
+        b09aUEw4Q3pTczRUZGV3VUF4U2E5TkUKnSOXjlqDg9Pzo6b9UXRc9T/0LKqxG7D2
+        raQS1jDeX+l1FYLmq6hbCXEFou4zHRYYIWmZCYvNvl1524SMhNzdxA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-19T13:14:39Z"
+  mac: ENC[AES256_GCM,data:S0gv1Ad1S9GF4aXx2tOI02NUg5gUVabW+Bb06zrsMKQX3rT8XCFuSYCIUObT59xfRny0xSsbNBU0/7yHOkcR5gVogE1DdL3OIxj64DC/zFpLrHQ0WZHdYWDRGjaYvhFvGIvJfLJITKVc/mtqc58NHeG2wK1//dfF/phCyVQe/DY=,iv:nJb9L3B4cbbKZmF0HlT9h3Q0j265lEyKwc/l14OBnW0=,tag:I9nHCUlWgrmmEMAqcLES6w==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: osticket
-    namespace: osticket
+  name: osticket
+  namespace: osticket
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - osticket.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: osticket
-              port: 80
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - osticket.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: osticket
+          port: 80
+      timeouts:
+        request: 240s
+        backendRequest: 0s
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCYW90TnFPNjNSVnh0VCtY
-            TWJpN2xkbzlmdUx3UGF3TDJJVTdId1F2Snk0CkkwYUtCb214RFZIVkJkc1U0dmRC
-            SmlFbE9iMVVSZTR6MVpVUGVyOUJhRWMKLS0tIEpjQm5ZRFZRUkJsTkxpSFRZS3Q3
-            b09aUEw4Q3pTczRUZGV3VUF4U2E5TkUKnSOXjlqDg9Pzo6b9UXRc9T/0LKqxG7D2
-            raQS1jDeX+l1FYLmq6hbCXEFou4zHRYYIWmZCYvNvl1524SMhNzdxA==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-19T13:14:39Z"
-    mac: ENC[AES256_GCM,data:S0gv1Ad1S9GF4aXx2tOI02NUg5gUVabW+Bb06zrsMKQX3rT8XCFuSYCIUObT59xfRny0xSsbNBU0/7yHOkcR5gVogE1DdL3OIxj64DC/zFpLrHQ0WZHdYWDRGjaYvhFvGIvJfLJITKVc/mtqc58NHeG2wK1//dfF/phCyVQe/DY=,iv:nJb9L3B4cbbKZmF0HlT9h3Q0j265lEyKwc/l14OBnW0=,tag:I9nHCUlWgrmmEMAqcLES6w==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCYW90TnFPNjNSVnh0VCtY
+        TWJpN2xkbzlmdUx3UGF3TDJJVTdId1F2Snk0CkkwYUtCb214RFZIVkJkc1U0dmRC
+        SmlFbE9iMVVSZTR6MVpVUGVyOUJhRWMKLS0tIEpjQm5ZRFZRUkJsTkxpSFRZS3Q3
+        b09aUEw4Q3pTczRUZGV3VUF4U2E5TkUKnSOXjlqDg9Pzo6b9UXRc9T/0LKqxG7D2
+        raQS1jDeX+l1FYLmq6hbCXEFou4zHRYYIWmZCYvNvl1524SMhNzdxA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-19T13:14:39Z"
+  mac: ENC[AES256_GCM,data:S0gv1Ad1S9GF4aXx2tOI02NUg5gUVabW+Bb06zrsMKQX3rT8XCFuSYCIUObT59xfRny0xSsbNBU0/7yHOkcR5gVogE1DdL3OIxj64DC/zFpLrHQ0WZHdYWDRGjaYvhFvGIvJfLJITKVc/mtqc58NHeG2wK1//dfF/phCyVQe/DY=,iv:nJb9L3B4cbbKZmF0HlT9h3Q0j265lEyKwc/l14OBnW0=,tag:I9nHCUlWgrmmEMAqcLES6w==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

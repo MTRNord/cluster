@@ -1,267 +1,267 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: bugzilla
-    labels:
+  name: bugzilla
+  labels:
+    app.kubernetes.io/name: bugzilla
+    app.kubernetes.io/instance: bugzilla
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bugzilla
+      app.kubernetes.io/instance: bugzilla
+  template:
+    metadata:
+      labels:
         app.kubernetes.io/name: bugzilla
         app.kubernetes.io/instance: bugzilla
-spec:
-    replicas: 0
-    selector:
-        matchLabels:
-            app.kubernetes.io/name: bugzilla
-            app.kubernetes.io/instance: bugzilla
-    template:
-        metadata:
-            labels:
-                app.kubernetes.io/name: bugzilla
-                app.kubernetes.io/instance: bugzilla
-            annotations:
-                prometheus.io/scrape: "true"
-                prometheus.io/port: "9117"
-        spec:
-            initContainers:
-                - name: init-bugzilla-vol
-                  image: alpine:3.21
-                  command:
-                    - chown
-                    - -R
-                    - 10001:10001
-                    - /app/data
-                  volumeMounts:
-                    - mountPath: /app/data
-                      name: bugzilla-data
-            containers:
-                - name: bugzilla
-                  image: ghcr.io/mtrnord/bugzilla:latest
-                  imagePullPolicy: Always
-                  securityContext:
-                    runAsUser: 10001
-                    runAsGroup: 10001
-                    fsGroup: 10001
-                  resources:
-                    limits:
-                        cpu: 100m
-                        memory: 512Mi
-                    requests:
-                        cpu: 100m
-                        memory: 512Mi
-                  args:
-                    - while true; do sleep 30; done;
-                  command:
-                    - /bin/bash
-                    - -c
-                    - --
-                  env:
-                    - name: BMO_urlbase
-                      value: https://bugzilla.midnightthoughts.space/
-                    - name: BMO_db_driver
-                      value: mysql
-                    - name: BMO_db_host
-                      value: mariadb-maxscale.mariadb-operator.svc.cluster.local
-                    - name: BMO_db_user
-                      value: bugzilla
-                    - name: PORT
-                      value: "8000"
-                    #- name: MOJO_REVERSE_PROXY
-                    #  value: "1"
-                    #  value: pg
-                    - name: BMO_db_name
-                      value: bugzilla
-                    - name: BMO_db_pass
-                      valueFrom:
-                        secretKeyRef:
-                            name: bugzilla
-                            key: ENC[AES256_GCM,data:btiBZRM7WpcB/fo=,iv:+DnT6m1VkLR6zovn97uFgsbt6IpX2wYeGsnK6l6wtkg=,tag:6TvBlVoHBVxPq/ImXH+cIA==,type:str]
-                    - name: BMO_site_wide_secret
-                      valueFrom:
-                        secretKeyRef:
-                            name: bugzilla
-                            key: ENC[AES256_GCM,data:U611SuKuZ9qPJADOysIlxw==,iv:4Si5ieeNQDJtS79Y79IfSdYJZ5vnr5LeAkS6UEN8970=,tag:ldtHmaZnkQZ9hDbItOGJZg==,type:str]
-                    - name: BMO_jwt_secret
-                      valueFrom:
-                        secretKeyRef:
-                            name: bugzilla
-                            key: ENC[AES256_GCM,data:7TvEhWnoyJEOIw==,iv:scYQHkuQd2Q/HoqtKy6Lx7m4AmgAFXi0R2Cx3gcScVA=,tag:rq0X4Q+JC5WsdHTtEoMJNQ==,type:str]
-                    #- name: BMO_inbound_proxies
-                    #  value: "*"
-                    - name: BMO_memcached_servers
-                      value: ""
-                    - name: BMO_memcached_namespace
-                      value: ""
-                    - name: MOJO_WORKERS
-                      value: "3"
-                  ports:
-                    - name: http
-                      containerPort: 8000
-                      protocol: TCP
-                  livenessProbe:
-                    httpGet:
-                        path: /
-                        port: http
-                  readinessProbe:
-                    httpGet:
-                        path: /
-                        port: http
-                  volumeMounts:
-                    - mountPath: /app/data
-                      name: bugzilla-data
-            volumes:
-                - name: bugzilla-data
-                  persistentVolumeClaim:
-                    claimName: bugzilla-data
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9117"
+    spec:
+      initContainers:
+        - name: init-bugzilla-vol
+          image: alpine:3.21
+          command:
+            - chown
+            - -R
+            - 10001:10001
+            - /app/data
+          volumeMounts:
+            - mountPath: /app/data
+              name: bugzilla-data
+      containers:
+        - name: bugzilla
+          image: ghcr.io/mtrnord/bugzilla:latest
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+          resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          args:
+            - while true; do sleep 30; done;
+          command:
+            - /bin/bash
+            - -c
+            - --
+          env:
+            - name: BMO_urlbase
+              value: https://bugzilla.midnightthoughts.space/
+            - name: BMO_db_driver
+              value: mysql
+            - name: BMO_db_host
+              value: mariadb-maxscale.mariadb-operator.svc.cluster.local
+            - name: BMO_db_user
+              value: bugzilla
+            - name: PORT
+              value: "8000"
+            #- name: MOJO_REVERSE_PROXY
+            #  value: "1"
+            #  value: pg
+            - name: BMO_db_name
+              value: bugzilla
+            - name: BMO_db_pass
+              valueFrom:
+                secretKeyRef:
+                  name: bugzilla
+                  key: ENC[AES256_GCM,data:btiBZRM7WpcB/fo=,iv:+DnT6m1VkLR6zovn97uFgsbt6IpX2wYeGsnK6l6wtkg=,tag:6TvBlVoHBVxPq/ImXH+cIA==,type:str]
+            - name: BMO_site_wide_secret
+              valueFrom:
+                secretKeyRef:
+                  name: bugzilla
+                  key: ENC[AES256_GCM,data:U611SuKuZ9qPJADOysIlxw==,iv:4Si5ieeNQDJtS79Y79IfSdYJZ5vnr5LeAkS6UEN8970=,tag:ldtHmaZnkQZ9hDbItOGJZg==,type:str]
+            - name: BMO_jwt_secret
+              valueFrom:
+                secretKeyRef:
+                  name: bugzilla
+                  key: ENC[AES256_GCM,data:7TvEhWnoyJEOIw==,iv:scYQHkuQd2Q/HoqtKy6Lx7m4AmgAFXi0R2Cx3gcScVA=,tag:rq0X4Q+JC5WsdHTtEoMJNQ==,type:str]
+            #- name: BMO_inbound_proxies
+            #  value: "*"
+            - name: BMO_memcached_servers
+              value: ""
+            - name: BMO_memcached_namespace
+              value: ""
+            - name: MOJO_WORKERS
+              value: "3"
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - mountPath: /app/data
+              name: bugzilla-data
+      volumes:
+        - name: bugzilla-data
+          persistentVolumeClaim:
+            claimName: bugzilla-data
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
-            YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
-            bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
-            MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
-            4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-31T14:12:11Z"
-    mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
+        YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
+        bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
+        MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
+        4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-31T14:12:11Z"
+  mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: bugzilla
-    labels:
-        app.kubernetes.io/name: bugzilla
-        app.kubernetes.io/instance: bugzilla
+  name: bugzilla
+  labels:
+    app.kubernetes.io/name: bugzilla
+    app.kubernetes.io/instance: bugzilla
 spec:
-    ports:
-        - name: http
-          port: 8000
-          targetPort: http
-    selector:
-        app.kubernetes.io/name: bugzilla
-        app.kubernetes.io/instance: bugzilla
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: bugzilla
+    app.kubernetes.io/instance: bugzilla
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
-            YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
-            bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
-            MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
-            4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-31T14:12:11Z"
-    mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
+        YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
+        bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
+        MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
+        4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-31T14:12:11Z"
+  mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: bugzilla-data
+  name: bugzilla-data
 spec:
-    accessModes:
-        - ReadWriteMany
-    resources:
-        requests:
-            storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
-            YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
-            bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
-            MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
-            4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-31T14:12:11Z"
-    mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
+        YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
+        bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
+        MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
+        4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-31T14:12:11Z"
+  mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-    name: bugzilla
+  name: bugzilla
 type: Opaque
 stringData:
-    password: ENC[AES256_GCM,data:5le4XY8+PjUNffEZJOPo4x3m6HS57Ns34GQNIYsZ2t3mnDdbAv8F1tmg9/cvzdc3JT1WjqvY/lvWWweIhrBBVA==,iv:IojlNhAzuTBFgHCAnb39O7VXsdU0tX4fXSiFPBbQipk=,tag:DpQPqwMFQTINZReTaRO0vQ==,type:str]
-    site_wide_secret: ENC[AES256_GCM,data:KJXodfkVU9x2CJicLR9riZfqp5k/OKuM70pooZcqx0vBi4Tw22BaKOkV/9IW0lYJ9h4LV+MUria601Wd0W/IEg==,iv:Y0Cwe5CqLReLYpnc5XhHo/rp8/DgE/xv6yEmyL8lXSA=,tag:KwQTZ0otdetpf0ZD5sXQGA==,type:str]
+  password: ENC[AES256_GCM,data:5le4XY8+PjUNffEZJOPo4x3m6HS57Ns34GQNIYsZ2t3mnDdbAv8F1tmg9/cvzdc3JT1WjqvY/lvWWweIhrBBVA==,iv:IojlNhAzuTBFgHCAnb39O7VXsdU0tX4fXSiFPBbQipk=,tag:DpQPqwMFQTINZReTaRO0vQ==,type:str]
+  site_wide_secret: ENC[AES256_GCM,data:KJXodfkVU9x2CJicLR9riZfqp5k/OKuM70pooZcqx0vBi4Tw22BaKOkV/9IW0lYJ9h4LV+MUria601Wd0W/IEg==,iv:Y0Cwe5CqLReLYpnc5XhHo/rp8/DgE/xv6yEmyL8lXSA=,tag:KwQTZ0otdetpf0ZD5sXQGA==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
-            YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
-            bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
-            MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
-            4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-31T14:12:11Z"
-    mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
+        YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
+        bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
+        MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
+        4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-31T14:12:11Z"
+  mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: bugzilla
-    namespace: bugzilla
+  name: bugzilla
+  namespace: bugzilla
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - bugzilla.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: bugzilla
-              port: 8000
-          timeouts:
-            request: 240s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - bugzilla.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: bugzilla
+          port: 8000
+      timeouts:
+        request: 240s
+        backendRequest: 0s
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
-            YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
-            bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
-            MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
-            4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-03-31T14:12:11Z"
-    mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
-    pgp: []
-    encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzd0tKZER5NktFN1N1c0Vy
+        YS93S05IWGZVZXIyMHJWVUNmTVpxallITUc0CkJxV1BSMi9iNzl1OFhJQXNUTnk2
+        bDN1WDNUZVBVYW9SN3k2SVNtQit0dE0KLS0tIENzYnVMdmloaGxEaGZwaUg2a3Ay
+        MWsxeklWdjRhMVdNamRneWNUa0pTc1EK/PtQwmTY5LjxVdrXtOhY/JqA8YrkS1wl
+        4aGQVugee/uyFqKU2GIrw630mTTT39/2/jWeoEk6nJA1c3WJVEaxfQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-03-31T14:12:11Z"
+  mac: ENC[AES256_GCM,data:rAnFG0KAhgVZ8Tr0bsyOEAK0uxB0beJiH22FSta8iUOVWzRpuipHmY2+gmjimbQu9hcvyPzlPyyY3q5n29ROgcXKAwpoR/LOkBq0aBlweBnKoyiF3U5WkK5RABWEzq0nIlgd5kU4sQU0OO4i0ZD8NnV3IpzGhMhRNMowQq/Fa4U=,iv:O8hl8VGTIEtD4OdhkVPDhLN2V+PAsM+U11Z1lW74flA=,tag:8Bk3Jibf7jJnoY9wegJpPg==,type:str]
+  pgp: []
+  encrypted_regex: ^(adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword)$
+  version: 3.9.1

@@ -1,33 +1,33 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-    name: minio-cluster
+  name: minio-cluster
 spec:
-    selector:
-        matchLabels:
-            v1.min.io/tenant: loki
-    endpoints:
-        - port: https-minio
-          path: /minio/v2/metrics/cluster
-          scheme: https
-          interval: 30s
-          tlsConfig:
-            serverName: minio.monitoring.svc.cluster.local
-            insecureSkipVerify: true
+  selector:
+    matchLabels:
+      v1.min.io/tenant: loki
+  endpoints:
+    - port: https-minio
+      path: /minio/v2/metrics/cluster
+      scheme: https
+      interval: 30s
+      tlsConfig:
+        serverName: minio.monitoring.svc.cluster.local
+        insecureSkipVerify: true
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-    name: minio-buckets
+  name: minio-buckets
 spec:
-    selector:
-        matchLabels:
-            v1.min.io/tenant: loki
-    endpoints:
-        - port: https-minio
-          path: /minio/v2/metrics/bucket
-          scheme: https
-          interval: 30s
-          tlsConfig:
-            serverName: minio.monitoring.svc.cluster.local
-            insecureSkipVerify: true
+  selector:
+    matchLabels:
+      v1.min.io/tenant: loki
+  endpoints:
+    - port: https-minio
+      path: /minio/v2/metrics/bucket
+      scheme: https
+      interval: 30s
+      tlsConfig:
+        serverName: minio.monitoring.svc.cluster.local
+        insecureSkipVerify: true

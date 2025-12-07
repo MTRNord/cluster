@@ -2,33 +2,33 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: mailserver
 resources:
-    - certificate.yaml
-    - repository.yaml
-    - pvc.yaml
-    - release.yaml
-    - routing.yaml
-    - mta-sts-deployment.yaml
-    - mailman-secrets.yaml
-    - mailman.yaml
+  - certificate.yaml
+  - repository.yaml
+  - pvc.yaml
+  - release.yaml
+  - routing.yaml
+  - mta-sts-deployment.yaml
+  - mailman-secrets.yaml
+  - mailman.yaml
 configMapGenerator:
-    - name: mta-sts-content
-      namespace: mailserver
-      files:
-        - mta-sts.txt=mta-sts.txt
-      options:
-        labels:
-            app: mta-sts-server
-    - name: mailman-nginx
-      namespace: mailserver
-      files:
-        - nginx.conf=mailman-nginx.conf
-      options:
-        labels:
-            app: mailman
-    - name: mailman-uwsgi
-      namespace: mailserver
-      files:
-        - uwsgi.ini=mailman-uwsgi.ini
-      options:
-        labels:
-            app: mailman
+  - name: mta-sts-content
+    namespace: mailserver
+    files:
+      - mta-sts.txt=mta-sts.txt
+    options:
+      labels:
+        app: mta-sts-server
+  - name: mailman-nginx
+    namespace: mailserver
+    files:
+      - nginx.conf=mailman-nginx.conf
+    options:
+      labels:
+        app: mailman
+  - name: mailman-uwsgi
+    namespace: mailserver
+    files:
+      - uwsgi.ini=mailman-uwsgi.ini
+    options:
+      labels:
+        app: mailman

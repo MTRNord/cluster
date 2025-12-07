@@ -2,17 +2,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: matrix
 resources:
-    - connectivity_tester.yaml
-    - staging_deployment.yaml
-    - deployment.yaml
-    - service.yaml
-    - tester-v2.yaml
+  - connectivity_tester.yaml
+  - staging_deployment.yaml
+  - deployment.yaml
+  - service.yaml
+  - tester-v2.yaml
 configMapGenerator:
-    - name: connectivity-tester-config
-      namespace: matrix
-      files:
-        - config.json=config.json
-    - name: connectivity-tester-stage-config
-      namespace: matrix
-      files:
-        - config.json=staging_config.json
+  - name: connectivity-tester-config
+    namespace: matrix
+    files:
+      - config.json=config.json
+  - name: connectivity-tester-stage-config
+    namespace: matrix
+    files:
+      - config.json=staging_config.json

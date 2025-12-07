@@ -2,14 +2,14 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: irc
 resources:
-    - resources.yaml
+  - resources.yaml
 secretGenerator:
-    - name: atheme-secrets
-      files:
-        - msmtprc=files/msmtprc
-        - atheme.conf=files/atheme.conf
-        - atheme.motd=files/atheme.motd
-    - name: solanum-config
-      files:
-        - ircd.conf=files/ircd.conf
-        - ircd.motd=files/ircd.motd
+  - name: atheme-secrets
+    files:
+      - msmtprc=files/msmtprc
+      - atheme.conf=files/atheme.conf
+      - atheme.motd=files/atheme.motd
+  - name: solanum-config
+    files:
+      - ircd.conf=files/ircd.conf
+      - ircd.motd=files/ircd.motd

@@ -1,81 +1,80 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: heisenbridge
-    namespace: matrix
-    labels:
-        app.kubernetes.io/component: appservice
-        app.kubernetes.io/instance: main-process
-        app.kubernetes.io/name: heisenbridge
+  name: heisenbridge
+  namespace: matrix
+  labels:
+    app.kubernetes.io/component: appservice
+    app.kubernetes.io/instance: main-process
+    app.kubernetes.io/name: heisenbridge
 spec:
-    strategy:
-        rollingUpdate:
-            maxSurge: 25%
-            maxUnavailable: 25%
-        type: RollingUpdate
-    selector:
-        matchLabels:
-            app: heisenbridge
-    template:
-        metadata:
-            labels:
-                app: heisenbridge
-        spec:
-            affinity:
-                podAntiAffinity:
-                    requiredDuringSchedulingIgnoredDuringExecution:
-                        - labelSelector:
-                            matchExpressions:
-                                - key: app
-                                  operator: In
-                                  values:
-                                    - heisenbridge
-                          topologyKey: "kubernetes.io/hostname"
-            containers:
-                - name: heisenbridge
-                  image: hif1/heisenbridge:1.15.3
-                  imagePullPolicy: IfNotPresent
-                  args: ["-c", "/data/heisenbridge.yaml", "--listen-address", "0.0.0.0", "-v", "--owner", "@mtrnord:midnightthoughts.space",
-                    "https://matrix.midnightthoughts.space"]
-                  resources:
-                    limits: {}
-                    requests:
-                        memory: "344Mi"
-                        cpu: "252m"
-                  securityContext:
-                    runAsUser: 1000
-                    runAsGroup: 1000
-                    readOnlyRootFilesystem: true
-                  ports:
-                    - containerPort: 9898
-                      name: appservice
-                      protocol: TCP
-                  volumeMounts:
-                    - name: config
-                      mountPath: "/data/heisenbridge.yaml"
-                      subPath: heisenbridge.yaml
-                      readOnly: true
-                    - mountPath: /tmp
-                      name: tmp
-                  livenessProbe:
-                    httpGet:
-                        path: /_matrix/mau/live
-                        port: appservice
-                        scheme: HTTP
-                  readinessProbe:
-                    httpGet:
-                        path: /_matrix/mau/live
-                        port: appservice
-                        scheme: HTTP
-                  startupProbe:
-                    httpGet:
-                        path: /_matrix/mau/live
-                        port: appservice
-                        scheme: HTTP
-            volumes:
-                - name: config
-                  secret:
-                    secretName: heisenbridge
-                - name: tmp
-                  emptyDir:
-                    sizeLimit: 2048Mi
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: heisenbridge
+  template:
+    metadata:
+      labels:
+        app: heisenbridge
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - heisenbridge
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: heisenbridge
+          image: hif1/heisenbridge:1.15.3
+          imagePullPolicy: IfNotPresent
+          args: ["-c", "/data/heisenbridge.yaml", "--listen-address", "0.0.0.0", "-v", "--owner", "@mtrnord:midnightthoughts.space", "https://matrix.midnightthoughts.space"]
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+          ports:
+            - containerPort: 9898
+              name: appservice
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: "/data/heisenbridge.yaml"
+              subPath: heisenbridge.yaml
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp
+          livenessProbe:
+            httpGet:
+              path: /_matrix/mau/live
+              port: appservice
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /_matrix/mau/live
+              port: appservice
+              scheme: HTTP
+          startupProbe:
+            httpGet:
+              path: /_matrix/mau/live
+              port: appservice
+              scheme: HTTP
+      volumes:
+        - name: config
+          secret:
+            secretName: heisenbridge
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi

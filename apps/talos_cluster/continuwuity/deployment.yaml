@@ -1,141 +1,141 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: continuwuity
+  name: continuwuity
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: continuwuity
-    strategy:
-        type: Recreate
-    template:
-        metadata:
-            labels:
-                app: continuwuity
-        spec:
-            enableServiceLinks: false
-            containers:
-                - name: continuwuity
-                  resources:
-                    limits: {}
-                    requests:
-                        memory: "100Mi"
-                        cpu: "28m"
-                  image: forgejo.ellis.link/continuwuation/continuwuity:main
-                  #image: forgejo.ellis.link/continuwuation/continuwuity:pr-1099-head
-                  imagePullPolicy: Always
-                  ports:
-                    - containerPort: 8448
-                  # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
-                  volumeMounts:
-                    - name: continuwuity-config
-                      mountPath: /etc/conduwuit
-                      readOnly: true
-                    - name: continuwuity-data
-                      mountPath: /var/lib/continuwuity
-                  env:
-                    - name: CONTINUWUITY_CONFIG
-                      value: /etc/conduwuit/conduwuit.toml
-                  livenessProbe:
-                    httpGet:
-                        path: /_matrix/client/versions
-                        port: 8448
-                    initialDelaySeconds: 50
-                    timeoutSeconds: 5
-                  readinessProbe:
-                    httpGet:
-                        path: /_matrix/client/versions
-                        port: 8448
-                    initialDelaySeconds: 20
-                    timeoutSeconds: 5
-            # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
-            volumes:
-                - name: continuwuity-config
-                  secret:
-                    secretName: continuwuity-config
-                - name: continuwuity-data
-                  persistentVolumeClaim:
-                    claimName: continuwuity
+  replicas: 1
+  selector:
+    matchLabels:
+      app: continuwuity
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: continuwuity
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: continuwuity
+          resources:
+            limits: {}
+            requests:
+              memory: "100Mi"
+              cpu: "28m"
+          image: forgejo.ellis.link/continuwuation/continuwuity:main
+          #image: forgejo.ellis.link/continuwuation/continuwuity:pr-1099-head
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8448
+          # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
+          volumeMounts:
+            - name: continuwuity-config
+              mountPath: /etc/conduwuit
+              readOnly: true
+            - name: continuwuity-data
+              mountPath: /var/lib/continuwuity
+          env:
+            - name: CONTINUWUITY_CONFIG
+              value: /etc/conduwuit/conduwuit.toml
+          livenessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8448
+            initialDelaySeconds: 50
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8448
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+      # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
+      volumes:
+        - name: continuwuity-config
+          secret:
+            secretName: continuwuity-config
+        - name: continuwuity-data
+          persistentVolumeClaim:
+            claimName: continuwuity
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: continuwuity
+  name: continuwuity
 spec:
-    selector:
-        app: continuwuity
-    ports:
-        - name: http
-          protocol: TCP
-          port: 8448
-          targetPort: 8448
+  selector:
+    app: continuwuity
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8448
+      targetPort: 8448
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: continuwuity
-    namespace: continuwuity
+  name: continuwuity
+  namespace: continuwuity
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - matrix.mtrnord.blog
-    rules:
-        # Client traffic (sync, login, media, etc.)
-        - name: client-traffic
-          matches:
-            - path:
-                type: PathPrefix
-                value: /_matrix/client
-          backendRefs:
-            - name: continuwuity
-              port: 8448
-          timeouts:
-            request: 240s
-            backendRequest: 0s
-        - name: media-traffic
-          matches:
-            - path:
-                type: PathPrefix
-                value: /_matrix/media
-          backendRefs:
-            - name: continuwuity
-              port: 8448
-        # Federation traffic
-        - name: federation-traffic
-          matches:
-            - path:
-                type: PathPrefix
-                value: /_matrix/federation
-          backendRefs:
-            - name: continuwuity
-              port: 8448
-          timeouts:
-            request: 240s
-            backendRequest: 0s
-        # Fallback (anything else Matrix-y)
-        - name: fallback
-          backendRefs:
-            - name: continuwuity
-              port: 8448
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - matrix.mtrnord.blog
+  rules:
+    # Client traffic (sync, login, media, etc.)
+    - name: client-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /_matrix/client
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+    - name: media-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /_matrix/media
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+    # Federation traffic
+    - name: federation-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /_matrix/federation
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+    # Fallback (anything else Matrix-y)
+    - name: fallback
+      backendRefs:
+        - name: continuwuity
+          port: 8448
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
-    name: continuwuity-general-ratelimit
-    namespace: continuwuity
+  name: continuwuity-general-ratelimit
+  namespace: continuwuity
 spec:
-    targetRefs:
-        - group: gateway.networking.k8s.io
-          kind: HTTPRoute
-          name: continuwuity
-    circuitBreaker:
-        maxConnections: 1500
-        maxPendingRequests: 300
-        maxParallelRequests: 700
-        maxParallelRetries: 50
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: continuwuity
+  circuitBreaker:
+    maxConnections: 1500
+    maxPendingRequests: 300
+    maxParallelRequests: 700
+    maxParallelRetries: 50
 ## Blocked by https://github.com/envoyproxy/gateway/pull/6888
 # ---
 # apiVersion: gateway.envoyproxy.io/v1alpha1

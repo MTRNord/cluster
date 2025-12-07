@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-    name: postgres-cluster
+  name: postgres-cluster
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-    name: cnpg
-    namespace: postgres-cluster
+  name: cnpg
+  namespace: postgres-cluster
 spec:
-    interval: 60m
-    url: https://cloudnative-pg.github.io/charts
+  interval: 60m
+  url: https://cloudnative-pg.github.io/charts
