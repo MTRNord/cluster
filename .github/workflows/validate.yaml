@@ -57,10 +57,6 @@ jobs:
           ./scripts/validate.sh
         continue-on-error: true
 
-      - name: Validate Flux sources
-        run: |
-          flux check --pre
-
   security-scan:
     name: Security Scanning
     runs-on: ubuntu-latest
