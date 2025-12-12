@@ -121,7 +121,7 @@ jobs:
           severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+        uses: github/codeql-action/upload-sarif@1b168cd39490f61582a9beae412bb7057a6b2c4e # v4
         if: always()
         with:
           sarif_file: "trivy-results.sarif"
@@ -165,7 +165,7 @@ jobs:
           outputFile: results.sarif
 
       - name: Upload Kubescape results to GitHub Security
-        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+        uses: github/codeql-action/upload-sarif@1b168cd39490f61582a9beae412bb7057a6b2c4e # v4
         if: always()
         with:
           sarif_file: "results.sarif"
