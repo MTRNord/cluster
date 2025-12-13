@@ -94,7 +94,7 @@ spec:
               memory: "344Mi"
               cpu: "252m"
           ports:
-            - containerPort: 3000
+            - containerPort: 8000
               name: web
               protocol: TCP
           volumeMounts:
@@ -141,8 +141,8 @@ spec:
       port: 8080
       targetPort: 8080
     - name: web
-      port: 3000
-      targetPort: 3000
+      port: 8000
+      targetPort: 8000
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -178,7 +178,7 @@ spec:
             type: PathPrefix
       backendRefs:
         - name: connectivity-tester-stage
-          port: 3000
+          port: 8000
       timeouts:
         request: 240s
         backendRequest: 0s
