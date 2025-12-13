@@ -365,6 +365,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: weblate.mtrnord.blog-tls
+    - name: https-sentry-mtrnord-blog
+      protocol: HTTPS
+      hostname: "sentry.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: sentry.mtrnord.blog-tls
     - name: https-mtrnord-blog-root
       protocol: HTTPS
       hostname: "mtrnord.blog"

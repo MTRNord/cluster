@@ -488,3 +488,15 @@ spec:
   ensure: present
   cluster:
     name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: sentry
+  namespace: postgres-cluster
+spec:
+  name: sentry
+  owner: sentry
+  ensure: present
+  cluster:
+    name: pg-cluster-v2
