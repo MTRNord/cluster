@@ -1,136 +1,136 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-    name: sentry
-    namespace: sentry
+  name: sentry
+  namespace: sentry
 spec:
-    releaseName: sentry
-    chart:
-        spec:
-            chart: sentry
-            version: 27.8.x
-            sourceRef:
-                kind: HelmRepository
-                name: sentry
-    interval: 60m
-    timeout: 20m0s
-    values:
-        ipv6: true
-        user:
-            create: true
-            email: mtrnord@nordgedanken.dev
-            password: ENC[AES256_GCM,data:Fpt9rdvQgDQX,iv:Um52XDuSDJDSfINDhv8JcVMzTzQKxpdjAdDEBAaq+mw=,tag:5STBL+rdlM8rzRCOlhcUJw==,type:str]
-        # this is required on the first installation, as sentry has to be initialized first
-        # recommended to set false for updating the helm chart afterwards,
-        # as you will have some downtime on each update if it's a hook
-        # deploys relay & snuba consumers as post hooks
-        asHook: false
-        hooks:
-            dbCheck:
-                image:
-                    repository: toolbelt/netcat
-                    tag: latest
-                    pullPolicy: Always
-        vroom:
-            persistence:
-                enabled: true
-                size: 5Gi
-                accessMode: ReadWriteMany
-                storageClass: longhorn
-        geodata:
-            persistence:
-                storageClass: longhorn
-        sentry:
-            singleOrganization: true
-            web:
-                enabled: true
-            features:
-                orgSubdomains: false
-                enableProfiling: false
-                enableSessionReplay: true
-                enableFeedback: true
-                enableSpan: true
-                enableUptime: false
-        system:
-            url: https://sentry.mtrnord.blog
-            adminEmail: ENC[AES256_GCM,data:plZYpaAaFk//QxrQjpH8yv1bJbofLR8rce0Or1Sh,iv:uAhawuOcnuDFFzFs+HPbfHmzt+nWoD9z2V/uh9VObog=,tag:i3JkQx+fpuXst6ArkryK1A==,type:str]
-            public: false
-            secretKey: ENC[AES256_GCM,data:BweqTvfnZ0ord278V3S2R71fU1cuFSNee8zUsXBmRibHdbdHbJambBfMsFuXAv1mv9sgIRCjsJir/cCxxiVwAg==,iv:YqtVYNFluR9xKIdJTzhD5BO7dPcikV4QBCnR5bbtQOE=,tag:2qe/cg2FyQ9j4G/HFlYYMQ==,type:str]
-        mail:
-            backend: smtp
-            smtp:
-                host: mail.midnightthoughts.space
-                useTls: true
-                useSsl: false
-                port: 587
-                username: support@midnightthoughts.space
-                password: ENC[AES256_GCM,data:fNsnS+z80azxzL0avx32NXwOUwcM31OrdIDGUJ1GWZy+Uvm+ylSP7SRa+cS5hy3Wltng6TbsvMs6zQ93zB7P4Q==,iv:pkFfVCUKg2LCQUST/92KZEnx8PfKUZ1YV0mGnwJDkBQ=,tag:CmyyNTmSMtHuNkv+i88yuQ==,type:str]
-                from: Sentry <support@midnightthoughts.space>
-        auth:
-            register: false
-        ingress:
-            enabled: false
-        filestore:
-            persistence:
-                enabled: true
-                size: 5Gi
-                accessMode: ReadWriteMany
-                storageClass: longhorn
-        clickhouse:
-            persistentVolumeClaim:
-                enabled: true
-                dataPersistentVolume:
-                    storage: 20Gi
-                    storageClass: longhorn
-                    accessModes:
-                        - ReadWriteOnce
-                        - ReadWriteMany
-        zookeeper:
-            persistence:
-                enabled: true
-                size: 8Gi
-                accessModes:
-                    - ReadWriteOnce
-                    - ReadWriteMany
-                storageClass: longhorn
-        redis:
-            master:
-                persistence:
-                    enabled: true
-                    size: 5Gi
-                    accessModes:
-                        - ReadWriteOnce
-                        - ReadWriteMany
-                    storageClass: longhorn
-        postgresql:
-            enabled: false
-        externalPostgresql:
-            port: 5432
-            username: sentry
-            password: ENC[AES256_GCM,data:S14yKVunj1oBW7RyXgu6dpZPqv7hHyxJEB7YwJNPwl3WpyZYQg9TCgc2FdHE+rn8oQvk5HLDbCJVJR9cxj23dg==,iv:i2F51Jdy+8VIXh6gtcR7SN5xAShGMEOQmfNtqbZNSi4=,tag:QiFIZ6PF2TOTpJBEJRqCxg==,type:str]
-            database: sentry
-            connMaxAge: 600
-            host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
-            sslMode: require
-        rabbitmq:
-            enabled: false
+  releaseName: sentry
+  chart:
+    spec:
+      chart: sentry
+      version: 27.8.x
+      sourceRef:
+        kind: HelmRepository
+        name: sentry
+  interval: 60m
+  timeout: 20m0s
+  values:
+    ipv6: true
+    user:
+      create: true
+      email: mtrnord@nordgedanken.dev
+      password: ENC[AES256_GCM,data:Fpt9rdvQgDQX,iv:Um52XDuSDJDSfINDhv8JcVMzTzQKxpdjAdDEBAaq+mw=,tag:5STBL+rdlM8rzRCOlhcUJw==,type:str]
+    # this is required on the first installation, as sentry has to be initialized first
+    # recommended to set false for updating the helm chart afterwards,
+    # as you will have some downtime on each update if it's a hook
+    # deploys relay & snuba consumers as post hooks
+    asHook: true
+    hooks:
+      dbCheck:
+        image:
+          repository: toolbelt/netcat
+          tag: latest
+          pullPolicy: Always
+    vroom:
+      persistence:
+        enabled: true
+        size: 5Gi
+        accessMode: ReadWriteMany
+        storageClass: longhorn
+    geodata:
+      persistence:
+        storageClass: longhorn
+    sentry:
+      singleOrganization: true
+      web:
+        enabled: true
+      features:
+        orgSubdomains: false
+        enableProfiling: false
+        enableSessionReplay: true
+        enableFeedback: true
+        enableSpan: true
+        enableUptime: false
+    system:
+      url: https://sentry.mtrnord.blog
+      adminEmail: ENC[AES256_GCM,data:plZYpaAaFk//QxrQjpH8yv1bJbofLR8rce0Or1Sh,iv:uAhawuOcnuDFFzFs+HPbfHmzt+nWoD9z2V/uh9VObog=,tag:i3JkQx+fpuXst6ArkryK1A==,type:str]
+      public: false
+      secretKey: ENC[AES256_GCM,data:BweqTvfnZ0ord278V3S2R71fU1cuFSNee8zUsXBmRibHdbdHbJambBfMsFuXAv1mv9sgIRCjsJir/cCxxiVwAg==,iv:YqtVYNFluR9xKIdJTzhD5BO7dPcikV4QBCnR5bbtQOE=,tag:2qe/cg2FyQ9j4G/HFlYYMQ==,type:str]
+    mail:
+      backend: smtp
+      smtp:
+        host: mail.midnightthoughts.space
+        useTls: true
+        useSsl: false
+        port: 587
+        username: support@midnightthoughts.space
+        password: ENC[AES256_GCM,data:fNsnS+z80azxzL0avx32NXwOUwcM31OrdIDGUJ1GWZy+Uvm+ylSP7SRa+cS5hy3Wltng6TbsvMs6zQ93zB7P4Q==,iv:pkFfVCUKg2LCQUST/92KZEnx8PfKUZ1YV0mGnwJDkBQ=,tag:CmyyNTmSMtHuNkv+i88yuQ==,type:str]
+        from: Sentry <support@midnightthoughts.space>
+    auth:
+      register: false
+    ingress:
+      enabled: false
+    filestore:
+      persistence:
+        enabled: true
+        size: 5Gi
+        accessMode: ReadWriteMany
+        storageClass: longhorn
+    clickhouse:
+      persistentVolumeClaim:
+        enabled: true
+        dataPersistentVolume:
+          storage: 20Gi
+          storageClass: longhorn
+          accessModes:
+            - ReadWriteOnce
+            - ReadWriteMany
+    zookeeper:
+      persistence:
+        enabled: true
+        size: 8Gi
+        accessModes:
+          - ReadWriteOnce
+          - ReadWriteMany
+        storageClass: longhorn
+    redis:
+      master:
+        persistence:
+          enabled: true
+          size: 5Gi
+          accessModes:
+            - ReadWriteOnce
+            - ReadWriteMany
+          storageClass: longhorn
+    postgresql:
+      enabled: false
+    externalPostgresql:
+      port: 5432
+      username: sentry
+      password: ENC[AES256_GCM,data:S14yKVunj1oBW7RyXgu6dpZPqv7hHyxJEB7YwJNPwl3WpyZYQg9TCgc2FdHE+rn8oQvk5HLDbCJVJR9cxj23dg==,iv:i2F51Jdy+8VIXh6gtcR7SN5xAShGMEOQmfNtqbZNSi4=,tag:QiFIZ6PF2TOTpJBEJRqCxg==,type:str]
+      database: sentry
+      connMaxAge: 600
+      host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+      sslMode: require
+    rabbitmq:
+      enabled: false
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPa2FYR1FVU2s5ZTkzVkpY
-            cjRGNDVlakUvc2Fjc0NGTW5EcStwbEtOZWx3CjRlVk05eDl3UWx4ZHdEOTFBdnNK
-            V0thYnN0YXJodWdjaTBxQ0I0K2E1b00KLS0tIGpZMSt1SS9iZG5Oa0MzVXZyTWJF
-            TktKWlpEWVNoVDZ1aHZFcUZCSEpWTDgKD4oZuOmSthgYz3phX8fjvGnzngk87X3o
-            WP0TcjIcmEqx7U1+qjCDl+bvaiGg3R90nqNWtvMbnsJi23KQOWAkHA==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-13T15:16:19Z"
-    mac: ENC[AES256_GCM,data:EJ2ZjcrNeaYXIZXRajUbcbptN3iE7UwLOVruaC4ciQ3TtFSZ4y9s8vMFpkEboR2OFoj6TwNNJlsC7m+t+kwWKbGVsFb+lp9O5HIkrCZmGB+rIvOoAm7pTGHqB7+Mzlb5jO75iArZq/bqGoa1QLNS/4O+HSVItnNHqif5tmhFBWc=,iv:8DXY0H2sDM7Pb+/O6VFf29G6OWnOS1zC5W3JSn2ArGM=,tag:DL9Z9YtrtU1p7pt+xVtupw==,type:str]
-    pgp: []
-    encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPa2FYR1FVU2s5ZTkzVkpY
+        cjRGNDVlakUvc2Fjc0NGTW5EcStwbEtOZWx3CjRlVk05eDl3UWx4ZHdEOTFBdnNK
+        V0thYnN0YXJodWdjaTBxQ0I0K2E1b00KLS0tIGpZMSt1SS9iZG5Oa0MzVXZyTWJF
+        TktKWlpEWVNoVDZ1aHZFcUZCSEpWTDgKD4oZuOmSthgYz3phX8fjvGnzngk87X3o
+        WP0TcjIcmEqx7U1+qjCDl+bvaiGg3R90nqNWtvMbnsJi23KQOWAkHA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-12-13T15:16:19Z"
+  mac: ENC[AES256_GCM,data:EJ2ZjcrNeaYXIZXRajUbcbptN3iE7UwLOVruaC4ciQ3TtFSZ4y9s8vMFpkEboR2OFoj6TwNNJlsC7m+t+kwWKbGVsFb+lp9O5HIkrCZmGB+rIvOoAm7pTGHqB7+Mzlb5jO75iArZq/bqGoa1QLNS/4O+HSVItnNHqif5tmhFBWc=,iv:8DXY0H2sDM7Pb+/O6VFf29G6OWnOS1zC5W3JSn2ArGM=,tag:DL9Z9YtrtU1p7pt+xVtupw==,type:str]
+  pgp: []
+  encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey)$
+  version: 3.9.1
