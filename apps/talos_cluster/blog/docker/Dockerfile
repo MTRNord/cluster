@@ -71,9 +71,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm redis-cache.2.7.0.zip
 # Install ActivityPub plugin
-RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.7.1.zip \
-    && unzip -q activitypub.7.7.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm activitypub.7.7.1.zip
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.8.1.zip \
+    && unzip -q activitypub.7.8.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.7.8.1.zip
 # Install Embed Optimizer
 RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta2.zip \
     && unzip -q embed-optimizer.1.0.0-beta2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
