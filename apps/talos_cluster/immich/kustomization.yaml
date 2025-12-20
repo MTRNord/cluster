@@ -3,12 +3,6 @@ kind: Kustomization
 namespace: immich
 resources:
   - repository.yaml
+  - database-credentials.yaml
   - release.yaml
   - route.yaml
-secretGenerator:
-  - name: immich-database
-    # Prevent the name from changing on each kustomize build
-    options:
-      disableNameSuffixHash: true
-    files:
-      - database-credentials.properties
