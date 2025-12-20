@@ -266,6 +266,12 @@ spec:
         superuser: false
         passwordSecret:
           name: sentry
+      - name: immich
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: immich
   storage:
     storageClass: hcloud-volumes
     size: 20Gi
@@ -503,6 +509,18 @@ metadata:
 spec:
   name: sentry
   owner: sentry
+  ensure: present
+  cluster:
+    name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: immich
+  namespace: postgres-cluster
+spec:
+  name: immich
+  owner: immich
   ensure: present
   cluster:
     name: pg-cluster-v2
