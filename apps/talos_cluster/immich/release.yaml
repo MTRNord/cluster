@@ -1,0 +1,69 @@
+---
+# PVC for immich
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immmich-pvc
+  namespace: immich
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+    storageClassName: longhorn
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+  namespace: immich
+spec:
+  releaseName: immich
+  chartRef:
+    kind: OCIRepository
+    name: immich
+    namespace: immich
+  interval: 60m
+  values:
+    server:
+      controllers:
+        main:
+          containers:
+            main:
+              env:
+                DB_HOSTNAME:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-database
+                      key: host
+                DB_USERNAME:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-database
+                      key: username
+                DB_PASSWORD:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-database
+                      key: password
+                DB_DATABASE_NAME:
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-database
+                      key: dbname
+    immich:
+      persistence:
+        library:
+          existingClaim: immmich-pvc
+      configuration: {}
+      configurationKind: ConfigMap
+    valkey:
+      enabled: false
+      persistence:
+        data:
+          enabled: true
+          size: 1Gi
+          type: emptyDir
+          accessMode: ReadWriteOnce
+          storageClass: longhorn
