@@ -272,6 +272,12 @@ spec:
         superuser: false
         passwordSecret:
           name: immich
+      - name: convex
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: convex
   storage:
     storageClass: hcloud-volumes
     size: 20Gi
@@ -521,6 +527,18 @@ metadata:
 spec:
   name: immich
   owner: immich
+  ensure: present
+  cluster:
+    name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: convex
+  namespace: postgres-cluster
+spec:
+  name: convex
+  owner: convex
   ensure: present
   cluster:
     name: pg-cluster-v2
