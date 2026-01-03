@@ -1,0 +1,184 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convex
+  namespace: convex
+spec:
+  progressDeadlineSeconds: 120
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: convex
+  template:
+    metadata:
+      labels:
+        app: convex
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/get-convex/convex-backend:latest
+          env:
+            - name: "CONVEX_CLOUD_ORIGIN"
+              value: "https://api.convex.mtrnord.blog"
+            - name: "CONVEX_SITE_ORIGIN"
+              value: "https://convex.mtrnord.blog"
+            - name: "DOCUMENT_RETENTION_DELAY"
+              value: "172800"
+            - name: "RUST_LOG"
+              value: "info"
+            - name: "POSTGRES_URL"
+              valueFrom:
+                secretKeyRef:
+                  name: pg-secret
+                  key: postgres-url
+            - name: "DO_NOT_REQUIRE_SSL"
+              value: "1"
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          ports:
+            - containerPort: 3210
+              name: api
+              protocol: TCP
+            - containerPort: 3211
+              name: site
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: "/convex/data"
+            - mountPath: /tmp
+              name: tmp
+          livenessProbe:
+            httpGet:
+              path: /version
+              port: api
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /version
+              port: api
+              scheme: HTTP
+          startupProbe:
+            httpGet:
+              path: /version
+              port: api
+              scheme: HTTP
+        - name: dashboard
+          image: ghcr.io/get-convex/convex-dashboard:latest
+          env:
+            - name: "NEXT_PUBLIC_DEPLOYMENT_URL"
+              value: "https://convex.mtrnord.blog"
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          ports:
+            - containerPort: 6791
+              name: dashboard
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+          livenessProbe:
+            httpGet:
+              path: /
+              port: dashboard
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: dashboard
+              scheme: HTTP
+          startupProbe:
+            httpGet:
+              path: /
+              port: dashboard
+              scheme: HTTP
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: data
+          persistentVolumeClaim:
+            claimName: convex-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: convex
+spec:
+  selector:
+    app: convex
+  ports:
+    - name: dashboard
+      port: 6791
+      targetPort: 6791
+    - name: api
+      port: 3210
+      targetPort: 3210
+    - name: site
+      port: 3211
+      targetPort: 3211
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: convex-dashboard
+  namespace: convex
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - dashboard.convex.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: convex
+          port: 6791
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: convex-api
+  namespace: convex
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - api.convex.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: convex
+          port: 6791
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: convex-site
+  namespace: convex
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - convex.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: convex
+          port: 3211
+      timeouts:
+        request: 240s
+        backendRequest: 0s
