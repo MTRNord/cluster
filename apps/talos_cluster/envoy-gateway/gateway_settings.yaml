@@ -257,6 +257,42 @@ spec:
         certificateRefs:
           - kind: Secret
             name: gts.mtrnord.blog-tls
+    - name: https-mtrnord-blog-convex
+      protocol: HTTPS
+      hostname: "convex.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: convex.mtrnord.blog-tls
+    - name: https-mtrnord-blog-convex-api
+      protocol: HTTPS
+      hostname: "api.convex.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: api.convex.mtrnord.blog-tls
+    - name: https-mtrnord-blog-convex-dashboard
+      protocol: HTTPS
+      hostname: "dashboard.convex.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: dashboard.convex.mtrnord.blog-tls
     - name: https-mtrnord-blog-books
       protocol: HTTPS
       hostname: "books.mtrnord.blog"
