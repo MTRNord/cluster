@@ -43,9 +43,9 @@ spec:
               value: "1"
             - name: "DISABLE_BEACON"
               value: "1"
+            - name: "ACTIONS_USER_TIMEOUT_SECS"
+              value: "20"
             # Unused
-            # - name: "ACTIONS_USER_TIMEOUT_SECS"
-            #   value: ""
             # - name: "AWS_ACCESS_KEY_ID"
             #   value: ""
             # - name: "AWS_REGION"
@@ -115,9 +115,8 @@ spec:
           env:
             - name: "NEXT_PUBLIC_DEPLOYMENT_URL"
               value: "https://convex.mtrnord.blog"
-            # Unused
-            #- name: "NEXT_PUBLIC_LOAD_MONACO_INTERNALLY"
-            #  value: ""
+            - name: "NEXT_PUBLIC_LOAD_MONACO_INTERNALLY"
+              value: "true"
           resources:
             limits: {}
             requests:
