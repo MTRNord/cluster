@@ -162,6 +162,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: auth.midnightthoughts.space-tls
+    - name: https-midnightthoughts-clickstack
+      protocol: HTTPS
+      hostname: "clickstack.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: clickstack.midnightthoughts.space-tls
     - name: https-midnightthoughts-grafana
       protocol: HTTPS
       hostname: "grafana.midnightthoughts.space"
