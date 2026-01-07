@@ -174,6 +174,21 @@ RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
     && unzip -q -o akismet.5.6.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm akismet.5.6.zip
 
+# Install Podlove Publisher
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.3.2.zip \
+    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.3.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-podcasting-plugin-for-wordpress.4.3.2.zip
+
+# Install Podlove Web Player
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-web-player.5.9.2.zip \
+    && unzip -q -o podlove-web-player.5.9.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-web-player.5.9.2.zip
+
+# Install Podlove Subscribe button
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-subscribe-button.1.3.12.zip \
+    && unzip -q -o podlove-subscribe-button.1.3.12.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-subscribe-button.1.3.12.zip
+
 # Configure nginx: replace default site and enable wordpress config
 RUN rm -f /etc/nginx/sites-enabled/default
 COPY wordpress.conf /etc/nginx/sites-available/wordpress.conf
