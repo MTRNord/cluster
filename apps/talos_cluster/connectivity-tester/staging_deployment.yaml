@@ -72,6 +72,8 @@ spec:
               value: "http://clickstack-otel-collector.clickstack.svc.cluster.local:4318"
             - name: OTEL_EXPORTER_OTLP_HEADERS
               value: "authorization=ebd93f5f-db33-4331-aed3-f39a281e2085"
+            - name: RUST_LOG
+              value: rust_federation_tester=debug,info
           resources:
             limits: {}
             requests:
