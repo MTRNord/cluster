@@ -68,10 +68,10 @@ spec:
             # Forward the K8s metadata to the app via OTEL_RESOURCE_ATTRIBUTES
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: k8s.pod.name=$(POD_NAME),k8s.pod.uid=$(POD_UID),k8s.namespace.name=$(POD_NAMESPACE),k8s.node.name=$(NODE_NAME),k8s.deployment.name=$(DEPLOYMENT_NAME)
-            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: "http://clickstack-otel-collector.clickstack.svc.cluster.local:4318"
-            - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
-              value: "http://clickstack-otel-collector.clickstack.svc.cluster.local:4318"
+            - name: OTEL_EXPORTER_OTLP_HEADERS
+              value: "authorization=ebd93f5f-db33-4331-aed3-f39a281e2085"
           resources:
             limits: {}
             requests:
