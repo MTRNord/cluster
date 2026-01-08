@@ -207,6 +207,17 @@ spec:
       timeouts:
         request: 240s
         backendRequest: 0s
+      filters:
+        - type: CORS
+          cors:
+            allowOrigins:
+              - "https://convex.mtrnord.blog"
+              - "https://api.convex.mtrnord.blog"
+              - "https://dashboard.convex.mtrnord.blog"
+            allowMethods:
+              - "*"
+            allowHeaders:
+              - "*"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
