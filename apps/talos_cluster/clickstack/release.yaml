@@ -33,24 +33,24 @@ spec:
           appUserPassword: ENC[AES256_GCM,data:UZQQ9Yg8yDlC2Hm5z/YYj2xw3fCdbV+2Brnn/UEB0B+wMiyGH9s4GupK0Q4/uvqIGkCjRvZH4DqG+higPyaJ,iv:kipnRldYvL/NaQTDwQuus1Skt2pV8TLXIGoiLrm0iFM=,tag:u+tv9dGEWVPmrnhfOWuStA==,type:str]
           otelUserPassword: ENC[AES256_GCM,data:s0QRS+ZMfLg/eLJoqxpkiYxgNheTpj4hZwqdUynRSysSzL5dxVMwSZq/lRhJQ8FqmHP5miGETJNF11Y0kEUb,iv:VCXLiq961D/LJMl0X9/ccFisNXJbE+9RxvlqBcxCAeg=,tag:V7UxUW46qQlrVShZpKiEOw==,type:str]
           otelUserName: otelcollector
-    otel:
-      customConfig: |
-        processors:
-          batch:
-          tail_sampling:
-            decission_wait: 30s
-            num_traces: 20000
-            expected_new_traces_per_sec: 50
-            policies:
-              - name: always_on_error
-                type: error
-              - name: slow_traces
-                type: latency
-                latency_threshold: 250ms
-              - name: probabilistic_fallback
-                type: probabilistic
-                sampling_percentage: 5.0
-        # TODO: Unclear how to configure the pipelines as its hardcoded over at https://github.com/hyperdxio/hyperdx/blob/af3bbcf1a0f3d31a0a74b4f4fe3073af229a8df7/packages/api/src/opamp/controllers/opampController.ts#L4 possibly?
+    # otel:
+    #   customConfig: |
+    #     processors:
+    #       batch:
+    #       tail_sampling:
+    #         decission_wait: 30s
+    #         num_traces: 20000
+    #         expected_new_traces_per_sec: 50
+    #         policies:
+    #           - name: always_on_error
+    #             type: error
+    #           - name: slow_traces
+    #             type: latency
+    #             latency_threshold: 250ms
+    #           - name: probabilistic_fallback
+    #             type: probabilistic
+    #             sampling_percentage: 5.0
+    #     # TODO: Unclear how to configure the pipelines as its hardcoded over at https://github.com/hyperdxio/hyperdx/blob/af3bbcf1a0f3d31a0a74b4f4fe3073af229a8df7/packages/api/src/opamp/controllers/opampController.ts#L4 possibly?
 sops:
   kms: []
   gcp_kms: []
