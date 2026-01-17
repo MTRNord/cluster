@@ -12,3 +12,18 @@ spec:
         env: dns
         project: dns-a
         app: dns-collector
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMStaticScrape
+metadata:
+  name: scrape-dns-traffic
+  namespace: monitoring
+spec:
+  jobName: static
+  targetEndpoints:
+    - targets: ["10.0.64.129:9166"]
+      path: /metrics
+      labels:
+        env: dns
+        project: dns-a
+        app: dns-collector
