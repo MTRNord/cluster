@@ -1,0 +1,14 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMStaticScrape
+metadata:
+  name: scrape-dns
+  namespace: monitoring
+spec:
+  jobName: static
+  targetEndpoints:
+    - targets: ["10.0.64.129:9165"]
+      path: /metrics
+      labels:
+        env: dns
+        project: dns-a
+        app: dns-collector
