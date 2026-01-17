@@ -16,6 +16,15 @@ configMapGenerator:
         grafana_dashboard: "1"
       annotations:
         grafana_folder: Matrix
+  - name: grafana-dashboards-dns
+    namespace: monitoring
+    files:
+      - dns.json=dns.json
+    options:
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        grafana_folder: DNS
   - name: grafana-dashboards-flux
     namespace: monitoring
     files:
