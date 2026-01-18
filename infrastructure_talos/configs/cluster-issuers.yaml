@@ -8,7 +8,8 @@ spec:
     server: https://acme-v02.api.letsencrypt.org./directory
     privateKeySecretRef:
       name: letsencrypt-dns-account-key
-    profile: tlsserver
+    #profile: tlsserver
+    profile: shortlived
     solvers:
       - dns01:
           webhook:
