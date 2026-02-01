@@ -208,6 +208,26 @@ spec:
         existingClaim: "mailserver-docker-mailserver-mail-state"
       mail-log:
         enabled: false
+    persistence:
+      # Stores generated configuration files
+      # https://docker-mailserver.github.io/docker-mailserver/edge/faq/#what-about-the-docker-datadmsconfig-directory
+      mail-config:
+        volumeName: mail-config
+        mountPath: /tmp/docker-mailserver
+        subPath:
+
+      # Stores emails
+      mail-data:
+        volumeName: mail-data
+        mountPath: /var/mail
+        subPath:
+
+      # Stores state for Postfix, Dovecot, Fail2Ban, Amavis, PostGrey, ClamAV, SpamAssassin, Rspamd & Redis
+      # https://docker-mailserver.github.io/docker-mailserver/edge/faq/#what-about-the-docker-datadmsmail-state-directory
+      mail-state:
+        volumeName: mail-state
+        mountPath: /var/mail-state
+        subPath:
     rspamd:
       ingress:
         enabled: false
