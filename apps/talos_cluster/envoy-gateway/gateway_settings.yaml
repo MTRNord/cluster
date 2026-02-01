@@ -269,6 +269,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: gts.mtrnord.blog-tls
+    - name: https-mtrnord-blog-peertube
+      protocol: HTTPS
+      hostname: "peertube.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: peertube.mtrnord.blog-tls
     - name: https-mtrnord-blog-convex
       protocol: HTTPS
       hostname: "convex.mtrnord.blog"
