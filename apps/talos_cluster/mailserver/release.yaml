@@ -207,10 +207,7 @@ spec:
         storageClass: longhorn
         existingClaim: "mailserver-docker-mailserver-mail-state"
       mail-log:
-        accessModes:
-          - ReadWriteOnce
-        storageClass: longhorn
-        existingClaim: "mailserver-docker-mailserver-mail-log"
+        enabled: false
     rspamd:
       ingress:
         enabled: false

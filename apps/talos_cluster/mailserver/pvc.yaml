@@ -27,19 +27,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mailserver-docker-mailserver-mail-log
-  namespace: mailserver
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
-  storageClassName: longhorn
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: mailserver-docker-mailserver-mail-state
   namespace: mailserver
 spec:
