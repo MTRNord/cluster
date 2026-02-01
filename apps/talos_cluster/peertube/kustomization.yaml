@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: peertube
+resources:
+  - secret.yaml
+  - pvc.yaml
+  - deployment.yaml
+configMapGenerator:
+  - name: peertube-nginx
+    namespace: peertube
+    files:
+      - peertube.conf=nginx/peertube.conf
+    options:
+      labels:
+        app: peertube

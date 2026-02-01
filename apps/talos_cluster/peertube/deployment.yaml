@@ -1,0 +1,342 @@
+# Redis deployment for PeerTube
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peertube-redis
+  namespace: peertube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peertube-redis
+  template:
+    metadata:
+      labels:
+        app: peertube-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:8-alpine
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+      volumes:
+        - name: redis-data
+          emptyDir:
+            sizeLimit: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peertube-redis
+  namespace: peertube
+spec:
+  selector:
+    app: peertube-redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+---
+# PeerTube main deployment with nginx sidecar
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peertube
+  namespace: peertube
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: peertube
+  template:
+    metadata:
+      labels:
+        app: peertube
+    spec:
+      containers:
+        # Nginx sidecar for S3 caching and static content
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          env:
+            - name: S3_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_ENDPOINT
+            - name: S3_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_HOST
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/templates/default.conf.template
+              subPath: peertube.conf
+              readOnly: true
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/ping
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/ping
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+
+        # PeerTube application
+        - name: peertube
+          image: chocobozzz/peertube:production-bookworm
+          ports:
+            - containerPort: 9000
+              name: peertube
+              protocol: TCP
+            - containerPort: 1935
+              name: rtmp
+              protocol: TCP
+          env:
+            # Database configuration (using CNPG cluster)
+            - name: PEERTUBE_DB_HOSTNAME
+              value: "pg-cluster-v2-rw.postgres-cluster.svc.cluster.local"
+            - name: PEERTUBE_DB_USERNAME
+              value: "peertube"
+            - name: PEERTUBE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: POSTGRES_PASSWORD
+            - name: PEERTUBE_DB_NAME
+              value: "peertube"
+            - name: PEERTUBE_DB_SSL
+              value: "false"
+            # Redis configuration
+            - name: PEERTUBE_REDIS_HOSTNAME
+              value: "peertube-redis"
+            - name: PEERTUBE_REDIS_PORT
+              value: "6379"
+            # Webserver configuration
+            - name: PEERTUBE_WEBSERVER_HOSTNAME
+              value: "peertube.mtrnord.blog"
+            - name: PEERTUBE_WEBSERVER_PORT
+              value: "443"
+            - name: PEERTUBE_WEBSERVER_HTTPS
+              value: "true"
+            # Trust proxy (envoy gateway and nginx sidecar)
+            - name: PEERTUBE_TRUST_PROXY
+              value: '["127.0.0.1", "loopback", "10.0.0.0/8", "100.64.0.0/10"]'
+            # Secret
+            - name: PEERTUBE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: PEERTUBE_SECRET
+            # Email configuration (using existing mailserver)
+            - name: PEERTUBE_SMTP_HOSTNAME
+              value: "mail.midnightthoughts.space"
+            - name: PEERTUBE_SMTP_PORT
+              value: "465"
+            - name: PEERTUBE_SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: SMTP_USERNAME
+            - name: PEERTUBE_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: SMTP_PASSWORD
+            - name: PEERTUBE_SMTP_FROM
+              value: "noreply@peertube.mtrnord.blog"
+            - name: PEERTUBE_SMTP_TLS
+              value: "true"
+            - name: PEERTUBE_SMTP_DISABLE_STARTTLS
+              value: "true"
+            - name: PEERTUBE_ADMIN_EMAIL
+              value: "support@midnightthoughts.space"
+            # S3 Object Storage Configuration (Hetzner)
+            - name: PEERTUBE_OBJECT_STORAGE_ENABLED
+              value: "true"
+            - name: PEERTUBE_OBJECT_STORAGE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_ENDPOINT
+            - name: PEERTUBE_OBJECT_STORAGE_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_REGION
+            - name: PEERTUBE_OBJECT_STORAGE_CREDENTIALS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_ACCESS_KEY_ID
+            - name: PEERTUBE_OBJECT_STORAGE_CREDENTIALS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_SECRET_ACCESS_KEY
+            # S3 Bucket Configuration - Web Videos
+            - name: PEERTUBE_OBJECT_STORAGE_WEB_VIDEOS_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_BUCKET_NAME
+            - name: PEERTUBE_OBJECT_STORAGE_WEB_VIDEOS_PREFIX
+              value: "web-videos/"
+            - name: PEERTUBE_OBJECT_STORAGE_WEB_VIDEOS_BASE_URL
+              value: "https://peertube.mtrnord.blog/static/web-videos"
+            # S3 Bucket Configuration - Streaming Playlists (HLS)
+            - name: PEERTUBE_OBJECT_STORAGE_STREAMING_PLAYLISTS_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_BUCKET_NAME
+            - name: PEERTUBE_OBJECT_STORAGE_STREAMING_PLAYLISTS_PREFIX
+              value: "streaming-playlists/"
+            - name: PEERTUBE_OBJECT_STORAGE_STREAMING_PLAYLISTS_BASE_URL
+              value: "https://peertube.mtrnord.blog/static/streaming-playlists"
+            # S3 Bucket Configuration - User Exports
+            - name: PEERTUBE_OBJECT_STORAGE_USER_EXPORTS_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_BUCKET_NAME
+            - name: PEERTUBE_OBJECT_STORAGE_USER_EXPORTS_PREFIX
+              value: "user-exports/"
+            - name: PEERTUBE_OBJECT_STORAGE_USER_EXPORTS_BASE_URL
+              value: "https://peertube.mtrnord.blog/static/user-exports"
+            # S3 Bucket Configuration - Original Video Files
+            - name: PEERTUBE_OBJECT_STORAGE_ORIGINAL_VIDEO_FILES_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_BUCKET_NAME
+            - name: PEERTUBE_OBJECT_STORAGE_ORIGINAL_VIDEO_FILES_PREFIX
+              value: "original-video-files/"
+            - name: PEERTUBE_OBJECT_STORAGE_ORIGINAL_VIDEO_FILES_BASE_URL
+              value: "https://peertube.mtrnord.blog/static/original-video-files"
+            # S3 Bucket Configuration - Captions
+            - name: PEERTUBE_OBJECT_STORAGE_CAPTIONS_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: peertube-secrets
+                  key: S3_BUCKET_NAME
+            - name: PEERTUBE_OBJECT_STORAGE_CAPTIONS_PREFIX
+              value: "captions/"
+            - name: PEERTUBE_OBJECT_STORAGE_CAPTIONS_BASE_URL
+              value: "https://peertube.mtrnord.blog/static/captions"
+            # S3 ACL settings
+            - name: PEERTUBE_OBJECT_STORAGE_UPLOAD_ACL_PUBLIC
+              value: "public-read"
+            - name: PEERTUBE_OBJECT_STORAGE_UPLOAD_ACL_PRIVATE
+              value: "private"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+          startupProbe:
+            httpGet:
+              path: /api/v1/ping
+              port: peertube
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: peertube-data
+        - name: config
+          persistentVolumeClaim:
+            claimName: peertube-config
+        - name: nginx-config
+          configMap:
+            name: peertube-nginx
+        - name: nginx-cache
+          emptyDir:
+            sizeLimit: 15Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peertube
+  namespace: peertube
+spec:
+  selector:
+    app: peertube
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: rtmp
+      port: 1935
+      targetPort: 1935
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: peertube
+  namespace: peertube
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - peertube.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: peertube
+          port: 8080
+      timeouts:
+        request: 600s
+        backendRequest: 0s
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: peertube-policy
+  namespace: peertube
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: peertube
+  compression:
+    - type: Gzip
+    - type: Brotli
