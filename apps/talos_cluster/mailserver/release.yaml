@@ -180,6 +180,8 @@ spec:
         - name: mailman-opt
           persistentVolumeClaim:
             claimName: mailman-opt-mailman-0
+        - name: mail-log
+          emptyDir: {}
     service:
       #annotations:
       #    external-dns.alpha.kubernetes.io/hostname: mail.midnightthoughts.space
@@ -228,6 +230,13 @@ spec:
         volumeName: mail-state
         mountPath: /var/mail-state
         subPath:
+
+      # Store mail logs
+      mail-log:
+        volumeName: mail-log
+        mountPath: /var/log/mail
+        subPath:
+
     rspamd:
       ingress:
         enabled: false
