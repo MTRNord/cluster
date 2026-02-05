@@ -175,9 +175,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
     && rm akismet.5.6.zip
 
 # Install Podlove Publisher
-RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.3.2.zip \
-    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.3.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm podlove-podcasting-plugin-for-wordpress.4.3.2.zip
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.3.3.zip \
+    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.3.3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-podcasting-plugin-for-wordpress.4.3.3.zip
 
 # Install Podlove Web Player
 RUN wget -q https://downloads.wordpress.org/plugin/podlove-web-player.5.9.2.zip \
