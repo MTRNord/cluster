@@ -94,9 +94,44 @@ spec:
   hostnames:
     - persephone.midnightthoughts.space
   rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /.well-known/matrix/server
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: gateway.envoyproxy.io
+            kind: HTTPRouteFilter
+            name: server-wellknown
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: persephone-matrix
+  namespace: persephone
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - matrix.persephone.midnightthoughts.space
+  rules:
     - backendRefs:
         - name: persephone
           port: 8008
       timeouts:
         request: 240s
         backendRequest: 0s
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRouteFilter
+metadata:
+  name: server-wellknown
+spec:
+  directResponse:
+    contentType: application/json
+    statusCode: 200
+    body:
+      type: Inline
+      inline: '{"m.server": "matrix.persephone.midnightthoughts.space"}'

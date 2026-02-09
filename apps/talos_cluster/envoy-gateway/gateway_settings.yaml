@@ -258,6 +258,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: persephone.midnightthoughts.space-tls
+    - name: https-midnightthoughts-persephone-matrix
+      protocol: HTTPS
+      hostname: "matrix.persephone.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: matrix.persephone.midnightthoughts.space-tls
     - name: ldap
       protocol: TCP
       port: 389
