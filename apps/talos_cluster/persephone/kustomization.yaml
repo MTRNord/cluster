@@ -3,8 +3,5 @@ kind: Kustomization
 namespace: persephone
 resources:
   - pvc.yaml
+  - config.yaml
   - deployment.yaml
-configMapGenerator:
-  - name: persephone-config
-    files:
-      - config.yaml
