@@ -71,9 +71,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm redis-cache.2.7.0.zip
 # Install ActivityPub plugin
-RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.8.5.zip \
-    && unzip -q activitypub.7.8.5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm activitypub.7.8.5.zip
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.9.0.zip \
+    && unzip -q activitypub.7.9.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.7.9.0.zip
 # Install Embed Optimizer
 RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta3.zip \
     && unzip -q embed-optimizer.1.0.0-beta3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -165,9 +165,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/gallery-block-lightbox.zip \
 #    && rm complianz-gdpr.7.4.3.zip
 
 # Install Google XML Sitemaps
-RUN wget -q https://downloads.wordpress.org/plugin/google-sitemap-generator.4.1.22.zip \
-    && unzip -q google-sitemap-generator.4.1.22.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm google-sitemap-generator.4.1.22.zip
+RUN wget -q https://downloads.wordpress.org/plugin/google-sitemap-generator.4.1.23.zip \
+    && unzip -q google-sitemap-generator.4.1.23.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm google-sitemap-generator.4.1.23.zip
 
 # Install Akismet
 RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
