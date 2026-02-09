@@ -22,6 +22,7 @@ spec:
           image: ghcr.io/mtrnord/persephone:main
           imagePullPolicy: Always
           env:
+            # Base path for the configuration file
             - name: PERSEPHONE_CONFIG
               value: /data
           resources:
@@ -34,11 +35,11 @@ spec:
               name: web
               protocol: TCP
           volumeMounts:
-            - name: config
-              mountPath: /data
-              subPath: config.yaml
             - name: data
-              mountPath: "/data"
+              mountPath: /data
+            - name: config
+              mountPath: /data/config.yaml
+              subPath: config.yaml
             - mountPath: /tmp
               name: tmp
           livenessProbe:
