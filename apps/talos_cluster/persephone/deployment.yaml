@@ -104,6 +104,16 @@ spec:
             group: gateway.envoyproxy.io
             kind: HTTPRouteFilter
             name: server-wellknown
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /.well-known/matrix/client
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: gateway.envoyproxy.io
+            kind: HTTPRouteFilter
+            name: client-wellknown
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -135,3 +145,16 @@ spec:
     body:
       type: Inline
       inline: '{"m.server": "matrix.persephone.midnightthoughts.space:443"}'
+
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRouteFilter
+metadata:
+  name: client-wellknown
+spec:
+  directResponse:
+    contentType: application/json
+    statusCode: 200
+    body:
+      type: Inline
+      inline: '{"m.homeserver": {"base_url": "https://matrix.persephone.midnightthoughts.space"}}'
