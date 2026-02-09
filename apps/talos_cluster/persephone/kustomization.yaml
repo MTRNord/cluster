@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: persephone
+resources:
+  - pvc.yaml
+  - deployment.yaml
+configMapGenerator:
+  - name: persephone-config
+    files:
+      - config.yaml

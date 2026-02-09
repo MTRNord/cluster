@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: persephone
+  namespace: persephone
+spec:
+  progressDeadlineSeconds: 120
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: persephone
+  template:
+    metadata:
+      labels:
+        app: persephone
+    spec:
+      containers:
+        - name: persephone
+          image: ghcr.io/mtrnord/persephone:main
+          imagePullPolicy: Always
+          env:
+            - name: PERSEPHONE_CONFIG
+              value: /data
+          resources:
+            limits: {}
+            requests:
+              memory: "344Mi"
+              cpu: "252m"
+          ports:
+            - containerPort: 8008
+              name: web
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /data
+              subPath: config.yaml
+            - name: data
+              mountPath: "/data"
+            - mountPath: /tmp
+              name: tmp
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web
+              scheme: HTTP
+          startupProbe:
+            httpGet:
+              path: /
+              port: web
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2048Mi
+        - name: data
+          persistentVolumeClaim:
+            claimName: persephone-data
+        - name: config
+          configMap:
+            name: persephone-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: persephone
+spec:
+  selector:
+    app: persephone
+  ports:
+    - name: web
+      port: 8008
+      targetPort: 8008
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: persephone
+  namespace: persephone
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - persephone.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: persephone
+          port: 8008
+      timeouts:
+        request: 240s
+        backendRequest: 0s

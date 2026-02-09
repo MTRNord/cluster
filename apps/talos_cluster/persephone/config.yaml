@@ -1,0 +1,32 @@
+database:
+    host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+    port: 5432
+    database_name: persephone
+    user: persephone
+    password: ENC[AES256_GCM,data:YJVt0q0FjyJzVij1CnTPoC3k6CecWRroL4l9YqBGzVQmNRpBVXnv0U6LzENAddwH+lX4tjk//d54TssGsiAu,iv:3ziRBrooxGIF9fsLgU3PeRiYIPXUvQTi0CRDqy4nnX8=,tag:0fSZeGHIyJZpitVTTVrv+Q==,type:str]
+matrix:
+    server_name: persephone.midnightthoughts.space
+    server_key_location: /data/server_key.key
+webserver:
+    ssl: true
+log_level: debug
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyYS9oYllEVHY1SDBWZkFz
+            TVBNcDk3SHNITWhTbDEvUkhuUlpHeDNPNjFzCmZxWGZkUnFoWUhkUEFyMktsbFlm
+            MUJlNjR6aThqL2Nla2N3UkU3Y1FjVjgKLS0tIFhaWFNqWkNpQ2ZzVVZKYmt3czVa
+            c1VPS0lrckpsbDNJdml0bE8zK1R1djgKa8BtErRDofdS4Q2SmZSVNdnM9tbMXN9a
+            t6Vg42BPDzyuyeityiXWZk5wPLQErm4cclKMZJuUlYZp9Hr1esSyVA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-02-09T16:11:25Z"
+    mac: ENC[AES256_GCM,data:zy/QFjrh4SAleKbWiCa5k884M8+SIPsoXo3AV8wUMhY7wqrqMXy32CjbSPWhrjzSsrPM4TSoeD9UMwo+b/zcLS8s3rTR2seE7YAMC1oy6tTrj0fnvV7Jhp3al9yZmuRfCaG6GUhJOgvUxgYtfoYgkMFcQMmMJX0cj1tMWho2cg8=,iv:GRCqeXzPqGTj15bAcGbavTCss8TiqFXZNIx73ExgHv0=,tag:jVyhsSciW9/4KKxkVeeXlA==,type:str]
+    pgp: []
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    version: 3.9.1
