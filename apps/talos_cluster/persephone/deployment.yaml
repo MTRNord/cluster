@@ -44,17 +44,17 @@ spec:
               name: tmp
           livenessProbe:
             httpGet:
-              path: /
+              path: /_matrix/federation/v1/version
               port: web
               scheme: HTTP
           readinessProbe:
             httpGet:
-              path: /
+              path: /_matrix/federation/v1/version
               port: web
               scheme: HTTP
           startupProbe:
             httpGet:
-              path: /
+              path: /_matrix/federation/v1/version
               port: web
       volumes:
         - name: tmp
