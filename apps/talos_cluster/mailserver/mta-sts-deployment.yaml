@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginxinc/nginx-unprivileged:1.25-alpine
+          image: nginxinc/nginx-unprivileged:1.29-alpine
           ports:
             - containerPort: 8080
               name: http
@@ -62,6 +62,8 @@ spec:
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
       volumes:
         - name: mta-sts-config
           configMap:
@@ -75,6 +77,7 @@ spec:
           emptyDir: {}
         - name: var-run
           emptyDir: {}
+      automountServiceAccountToken: false
       securityContext:
         fsGroup: 101
 ---

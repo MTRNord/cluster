@@ -65,6 +65,8 @@ spec:
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
       volumes:
         - name: wkd-config
           configMap:
@@ -78,6 +80,7 @@ spec:
           emptyDir: {}
         - name: var-run
           emptyDir: {}
+      automountServiceAccountToken: false
       securityContext:
         fsGroup: 101
 ---
