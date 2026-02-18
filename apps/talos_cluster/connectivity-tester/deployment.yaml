@@ -39,12 +39,15 @@ spec:
                 command:
                   - sleep
                   - "10"
+          # NOTE: nginx:1.27-alpine runs master as root; remove runAsNonRoot/runAsUser
+          # when switching to deno image (USER deno = UID 1000), add:
+          #   runAsNonRoot: true
+          #   runAsUser: 1000
+          #   runAsGroup: 1000
+          # and change containerPort to 8000.
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
             capabilities:
               drop:
                 - ALL
@@ -68,6 +71,11 @@ spec:
               readOnly: true
             - mountPath: /tmp
               name: tmp
+            # nginx needs these writable; deno only needs /tmp
+            - mountPath: /var/cache/nginx
+              name: var-cache-nginx
+            - mountPath: /var/run
+              name: var-run
           livenessProbe:
             httpGet:
               path: /
@@ -89,6 +97,10 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 2048Mi
+        - name: var-cache-nginx
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
