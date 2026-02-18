@@ -85,8 +85,6 @@ spec:
         app: peertube
     spec:
       automountServiceAccountToken: false
-      securityContext:
-        fsGroup: 999
       containers:
         # Nginx sidecar for S3 caching and static content
         # NOTE: nginx:1.27-alpine master runs as root; same pattern as connectivity-tester UI.
@@ -114,25 +112,6 @@ spec:
               mountPath: /etc/nginx/templates/default.conf.template
               subPath: peertube.conf
               readOnly: true
-            - name: nginx-cache
-              mountPath: /var/cache/nginx
-            - name: nginx-tmp
-              mountPath: /tmp
-            - name: nginx-run
-              mountPath: /var/run
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-              add:
-                - CHOWN
-                - FOWNER
-                - SETUID
-                - SETGID
-            seccompProfile:
-              type: RuntimeDefault
           resources:
             requests:
               memory: "128Mi"
@@ -343,13 +322,6 @@ spec:
         - name: nginx-config
           configMap:
             name: peertube-nginx
-        - name: nginx-cache
-          emptyDir:
-            sizeLimit: 15Gi
-        - name: nginx-tmp
-          emptyDir: {}
-        - name: nginx-run
-          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
