@@ -17,6 +17,7 @@ spec:
       labels:
         app: connectivity-tester
     spec:
+      automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -38,8 +39,21 @@ spec:
                 command:
                   - sleep
                   - "10"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
-            limits: {}
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
             requests:
               memory: "100Mi"
               cpu: "100m"
@@ -95,6 +109,7 @@ spec:
       labels:
         app: connectivity-tester-api
     spec:
+      automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -111,8 +126,21 @@ spec:
         - name: federation-tester-api
           image: ghcr.io/mtrnord/rust-federation-tester:v0.2.6
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
-            limits: {}
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
             requests:
               memory: "344Mi"
               cpu: "252m"
@@ -121,10 +149,6 @@ spec:
               mountPath: /app/config.yaml
               subPath: config.yaml
               readOnly: true
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            readOnlyRootFilesystem: true
           ports:
             - containerPort: 8080
               name: api

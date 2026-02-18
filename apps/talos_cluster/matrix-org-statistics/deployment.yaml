@@ -29,6 +29,7 @@ spec:
       labels:
         app: morg-statistics
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: morg-statistics
           image: ghcr.io/mtrnord/matrix-org-statistics:latest
@@ -44,9 +45,16 @@ spec:
               memory: "500Mi"
               cpu: "250m"
           securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
             runAsUser: 999
             runAsGroup: 999
-            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8080
               name: http

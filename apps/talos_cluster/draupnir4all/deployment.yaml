@@ -36,6 +36,7 @@ spec:
         app.kubernetes.io/instance: main-process
         app.kubernetes.io/name: draupnir4all
     spec:
+      automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -69,15 +70,24 @@ spec:
               value: "--trace-warnings"
           command: ["./draupnir-entrypoint.sh"]
           args: ["appservice", "-c", "/data/config/config.appservice.yaml", "-f", "/data/config/draupnir-registration.yaml", "--draupnir-config", "/data/config/draupnir-config.yaml", "-p", "9000"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
-            limits: {}
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
             requests:
               memory: "344Mi"
               cpu: "252m"
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            readOnlyRootFilesystem: true
           ports:
             - containerPort: 9001
               name: api

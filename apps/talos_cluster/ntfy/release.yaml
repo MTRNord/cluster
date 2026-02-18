@@ -11,6 +11,7 @@ spec:
       labels:
         app: ntfy
     spec:
+      automountServiceAccountToken: false
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -21,8 +22,16 @@ spec:
           securityContext:
             runAsUser: 0
             runAsGroup: 0
-            allowPrivilegeEscalation: true
-          command: ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - FOWNER
+                - DAC_OVERRIDE
+          command:
+            ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
           volumeMounts:
             - name: ntfy-cache
               mountPath: /opt/docker/ntfy/cache
@@ -34,10 +43,16 @@ spec:
         - name: ntfy
           securityContext:
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
             readOnlyRootFilesystem: true
-          image: binwiederhier/ntfy
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          image: binwiederhier/ntfy:v2.17.0
           args: ["serve", "--config", "/opt/docker/ntfy/config/ntfy.yml"]
           env:
             - name: TZ
@@ -52,6 +67,14 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+          livenessProbe:
+            httpGet:
+              path: /v1/health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/health
+              port: 8080
           volumeMounts:
             - name: ntfy-config
               mountPath: /opt/docker/ntfy/config
@@ -61,15 +84,6 @@ spec:
               mountPath: /etc/ntfy
             - name: ntfy-cache-2
               mountPath: /var/cache/ntfy
-      probes:
-        livenessProbe:
-          httpGet:
-            path: /v1/health
-            port: 8080
-        readinessProbe:
-          httpGet:
-            path: /v1/health
-            port: 8080
       volumes:
         - name: ntfy-config
           configMap:
