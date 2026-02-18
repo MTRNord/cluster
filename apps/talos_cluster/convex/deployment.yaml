@@ -84,9 +84,8 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
+            # runAsNonRoot/runAsUser omitted: image entrypoint script perms are tied
+            # to the image's own user; override breaks exec. Image must set non-root USER.
             capabilities:
               drop:
                 - ALL

@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false  # app writes to ./uploads/tmp/ relative to workdir
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000

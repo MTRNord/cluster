@@ -26,12 +26,20 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 33
-            runAsGroup: 33
+            # NOTE: FreshRSS entrypoint starts as root to write /etc/localtime, /etc/timezone,
+            # /etc/php config, set up cron, then seteuid to www-data (uid 33).
+            # Cannot set runAsNonRoot/runAsUser here — entrypoint breaks without root init.
+            # Capabilities needed for entrypoint setup: CHOWN, DAC_OVERRIDE (write /etc/ files),
+            # SETUID/SETGID (seteuid to www-data), FOWNER (chmod operations).
             capabilities:
               drop:
                 - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
             seccompProfile:
               type: RuntimeDefault
           env:

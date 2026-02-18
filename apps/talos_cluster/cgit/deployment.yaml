@@ -94,6 +94,8 @@ spec:
             capabilities:
               drop:
                 - ALL
+              add:
+                - FOWNER  # entrypoint does chmod /tmp (root-owned dir)
             seccompProfile:
               type: RuntimeDefault
           resources:
