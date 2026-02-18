@@ -44,10 +44,31 @@ spec:
       labels:
         app: miro-neoboard-exporter
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: miro-neoboard-exporter
           image: ghcr.io/mtrnord/neoboard-exporter:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
           ports:
             - containerPort: 3000
           envFrom:
@@ -57,6 +78,8 @@ spec:
             - name: env-file
               mountPath: /app/.env
               subPath: .env
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /
@@ -76,6 +99,8 @@ spec:
             successThreshold: 1
             failureThreshold: 3
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: env-file
           secret:
             secretName: ENC[AES256_GCM,data:oin2nzHOttpqP0vrx7wBz2yxwdfF9z8cZTVky9I=,iv:IEfzn9Ht9ItEd69xSn+DDZri08VakSlH685lgrfWgSo=,tag:dpL4cc/qOiK7K8z4R8MplQ==,type:str]

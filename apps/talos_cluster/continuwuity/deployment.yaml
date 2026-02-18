@@ -14,11 +14,27 @@ spec:
       labels:
         app: continuwuity
     spec:
+      automountServiceAccountToken: false
       enableServiceLinks: false
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: continuwuity
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
-            limits: {}
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
             requests:
               memory: "100Mi"
               cpu: "28m"
@@ -34,6 +50,8 @@ spec:
               readOnly: true
             - name: continuwuity-data
               mountPath: /var/lib/continuwuity
+            - name: tmp
+              mountPath: /tmp
           env:
             - name: CONTINUWUITY_CONFIG
               value: /etc/conduwuit/conduwuit.toml
@@ -57,6 +75,8 @@ spec:
         - name: continuwuity-data
           persistentVolumeClaim:
             claimName: continuwuity
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

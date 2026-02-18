@@ -17,16 +17,32 @@ spec:
       labels:
         app: persephone
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: persephone
           image: ghcr.io/mtrnord/persephone:main
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             # Base path for the configuration file
             - name: PERSEPHONE_CONFIG
               value: /data/config.yaml
           resources:
-            limits: {}
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
             requests:
               memory: "344Mi"
               cpu: "252m"

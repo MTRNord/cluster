@@ -17,9 +17,23 @@ spec:
       labels:
         app: freshrss
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 33
       containers:
         - name: freshrss
           image: freshrss/freshrss:1.28.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 33
+            runAsGroup: 33
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: TZ
               value: "Europe/Berlin"
@@ -30,7 +44,9 @@ spec:
             - name: LISTEN
               value: "0.0.0.0:8080"
           resources:
-            limits: {}
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
             requests:
               memory: "344Mi"
               cpu: "252m"
@@ -43,6 +59,10 @@ spec:
               mountPath: "/var/www/FreshRSS/data"
             - mountPath: /tmp
               name: tmp
+            - mountPath: /var/run
+              name: var-run
+            - mountPath: /var/log
+              name: var-log
           livenessProbe:
             httpGet:
               path: /
@@ -61,6 +81,10 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 2048Mi
+        - name: var-run
+          emptyDir: {}
+        - name: var-log
+          emptyDir: {}
         - name: data
           persistentVolumeClaim:
             claimName: freshrss-data

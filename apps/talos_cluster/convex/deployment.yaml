@@ -17,6 +17,9 @@ spec:
       labels:
         app: convex
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: backend
           image: ghcr.io/mtrnord/git-convex:latest
@@ -78,8 +81,21 @@ spec:
             #   value: ""
             # - name: "S3_STORAGE_SNAPSHOT_IMPORTS_BUCKET"
             #   value: ""
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
-            limits: {}
+            limits:
+              cpu: "2000m"
+              memory: "1Gi"
             requests:
               memory: "344Mi"
               cpu: "252m"
@@ -112,13 +128,26 @@ spec:
               scheme: HTTP
         - name: dashboard
           image: ghcr.io/get-convex/convex-dashboard:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: "NEXT_PUBLIC_DEPLOYMENT_URL"
               value: "https://api.convex.mtrnord.blog"
             - name: "NEXT_PUBLIC_LOAD_MONACO_INTERNALLY"
               value: "true"
           resources:
-            limits: {}
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
             requests:
               memory: "344Mi"
               cpu: "252m"

@@ -26,11 +26,23 @@ spec:
       labels:
         app: wordpress
     spec:
+      automountServiceAccountToken: false
       securityContext:
         fsGroup: 33
       containers:
         - name: wordpress
           image: ghcr.io/mtrnord/blog:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 33
+            runAsGroup: 33
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: DB_HOST
               value: mysql-service.blog.svc.cluster.local

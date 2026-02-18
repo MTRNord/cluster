@@ -14,9 +14,23 @@ spec:
       labels:
         app: mysql
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 999
       containers:
         - name: mysql
           image: mariadb:12.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:

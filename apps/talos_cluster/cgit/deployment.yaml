@@ -33,6 +33,9 @@ spec:
         app: cgit
         app.kubernetes.io/name: cgit
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: anubis
           image: ghcr.io/techarohq/anubis:latest
@@ -73,6 +76,7 @@ spec:
             runAsGroup: 1000
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -81,8 +85,21 @@ spec:
         - name: cgit
           image: ghcr.io/mtrnord/cgit-docker:main
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
-            limits: {}
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
             requests:
               memory: "344Mi"
               cpu: "252m"
