@@ -11,10 +11,10 @@ spec:
     metadata:
       labels:
         app: draupnir-synapse-keydb
+    spec:
       automountServiceAccountToken: false
       securityContext:
         fsGroup: 999
-    spec:
       containers:
         - name: draupnir-synapse-keydb
           image: eqalpha/keydb:latest

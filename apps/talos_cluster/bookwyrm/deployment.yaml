@@ -44,9 +44,24 @@ spec:
         - name: nginx-config
           configMap:
             name: nginx
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: nginx-var-cache
+          emptyDir: {}
+        - name: nginx-var-run
+          emptyDir: {}
       initContainers:
         - name: bookwyrm-update
           image: ghcr.io/mtrnord/bookwyrm:v0.8.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - FOWNER
+                - DAC_OVERRIDE
           imagePullPolicy: Always
           command: ["bash"]
           args:
@@ -172,8 +187,31 @@ spec:
             - name: DATA_UPLOAD_MAX_MEMORY_MiB
               value: "100"
       containers:
+        # NOTE: nginx:latest master runs as root for chown; same pattern as connectivity-tester.
+        # Switch to nginxinc/nginx-unprivileged when updating this image and replace securityContext
+        # with full non-root settings (runAsUser: 101, runAsNonRoot: true, drop ALL caps).
         - name: nginx
           image: nginx:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - FOWNER
+                - SETUID
+                - SETGID
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
           volumeMounts:
             - name: bookwyrm-data
               mountPath: /app/static
@@ -203,6 +241,12 @@ spec:
               mountPath: /etc/nginx/conf.d/server_name
               subPath: server_name
               readOnly: true
+            - name: nginx-tmp
+              mountPath: /tmp
+            - name: nginx-var-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-var-run
+              mountPath: /var/run
           env:
             - name: POD_IP
               valueFrom:
@@ -322,7 +366,21 @@ spec:
           command: ["gunicorn"]
           args:
             - "bookwyrm.wsgi:application"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
             requests:
               cpu: 200m
               memory: 500Mi
@@ -464,7 +522,21 @@ spec:
             - "info"
             - "-Q"
             - "high_priority,medium_priority,low_priority,streams,images,suggested_users,email,connectors,lists,inbox,imports,import_triggered,broadcast,misc"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
             requests:
               cpu: 200m
               memory: 200Mi
@@ -596,7 +668,21 @@ spec:
             - "INFO"
             - "--scheduler"
             - "django_celery_beat.schedulers:DatabaseScheduler"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
+            limits:
+              cpu: "200m"
+              memory: "500Mi"
             requests:
               cpu: 200m
               memory: 200Mi
@@ -725,7 +811,21 @@ spec:
             - "celerywyrm"
             - "flower"
             - "--url_prefix=flower"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
+            limits:
+              cpu: "200m"
+              memory: "500Mi"
             requests:
               cpu: 200m
               memory: 200Mi

@@ -11,10 +11,10 @@ spec:
     metadata:
       labels:
         app: bookwyrm-keydb
+    spec:
       automountServiceAccountToken: false
       securityContext:
         fsGroup: 999
-    spec:
       containers:
         - name: bookwyrm-keydb
           image: eqalpha/keydb:latest

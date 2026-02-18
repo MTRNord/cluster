@@ -126,6 +126,8 @@ spec:
               #- name: wordpress-persistent-storage
               #  mountPath: /var/www/html/wordpress/wp-content/themes
               #  subPath: themes
+            - name: var-run
+              mountPath: /var/run
           readinessProbe:
             httpGet:
               path: /wp-login.php
@@ -150,6 +152,8 @@ spec:
         - name: wordpress-persistent-storage
           persistentVolumeClaim:
             claimName: wordpress-pvc
+        - name: var-run
+          emptyDir: {}
 ---
 kind: Service
 apiVersion: v1
