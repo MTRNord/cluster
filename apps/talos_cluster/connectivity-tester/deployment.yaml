@@ -68,11 +68,6 @@ spec:
               readOnly: true
             - mountPath: /tmp
               name: tmp
-            # nginx needs these writable; deno only needs /tmp
-            - mountPath: /var/cache/nginx
-              name: var-cache-nginx
-            - mountPath: /var/run
-              name: var-run
           livenessProbe:
             httpGet:
               path: /
@@ -94,10 +89,6 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 2048Mi
-        - name: var-cache-nginx
-          emptyDir: {}
-        - name: var-run
-          emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
