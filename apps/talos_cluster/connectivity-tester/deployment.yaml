@@ -39,31 +39,14 @@ spec:
                 command:
                   - sleep
                   - "10"
-          # NOTE: nginx:1.27-alpine master runs as root and chowns temp dirs to uid 101;
-          # capabilities drop ALL prevents that chown. Keeping CHOWN + FOWNER for now.
-          # When switching to deno image (USER deno = UID 1000), replace this entire
-          # securityContext with:
-          #   allowPrivilegeEscalation: false
-          #   readOnlyRootFilesystem: true
-          #   runAsNonRoot: true
-          #   runAsUser: 1000
-          #   runAsGroup: 1000
-          #   capabilities:
-          #     drop: [ALL]
-          #   seccompProfile:
-          #     type: RuntimeDefault
-          # and change containerPort from 3000 to 8000.
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsGroup: 1000
             capabilities:
               drop:
                 - ALL
-              add:
-                - CHOWN
-                - FOWNER
-                - SETUID
-                - SETGID
             seccompProfile:
               type: RuntimeDefault
           resources:
@@ -74,7 +57,7 @@ spec:
               memory: "100Mi"
               cpu: "100m"
           ports:
-            - containerPort: 3000
+            - containerPort: 8000
               name: web
               protocol: TCP
           volumeMounts:
@@ -268,9 +251,9 @@ spec:
   #    name: connectivity-tester
   service:
     # service port number
-    port: 3000
+    port: 8000
     # container port number or name (optional)
-    targetPort: 3000
+    targetPort: 8000
     # Gateway API HTTPRoute host names
     hosts:
       - connectivity-tester.mtrnord.blog
@@ -322,7 +305,7 @@ spec:
         timeout: 15s
         metadata:
           type: bash
-          cmd: "curl -s http://connectivity-tester-canary.matrix:3000"
+          cmd: "curl -s http://connectivity-tester-canary.matrix:8000"
       - name: load-test
         url: http://flagger-loadtester.flagger-system/
         timeout: 10m
