@@ -87,11 +87,19 @@ spec:
       automountServiceAccountToken: false
       containers:
         # Nginx sidecar for S3 caching and static content
-        # NOTE: nginx:1.27-alpine master runs as root; same pattern as connectivity-tester UI.
-        # When/if switched to nginx-unprivileged, remove the added capabilities and add
-        # runAsNonRoot: true, runAsUser: 101, runAsGroup: 101.
         - name: nginx
-          image: nginx:1.27-alpine
+          image: nginxinc/nginx-unprivileged:1.27-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false  # envsubst template processing writes to /etc/nginx/conf.d/
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8080
               name: http
@@ -112,6 +120,8 @@ spec:
               mountPath: /etc/nginx/templates/default.conf.template
               subPath: peertube.conf
               readOnly: true
+            - name: nginx-tmp
+              mountPath: /tmp
           resources:
             requests:
               memory: "128Mi"
@@ -322,6 +332,8 @@ spec:
         - name: nginx-config
           configMap:
             name: peertube-nginx
+        - name: nginx-tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

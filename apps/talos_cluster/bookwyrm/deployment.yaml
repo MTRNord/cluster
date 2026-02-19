@@ -187,22 +187,17 @@ spec:
             - name: DATA_UPLOAD_MAX_MEMORY_MiB
               value: "100"
       containers:
-        # NOTE: nginx:latest master runs as root for chown; same pattern as connectivity-tester.
-        # Switch to nginxinc/nginx-unprivileged when updating this image and replace securityContext
-        # with full non-root settings (runAsUser: 101, runAsNonRoot: true, drop ALL caps).
         - name: nginx
-          image: nginx:latest
+          image: nginxinc/nginx-unprivileged:1.27-alpine
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
             capabilities:
               drop:
                 - ALL
-              add:
-                - CHOWN
-                - FOWNER
-                - SETUID
-                - SETGID
             seccompProfile:
               type: RuntimeDefault
           resources:
@@ -380,7 +375,7 @@ spec:
           resources:
             limits:
               cpu: "500m"
-              memory: "2Gi"
+              memory: "3Gi"
             requests:
               cpu: 200m
               memory: 500Mi
@@ -536,7 +531,7 @@ spec:
           resources:
             limits:
               cpu: "500m"
-              memory: "1024Mi"
+              memory: "2Gi"
             requests:
               cpu: 200m
               memory: 200Mi
