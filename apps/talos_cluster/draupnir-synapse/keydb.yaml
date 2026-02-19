@@ -41,6 +41,9 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
+          volumeMounts:
+            - name: data
+              mountPath: /data
           livenessProbe:
             exec:
               command:
@@ -57,6 +60,9 @@ spec:
                 - keydb-cli ping
             initialDelaySeconds: 10
             timeoutSeconds: 5
+      volumes:
+        - name: data
+          emptyDir: {}
       tolerations:
         - key: arch
           operator: Equal
