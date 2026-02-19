@@ -122,6 +122,10 @@ spec:
               readOnly: true
             - name: nginx-tmp
               mountPath: /tmp
+            - name: nginx-log
+              mountPath: /var/log/nginx
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
           resources:
             requests:
               memory: "128Mi"
@@ -334,6 +338,11 @@ spec:
             name: peertube-nginx
         - name: nginx-tmp
           emptyDir: {}
+        - name: nginx-log
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir:
+            sizeLimit: 11Gi
 ---
 apiVersion: v1
 kind: Service
