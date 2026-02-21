@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: forgejo-runner
+  name: forgejo-runner
+  namespace: codeberg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forgejo-runner
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: forgejo-runner
+    spec:
+      securityContext:
+        fsGroup: 1000
+      restartPolicy: Always
+      initContainers:
+        - name: init
+          image: { { .Values.image } }
+          command:
+            [
+              "sh",
+              "-c",
+              "if ! [ -f /data/.runner ]; then forgejo-runner register --no-interactive --token ${RUNNER_REGISTRATION_TOKEN} --labels ${LABELS} --name ${RUNNER_NAME} --instance ${INSTANCE_URL}; fi",
+            ]
+          env:
+            - name: INSTANCE_URL
+              value: { { .Values.forgejoInstanceUrl } }
+            - name: RUNNER_NAME
+              value: forgejo-runner
+            - name: LABELS
+              value: ubuntu-latest,ubuntu-22.04,docker
+            - name: RUNNER_REGISTRATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: codeberg-runner
+                  key: forgejoInstanceToken
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
+            - name: runner-data
+              mountPath: /data
+            - name: runner-config
+              mountPath: /config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1024Mi"
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+      containers:
+        - name: runner
+          image: { { .Values.image } }
+          command:
+            [
+              "sh",
+              "-c",
+              "while ! nc -z localhost 2376 </dev/null; do echo 'waiting for docker daemon...'; sleep 5; done; forgejo-runner daemon --config /config/config.yaml",
+            ]
+          env:
+            - name: DOCKER_HOST
+              value: tcp://localhost:2376
+            - name: DOCKER_CERT_PATH
+              value: /certs/client
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
+            - name: runner-data
+              mountPath: /data
+            - name: runner-config
+              mountPath: /config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1024Mi"
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+        - name: daemon
+          image: docker:27.5.1-dind
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: /certs
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
+            - name: docker-data
+              mountPath: /var/lib/docker
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4096Mi"
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+      volumes:
+        - name: docker-certs
+          emptyDir: {}
+        - name: runner-data
+          persistentVolumeClaim:
+            claimName: forgejo-runner-vol
+        - name: docker-data
+          persistentVolumeClaim:
+            claimName: docker
+        - name: runner-config
+          configMap:
+            name: runner-config
+            items:
+              - key: config.yaml
+                path: config.yaml
