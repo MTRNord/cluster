@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: codeberg-runner
+  namespace: codeberg
+spec:
+  releaseName: codeberg-runner
+  chart:
+    spec:
+      chart: forgejoRunner
+      sourceRef:
+        kind: HelmRepository
+        name: codeberg-runner
+  interval: 50m
+  values:
+    secretRef: codeberg-runner
+    storageClassName: longhorn
