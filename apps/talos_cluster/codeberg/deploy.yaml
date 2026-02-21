@@ -21,7 +21,7 @@ spec:
       restartPolicy: Always
       initContainers:
         - name: init
-          image: { { .Values.image } }
+          image: code.forgejo.org/forgejo/runner:9
           command:
             [
               "sh",
@@ -30,7 +30,7 @@ spec:
             ]
           env:
             - name: INSTANCE_URL
-              value: { { .Values.forgejoInstanceUrl } }
+              value: https://codeberg.org
             - name: RUNNER_NAME
               value: forgejo-runner
             - name: LABELS
@@ -56,7 +56,7 @@ spec:
               memory: "32Mi"
       containers:
         - name: runner
-          image: { { .Values.image } }
+          image: code.forgejo.org/forgejo/runner:9
           command:
             [
               "sh",
