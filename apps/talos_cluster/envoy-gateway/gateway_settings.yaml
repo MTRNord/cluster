@@ -641,6 +641,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: miro-exporter.neoboard.midnightthoughts.space
+    - name: https-midnightthoughts-miro-neoboard-exporter
+      protocol: HTTPS
+      hostname: "miro-neoboard-exporter.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: miro-neoboard-exporter.midnightthoughts.space
     - name: http
       protocol: HTTP
       port: 80
