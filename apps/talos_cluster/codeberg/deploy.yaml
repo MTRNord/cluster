@@ -110,8 +110,7 @@ spec:
           persistentVolumeClaim:
             claimName: forgejo-runner-vol
         - name: docker-data
-          persistentVolumeClaim:
-            claimName: docker
+          emptyDir: {}
         - name: runner-config
           configMap:
             name: runner-config

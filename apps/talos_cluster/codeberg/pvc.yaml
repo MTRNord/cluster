@@ -7,17 +7,5 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
-  storageClassName: longhorn
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: docker
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
+      storage: 10Gi
   storageClassName: longhorn
