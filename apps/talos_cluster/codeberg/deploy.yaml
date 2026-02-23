@@ -61,7 +61,7 @@ spec:
             [
               "sh",
               "-c",
-              "while ! nc -z localhost 2376 </dev/null; do echo 'waiting for docker daemon...'; sleep 5; done; forgejo-runner daemon --config /config/config.yaml",
+              "while ! [ -f /certs/client/ca.pem ]; do echo 'waiting for docker certs...'; sleep 2; done; forgejo-runner daemon --config /config/config.yaml",
             ]
           env:
             - name: DOCKER_HOST
@@ -89,6 +89,8 @@ spec:
           env:
             - name: DOCKER_TLS_CERTDIR
               value: /certs
+            - name: DOCKER_DRIVER
+              value: vfs
           securityContext:
             privileged: true
           volumeMounts:
