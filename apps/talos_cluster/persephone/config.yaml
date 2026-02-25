@@ -1,27 +1,27 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: persephone-config
-    namespace: persephone
+  name: persephone-config
+  namespace: persephone
 data:
-    config.yaml: ENC[AES256_GCM,data:NNAtKaEHrLncFX0XdEdvxxI6jCWY/dRjGuQZpfuIas+byc+47fL2QFZHQeEleDvCgbU/WB3x35OKm0TG3SXwjyz/NwsN7ZjoR8puH4K16JrH6+mU653utJtJoB9Q0Z8jZbuty+tL8aZ7+Fkj5PG3qs/NVz0r1hLPa757VjqzSdYrIapOgaljnPOvR34KyiVNbhNKP9fFpKyl4zJ7tppqdOiilXlkXPtGa4qHIXabTAfCkl938XtNetqILfKgqliYaGGuifCnDjgPLQiwfFtYrg0hnKasel2rqcOWtSdU20OzvezlevwDp9SeWrG3mvJOyodgvjcmnr8kzUYMjyqoTRgflDY6XEuF02oPOEdA4QbieCUWvyjNe+II+jsYYVxisFcHd/uoHEO3si+kjCjM2lw2sKV6PJetz3cl0hQGNAhTf6tKnpYNu5/qI3bXAJfW3lbie+yxH957P7xzPNQQpksRfcZU4IhWHVbSOg==,iv:oqGz8SLm341NJmoKZm1LZQVFAEZbDVf2R6V6fCKbuGA=,tag:Fu/0ZuJ+1aGu5WHY+Y7W2Q==,type:str]
+  config.yaml: ENC[AES256_GCM,data:NNAtKaEHrLncFX0XdEdvxxI6jCWY/dRjGuQZpfuIas+byc+47fL2QFZHQeEleDvCgbU/WB3x35OKm0TG3SXwjyz/NwsN7ZjoR8puH4K16JrH6+mU653utJtJoB9Q0Z8jZbuty+tL8aZ7+Fkj5PG3qs/NVz0r1hLPa757VjqzSdYrIapOgaljnPOvR34KyiVNbhNKP9fFpKyl4zJ7tppqdOiilXlkXPtGa4qHIXabTAfCkl938XtNetqILfKgqliYaGGuifCnDjgPLQiwfFtYrg0hnKasel2rqcOWtSdU20OzvezlevwDp9SeWrG3mvJOyodgvjcmnr8kzUYMjyqoTRgflDY6XEuF02oPOEdA4QbieCUWvyjNe+II+jsYYVxisFcHd/uoHEO3si+kjCjM2lw2sKV6PJetz3cl0hQGNAhTf6tKnpYNu5/qI3bXAJfW3lbie+yxH957P7xzPNQQpksRfcZU4IhWHVbSOg==,iv:oqGz8SLm341NJmoKZm1LZQVFAEZbDVf2R6V6fCKbuGA=,tag:Fu/0ZuJ+1aGu5WHY+Y7W2Q==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwZWxScU5obEExNzRwTk4y
-            WTZ0NFNwSG1sSEdqa0JTdjZvMTR2K2YwNFNZCm9sNnhKcDcraEY2TlQ5eDFSMHhZ
-            QS8xelgzQXhzNnlYTzMyWFdoeUJXbEEKLS0tIHFBc3FaVkE1TnBFU1NSK2lBYlhG
-            c2tvYUVEUm42Vi9uV2xTSXVLb2lueFkKMFfA6ifC10MzY7Iuc0+ii50spxARkJoD
-            DipGPM4x2GUMW4/nKPlnYEtdtR+YWOrnDTSZwlfti0is9Rqoz1A+Aw==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-02-09T20:40:18Z"
-    mac: ENC[AES256_GCM,data:HM3Dq9Kjt/+pS031r+Mo1SGpvgm8SgRDU9a+spnKAjGIDcBrBXbqz/WjziQCPHe75q3GFab77p9Yb8QECiH5lMW39TIk0ldqsAi8Sj0yjtZ1Ii6X3uXyxcldRCXI3IVDiqUEvsrCmlQpOoiDbZtUg2tXuzlZEVlwQnPNG+8dN1Y=,iv:Z2675OR3adfnVK6hptSdrL+CFpk+Hj+nJDXwp3Y+l4A=,tag:efQue3buKjkaaPj59k8ypQ==,type:str]
-    pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
-    version: 3.9.1
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwZWxScU5obEExNzRwTk4y
+        WTZ0NFNwSG1sSEdqa0JTdjZvMTR2K2YwNFNZCm9sNnhKcDcraEY2TlQ5eDFSMHhZ
+        QS8xelgzQXhzNnlYTzMyWFdoeUJXbEEKLS0tIHFBc3FaVkE1TnBFU1NSK2lBYlhG
+        c2tvYUVEUm42Vi9uV2xTSXVLb2lueFkKMFfA6ifC10MzY7Iuc0+ii50spxARkJoD
+        DipGPM4x2GUMW4/nKPlnYEtdtR+YWOrnDTSZwlfti0is9Rqoz1A+Aw==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-02-09T20:40:18Z"
+  mac: ENC[AES256_GCM,data:HM3Dq9Kjt/+pS031r+Mo1SGpvgm8SgRDU9a+spnKAjGIDcBrBXbqz/WjziQCPHe75q3GFab77p9Yb8QECiH5lMW39TIk0ldqsAi8Sj0yjtZ1Ii6X3uXyxcldRCXI3IVDiqUEvsrCmlQpOoiDbZtUg2tXuzlZEVlwQnPNG+8dN1Y=,iv:Z2675OR3adfnVK6hptSdrL+CFpk+Hj+nJDXwp3Y+l4A=,tag:efQue3buKjkaaPj59k8ypQ==,type:str]
+  pgp: []
+  encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+  version: 3.9.1

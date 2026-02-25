@@ -22,12 +22,8 @@ spec:
       initContainers:
         - name: init
           image: code.forgejo.org/forgejo/runner:9
-          command:
-            [
-              "sh",
-              "-c",
-              "if ! [ -f /data/.runner ]; then forgejo-runner register --no-interactive --token ${RUNNER_REGISTRATION_TOKEN} --labels ${LABELS} --name ${RUNNER_NAME} --instance ${INSTANCE_URL}; fi",
-            ]
+          command: ["sh", "-c", "if ! [ -f /data/.runner ]; then forgejo-runner register --no-interactive --token ${RUNNER_REGISTRATION_TOKEN} --labels ${LABELS} --name ${RUNNER_NAME} --instance ${INSTANCE_URL};
+              fi"]
           env:
             - name: INSTANCE_URL
               value: https://codeberg.org
@@ -57,12 +53,7 @@ spec:
       containers:
         - name: runner
           image: code.forgejo.org/forgejo/runner:9
-          command:
-            [
-              "sh",
-              "-c",
-              "while ! [ -f /certs/client/ca.pem ]; do echo 'waiting for docker certs...'; sleep 2; done; forgejo-runner daemon --config /config/config.yaml",
-            ]
+          command: ["sh", "-c", "while ! [ -f /certs/client/ca.pem ]; do echo 'waiting for docker certs...'; sleep 2; done; forgejo-runner daemon --config /config/config.yaml"]
           env:
             - name: DOCKER_HOST
               value: tcp://localhost:2376

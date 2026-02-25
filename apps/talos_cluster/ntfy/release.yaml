@@ -30,8 +30,7 @@ spec:
                 - CHOWN
                 - FOWNER
                 - DAC_OVERRIDE
-          command:
-            ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
+          command: ["sh", "-c", "chown -R 1000:1000 /opt/docker/ntfy/cache /etc/ntfy"]
           volumeMounts:
             - name: ntfy-cache
               mountPath: /opt/docker/ntfy/cache

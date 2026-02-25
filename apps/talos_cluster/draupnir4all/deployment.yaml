@@ -69,18 +69,7 @@ spec:
             - name: NODE_OPTIONS
               value: "--trace-warnings"
           command: ["./draupnir-entrypoint.sh"]
-          args:
-            [
-              "appservice",
-              "-c",
-              "/data/config/config.appservice.yaml",
-              "-f",
-              "/data/config/draupnir-registration.yaml",
-              "--draupnir-config",
-              "/data/config/draupnir-config.yaml",
-              "-p",
-              "9000",
-            ]
+          args: ["appservice", "-c", "/data/config/config.appservice.yaml", "-f", "/data/config/draupnir-registration.yaml", "--draupnir-config", "/data/config/draupnir-config.yaml", "-p", "9000"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

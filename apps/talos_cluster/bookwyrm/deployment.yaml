@@ -191,7 +191,7 @@ spec:
           image: nginxinc/nginx-unprivileged:1.27-alpine
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false  # envsubst template processing writes to /etc/nginx/conf.d/
+            readOnlyRootFilesystem: false # envsubst template processing writes to /etc/nginx/conf.d/
             runAsNonRoot: true
             runAsUser: 101
             runAsGroup: 101
