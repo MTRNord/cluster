@@ -1,0 +1,167 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sentry
+  namespace: sentry
+spec:
+  releaseName: sentry
+  chart:
+    spec:
+      chart: sentry
+      version: 28.1.x
+      sourceRef:
+        kind: HelmRepository
+        name: sentry
+  interval: 60m
+  timeout: 240m0s
+  values:
+    ipv6: true
+    user:
+      create: true
+      email: mtrnord@nordgedanken.dev
+      password: ENC[AES256_GCM,data:WTwV6ujtww48,iv:jqWkKwcQYBVmVbrMNWelAPdM99HxeLoKH01wr8HMELM=,tag:79lhm3xMAYWJgDSPp2g6XA==,type:str]
+    # this is required on the first installation, as sentry has to be initialized first
+    # recommended to set false for updating the helm chart afterwards,
+    # as you will have some downtime on each update if it's a hook
+    # deploys relay & snuba consumers as post hooks
+    asHook: false
+    hooks:
+      dbCheck:
+        image:
+          repository: toolbelt/netcat
+          tag: latest
+          pullPolicy: Always
+    vroom:
+      persistence:
+        enabled: true
+        size: 5Gi
+        accessMode: ReadWriteMany
+        storageClass: longhorn
+    geodata:
+      persistence:
+        storageClass: longhorn
+    sentry:
+      singleOrganization: true
+      web:
+        enabled: true
+      features:
+        orgSubdomains: false
+        enableProfiling: false
+        enableSessionReplay: true
+        enableFeedback: true
+        enableSpan: true
+        enableUptime: false
+      ingestFeedback:
+        enabled: true
+    system:
+      url: https://sentry.mtrnord.blog
+      adminEmail: ENC[AES256_GCM,data:FZctGNse1Ruv7krqJxAu2k36/2cBkaS/7/UGqjKZ,iv:DGhUqYRIYcWQAOTTmFd1B8R4+MCYP16Crndfv2i7Tbk=,tag:TdVeCP6gsTCDwmcZMBswqg==,type:str]
+      public: false
+      secretKey: ENC[AES256_GCM,data:25IVzNtqa8GMGbAcvt52UtmkgA1oQcm1qLudb0O4Nf3fmZFGzW3rgmhH3Xy6n0wBrZA+21n0s0buRsvDaF2Nxg==,iv:I6GpOFvrOcyuY+sczCqWpfNCwdZxt4Rk+svKBEGmhv0=,tag:xHaP5EHDcJrH+XqN0dXRgw==,type:str]
+    mail:
+      backend: smtp
+      host: mail.midnightthoughts.space
+      useTls: "true"
+      useSsl: "false"
+      port: "587"
+      username: support@midnightthoughts.space
+      password: ENC[AES256_GCM,data:jBgw6wgU8wHO22oHOjigdDD0jfr1ZN4vhSQxoDa/YFgAoFferHEYc724gamTuoEOTSB8oBkIQduNm65PemRnrw==,iv:Iq8fpC0SuMnXN19AePDzU564oyvGTdZDJb3UYrl0mlE=,tag:prH26pGX0bpOBMvRUr/RwA==,type:str]
+      from: support@midnightthoughts.space
+    github:
+      appId: ENC[AES256_GCM,data:9Nh2OIzQzw==,iv:ESWCjcEsDV4lILIpyp+MRDJHMJ4lxghhAB8TTRHADcw=,tag:03Y10Q6RuwxUOBMN7wFeUw==,type:str]
+      appName: Sentry Midnightthoughts
+      clientId: ENC[AES256_GCM,data:IV3fzL3qUSyWS5FFG5//GOprtJs=,iv:c/8aWMMcqnePEDLTF9et1pUbwcoXa39+on+TqUl6F7A=,tag:TCGyxJkWzfCM88Su16wCKA==,type:str]
+      clientSecret: ENC[AES256_GCM,data:Zp4uu9L5Hc7zqlORkPoQVeW5GPj1Ho/S1fjaw/PTuHQXPeBzC+qpEA==,iv:ILXi9XL7+FYskjv5OEk64Y8E+6motfARONM7XKH36Jw=,tag:MRB8KFpkdwua4XH2WcIfMg==,type:str]
+      privateKey: ENC[AES256_GCM,data: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,iv:td50Un7ITMuMeamp2xI1ZirEfueVLy7riN9eLYAb0Ic=,tag:qa762/Nkwx82V8IBAeDwzg==,type:str]
+      webhookSecret: ENC[AES256_GCM,data:PfkiR6C2T+GdkeDjKm4d8walePHqqWYrLCPLDyKejjqrwX9RLFQPIfkHw66d0rxA9Q3/LjXXx1++8cT+J3Ie6w==,iv:5MJqZdTdgYBZt53MXwE6jgCiBc43AvyT8BTruhz+9w4=,tag:DvmVrko9Omq1dwS9L4Izdg==,type:str]
+    auth:
+      register: false
+    ingress:
+      enabled: false
+    filestore:
+      backend: filesystem
+      filesystem:
+        persistence:
+          enabled: true
+          size: 5Gi
+          accessMode: ReadWriteMany
+          storageClass: longhorn
+          persistentWorkers: true
+    clickhouse:
+      clickhouse:
+        persistentVolumeClaim:
+          enabled: true
+          dataPersistentVolume:
+            storage: 20Gi
+            storageClassName: longhorn
+            accessModes:
+              - ReadWriteMany
+              - ReadWriteOnce
+    zookeeper:
+      persistence:
+        enabled: true
+        size: 8Gi
+        accessModes:
+          - ReadWriteMany
+          - ReadWriteOnce
+        storageClass: longhorn
+    redis:
+      master:
+        persistence:
+          enabled: true
+          size: 5Gi
+          accessModes:
+            - ReadWriteOnce
+            - ReadWriteMany
+          storageClass: longhorn
+      replica:
+        persistence:
+          enabled: true
+          size: 5Gi
+          accessModes:
+            - ReadWriteOnce
+            - ReadWriteMany
+          storageClass: longhorn
+    postgresql:
+      enabled: false
+    externalPostgresql:
+      port: 5432
+      username: sentry
+      password: ENC[AES256_GCM,data:poj0izLlXR7y6xZI8CHrXV/COL6q8kUvNNs5hEr2/LXveA4YKF1zlQMELUOzMyUwHvovjTBoKXEy9UQ2Rrf/WQ==,iv:U/c72XqWoeKflHx5sWKP/iz1ZMLdS1SmjW0fQKr/jlo=,tag:Mnu9FLOjXcIYQoX0eJQmHA==,type:str]
+      database: sentry
+      connMaxAge: 600
+      host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+      sslMode: require
+    rabbitmq:
+      enabled: false
+    kafka:
+      controller:
+        persistence:
+          enabled: true
+          size: 10Gi
+          accessModes:
+            - ReadWriteMany
+            - ReadWriteOnce
+          storageClass: longhorn
+        logPersistence:
+          enabled: false
+sops:
+  kms: []
+  gcp_kms: []
+  azure_kv: []
+  hc_vault: []
+  age:
+    - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhQXBKUG1SWmliSUU2Z1Rn
+        dWdlTTVkbUllcXVxbzhQMnVBNzhHNzJETEdnCjdVZ1crSjROT1lnM0cweWcrUzZF
+        cThwQW44TGNQUDkrdU5PNTZIc3laTzQKLS0tIEkzQnFUdTZteGxpNElHYXlxbjdZ
+        Y3BhYXZ4RmpHcUpEQ2ZSK3NZUEtwekEKfudmrfTPHxLJtILnz3B7/uWKwBgrIE3W
+        lchyeAAESQ9KFFnYuCaKuIvxM48x1KLN4LkrWnV4BPWCsx6wryV6fA==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-12-16T11:05:34Z"
+  mac: ENC[AES256_GCM,data:hxsmpfgd4CQs7eY9iYyn066NXd0nqdm/WRNuNV9LdgoBR2gdyI9t/a3JOoc5gNXC+qQyIG86VUpVkMUiiHZBFkgMqk65DAeoupat1d6pZ7+4G0YJWRTRWNmNrQe0eSdLx0Bg1xyxuN8tkYZnmg/yWPvj/EDzHOdcUQCUMthz02A=,iv:tNoFVh1X0OsiW9yMTsJauekxEl7R9RBxQgQ4t6HiB3M=,tag:DBYh6FgHcG9EtEx2JiPhdA==,type:str]
+  pgp: []
+  encrypted_regex: ^(harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+  version: 3.9.1

@@ -1,0 +1,32 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sentry
+  namespace: sentry
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - sentry.mtrnord.blog
+  rules:
+    - backendRefs:
+        - name: sentry-nginx
+          port: 80
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: sentry-compression
+  namespace: sentry
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: sentry
+  compression:
+    - type: Gzip
+    - type: Brotli

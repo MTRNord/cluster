@@ -1,0 +1,17 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: clickstack
+  namespace: clickstack
+spec:
+  interval: 60m
+  url: https://hyperdxio.github.io/helm-charts
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: open-telemetry
+  namespace: clickstack
+spec:
+  interval: 60m
+  url: https://open-telemetry.github.io/opentelemetry-helm-charts
