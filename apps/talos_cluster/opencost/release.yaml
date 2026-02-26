@@ -25,10 +25,8 @@ spec:
       exporter:
         defaultCloudBackend: custom
         extraEnv:
-          - name: USE_CSV_PROVIDER
-            value: "true"
-          - name: CSV_PATH
-            value: /etc/opencost/pricing/hetzner.csv
+          USE_CSV_PROVIDER: "true"
+          CSV_PATH: "/etc/opencost/pricing/hetzner.csv"
         extraVolumeMounts:
           - name: hetzner-pricing
             mountPath: /etc/opencost/pricing
