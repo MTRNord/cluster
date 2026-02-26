@@ -653,6 +653,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: miro-neoboard-exporter.midnightthoughts.space
+    - name: https-opencost-k8s-midnightthoughts-space
+      protocol: HTTPS
+      hostname: "opencost.k8s.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: opencost.k8s.midnightthoughts.space-tls
     - name: http
       protocol: HTTP
       port: 80
