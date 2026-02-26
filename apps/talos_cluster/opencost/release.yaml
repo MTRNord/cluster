@@ -27,25 +27,36 @@ spec:
         extraEnv:
           USE_CSV_PROVIDER: "true"
           CSV_PATH: "/etc/opencost/pricing/hetzner.csv"
+          PROM_CLUSTER_ID_LABEL: cluster
+          KUBECOST_SCRAPE_INTERVAL: 1m
         extraVolumeMounts:
           - name: hetzner-pricing
             mountPath: /etc/opencost/pricing
             readOnly: true
       prometheus:
+        external:
+          enabled: true
+          url: http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc.cluster.local:8481/select/0/prometheus
         internal:
           enabled: false
-          # vmselect service from the victoria-metrics-k8s-stack HelmRelease (name: vm)
-          serviceName: vmselect-vm-victoria-metrics-k8s-stack
-          namespaceName: monitoring
-          port: 8481
-          path: /select/0/prometheus/
-    serviceMonitor:
-      enabled: true
-      namespace: monitoring
     extraVolumes:
       - name: hetzner-pricing
         configMap:
           name: hetzner-pricing-csv
+          Line wrapping: OFF
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: opencost
+  namespace: opencost
+spec:
+  endpoints:
+    - port: http
+      path: /metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: opencost
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
