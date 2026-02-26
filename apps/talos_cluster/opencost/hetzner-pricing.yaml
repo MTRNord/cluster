@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hetzner-pricing-csv
+  namespace: opencost
+data:
+  hetzner.csv: |
+    Region,Instance Type,vCPUs,RAM (GiB),Storage (GB),GPU,Cost per Hour,PricingUnit
+    fsn1,cax11,2,4,40,0,0.00742,Hour
+    hel1,cax11,2,4,40,0,0.00742,Hour
+    nbg1,cax11,2,4,40,0,0.00742,Hour
+    hel1,cax21,4,8,80,0,0.01321,Hour
+    fsn1,cax21,4,8,80,0,0.01321,Hour
+    nbg1,cax21,4,8,80,0,0.01321,Hour
+    fsn1,cax31,8,16,160,0,0.02643,Hour
+    hel1,cax31,8,16,160,0,0.02643,Hour
+    nbg1,cax31,8,16,160,0,0.02643,Hour
+    hel1,cax41,16,32,320,0,0.05000,Hour
+    fsn1,cax41,16,32,320,0,0.05000,Hour
+    nbg1,cax41,16,32,320,0,0.05000,Hour
+    hel1,cpx11,2,2,40,0,0.00614,Hour
+    hel1,cpx21,3,4,80,0,0.01007,Hour
+    hel1,cpx31,4,8,160,0,0.01793,Hour
+    hel1,cpx41,8,16,240,0,0.03236,Hour
+    hel1,cpx51,16,32,360,0,0.06000,Hour
