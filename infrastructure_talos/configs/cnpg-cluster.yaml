@@ -293,10 +293,17 @@ spec:
           name: persephone
   bootstrap:
     recovery:
-      backup:
-        name: pre-migration-backup
+      source: pg-s3-backup
       recoveryTarget:
-        targetTLI: latest
+        targetTime: "2026-02-27T20:58:00Z"
+
+  externalClusters:
+    - name: pg-s3-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: hetzner-base-backup
+          serverName: pg-cluster-v2
 
   storage:
     storageClass: longhorn
