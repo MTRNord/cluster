@@ -1,0 +1,55 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: proxmox-ccm
+  namespace: kube-system
+spec:
+  releaseName: proxmox-ccm
+  targetNamespace: kube-system
+  interval: 30m
+  chart:
+    spec:
+      chart: proxmox-cloud-controller-manager
+      sourceRef:
+        kind: HelmRepository
+        name: sergelogvinov
+        namespace: kube-system
+      interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  # Sensitive values (Proxmox API credentials) are loaded from the SOPS-encrypted secret.
+  # Non-sensitive values are set inline below.
+  valuesFrom:
+    - kind: Secret
+      name: proxmox-ccm-values
+      valuesKey: values.yaml
+  values:
+    cluster:
+      name: cluster-2025
+
+    # Only initialize nodes — node lifecycle (deletion on VM removal) is also safe
+    # to enable since each CCM only manages its own providerID-prefixed nodes.
+    enabledControllers:
+      - cloud-node
+      - cloud-node-lifecycle
+
+    # Run on existing cloud control-plane nodes so the CCM is available before
+    # dedicated workers join (and thus can remove the uninitialized taint promptly).
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
+
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 32Mi
+      limits:
+        memory: 128Mi
