@@ -1,0 +1,137 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: cilium
+  namespace: kube-system
+spec:
+  interval: 24h
+  url: https://helm.cilium.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cilium
+  namespace: kube-system
+spec:
+  releaseName: cilium
+  targetNamespace: kube-system
+  interval: 30m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: cilium
+      version: "1.18.7"
+      sourceRef:
+        kind: HelmRepository
+        name: cilium
+        namespace: kube-system
+      interval: 24h
+  values:
+    bpf:
+      datapathMode: netkit
+      hostLegacyRouting: false
+      masquerade: true
+    cgroup:
+      autoMount:
+        enabled: false
+      hostRoot: /sys/fs/cgroup
+    dnsProxy:
+      enableTransparentMode: true
+    egressGateway:
+      enabled: false
+    encryption:
+      enabled: true
+      type: wireguard
+    gatewayAPI:
+      enableAlpn: true
+      enableAppProtocol: true
+      enableProxyProtocol: true
+      enabled: false
+      externalTrafficPolicy: Cluster
+      gatewayClass:
+        create: "false"
+    hubble:
+      enabled: true
+      peerService:
+        clusterDomain: cluster.local
+      relay:
+        enabled: true
+      ui:
+        enabled: true
+    installNoConntrackIptablesRules: true
+    ipam:
+      mode: kubernetes
+    ipv4NativeRoutingCIDR: 10.0.0.0/16
+    k8s:
+      requireIPv4PodCIDR: true
+    k8sServiceHost: 127.0.0.1
+    k8sServicePort: 7445
+    kubeProxyReplacement: true
+    kubeProxyReplacementHealthzBindAddr: "0.0.0.0:10256"
+    loadBalancer:
+      acceleration: native
+    operator:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      podDisruptionBudget:
+        enabled: true
+        maxUnavailable: 1
+        minAvailable: null
+      prometheus:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+          interval: 15s
+      replicas: 2
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: cilium-operator
+          matchLabelKeys:
+            - pod-template-hash
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: cilium-operator
+          matchLabelKeys:
+            - pod-template-hash
+          maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+    policyCIDRMatchMode: nodes
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        interval: 15s
+        trustCRDsExist: true
+    routingMode: native
+    securityContext:
+      capabilities:
+        ciliumAgent:
+          - CHOWN
+          - KILL
+          - NET_ADMIN
+          - NET_RAW
+          - IPC_LOCK
+          - SYS_ADMIN
+          - SYS_RESOURCE
+          - DAC_OVERRIDE
+          - FOWNER
+          - SETGID
+          - SETUID
+        cleanCiliumState:
+          - NET_ADMIN
+          - SYS_ADMIN
+          - SYS_RESOURCE
+    socketLB:
+      hostNamespaceOnly: false
