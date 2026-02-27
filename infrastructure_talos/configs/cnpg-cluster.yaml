@@ -290,6 +290,14 @@ spec:
         superuser: false
         passwordSecret:
           name: persephone
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node.kubernetes.io/instance-type
+                operator: In
+                values: [cax11, cax31]
   storage:
     storageClass: hcloud-volumes
     size: 20Gi
