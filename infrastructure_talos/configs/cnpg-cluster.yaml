@@ -113,7 +113,7 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: hetzner-base-backup
-        serverName: pg-cluster-v2-longhorn
+        serverName: pg-cluster-v2-restored
   managed:
     roles:
       - name: freshrss
@@ -306,8 +306,8 @@ spec:
           serverName: pg-cluster-v2
 
   storage:
-    storageClass: longhorn
-    size: 20Gi
+    storageClass: hcloud-volumes
+    size: 25Gi
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
