@@ -29,6 +29,11 @@ spec:
         namespace: descheduler
       interval: 12h
   values:
+    rbac:
+      additionalRules:
+        - apiGroups: [""]
+          resources: ["persistentvolumeclaims"]
+          verbs: ["get", "list", "watch"]
     tolerations:
       - key: "arch"
         operator: "Equal"
