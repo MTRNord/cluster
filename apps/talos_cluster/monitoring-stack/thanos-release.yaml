@@ -41,12 +41,14 @@ spec:
       name: thanos-objstore-secret
       key: config
 
+    # Thanos sidecar gRPC endpoint — uses dns+ prefix for periodic re-resolution
+    # (prometheus-operator creates the prometheus-operated headless service)
+    additionalEndpoints:
+      - dns+prometheus-operated.monitoring.svc.cluster.local:10901
+
     # Thanos Query: aggregates recent data from sidecar + historical from Store Gateway
     query:
       enabled: true
-      stores:
-        # Thanos sidecar gRPC endpoint (prometheus-operator creates this headless service)
-        - prometheus-operated.monitoring.svc.cluster.local:10901
 
     # Thanos Query Frontend: caching layer in front of Query
     queryFrontend:
