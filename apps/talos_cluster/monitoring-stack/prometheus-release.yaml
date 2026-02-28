@@ -60,6 +60,10 @@ spec:
         grafana:
             adminPassword: ENC[AES256_GCM,data:ipUgR/m8DxxdpUOVXPwo1k0pcBubMrTV2ZmXqtzvZ0jkhmfDc/YVGuyPyG558c4Afkx51t5CUycVQVMueNMMqQ==,iv:0jZuf3v4DrBJTQHHOk7QAqVXllMUzrIcOOg5KTFUINQ=,tag:P29X7rGijLZ0nkjT9cSx1w==,type:str]
             sidecar:
+                datasources:
+                    # Disable the auto-generated default Prometheus datasource so it
+                    # doesn't conflict with our custom datasources.yaml (which points to Thanos)
+                    defaultDatasourceEnabled: false
                 dashboards:
                     folderAnnotation: grafana_folder
                     provider:

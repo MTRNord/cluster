@@ -1,0 +1,52 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: external-costs
+  namespace: monitoring
+spec:
+  groups:
+    - name: external_costs
+      # Evaluate every 5 minutes — these are static values so interval doesn't matter much
+      interval: 5m
+      rules:
+        # Monthly costs in EUR for non-Kubernetes infrastructure
+        # Update prices here when Hetzner pricing changes (CAX11/CAX21 increase on 2026-04-01)
+
+        - record: external_cost_euros_monthly
+          expr: vector(16.1505)
+          labels:
+            service: storage_box_bx31
+            category: storage
+
+        - record: external_cost_euros_monthly
+          expr: vector(4.29)
+          labels:
+            service: server_nx11
+            category: server
+
+        - record: external_cost_euros_monthly
+          # 10x IPv4 addresses at 0.50€/each
+          expr: vector(5.00)
+          labels:
+            service: ipv4_addresses_10x
+            category: network
+
+        - record: external_cost_euros_monthly
+          expr: vector(0.0131)
+          labels:
+            service: snapshot
+            category: storage
+
+        # dns-b server (CAX11) — price increases to 5.34€ on 2026-04-01
+        - record: external_cost_euros_monthly
+          expr: vector(3.92)
+          labels:
+            service: server_cax11_dns_b
+            category: server
+
+        # dns-a server (CAX21) — price increases to 9.51€ on 2026-04-01
+        - record: external_cost_euros_monthly
+          expr: vector(7.13)
+          labels:
+            service: server_cax21_dns_a
+            category: server
