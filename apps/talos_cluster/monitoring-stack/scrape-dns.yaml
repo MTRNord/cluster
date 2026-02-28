@@ -1,21 +1,23 @@
-apiVersion: operator.victoriametrics.com/v1beta1
-kind: VMStaticScrape
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
 metadata:
   name: scrape-dns
   namespace: monitoring
 spec:
   jobName: dnscollector_exporter
-  targetEndpoints:
-    - targets: ["10.0.64.129:9165"]
-      path: /metrics
+  staticConfigs:
+    - targets:
+        - "10.0.64.129:9165"
+  metricsPath: /metrics
 ---
-apiVersion: operator.victoriametrics.com/v1beta1
-kind: VMStaticScrape
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
 metadata:
   name: scrape-dns-traffic
   namespace: monitoring
 spec:
   jobName: dnscollector_traffic
-  targetEndpoints:
-    - targets: ["10.0.64.129:9166"]
-      path: /metrics
+  staticConfigs:
+    - targets:
+        - "10.0.64.129:9166"
+  metricsPath: /metrics

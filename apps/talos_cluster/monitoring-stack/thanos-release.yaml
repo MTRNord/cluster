@@ -1,0 +1,67 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: stevehipwell
+  namespace: monitoring
+spec:
+  interval: 24h
+  url: https://stevehipwell.github.io/helm-charts/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: thanos
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: thanos
+      version: 1.22.x
+      sourceRef:
+        kind: HelmRepository
+        name: stevehipwell
+      interval: 60m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  # https://github.com/stevehipwell/helm-charts/blob/main/charts/thanos/values.yaml
+  values:
+    # Sidecar approach: Thanos sidecar runs inside Prometheus pod (managed by kube-prometheus-stack).
+    # This chart provides the remaining Thanos components.
+    receive:
+      enabled: false
+
+    # Object store config — references SOPS-encrypted Secret
+    objstoreConfig:
+      create: false
+      name: thanos-objstore-secret
+      key: config
+
+    # Thanos Query: aggregates recent data from sidecar + historical from Store Gateway
+    query:
+      enabled: true
+      stores:
+        # Thanos sidecar gRPC endpoint (prometheus-operator creates this headless service)
+        - prometheus-operated.monitoring.svc.cluster.local:10901
+
+    # Thanos Query Frontend: caching layer in front of Query
+    queryFrontend:
+      enabled: true
+
+    # Thanos Store Gateway: serves historical blocks from S3
+    storeGateway:
+      enabled: true
+      persistence:
+        enabled: true
+        size: 2Gi
+
+    # Thanos Compact: compacts and downsamples blocks in S3
+    compact:
+      enabled: true
+      persistence:
+        enabled: true
+        size: 2Gi
