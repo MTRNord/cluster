@@ -4,11 +4,13 @@ metadata:
   name: scrape-dns
   namespace: monitoring
 spec:
-  jobName: dnscollector_exporter
   staticConfigs:
     - targets:
         - "10.0.64.129:9165"
   metricsPath: /metrics
+  relabelings:
+    - targetLabel: job
+      replacement: dnscollector_exporter
 ---
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
@@ -16,8 +18,10 @@ metadata:
   name: scrape-dns-traffic
   namespace: monitoring
 spec:
-  jobName: dnscollector_traffic
   staticConfigs:
     - targets:
         - "10.0.64.129:9166"
   metricsPath: /metrics
+  relabelings:
+    - targetLabel: job
+      replacement: dnscollector_traffic
