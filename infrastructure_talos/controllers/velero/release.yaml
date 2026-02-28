@@ -27,6 +27,14 @@ spec:
     # (hcloud CSI driver does not support VolumeSnapshots)
     deployNodeAgent: true
 
+    nodeAgent:
+      tolerations:
+        # Allow node-agent to run on control plane nodes so that DaemonSet pods
+        # scheduled there (Cilium, hcloud-csi-controller) can have their volumes backed up.
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+
     configuration:
       # EnableCSI: built-in since v1.14, enables CSI snapshots for Longhorn volumes
       features: EnableCSI
