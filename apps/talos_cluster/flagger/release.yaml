@@ -23,7 +23,7 @@ spec:
   values:
     nodeSelector:
       kubernetes.io/os: linux
-    metricsServer: "http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc:8481/select/0/prometheus"
+    metricsServer: "http://thanos-query-frontend.monitoring.svc.cluster.local:10902"
     serviceMonitor:
       enabled: true
     meshProvider: "gatewayapi:v1"

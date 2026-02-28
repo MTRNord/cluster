@@ -183,7 +183,7 @@ metadata:
 spec:
   provider:
     type: prometheus
-    address: "http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc:8481/select/0/prometheus"
+    address: "http://thanos-query-frontend.monitoring.svc.cluster.local:10902"
   query: |
     histogram_quantile(0.99,
       sum(
@@ -203,7 +203,7 @@ metadata:
 spec:
   provider:
     type: prometheus
-    address: "http://vmselect-vm-victoria-metrics-k8s-stack.monitoring.svc:8481/select/0/prometheus"
+    address: "http://thanos-query-frontend.monitoring.svc.cluster.local:10902"
   query: |
     sum(
       rate(
