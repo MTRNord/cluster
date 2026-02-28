@@ -1,0 +1,59 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: cluster-backup-0000
+  namespace: velero
+spec:
+  schedule: "0 0 * * *"
+  template:
+    includedNamespaces:
+      - "*"
+    storageLocation: default
+    volumeSnapshotLocations:
+      - default
+    ttl: 336h
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: cluster-backup-0600
+  namespace: velero
+spec:
+  schedule: "0 6 * * *"
+  template:
+    includedNamespaces:
+      - "*"
+    storageLocation: default
+    volumeSnapshotLocations:
+      - default
+    ttl: 336h
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: cluster-backup-1200
+  namespace: velero
+spec:
+  schedule: "0 12 * * *"
+  template:
+    includedNamespaces:
+      - "*"
+    storageLocation: default
+    volumeSnapshotLocations:
+      - default
+    ttl: 336h
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: cluster-backup-1800
+  namespace: velero
+spec:
+  schedule: "0 18 * * *"
+  template:
+    includedNamespaces:
+      - "*"
+    storageLocation: default
+    volumeSnapshotLocations:
+      - default
+    ttl: 336h

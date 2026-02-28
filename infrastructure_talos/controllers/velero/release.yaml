@@ -1,0 +1,61 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: velero
+  namespace: velero
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: velero
+      version: "11.4.0"
+      sourceRef:
+        kind: HelmRepository
+        name: vmware-tanzu
+        namespace: velero
+      interval: 24h
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    # Kopia node agent DaemonSet — required for file-system backup of hcloud-volumes
+    # (hcloud CSI driver does not support VolumeSnapshots)
+    deployNodeAgent: true
+
+    configuration:
+      # EnableCSI: built-in since v1.14, enables CSI snapshots for Longhorn volumes
+      features: EnableCSI
+      # Use Kopia file-system backup for all volumes by default.
+      # CSI snapshots (for Longhorn) run additionally when a VolumeSnapshotClass
+      # labelled velero.io/csi-volumesnapshot-class=true exists.
+      defaultVolumesToFsBackup: true
+      backupStorageLocation:
+        - name: default
+          provider: aws
+          bucket: mtrnord-talos-velero
+          config:
+            s3Url: https://hel1.your-objectstorage.com
+            region: hel1
+            s3ForcePathStyle: "true"
+      volumeSnapshotLocation:
+        - name: default
+          provider: aws
+          config:
+            region: hel1
+
+    credentials:
+      useSecret: true
+      existingSecret: velero-s3-credentials
+
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: velero/velero-plugin-for-aws:v1.13.2
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
