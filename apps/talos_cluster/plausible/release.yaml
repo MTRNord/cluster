@@ -42,7 +42,34 @@ spec:
       persistence:
         storageClass: longhorn
         enabled: true
-        size: 8Gi
+        size: 256Mi
+      extraEnvVarsSecret: clickhouse-s3-credentials
+      configdFiles:
+        s3-storage.xml: |
+          <clickhouse>
+            <storage_configuration>
+              <disks>
+                <s3_disk>
+                  <type>s3</type>
+                  <endpoint>https://hel1.your-objectstorage.com/midnightthoughts-clickhouse/</endpoint>
+                  <access_key_id from_env="CH_S3_ACCESS_KEY"/>
+                  <secret_access_key from_env="CH_S3_SECRET_KEY"/>
+                </s3_disk>
+              </disks>
+              <policies>
+                <s3_only>
+                  <volumes>
+                    <main>
+                      <disk>s3_disk</disk>
+                    </main>
+                  </volumes>
+                </s3_only>
+              </policies>
+            </storage_configuration>
+            <merge_tree>
+              <storage_policy>s3_only</storage_policy>
+            </merge_tree>
+          </clickhouse>
     ingress:
       enabled: false
       annotations:
