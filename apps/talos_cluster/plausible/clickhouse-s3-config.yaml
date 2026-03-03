@@ -18,10 +18,14 @@ data:
         <policies>
           <s3_only>
             <volumes>
-              <main>
+              <local>
+                <disk>default</disk>
+              </local>
+              <remote>
                 <disk>s3_disk</disk>
-              </main>
+              </remote>
             </volumes>
+            <move_factor>0.99</move_factor>
           </s3_only>
         </policies>
       </storage_configuration>
