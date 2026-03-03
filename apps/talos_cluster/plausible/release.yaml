@@ -17,12 +17,14 @@ spec:
         remediation:
             retries: 3
     values:
+        image:
+            tag: v3.2.0
         baseURL: https://plausible.midnightthoughts.space
         disableRegistration: true
         logFailedLoginAttempts: true
-        totpVaultKey: ENC[AES256_GCM,data:r5wFOlu6UM/a2sN+1YzvVtAgJ1isPLHWkwTZBZ0TF+2varR9Mth0Ii4Ee9I=,iv:8mqKNpNybA54nRj5S7/dhC4nCg+M+PwtLtlVTL21IzE=,tag:19FxpRT+BuLtd6SyEzDt8g==,type:str]
-        clickhouseDatabaseURL: ENC[AES256_GCM,data:Js8c1LAg21q90SC388FYaxhNiDvzv241IFZTZboO8Zq6cPtsWxjby6VqqcvsaU5QubDuqZolLLIfg9DyRubW2VZmZj06Iyb0GXRRLw6tjlAwcGbBj0OSoJaXRLN4wp9G7qoBwbfoPxpGvYh3sXmGU4/NOjZAHoBzoZBuLDc6PZkHmrnKDToPk+AeFQxShL/rFySA0gApWw==,iv:Z2yLzS5/fptY1tiEPvGWJ7g3zaipHB8t5TyLJ3zRf6Q=,tag:IPbLsAcQs3nTxe5eSMSiaQ==,type:str]
-        databaseURL: ENC[AES256_GCM,data:aYqulUymGTLDyVUrxO5fxVCFPztf8UkxgftGSBx3k19lZjGU8yeeBrTQwCyAzgpnGPdUxuKZZPmcJqrcO1hGr5NCqa2Ry5p3NrYI8TZYEa3UQFb1ijGjUwSPNeQcFFlHjD7r7TSFqduFtOaDn6rQtKIkAbNf5TgBTBQBDr6mTpySV8HX2qjO0/10rCntBllNBtK36j+VFQU=,iv:MQQlT7DfQhX1bEDqaz5iy3fcHUwKG3Ht+WarCVslTSE=,tag:K9lNHwjBVUNIkL4gcoqj2Q==,type:str]
+        totpVaultKey: ENC[AES256_GCM,data:cGeabjsUV8i7czAWhQ4X5yLsVRFHDVjbQlqB8UT9nKV0GAhMMSlR0qTObI4=,iv:bQBqySHv3SkevzQEyEFpA24owky0c8Qy3MsJU9wa75s=,tag:SoJHKpTw1dENUPjY2sjh9A==,type:str]
+        clickhouseDatabaseURL: ENC[AES256_GCM,data:pdFgj2x0+wESVi4V5n80jalVjdGKIzPn/aepiab/0URr0pGAXgV+XnreToz1TpFMHcZXJeNBrL74qtgOHrPtxlnoILg38cw2t4KbJxpN00PXWppqxk83N2WtoSy9Pf26jIWhOe8JaX8VXZmJ6fDfTRqQxEdEZ7WhgLy0VzWFw+iQsOhcnDBV/2ecrCZ4anLcbyNFejnkXw==,iv:TsGAGa7Ua7U8Q8XGUmhiF1wYYDUp9BhzHcD1az6mwAc=,tag:OGXU9AVQAwxz1hnSiNmoqw==,type:str]
+        databaseURL: ENC[AES256_GCM,data:90ebt9nYA8dLldkTO5y3pn7fN5EbQ065s75XiOl8PHN9WRFp+S8ot1rgV8kqhrX+76q2wP0YhU8sttwi8DV/2nnN51elvQeckD3y5OhrMM9Lc3nP5y/l2yDQFTWbqJiZvYxKQ05kob7igxmIOElqhxTu4Yi71FR/etmi2i/dx5lDvfDBVYr5IqtoOr1vk7yYRBdaEnUD/2Y=,iv:SxqEiWon87HCGiQ6u2ji3BFBAfAlC6NV5XE4L7iFsg8=,tag:fwsUWynREN6c9i7yOeZtLg==,type:str]
         mailer:
             enabled: true
             adapter: Bamboo.Mua
@@ -32,14 +34,14 @@ spec:
                 port: 465
                 auth: true
                 username: support@midnightthoughts.space
-                password: ENC[AES256_GCM,data:ry62n9CHKYabmsBsYthBnueJOdR5CWnysCoWhHsVZjYCvJG8zezcFb4ozxi6YzMtSkb6hm7fgcrjQ63OlbpEUw==,iv:/bJMCNY7SOvdkyNhP0kbcwM8Gjy+xb9/Jr3G7KfEE1k=,tag:oP6UORZOJunOYnqXIemU/Q==,type:str]
+                password: ENC[AES256_GCM,data:dIpZ3Gj7CJPajOTrdzdWx8JPjnjAaJOLDGdQnsihVl/gsCD6Us4ZLWGAvmW+cTUCYmGQXBN9/rYcgVTG9iUXjQ==,iv:YC5OBtzbcS8sEjG0CPAaVk30d78L7V/LPFuOQ7zJCcA=,tag:YumX+S5COUX+i9SkD1hXlg==,type:str]
                 ssl: true
         postgresql:
             enabled: false
         clickhouse:
             resourcesPreset: xlarge
             auth:
-                password: ENC[AES256_GCM,data:rJjymCsYl11uHU8mm1ydscbnetlSCoFwOchZU7TbfyNrm0rUf9qRsJo701XI1cBPLdBuXJDh2+gUyCz7xmcPPQ==,iv:CTr5vmB+ymsMxYbR9xU+dYVakF1k2okNkSeWi41EBKY=,tag:aAiSYwiHQJZaa97FqswimA==,type:str]
+                password: ENC[AES256_GCM,data:Fsx/G2LUVJGvhB353vsCJaLy+msxocx7lJnwJoYMjA06BT1AF48FGjOLUM/d0e/jrBfrULIRIR+6V7WBQhe1Sg==,iv:TAjNvBemWeshzBJ+MU/9aiaJ1/WE8hxIkd7hwB3eKBY=,tag:p6lgSaZRjejiGT4ziac6mQ==,type:str]
             persistence:
                 storageClass: longhorn
                 enabled: true
@@ -73,14 +75,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBtQ2hUdXhheHpWa3IycCtO
-            OXJNaVhhWjZGVy9LK0VCMklSTjBBY0FuM0Z3Cm5VL1BHbTRlSzI2NXZXbkVhc1dH
-            ZXJQaWJvMFdoWS85OGVNS1h0QU5vbEkKLS0tIHJGMDFndDE0S1R5cG9ETHYzMlU3
-            M1NyQi9IR1FsM3hEdlJIOUFCOTV3VTQKB97cq5bUma0YKzIGKGgdXdg6M3YQZyW/
-            YWa+sDy9Y95/SRp2+jsHwHfwT0uoFznudqyU7GViIHKJBN42mzW1PA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2SHltemdpUUtQZG01ZDVj
+            VEVqU2gyRDZPcnh3WWVSamVFZUczQnhOVlhFCjFJSVZ1clg3TXpXSFJDaURxSTNy
+            cDAybnBrcUdVWFc1VUYrKzltbGpScG8KLS0tIHlDeFhpMG1JSHQwTWVmYlQzYWRj
+            K2NhN2pTSlFwNjFndHNUN1NaQ3dHblkKoawpu0/i8Di4G68MXyHS0QdRkLP3XVon
+            3EcxuOmi+QS6rruyHWOMYz9FMGeHRCkhac7D6RBLKmXyHdAlO+TJtA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-03T21:57:06Z"
-    mac: ENC[AES256_GCM,data:43MveR0ZFTzWWkkTf6IuYh2F4iU6/uYt6oaESUNZEtwCcY0I8V+O84dxZT4r8uKSJF6tWWKdiJ85L1PYGNEcY3Gy2aNC0ZYn9BG8j/Er/JDWDJ4r80PwqA0tOKqzP0MaMi5PO6c4FtrQ1jTo8tv3c7XskabIMOvQPL+AQhWXCj8=,iv:TmahLL8PQznAcqmi59qr+dunMaNsGbwj7iowB2Nsyqw=,tag:zX9ia2d51m1dV6KAQTm7Ow==,type:str]
+    lastmodified: "2026-03-03T22:09:38Z"
+    mac: ENC[AES256_GCM,data:+5gQwX7rT8U+4ZfCOWbFZEOI9EkSrBoQ/v5MCnE+DNKxS2/9P38anJf3XdVs492GlpOROmTx2Qh2Y9/m37aBoShvMnRGJdfp6VqeXtk+IO4T/R819FY2JcS5nb1d3tevTsOrTbtbHZUjlQrUtPYy68GPqTc3AOI7BBC74/DDeTE=,iv:5DNb+s9BdJwkQeatRTLwDthgS2cZYn0yspBQJj7xMiw=,tag:DnrgCtsoRTzYwEoiNrTeLw==,type:str]
     pgp: []
     encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
     version: 3.9.1
