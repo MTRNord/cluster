@@ -59,3 +59,13 @@ configMapGenerator:
         grafana_dashboard: "1"
       annotations:
         grafana_folder: OpenCost
+  - name: grafana-dashboards-cluster
+    namespace: monitoring
+    files:
+      - k8s_dash.json=k8s_dash.json
+      - thanos.json=thanos.json
+    options:
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        grafana_folder: Cluster
