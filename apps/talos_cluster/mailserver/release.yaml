@@ -79,8 +79,8 @@ spec:
         LOGWATCH_SENDER:
         REPORT_RECIPIENT:
         REPORT_SENDER:
-        LOGROTATE_COUNT: 4
-        LOGROTATE_INTERVAL: weekly
+        LOGROTATE_COUNT: 7
+        LOGROTATE_INTERVAL: daily
         POSTFIX_REJECT_UNKNOWN_CLIENT_HOSTNAME: 0
         POSTFIX_INET_PROTOCOLS: all
         DOVECOT_INET_PROTOCOLS: all
@@ -171,7 +171,8 @@ spec:
         requests:
           cpu: 249m
           memory: 294Mi
-        limits: {}
+        limits:
+          ephemeral-storage: 2Gi
       extraVolumeMounts:
         - name: mailman-opt
           mountPath: /etc/postfix/mailman
