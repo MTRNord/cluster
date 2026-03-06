@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gotosocial-s3-sync
+  namespace: gotosocial
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: sync
+          image: amazon/aws-cli:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          command:
+            - aws
+            - s3
+            - sync
+            - /storage/
+            - s3://midnightthoughts-gotosocial/
+            - --endpoint-url
+            - https://hel1.your-objectstorage.com
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gotosocial-s3-secret
+                  key: s3_access_key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gotosocial-s3-secret
+                  key: s3_secret_key
+            - name: AWS_DEFAULT_REGION
+              value: hel1
+          volumeMounts:
+            - name: storage
+              mountPath: /storage
+              subPath: storage
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: gotosocial
