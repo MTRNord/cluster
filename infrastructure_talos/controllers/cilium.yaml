@@ -63,8 +63,30 @@ spec:
         clusterDomain: cluster.local
       relay:
         enabled: true
+        prometheus:
+          enabled: true
+          serviceMonitor:
+            enabled: true
       ui:
         enabled: true
+      metrics:
+        enabled:
+          - dns:query;ignoreResponseCode
+          - drop
+          - flow
+          - flows_to_world
+          - http
+          - icmp
+          - port-distribution
+          - tcp
+        serviceMonitor:
+          enabled: true
+          interval: 15s
+          trustCRDsExist: true
+        dashboards:
+          enabled: true
+          annotations:
+            grafana_folder: Cilium
     installNoConntrackIptablesRules: true
     ipam:
       mode: kubernetes
