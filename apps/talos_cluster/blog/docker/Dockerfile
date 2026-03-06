@@ -71,13 +71,13 @@ RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm redis-cache.2.7.0.zip
 # Install ActivityPub plugin
-RUN wget -q https://downloads.wordpress.org/plugin/activitypub.7.9.1.zip \
-    && unzip -q activitypub.7.9.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm activitypub.7.9.1.zip
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.8.0.0.zip \
+    && unzip -q activitypub.8.0.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.8.0.0.zip
 # Install Embed Optimizer
-RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta3.zip \
-    && unzip -q embed-optimizer.1.0.0-beta3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm embed-optimizer.1.0.0-beta3.zip
+RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta5.zip \
+    && unzip -q embed-optimizer.1.0.0-beta5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm embed-optimizer.1.0.0-beta5.zip
 # Install Enhanced Responsive Images
 RUN wget -q https://downloads.wordpress.org/plugin/auto-sizes.1.7.0.zip \
     && unzip -q auto-sizes.1.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -87,9 +87,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/friends.3.6.0.zip \
     && unzip -q friends.3.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm friends.3.6.0.zip
 # Install Image Placeholders
-RUN wget -q https://downloads.wordpress.org/plugin/dominant-color-images.1.2.0.zip \
-    && unzip -q dominant-color-images.1.2.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm dominant-color-images.1.2.0.zip
+RUN wget -q https://downloads.wordpress.org/plugin/dominant-color-images.1.2.1.zip \
+    && unzip -q dominant-color-images.1.2.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm dominant-color-images.1.2.1.zip
 # Install Image Prioritizer
 RUN wget -q https://downloads.wordpress.org/plugin/image-prioritizer.1.0.0-beta3.zip \
     && unzip -q image-prioritizer.1.0.0-beta3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -103,13 +103,13 @@ RUN wget -q https://downloads.wordpress.org/plugin/webp-uploads.2.6.1.zip \
     && unzip -q webp-uploads.2.6.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm webp-uploads.2.6.1.zip
 # Install Optimization Detective
-RUN wget -q https://downloads.wordpress.org/plugin/optimization-detective.1.0.0-beta4.zip \
-    && unzip -q optimization-detective.1.0.0-beta4.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm optimization-detective.1.0.0-beta4.zip
+RUN wget -q https://downloads.wordpress.org/plugin/optimization-detective.1.0.0-beta5.zip \
+    && unzip -q optimization-detective.1.0.0-beta5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm optimization-detective.1.0.0-beta5.zip
 # Install Performance Lab
-RUN wget -q https://downloads.wordpress.org/plugin/performance-lab.4.0.1.zip \
-    && unzip -q performance-lab.4.0.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm performance-lab.4.0.1.zip
+RUN wget -q https://downloads.wordpress.org/plugin/performance-lab.4.1.0.zip \
+    && unzip -q performance-lab.4.1.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm performance-lab.4.1.0.zip
 # Install Speculative Loading
 RUN wget -q https://downloads.wordpress.org/plugin/speculation-rules.1.6.0.zip \
     && unzip -q speculation-rules.1.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -130,9 +130,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/plausible-analytics.latest-st
     && rm plausible-analytics.latest-stable.zip
 
 # Install Public Post Preview
-RUN wget -q https://downloads.wordpress.org/plugin/public-post-preview.3.0.1.zip \
-    && unzip -q public-post-preview.3.0.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm public-post-preview.3.0.1.zip
+RUN wget -q https://downloads.wordpress.org/plugin/public-post-preview.3.1.0.zip \
+    && unzip -q public-post-preview.3.1.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm public-post-preview.3.1.0.zip
 
 # Install Opengraph plugin
 RUN wget -q https://downloads.wordpress.org/plugin/opengraph.2.0.2.zip \
@@ -175,9 +175,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
     && rm akismet.5.6.zip
 
 # Install Podlove Publisher
-RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.3.3.zip \
-    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.3.3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm podlove-podcasting-plugin-for-wordpress.4.3.3.zip
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.3.4.zip \
+    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.3.4.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-podcasting-plugin-for-wordpress.4.3.4.zip
 
 # Install Podlove Web Player
 RUN wget -q https://downloads.wordpress.org/plugin/podlove-web-player.5.9.2.zip \
