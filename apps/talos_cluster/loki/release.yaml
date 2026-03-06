@@ -1,0 +1,129 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: loki
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: loki
+      version: "6.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: loki
+      interval: 24h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    deploymentMode: SingleBinary
+
+    loki:
+      auth_enabled: false
+      commonConfig:
+        replication_factor: 1
+      storage:
+        type: s3
+        s3:
+          endpoint: hel1.your-objectstorage.com
+          region: hel1
+          bucketnames: midnightthoughts-loki
+          s3forcepathstyle: true
+          insecure: false
+      schemaConfig:
+        configs:
+          - from: "2024-01-01"
+            store: tsdb
+            object_store: s3
+            schema: v13
+            index:
+              prefix: loki_index_
+              period: 24h
+      limits_config:
+        retention_period: 720h
+      compactor:
+        retention_enabled: true
+        delete_request_store: s3
+
+    singleBinary:
+      replicas: 1
+      persistence:
+        enabled: true
+        storageClass: longhorn
+        size: 256Mi
+      extraEnv:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: loki-s3-credentials
+              key: access_key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: loki-s3-credentials
+              key: secret_key
+
+    # Disable components not needed in SingleBinary mode
+    read:
+      replicas: 0
+    write:
+      replicas: 0
+    backend:
+      replicas: 0
+
+    gateway:
+      enabled: false
+
+    monitoring:
+      serviceMonitor:
+        enabled: true
+        labels:
+          release: prometheus-stack
+      selfMonitoring:
+        enabled: false
+        grafanaAgent:
+          installOperator: false
+      lokiCanary:
+        enabled: false
+
+    test:
+      enabled: false
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: promtail
+  namespace: loki
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: promtail
+      version: "6.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: loki
+      interval: 24h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    config:
+      logLevel: info
+      clients:
+        - url: http://loki-singleBinary.loki.svc.cluster.local:3100/loki/api/v1/push
+    tolerations:
+      - operator: Exists
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: prometheus-stack
