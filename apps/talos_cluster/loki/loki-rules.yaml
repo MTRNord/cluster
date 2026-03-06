@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-rules
+  namespace: loki
+data:
+  rules.yaml: |
+    groups:
+      - name: mailserver
+        rules:
+          - alert: MailserverHighRejectionRate
+            expr: |
+              sum(rate({namespace="mailserver"} |= "reject" [5m])) > 5
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High mail rejection rate on mailserver"
+              description: "More than 5 rejections/sec for 5 minutes."
+
+          - alert: MailserverBruteForce
+            expr: |
+              sum(rate({namespace="mailserver"} |= "SASL authentication failed" [5m])) > 3
+            for: 2m
+            labels:
+              severity: info
+            annotations:
+              summary: "Possible brute force on mailserver SASL"
+              description: "More than 3 SASL auth failures/sec for 2 minutes."
+
+      - name: plausible
+        rules:
+          - alert: ClickHouseExceptionRate
+            expr: |
+              sum(rate({namespace="blog", container="clickhouse"} |= "Exception" [5m])) > 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "ClickHouse exceptions in Plausible"
+              description: "ClickHouse is logging exceptions — check Plausible analytics."

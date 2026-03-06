@@ -31,7 +31,6 @@ spec:
         type: s3
         bucketNames:
           chunks: midnightthoughts-loki
-          ruler: midnightthoughts-loki
           admin: midnightthoughts-loki
         s3:
           endpoint: hel1.your-objectstorage.com
@@ -56,6 +55,17 @@ spec:
       compactor:
         retention_enabled: true
         delete_request_store: s3
+      rulerConfig:
+        storage:
+          type: local
+          local:
+            directory: /rules
+        rule_path: /tmp/loki-rules
+        alertmanager_url: http://alertmanager-operated.monitoring.svc.cluster.local:9093
+        ring:
+          kvstore:
+            store: memberlist
+        enable_api: true
 
     singleBinary:
       replicas: 1
@@ -63,6 +73,13 @@ spec:
         enabled: true
         storageClass: longhorn
         size: 512Mi
+      extraVolumes:
+        - name: loki-rules
+          configMap:
+            name: loki-rules
+      extraVolumeMounts:
+        - name: loki-rules
+          mountPath: /rules/fake
       extraEnv:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
