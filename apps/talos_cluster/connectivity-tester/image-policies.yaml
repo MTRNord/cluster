@@ -1,0 +1,41 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: matrix-connection-tester-ui
+  namespace: flux-system
+spec:
+  image: ghcr.io/mtrnord/matrix-connection-tester-ui
+  interval: 1h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: matrix-connection-tester-ui
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: matrix-connection-tester-ui
+  policy:
+    semver:
+      range: ">=v0.3.0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: rust-federation-tester
+  namespace: flux-system
+spec:
+  image: ghcr.io/mtrnord/rust-federation-tester
+  interval: 1h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: rust-federation-tester
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: rust-federation-tester
+  policy:
+    semver:
+      range: ">=0.3.0"
