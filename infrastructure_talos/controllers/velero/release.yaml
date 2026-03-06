@@ -35,6 +35,13 @@ spec:
           operator: Exists
           effect: NoSchedule
 
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        additionalLabels:
+          release: prometheus-stack
+
     configuration:
       # EnableCSI: built-in since v1.14, enables CSI snapshots for Longhorn volumes
       features: EnableCSI
@@ -42,6 +49,8 @@ spec:
       # CSI snapshots (for Longhorn) run additionally when a VolumeSnapshotClass
       # labelled velero.io/csi-volumesnapshot-class=true exists.
       defaultVolumesToFsBackup: true
+      # Increase timeout to avoid "exposed PVB is not ready" errors on slow volumes
+      podVolumeOperationTimeout: 60m
       backupStorageLocation:
         - name: default
           provider: aws
