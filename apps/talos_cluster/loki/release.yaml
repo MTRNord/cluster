@@ -29,10 +29,13 @@ spec:
         replication_factor: 1
       storage:
         type: s3
+        bucketNames:
+          chunks: midnightthoughts-loki
+          ruler: midnightthoughts-loki
+          admin: midnightthoughts-loki
         s3:
           endpoint: hel1.your-objectstorage.com
           region: hel1
-          bucketnames: midnightthoughts-loki
           s3forcepathstyle: true
           insecure: false
       schemaConfig:
