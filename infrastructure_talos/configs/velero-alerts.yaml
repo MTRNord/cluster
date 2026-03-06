@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: velero-alerts
+  namespace: velero
+  labels:
+    release: prometheus-stack
+spec:
+  groups:
+    - name: velero
+      rules:
+        - alert: VeleroBackupPartialFailure
+          expr: |
+            increase(velero_backup_partial_failure_total{schedule!=""}[1h]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Velero backup partially failed"
+            description: "Schedule {{ $labels.schedule }} has partial failures in the last hour."
+
+        - alert: VeleroBackupFailure
+          expr: |
+            increase(velero_backup_failure_total{schedule!=""}[1h]) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Velero backup failed"
+            description: "Schedule {{ $labels.schedule }} backup failed in the last hour."
+
+        - alert: VeleroBackupMissing
+          expr: |
+            time() - velero_backup_last_successful_timestamp{schedule!=""} > 43200
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Velero backup missing for 12h"
+            description: "Schedule {{ $labels.schedule }} has no successful backup in the last 12 hours."
