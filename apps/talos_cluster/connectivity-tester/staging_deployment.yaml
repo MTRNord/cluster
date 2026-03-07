@@ -234,30 +234,34 @@ spec:
   rules:
     - matches:
         - path:
-            value: /api
-            type: PathPrefix
-        - path:
-            value: /api-docs
-            type: PathPrefix
-        - path:
-            value: /oauth2
-            type: PathPrefix
-        - path:
-            value: /metrics
+            value: /
             type: PathPrefix
       backendRefs:
         - name: connectivity-tester-stage
-          port: 8080
+          port: 8000
       timeouts:
         request: 240s
         backendRequest: 0s
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: connectivity-tester-stage-api
+  namespace: matrix
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - api.stage.connectivity-tester.mtrnord.blog
+  rules:
     - matches:
         - path:
             value: /
             type: PathPrefix
       backendRefs:
         - name: connectivity-tester-stage
-          port: 8000
+          port: 8080
       timeouts:
         request: 240s
         backendRequest: 0s
