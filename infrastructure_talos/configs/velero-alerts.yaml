@@ -31,10 +31,10 @@ spec:
 
         - alert: VeleroBackupMissing
           expr: |
-            time() - velero_backup_last_successful_timestamp{schedule!=""} > 43200
+            time() - velero_backup_last_successful_timestamp{schedule!=""} > 90000
           for: 5m
           labels:
             severity: critical
           annotations:
-            summary: "Velero backup missing for 12h"
-            description: "Schedule {{ $labels.schedule }} has no successful backup in the last 12 hours."
+            summary: "Velero backup missing for 25h"
+            description: "Schedule {{ $labels.schedule }} has no successful backup in the last 25 hours."
