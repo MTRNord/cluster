@@ -126,6 +126,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: talos.midnightthoughts.space-tls
+    - name: https-alertmanager-midnightthoughts
+      protocol: HTTPS
+      hostname: "alertmanager.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: alertmanager.midnightthoughts.space-tls
     - name: https-nordgedanken.dev
       protocol: HTTPS
       hostname: "nordgedanken.dev"
