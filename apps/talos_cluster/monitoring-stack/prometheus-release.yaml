@@ -25,9 +25,13 @@ spec:
             config:
                 global:
                     resolve_timeout: 5m
-                    pagerduty_url: https://events.eu.pagerduty.com/v2/enqueue
+                    smtp_smarthost: smtp.fastmail.com:587
+                    smtp_from: ops@nordgedanken.dev
+                    smtp_auth_username: ENC[AES256_GCM,data:klzPScrEKZVsu8MTgWFqN26t6riia9gj,iv:mIZcmRn5WQZkdPJVHcUMWPbTxsnQ7yZS0oD9PP2oFuw=,tag:q2J1kgIEzgHeai1n4oa44g==,type:str]
+                    smtp_auth_password: ENC[AES256_GCM,data:5o8xmfJfMApWSGPG0VtIjA==,iv:huTzVH4BK7w81Xz4HRrII6mCK9+meV9h92fYxW3krms=,tag:wgc9qa5hXpTUMPvXh2aD2w==,type:str]
+                    smtp_require_tls: true
                 route:
-                    receiver: pagerduty-warning
+                    receiver: email
                     group_by:
                         - alertname
                         - namespace
@@ -59,26 +63,15 @@ spec:
                           matchers:
                             - alertname = "KubePersistentVolumeFillingUp"
                             - persistentvolumeclaim = "storage-loki-0"
-                        - receiver: pagerduty-draupnir4all
-                          matchers:
-                            - service_id = "draupnir4all"
-                        - receiver: pagerduty-critical
+                        - receiver: email
                           matchers:
                             - severity = "critical"
                 receivers:
                     - name: "null"
-                    - name: pagerduty-critical
-                      pagerduty_configs:
-                        - routing_key: ENC[AES256_GCM,data:yaGdLAiTSG/BSg5CPV1FMlaQV+DO73YAXq/V9ew6jxc=,iv:GPz6iCmwFYsk1+6Y2S7g6OwgfIqHxR65TAWdfX+4/wE=,tag:NRP8q0fATdzC/eUtpGSXWQ==,type:str]
-                          severity: critical
-                    - name: pagerduty-warning
-                      pagerduty_configs:
-                        - routing_key: ENC[AES256_GCM,data:Dq4GeVjPI8tWt+yfZvP6JwgOx9GjB7tpvZvRReFUdag=,iv:yS5wKPTGtPiD9/G6yI5rNY+uljAUh/mB/ePEkTAbjeM=,tag:rIueFbelOAAmOUjC0+MdmQ==,type:str]
-                          severity: warning
-                    - name: pagerduty-draupnir4all
-                      pagerduty_configs:
-                        - routing_key: ENC[AES256_GCM,data:LXl707QxKiCtsJYUiO/rWkJZyrRhzn4Th+NxO2xf6zU=,iv:yOkxC4sGORco2FRd5QcWwVDrlkR+7m+a2KOiNyPfFKw=,tag:GSAhPoM6PYsDDHR/Ib5ikw==,type:str]
-                          severity: critical
+                    - name: email
+                      email_configs:
+                        - to: mtrnord@nordgedanken.dev
+                          send_resolved: true
                 inhibit_rules:
                     - source_matchers:
                         - severity = "critical"
@@ -115,7 +108,7 @@ spec:
                     objectStorageConfig:
                         existingSecret:
                             name: thanos-objstore-secret
-                            key: ENC[AES256_GCM,data:G79TGxNq,iv:HGsxNiyVmhHUYgIxFsjfDgcqMGJKEqY05amE0cTihR0=,tag:AHn1PUea7+byTYWPFuYRmw==,type:str]
+                            key: ENC[AES256_GCM,data:LhNiSjsN,iv:hCFA/RECD9rJxxenXrVD2icqD2CC7nQF6/poDva5ZCE=,tag:YA23nj/URH7NWVWDppjDew==,type:str]
                 storageSpec:
                     volumeClaimTemplate:
                         spec:
@@ -126,7 +119,7 @@ spec:
                                 requests:
                                     storage: 10Gi
         grafana:
-            adminPassword: ENC[AES256_GCM,data:lGxZ4e+R2exsYiDzSIdmZIgujHoVH9b2SIECAwVYLdPAzoo3x0TiUvJQL23/90dSIrBfWBKsUTORVEGOeLs2eQ==,iv:0LPkUW4hqFNx2wEv+Mj/nEEc6TMsZfGlmmBhxIq4/Io=,tag:5gnpZtOz+TfJF+umSRQiaw==,type:str]
+            adminPassword: ENC[AES256_GCM,data:unnZADH0EX7gbeYKvxotE+rMmq4KClP7tuJEP5P5h9M/FpyoSDRjgE7l7kCVj9XxCHNh6A+xJELnrZdhkyZnaQ==,iv:qPQI+CMVxh6Ny43Ll9cgRBXBI53wqdXGfmxKh1Lq5cs=,tag:9MaX93QuYdRR7B8xTFForw==,type:str]
             sidecar:
                 datasources:
                     # Disable the auto-generated default Prometheus datasource so it
@@ -186,7 +179,7 @@ spec:
                           database: draupnir_synapse
                           user: grafana-ro
                           secureJsonData:
-                            password: ENC[AES256_GCM,data:BFYJqYhZMNnuFyA+NHsIypFdgult35TWQWFZWhGjA2ZNC3toS8qT4CuEGJk+OOSr1Swe6AoKfOPTS3MmJ0hBPQ==,iv:21X7hWWKDyMFJI4ZYNxO7dl/uKsnEedy7LkNy5KsyX4=,tag:G0oK+fEwAxnrH5Bb2+AoLw==,type:str]
+                            password: ENC[AES256_GCM,data:jLu1MZnV2Xa45Ao3tpmwBvtgGWFxSui1Trczu+b2GHtoCAzgEAGgu6kTN0GEJsPPT0y69J6WMQJDnvosrVKRvA==,iv:2ovWUPD6jktPZd0JyFmopnunfK3dfrMczL6LmeYzS4I=,tag:ND3JHQGGnqgpJJBFwGVB1w==,type:str]
                           isDefault: false
                           jsonData:
                             sslmode: disable
@@ -210,7 +203,7 @@ spec:
                           database: connectivity-tester
                           user: connectivity-tester
                           secureJsonData:
-                            password: ENC[AES256_GCM,data:Rd7DFPBBlu8ejbFZrAPEZLg4Iwsq/VgtOA8qKst3hkLrx/8EHqQ7nh48xGo9IsT2SEF5soo/B4bsfrshOTBuXA==,iv:5xiRAQeLizknUUGyoAnkG4MPPtHQ/TNUFu6UyGaLUa0=,tag:/lNdWXrUHFpBIeZfVrjBcg==,type:str]
+                            password: ENC[AES256_GCM,data:1t84+QHZAHpeamL5LmPjyj3CBeCbmYhnLwuf/Nm27V222BLCGvixnFyloYfoXsitSvy6/KQCRD+FLdirJKxl0w==,iv:wkVKZqCfhFI3IzbrakDssiP91ZEcCwSRXq/F6I7jxpQ=,tag:0bMe2MRY5hkJD4Dp18hF1g==,type:str]
                           isDefault: false
                           jsonData:
                             sslmode: disable
@@ -228,7 +221,7 @@ spec:
                     host: smtp.fastmail.com:465
                     from_address: ops@nordgedanken.dev
                 paths:
-                    data: ENC[AES256_GCM,data:qel5EIs4wT8jikQeKZDV10c=,iv:GofaZfhThbfTgKS6m6uaOmGUBaCdMzbVVZ312BSskIU=,tag:ZCl4JwpUGkppxurTphtbeQ==,type:str]
+                    data: ENC[AES256_GCM,data:+MuE3zGDn2o9kOCKilqiF5M=,iv:i1fnjFO1qOEOt0imwdnrxSNsLioq88WtfkvOvJYjxOg=,tag:ouBFP+O7svEU23cTeCr17A==,type:str]
                     logs: /var/log/grafana
                     plugins: /var/lib/grafana/plugins
                     provisioning: /etc/grafana/provisioning
@@ -244,8 +237,8 @@ spec:
                 auth.generic_oauth:
                     name: authentik
                     enabled: true
-                    client_id: ENC[AES256_GCM,data:wQPuBkgZkaP4xpIp49//JFuOtcnxXiS45HZqYoO/O3gdm//JKE6dUL5Xr4CC0hWnf74=,iv:sJONQxyHX24kAUFf0VBNvaN9bUKYcmjjQIoS13Nk2IU=,tag:8H1znDoR6jSvXte/ym79YA==,type:str]
-                    client_secret: ENC[AES256_GCM,data:aactgxIi9Hau1vZASPvAVmTdHgf8yj3ezkMcrh5SOyvHsZltWIT5+hs/sg8mbAPQ+LPqRD5h,iv:V1XUoNMDj9s0EGu/ecBt6MCT2ykLc+RM1V5rGhGCxOs=,tag:tRGiD1SS5sa0Ct86x/Vs1w==,type:str]
+                    client_id: ENC[AES256_GCM,data:k5TIhkbslUOjEJLZbTkkkfT9BKNCg4xb8qBGksLdaiOtsE5otqJPlyWqh4+FKz9+D5E=,iv:DVyRjIyNrEEgWPNb0HCDLjOP9/fMR8aSQFeB1o4+28I=,tag:RB211LaE4ndflIlHg39EFA==,type:str]
+                    client_secret: ENC[AES256_GCM,data:E9JLK4rY6gM1pzQBlARsZC8r8O6cZW12vZ+IbeFFGgYNTXcP/tHn4hozMj4iEkwMLuO2QGcP,iv:w9r/FuiVGfvQLXrz0DdjK2lsN6BHZp5ZtVK0BQZhhA0=,tag:6ifozNd919w+Wl1M/tfTOw==,type:str]
                     scopes: openid email profile
                     auth_url: https://auth.midnightthoughts.space/application/o/authorize/
                     token_url: https://auth.midnightthoughts.space/application/o/token/
@@ -266,48 +259,48 @@ spec:
                               title: CertManagerHittingRateLimits
                               condition: B
                               data:
-                                - refId: ENC[AES256_GCM,data:Hw==,iv:0HyoU8f4ODcX9kol5QgWwB1SV1l78HTPfzOmdYxXNho=,tag:BP9o0aoLtCfG4cVyILMN+Q==,type:str]
+                                - refId: ENC[AES256_GCM,data:yA==,iv:OR+xQNsDLh0hjKcGfIfiZJfz0uY8kmCSdwRBCE17QXw=,tag:bsWKftlNH7rWedIhrITicA==,type:str]
                                   relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:cKEp,iv:f8U4CRaq1ynmiPTmdF5+z40LTvu+6ZsVZD7sRSehcXg=,tag:R+s853nn2zd0/yatdwketg==,type:int]
-                                    to: ENC[AES256_GCM,data:Xw==,iv:X4CRmmlyV5gTiirSXFXqokriAPdORGcv/T5R0HNB80I=,tag:OoTSW7qWcTiLaUQrT/gIgA==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:/viItEFRK+OokQ==,iv:W4ntm7AWNhf2hcLH9Ad97ABHLeE89uCnYdsH/tgk/Yw=,tag:hw8fzPN7EKKY4+FPdBs2Sw==,type:str]
+                                    from: ENC[AES256_GCM,data:60fq,iv:LxxXcLXRDKv6F8sI/KfGmrGU8JZPcniKNVQ0E5Fxmcc=,tag:L/N8mVeRd7vMov4WfuN5ww==,type:int]
+                                    to: ENC[AES256_GCM,data:lA==,iv:rjwo9/KOmgBgk5p43pcZwVCAl56YGflAvXrQd0dga/M=,tag:TAZxIaIdSRq1BCpP3/kS0Q==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:1Qq5LHEUwRFm1w==,iv:2kOtARyzRQLEhtuw/aDOgYytlf7gRkXaGAzQn5YQ5yg=,tag:XGcMaFft2abl+PhUl2Q5Rw==,type:str]
                                   model:
-                                    editorMode: ENC[AES256_GCM,data:V13+KA==,iv:1ChiFYMoXX2OOGJRp6cpfXP/2KF7PqRytHXrP6OW4Hc=,tag:gVA4I5yKkOjtUSwoMRUXfg==,type:str]
-                                    expr: ENC[AES256_GCM,data:RVqsXssSeNC/qYT2kxdw18lECfYrA611JO7NkUDYQWyX+XCv6RwSXW+tOxrjYTC5Zt8I1IkhypSItTqdDZG+pxY/jmQFt6WhwbvdCmp75RnNA7RukrUPRt0o7NtwjJqIOZRKMZvwFaISv5Qv47aR0yXk,iv:1Bu/8C4gR4xnkRMgogW7D22TGiRbokNDxa3i20TcGT4=,tag:NjP7QKMfyCKWWubHJiHrJQ==,type:str]
-                                    instant: ENC[AES256_GCM,data:0ki1CQ==,iv:ZdoVHtUAW+vd/AF4/T2sknd1gSIxlzOAV8sgYP5jTQk=,tag:SSU6g7wkvNB2C15QS3SgOg==,type:bool]
-                                    intervalMs: ENC[AES256_GCM,data:p2wE6Q==,iv:FKKY08HEmGcrzXubkZmDf4N4fD9sVV4uzXBxpiCOzV4=,tag:QHa6/mXPxRrjBGXQv4oFSg==,type:int]
-                                    legendFormat: ENC[AES256_GCM,data:M1T+B5n6,iv:WuMZhfWxsPrXTVY8++XotrK4G5Axsksms7+cyxpNam8=,tag:OmvpcRMBCXmn63gmivZVYg==,type:str]
-                                    maxDataPoints: ENC[AES256_GCM,data:vnahLUI=,iv:HLMeb8vU7xFGFRQpdJaE1JIEsaBAiKXoLf1iRgsd8xA=,tag:IRm2NOdKRa98ifoCDakRag==,type:int]
-                                    range: ENC[AES256_GCM,data:I/ezHbE=,iv:af5VmTLpuCjEDEKCrQ+teinxyInN2ej64+o14D+a/Xo=,tag:jhcuV7zUrx6yvraQTOnFhA==,type:bool]
-                                    refId: ENC[AES256_GCM,data:ow==,iv:s61hWxNGjZqDDpTePwkx+itfTLxZ9hm21+MswuhdCto=,tag:V4mUtcG6KMgNY+FvgSFh5A==,type:str]
-                                - refId: ENC[AES256_GCM,data:uQ==,iv:83d24qp54dgKbCzMIHFGyvwyokNiAdBZWLhggMfgNfQ=,tag:4gEtoQ722ODJQS1X8BBnag==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:jKeQiQ==,iv:U0KV4XrAJeGIX04cUagJ4+Px0PMvvnKJZC0YbP6of70=,tag:haLMXltPHVQtMKGDCr0gMw==,type:str]
+                                    expr: ENC[AES256_GCM,data:pjF9obADEIev9UnASBPOoWPSSRIdMNsGKc7zZP8T5AzN9Gnxta9mUf02BAh5z19LdGVwiAAYvOXyUxMLoZFR2vTv17TmimVIH9iSoab1QZHttyzuacK/7abWb5XbGOr8vl0cOmHOMBV4V4d+bUFBraJN,iv:qmWsMf7yxNZ/YHF1hHGLENEr378/5qT9pqZ/lVbpqQM=,tag:vDOwezw8F3ZN4Ffp82reSw==,type:str]
+                                    instant: ENC[AES256_GCM,data:u0FiGg==,iv:yLHpAvW9ovkHrF+auz/UXiIyOUfOCbXij5NCKOZ7thA=,tag:MmmH08+J/b2fO8sYZUQ9Aw==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:dC9n/g==,iv:Ht1/HfBasIY3ZXOG6pzafoYP/L7mHjAr7vQiHuifc9w=,tag:/rz0urlMMFp7ToZ/yakchw==,type:int]
+                                    legendFormat: ENC[AES256_GCM,data:2pyjKR2n,iv:BPpv3T5RPE9ivAzr/9WV/mn2wTIcx9uRL857qzEBK5w=,tag:olSxuqEmGLGidcig9isDrA==,type:str]
+                                    maxDataPoints: ENC[AES256_GCM,data:2JcNDBQ=,iv:ym8PbiRVLeIpBtnPzI1UQe4zTaSx7uc9HMIHA+TzMIE=,tag:bAxu4wv7DrEO6u+ReiLjMQ==,type:int]
+                                    range: ENC[AES256_GCM,data:cwcFRuU=,iv:IpVU1/TCPV+vWcOonKx5YX+2Dw4uwdrhIfth3aScAJI=,tag:8M5nu1xEooun7RDPgTpbKg==,type:bool]
+                                    refId: ENC[AES256_GCM,data:ZA==,iv:Vn0zZ8N/e1nixeAc4z+uQI8V5G3QGFpkEaMveA8Wh24=,tag:FhEQmE9jzOi07ibhKf89VA==,type:str]
+                                - refId: ENC[AES256_GCM,data:lA==,iv:+/E8FB3Lylz2kVp+VnpZk0QqLw2OwJtGuk1IMcGdWE0=,tag:YgRc8gT0BkyP2CpkVVOVDg==,type:str]
                                   relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:lOn8,iv:k4k0loVUxK/HKMVBkl9GjV6rS9uSVt2J92DUPocv/Ic=,tag:GBkSzkxGvwvVz9ZzHRcT7A==,type:int]
-                                    to: ENC[AES256_GCM,data:sg==,iv:0VRNFkOauHB/TKkanYFb7YWXDchcVxhkxoU8ycU2594=,tag:WJoBB4hf5wCL1x3W0ZNGHQ==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:paHFJVOnCYU=,iv:7V5yKcmCxNzUWOgtvhCH+Gh8XwDrU3rB5Yz/dE1XNkE=,tag:wrIO0pM1pWeKayMutKYxgw==,type:str]
+                                    from: ENC[AES256_GCM,data:4/9J,iv:WIXmgO4cuS8VVRpl7sYVB0vcgYQYeHsEdBW7JspQQFM=,tag:AiR4jP2qB6fdakPVhYCdoA==,type:int]
+                                    to: ENC[AES256_GCM,data:/Q==,iv:WYpl876IoEa3rqrfkZUmbygsp+8jxfJOgunYS3jRV+w=,tag:txBAq/85hphMQXe7UAAKhQ==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:MOxXoJRfYT4=,iv:E1w6YCf19ylgOnPsPrUaFEijXyRtfmIOCU2gMc3V4gg=,tag:iJCG2Fouac9UkZOxPQQ7TQ==,type:str]
                                   model:
                                     conditions:
                                         - evaluator:
                                             params: []
-                                            type: ENC[AES256_GCM,data:Qe8=,iv:6tsELYSPLBiZhHS3o+VJjwKB3v1kkVPRHGP6fk2b82k=,tag:Wg8DSVtDP+ANH7wnw2HBZw==,type:str]
+                                            type: ENC[AES256_GCM,data:RTE=,iv:6NCeJ1RjLzZTnvDZTHfPp7Ie/uafVLWbKTCua399whk=,tag:wYnQaomBlc9HX3w7bdLIlA==,type:str]
                                           operator:
-                                            type: ENC[AES256_GCM,data:RMax,iv:uLE57sJEuSroiLR4WfRwSaqak38aqY32pCFZdBRjYP4=,tag:8EWvDqjwHMx0uzJ1LncGHQ==,type:str]
+                                            type: ENC[AES256_GCM,data:W3F9,iv:n4FkevK6UtWwtybL6I7pjfNfpprIxzRzR2amHYNwGkI=,tag:gYYkl98oM9Yuup+l0hYIMA==,type:str]
                                           query:
                                             params:
-                                                - ENC[AES256_GCM,data:gA==,iv:SZ8wR6rF/NI6aJ+KqvgUczrmJ++sEdykL7sJqtDuJqY=,tag:FXW0uTV65AMhjlimdaxEBg==,type:str]
+                                                - ENC[AES256_GCM,data:Jg==,iv:Gv7FPnzaizeIUocjYyXnZRsU1XT5JVIufy44mBeFX7w=,tag:sSSIna1UbxO8hLW4sQd6fA==,type:str]
                                           reducer:
                                             params: []
-                                            type: ENC[AES256_GCM,data:IYZO1Q==,iv:TsWbUMWUouJLgmC9dCC/keCLu1ek+7k/JJxebqRdS1s=,tag:TxPH1XkxGnHgKqvw6Ii4bQ==,type:str]
-                                          type: ENC[AES256_GCM,data:jPIscHc=,iv:kWhpjnki93mzgbyBMtx2ebj2QjJsKq2i4vA4JRDM1pY=,tag:ikx5C97UJIJJJ+4GJuQlaQ==,type:str]
+                                            type: ENC[AES256_GCM,data:19wdLg==,iv:mWyyab77628fBk6mYgt5RANa203oDqgto1Y0ARm23LM=,tag:E8szLr72WE7JWpavixXXgA==,type:str]
+                                          type: ENC[AES256_GCM,data:IrIq+cg=,iv:hgLQ63m7mCa4oOMGwKMWBUwOfeHian4qih7OXCKiPXY=,tag:XWg6RmDBVMgMOSWtAbZPPg==,type:str]
                                     datasource:
-                                        type: ENC[AES256_GCM,data:G2VlNRMoAyE=,iv:/lBkkq+3JpXUPhvF46uklAeyUiJ7SkNnIu/CEefNBW0=,tag:UbzU3ylSQ8YrrSEP9jNkqg==,type:str]
-                                        uid: ENC[AES256_GCM,data:Hoay8b4fQko=,iv:CQywQpu2b0AixkBDxfHIPhVSVoCYXs+1t4peH9CmOI8=,tag:UZqDJOIIOMwnBg46uOMppw==,type:str]
-                                    expression: ENC[AES256_GCM,data:bQ==,iv:pYSPep56OrFGMklxHWP0qDuRD2aXKVDih8L6lSnq/nA=,tag:nl/pqo3p0yP/VBi63qGE7g==,type:str]
-                                    intervalMs: ENC[AES256_GCM,data:IK5wNg==,iv:AKQrfJdGqYWuTsNW8hPlQl/YbE8WAmPXjO06gLEGkzY=,tag:DOwfwT05Res+WBf2+wj1Gg==,type:int]
-                                    maxDataPoints: ENC[AES256_GCM,data:9FxNd4A=,iv:mGO2mSzrWtT++nhVEgTMmBpC2K8KUZ+ktOWc+PJKb5Y=,tag:z4/d8l75tcctLeqEO2Wa5g==,type:int]
-                                    reducer: ENC[AES256_GCM,data:gIHOow==,iv:jUUcvRIl0EQAq4l48ne3x6GwNGoxoSdsYjI2gbjvcso=,tag:i/2w8U2tPp7NlC1JsfpnOw==,type:str]
-                                    refId: ENC[AES256_GCM,data:vg==,iv:D0sNVoSqiNLQXlOdV77MPMPQ1xAycsThkN87BRq5+vA=,tag:sw4zdP5YL15MdUgPBNgN0g==,type:str]
-                                    type: ENC[AES256_GCM,data:WEORrgvf,iv:enVodUxjjOUyH4Y3EeGjsahdONeE0TerNbi490fyFQc=,tag:sabNRHSlkBaCQQS4uAu+wQ==,type:str]
+                                        type: ENC[AES256_GCM,data:4aFCtmFfd6s=,iv:HSzoWYqd/vS508UCoLZLIybLOveHgpJ5vC/60Lbnp24=,tag:nSFTjn9/QOHRA7xVp7j8fg==,type:str]
+                                        uid: ENC[AES256_GCM,data:ld5ozaC6670=,iv:jN3OXsiT400W/Oq38tVBVCBJ8eG1B7AO3/ZTcoAkId4=,tag:C6SbQAqzoVfU7tS+F35WcA==,type:str]
+                                    expression: ENC[AES256_GCM,data:ng==,iv:5rlGzE4vRhpvQoth6dM06fH/cIXRTdOfZ07whsO3xTk=,tag:XKs+tfTiAJeUY1+GZWeUaw==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:GaSw6g==,iv:MrLHCRM/pRhwKQn5DKzcZj7r8SBDHxBBr61ECMW8/1k=,tag:8qGqE7V4mGzV72qkx8sH5g==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:VWowUsY=,iv:jymXTOInbCghbzRovH3s88u7Gq/tkx28l3sPSSR3wTg=,tag:CUFo6k4NX9AR4IdwcmfaHg==,type:int]
+                                    reducer: ENC[AES256_GCM,data:psQLNg==,iv:cD1YW14Zq2CxZcFUJnstGKgy1c2RqHJecm6RUv4GyDY=,tag:xQ0cLvjN8m5O2Ms/bMPNCw==,type:str]
+                                    refId: ENC[AES256_GCM,data:IQ==,iv:fDb4aI/F2LlL22tvE07sG8Kw3Th6MKMpGNuFbnDqt+4=,tag:mTViLNWxJe3PQeTCM9H1lg==,type:str]
+                                    type: ENC[AES256_GCM,data:UGg9eNjs,iv:AQoQFnQDBfak7BeiCpMfub/yGG8WEPVW7e2qo4YpBj0=,tag:o7isrqaJuayYqbOXk7wW3Q==,type:str]
                               noDataState: OK
                               execErrState: Error
                               for: 5m
@@ -317,7 +310,7 @@ spec:
                               labels: {}
                               isPaused: false
                               notification_settings:
-                                receiver: PagerDuty Warning
+                                receiver: MidnightThoughts Ops
                 contactpoints.yaml:
                     apiVersion: 1
                     contactPoints:
@@ -330,65 +323,23 @@ spec:
                               sendReminder: true
                               frequency: 1m
                               settings:
-                                addresses: ops@nordgedanken.dev;mtrnord@nordgedanken.dev;mtrnord1@gmail.com
-                        - orgId: 1
-                          name: PagerDuty
-                          receivers:
-                            - uid: adz30e8814wshd
-                              type: pagerduty
+                                addresses: ENC[AES256_GCM,data:3FnRacHhuev8OjlSogfwpBPv0v9VJ6RDGI8LyDH0RhPGR8aspj7uh3HJTg==,iv:gF73hsvFfAPVD9NxlzpUl4D7mhkZVpQhr94X9sEzTWo=,tag:9/9WKQ2x40p/ztStoz1tQQ==,type:str]
+                            - uid: ntfy-grafana
+                              type: ntfy
                               settings:
-                                integrationKey: ENC[AES256_GCM,data:AhP/oLrCLT6vhjqIRWmFWxF9NZCJEcmiulPtj0ZK2Cc=,iv:cV+BMqpVMbxlmddfq55By2orS5m1LIlXLnyj5ni5q5I=,tag:1nxu3oSzHfKV8ACJWzNZNg==,type:str]
-                                url: https://events.eu.pagerduty.com/v2/enqueue
-                              disableResolveMessage: false
-                        - orgId: 1
-                          name: PagerDuty Warning
-                          receivers:
-                            - uid: pg_warning
-                              type: pagerduty
-                              settings:
-                                integrationKey: ENC[AES256_GCM,data:UrlLd2g49q7dnEDp44NO/nIGLJN8go0F0ERFDZfWtg0=,iv:Kz8ZgfmCw7Wb1KYRiF/uHQrVlisTYpHsB5D8L8YmCSY=,tag:GYzwHrLAJk/+HJfsym75UA==,type:str]
-                                severity: warning
-                                url: https://events.eu.pagerduty.com/v2/enqueue
-                              disableResolveMessage: false
-                        - orgId: 1
-                          name: PagerDuty Draupnir4All
-                          receivers:
-                            - uid: "3"
-                              type: pagerduty
-                              settings:
-                                integrationKey: ENC[AES256_GCM,data:eJnfv4cO/BtTyeAaOM6KPAyHxxb1gL8N81rYuBwibyg=,iv:6VfiZWQ0qpv7hfhtXpmjE4oBEktg4tbz+F+43S3OdxE=,tag:NC8hOjEsNKCdVRgWotuJsw==,type:str]
-                                url: https://events.eu.pagerduty.com/v2/enqueue
-                              disableResolveMessage: false
-                        - orgId: 1
-                          name: PagerDuty Draupnir4All Warning
-                          receivers:
-                            - uid: de02at943dxxcf
-                              type: pagerduty
-                              settings:
-                                integrationKey: ENC[AES256_GCM,data:mygTyoYvbyup2pFbRrC/QjYbRDBrOPHZoL2FFv6yqiQ=,iv:7bqlohhwfj/w4HMNwoB7DdgAu8QXbJklNVaVgx4LCUw=,tag:EiReVvzzQTCvRkbVxE1bGw==,type:str]
-                                severity: warning
-                                url: https://events.eu.pagerduty.com/v2/enqueue
+                                url: https://notify.mtrnord.blog
+                                topic: alertmanager
+                                authorization_scheme: Bearer
+                                authorization_credentials: ENC[AES256_GCM,data:YmvohKrFC2W2M/tKHS1a3qBrhovpSQbkmihx7TmEiAI=,iv:Zz/rLy8noCq/W8NOXBec0z5LhVbQlkL0U8d8GUpZh7c=,tag:/T2uShLInzkcFAw2dY4hHA==,type:str]
                               disableResolveMessage: false
                 policies.yaml:
                     apiVersion: 1
                     policies:
                         - orgId: 1
-                          receiver: PagerDuty
+                          receiver: MidnightThoughts Ops
                           group_by:
                             - grafana_folder
                             - alertname
-                          routes:
-                            - receiver: PagerDuty
-                              object_matchers:
-                                - - service_id
-                                  - '!='
-                                  - draupnir4all
-                            - receiver: PagerDuty Draupnir4All
-                              object_matchers:
-                                - - service_id
-                                  - =
-                                  - draupnir4all
-                            - receiver: MidnightThoughts Ops
     postRenderers:
         - kustomize:
             patches:
@@ -416,16 +367,16 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBocFo1NHN2ZVBhbXJWZWxN
-            QldyaGVhalJPVzFtQmJraHc5OW1LRElrbUEwCjM0b2krWXhSWXlUOFpFejZJdlFD
-            UHpyY3ZxR0RkYXdMTTBHanFxUklTOGMKLS0tIGwzOW41ckp6ZHpYMUQzalVXMnVl
-            dnRlT3MyTXBBcStYZGVRK2h1NEhMMVUKrW3ylOr5J0eEl73FRr4Lm6u4K3a2QR3S
-            rf3z0QQQqA0sB4Bjk2zy81+BZZbQ69OEDC00rfd3P1LfWO+gfvHxZA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBMSXZ3VDZDdnVrUGxxZ29l
+            RE1BbnhlSHlYUjJ1eEdDWGhYMVFlaU9Wcm5ZCnNKemh4TzdaU1V2Qzl1bitqT1dS
+            RVZkdlBwS1pPWjYvRFcwWno0S1F4MWMKLS0tIDV4djd2VUVrUkdEUDBPTEREeXJG
+            SDBhY0NRT2h2bXd1OFZITTUyOTBOZTgK6+Irz4zGf4/dPVA3YFP7LiVfGC8TOq2f
+            3SyzsNhNe6aHxoWFfLhRiOjUyiiztjrzbKaiHSWb4kCRRwMDIbqFyQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-07T08:22:49Z"
-    mac: ENC[AES256_GCM,data:gNvfMlzzfSRJjMY9/2nB21MZ5PNlTPJvy2mHX8LGgYc2PH0l/cfjjpU409n9qfwhtd6kvzZtJJCkN41uWHBZ/CTJmE9xyJCQZ9Fn2jookQjCJ+WT29wkhdz/rQ+ZTK6+2eAgH7ghrcJvaTTmBTnb4i6mttL16R8SU51y6d5zRnk=,iv:ScQu0AqFaiNOHVQG4BFnpPFlXbpmYvU7LIArTxIk1J4=,tag:LwBGeyFacND8QCLG6BizEw==,type:str]
+    lastmodified: "2026-03-13T10:41:32Z"
+    mac: ENC[AES256_GCM,data:HOYJ7gNGdZQkRaR0MHZLLBUp1b+T83BYhNJJazNLDNhYmCaICzKCzz7JqKxzAAn3D21Fm8JcnA7LKq+k0eUPa2KhSSaYnGuusRi7pTIpugEXjMGJb6jAwDhvt2wiPl+zxWH0v6pRYCiV71xmRndRe6sfH2qRqAOv2yCOZ7qj41s=,iv:ynXWnHQhXTu9cfKWEjVJpMoCwg5vDYiaxA0RF6QzLSk=,tag:YYssuRkHGnGaCyMsFGTTog==,type:str]
     pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
     version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -455,14 +406,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBocFo1NHN2ZVBhbXJWZWxN
-            QldyaGVhalJPVzFtQmJraHc5OW1LRElrbUEwCjM0b2krWXhSWXlUOFpFejZJdlFD
-            UHpyY3ZxR0RkYXdMTTBHanFxUklTOGMKLS0tIGwzOW41ckp6ZHpYMUQzalVXMnVl
-            dnRlT3MyTXBBcStYZGVRK2h1NEhMMVUKrW3ylOr5J0eEl73FRr4Lm6u4K3a2QR3S
-            rf3z0QQQqA0sB4Bjk2zy81+BZZbQ69OEDC00rfd3P1LfWO+gfvHxZA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBMSXZ3VDZDdnVrUGxxZ29l
+            RE1BbnhlSHlYUjJ1eEdDWGhYMVFlaU9Wcm5ZCnNKemh4TzdaU1V2Qzl1bitqT1dS
+            RVZkdlBwS1pPWjYvRFcwWno0S1F4MWMKLS0tIDV4djd2VUVrUkdEUDBPTEREeXJG
+            SDBhY0NRT2h2bXd1OFZITTUyOTBOZTgK6+Irz4zGf4/dPVA3YFP7LiVfGC8TOq2f
+            3SyzsNhNe6aHxoWFfLhRiOjUyiiztjrzbKaiHSWb4kCRRwMDIbqFyQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-07T08:22:49Z"
-    mac: ENC[AES256_GCM,data:gNvfMlzzfSRJjMY9/2nB21MZ5PNlTPJvy2mHX8LGgYc2PH0l/cfjjpU409n9qfwhtd6kvzZtJJCkN41uWHBZ/CTJmE9xyJCQZ9Fn2jookQjCJ+WT29wkhdz/rQ+ZTK6+2eAgH7ghrcJvaTTmBTnb4i6mttL16R8SU51y6d5zRnk=,iv:ScQu0AqFaiNOHVQG4BFnpPFlXbpmYvU7LIArTxIk1J4=,tag:LwBGeyFacND8QCLG6BizEw==,type:str]
+    lastmodified: "2026-03-13T10:41:32Z"
+    mac: ENC[AES256_GCM,data:HOYJ7gNGdZQkRaR0MHZLLBUp1b+T83BYhNJJazNLDNhYmCaICzKCzz7JqKxzAAn3D21Fm8JcnA7LKq+k0eUPa2KhSSaYnGuusRi7pTIpugEXjMGJb6jAwDhvt2wiPl+zxWH0v6pRYCiV71xmRndRe6sfH2qRqAOv2yCOZ7qj41s=,iv:ynXWnHQhXTu9cfKWEjVJpMoCwg5vDYiaxA0RF6QzLSk=,tag:YYssuRkHGnGaCyMsFGTTog==,type:str]
     pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
     version: 3.9.1
