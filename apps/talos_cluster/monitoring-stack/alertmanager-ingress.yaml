@@ -1,0 +1,105 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: alertmanager
+    namespace: monitoring
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - alertmanager.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: prometheus-stack-kube-prom-alertmanager
+              port: 9093
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3a3NnNnpaVG1zM0pDVlpM
+            WmZCNlRtSTl1MzRzY2ZnRVJBcE5uUmNUcEZRCnluQXJEUHpqYkdUUWRIRndrR24x
+            c2NqYnVBdGdjd05mZnRyUFZ6bmkvaHcKLS0tIGVRb3ZNWWY3M3RxTnUxSlV3QUlU
+            UTJ3UjBCVzFDTy90SnM4Y0hKdkc3MVEK6SzjAX6kOYjRbapqh85ACyQxNx1o8/aQ
+            7ZPSm1ASI7cQei0MY/Fm+RwTn0S91oC+DlLsddJT6Sb+WUEUMjbGjw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T10:55:38Z"
+    mac: ENC[AES256_GCM,data:A71mRe+40KByfAsB/3xrtjotVA0HIn/Y3ouNrI5idPCYNqyXHPENP401iBpOcvS/ITFWbtY4FyNTS97k3ewjgflfAY+ltpYdxDWvWeJfaYmyJ+05H0SmZUfcf+tEgvsBtOvV2vEMwIgrelroNZI64nQVBf+YV4/UGT/Kx1UG8SY=,iv:zYq4ohrbhROFJh4t7QqwtMmO7Swegt3NOoN/wkUyKns=,tag:K+uVmesjvTzjlQVIWMfw2A==,type:str]
+    pgp: []
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    version: 3.9.1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: alertmanager-oidc-config
+    namespace: monitoring
+type: Opaque
+stringData:
+    client-secret: ENC[AES256_GCM,data:rwcaoibk1JGmBULzOAvZijMG2JWQ25ooZdKozoovDRk3i+gRIYL4GCNloCq3YydkT7Xq955e9+Tqm5C6oiv7B92b9sFis8Koo9FKArqK4rcNfm0KD2Wf1L0OZ40F00OyByFdHdWtIkLqXdIeF4E5uMYGTMkeGfL3WcBZaOpvU08=,iv:ZiDh8Pb0Cl3535LP7Gdsw/tmETGb/kk6jNm2+lSQBNo=,tag:RoMNYECiCSE75Ye8LqOt0w==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3a3NnNnpaVG1zM0pDVlpM
+            WmZCNlRtSTl1MzRzY2ZnRVJBcE5uUmNUcEZRCnluQXJEUHpqYkdUUWRIRndrR24x
+            c2NqYnVBdGdjd05mZnRyUFZ6bmkvaHcKLS0tIGVRb3ZNWWY3M3RxTnUxSlV3QUlU
+            UTJ3UjBCVzFDTy90SnM4Y0hKdkc3MVEK6SzjAX6kOYjRbapqh85ACyQxNx1o8/aQ
+            7ZPSm1ASI7cQei0MY/Fm+RwTn0S91oC+DlLsddJT6Sb+WUEUMjbGjw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T10:55:38Z"
+    mac: ENC[AES256_GCM,data:A71mRe+40KByfAsB/3xrtjotVA0HIn/Y3ouNrI5idPCYNqyXHPENP401iBpOcvS/ITFWbtY4FyNTS97k3ewjgflfAY+ltpYdxDWvWeJfaYmyJ+05H0SmZUfcf+tEgvsBtOvV2vEMwIgrelroNZI64nQVBf+YV4/UGT/Kx1UG8SY=,iv:zYq4ohrbhROFJh4t7QqwtMmO7Swegt3NOoN/wkUyKns=,tag:K+uVmesjvTzjlQVIWMfw2A==,type:str]
+    pgp: []
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    version: 3.9.1
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+    name: oidc-alertmanager
+    namespace: monitoring
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: alertmanager
+    oidc:
+        provider:
+            issuer: https://auth.midnightthoughts.space/application/o/grafana/
+            authorizationEndpoint: https://auth.midnightthoughts.space/application/o/authorize/
+            tokenEndpoint: https://auth.midnightthoughts.space/application/o/token/
+        clientID: Hi9j2holcUd89OwdmJgoaGppow6RrECQJiTq4Isk
+        clientSecret:
+            name: ENC[AES256_GCM,data:1LEXwIOr3sO1drLIr+8ITenbvG1++kTt,iv:46F1LYXgwhIdAPBKc35uEUDfpKyIBDKZPJ70IjVkXsU=,tag:jMTS6vfZ8gELnpGcgzbG/w==,type:str]
+        refreshToken: true
+        cookieDomain: midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3a3NnNnpaVG1zM0pDVlpM
+            WmZCNlRtSTl1MzRzY2ZnRVJBcE5uUmNUcEZRCnluQXJEUHpqYkdUUWRIRndrR24x
+            c2NqYnVBdGdjd05mZnRyUFZ6bmkvaHcKLS0tIGVRb3ZNWWY3M3RxTnUxSlV3QUlU
+            UTJ3UjBCVzFDTy90SnM4Y0hKdkc3MVEK6SzjAX6kOYjRbapqh85ACyQxNx1o8/aQ
+            7ZPSm1ASI7cQei0MY/Fm+RwTn0S91oC+DlLsddJT6Sb+WUEUMjbGjw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T10:55:38Z"
+    mac: ENC[AES256_GCM,data:A71mRe+40KByfAsB/3xrtjotVA0HIn/Y3ouNrI5idPCYNqyXHPENP401iBpOcvS/ITFWbtY4FyNTS97k3ewjgflfAY+ltpYdxDWvWeJfaYmyJ+05H0SmZUfcf+tEgvsBtOvV2vEMwIgrelroNZI64nQVBf+YV4/UGT/Kx1UG8SY=,iv:zYq4ohrbhROFJh4t7QqwtMmO7Swegt3NOoN/wkUyKns=,tag:K+uVmesjvTzjlQVIWMfw2A==,type:str]
+    pgp: []
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    version: 3.9.1

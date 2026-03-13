@@ -22,13 +22,15 @@ spec:
         kubeProxy:
             enabled: false
         alertmanager:
+            alertmanagerSpec:
+                externalUrl: https://alertmanager.midnightthoughts.space
             config:
                 global:
                     resolve_timeout: 5m
                     smtp_smarthost: smtp.fastmail.com:587
                     smtp_from: ops@nordgedanken.dev
-                    smtp_auth_username: ENC[AES256_GCM,data:klzPScrEKZVsu8MTgWFqN26t6riia9gj,iv:mIZcmRn5WQZkdPJVHcUMWPbTxsnQ7yZS0oD9PP2oFuw=,tag:q2J1kgIEzgHeai1n4oa44g==,type:str]
-                    smtp_auth_password: ENC[AES256_GCM,data:5o8xmfJfMApWSGPG0VtIjA==,iv:huTzVH4BK7w81Xz4HRrII6mCK9+meV9h92fYxW3krms=,tag:wgc9qa5hXpTUMPvXh2aD2w==,type:str]
+                    smtp_auth_username: ENC[AES256_GCM,data:pkfN44Ah71fvgxCfYKdHwWvlnZI9LoYX,iv:g0K6DT0jvO6KejIRP8R9yILr+fuYxfjE1adqK2hF9VI=,tag:V3xpUgeY4D14GNpitoBqGg==,type:str]
+                    smtp_auth_password: ENC[AES256_GCM,data:XEv3UihMsvGGS+1krddGow==,iv:hKcp3NLSRQmsFbXXu/brHCCaqaZLjFAGp9OvOmWozDE=,tag:XfRRxD9ySMgWyuwKCIKvEw==,type:str]
                     smtp_require_tls: true
                 route:
                     receiver: email
@@ -108,7 +110,7 @@ spec:
                     objectStorageConfig:
                         existingSecret:
                             name: thanos-objstore-secret
-                            key: ENC[AES256_GCM,data:LhNiSjsN,iv:hCFA/RECD9rJxxenXrVD2icqD2CC7nQF6/poDva5ZCE=,tag:YA23nj/URH7NWVWDppjDew==,type:str]
+                            key: ENC[AES256_GCM,data:m+ww8vQA,iv:KrRks+XWoAVm29yGE0GFOaeGTpHIIjrMuXLT3IiVX/I=,tag:dLORxJPD+tQc4zoyU1W74Q==,type:str]
                 storageSpec:
                     volumeClaimTemplate:
                         spec:
@@ -119,7 +121,7 @@ spec:
                                 requests:
                                     storage: 10Gi
         grafana:
-            adminPassword: ENC[AES256_GCM,data:unnZADH0EX7gbeYKvxotE+rMmq4KClP7tuJEP5P5h9M/FpyoSDRjgE7l7kCVj9XxCHNh6A+xJELnrZdhkyZnaQ==,iv:qPQI+CMVxh6Ny43Ll9cgRBXBI53wqdXGfmxKh1Lq5cs=,tag:9MaX93QuYdRR7B8xTFForw==,type:str]
+            adminPassword: ENC[AES256_GCM,data:RmRMeFNhMUXKBC+xpCqu7bICc0wXOgGZR4WBi16PG4Flj5SOy3IQGL/PEWY4vvkx9gjpPk5yGNoicpFbcFBRZQ==,iv:o6bTt0+p7rF8FNXHn4rIN/y6gmLTKjL6FIfML5sJuSI=,tag:DO72h8uYw63gf8q+wK1FDw==,type:str]
             sidecar:
                 datasources:
                     # Disable the auto-generated default Prometheus datasource so it
@@ -179,7 +181,7 @@ spec:
                           database: draupnir_synapse
                           user: grafana-ro
                           secureJsonData:
-                            password: ENC[AES256_GCM,data:jLu1MZnV2Xa45Ao3tpmwBvtgGWFxSui1Trczu+b2GHtoCAzgEAGgu6kTN0GEJsPPT0y69J6WMQJDnvosrVKRvA==,iv:2ovWUPD6jktPZd0JyFmopnunfK3dfrMczL6LmeYzS4I=,tag:ND3JHQGGnqgpJJBFwGVB1w==,type:str]
+                            password: ENC[AES256_GCM,data:bdptIaS8wVr2PnUYPs/vNloTq72U6Dl5VVmVfMfmyDzilAhNZfclc516FaDraSqA4Sm3E+oxMeEJy4dkAE/9gA==,iv:YxzvPE0eFdYAz4Fd8Z53k3kW0f7OsXNegeq5lU27pQU=,tag:w1av/9BpEfei3qj50B4fUQ==,type:str]
                           isDefault: false
                           jsonData:
                             sslmode: disable
@@ -203,7 +205,7 @@ spec:
                           database: connectivity-tester
                           user: connectivity-tester
                           secureJsonData:
-                            password: ENC[AES256_GCM,data:1t84+QHZAHpeamL5LmPjyj3CBeCbmYhnLwuf/Nm27V222BLCGvixnFyloYfoXsitSvy6/KQCRD+FLdirJKxl0w==,iv:wkVKZqCfhFI3IzbrakDssiP91ZEcCwSRXq/F6I7jxpQ=,tag:0bMe2MRY5hkJD4Dp18hF1g==,type:str]
+                            password: ENC[AES256_GCM,data:rtHj7Z/L7m95MPKGnnjdMxbKvuHrl/4EHy+kMfjNmfIFobf64qyTZVyIgMrNP8NvaZmvLuT9357H8Q6YBkRhbg==,iv:XqwwoI+miW4bFSYQ8IB9DMcpISn0nccZlCKwpca9G2E=,tag:OlBhvtR4agnkEavhgcdBgg==,type:str]
                           isDefault: false
                           jsonData:
                             sslmode: disable
@@ -221,7 +223,7 @@ spec:
                     host: smtp.fastmail.com:465
                     from_address: ops@nordgedanken.dev
                 paths:
-                    data: ENC[AES256_GCM,data:+MuE3zGDn2o9kOCKilqiF5M=,iv:i1fnjFO1qOEOt0imwdnrxSNsLioq88WtfkvOvJYjxOg=,tag:ouBFP+O7svEU23cTeCr17A==,type:str]
+                    data: ENC[AES256_GCM,data:YVIzGgP1lwNZwroixz0Lpuc=,iv:pscNFBq80id4HdGzaiK+VFCE8vnBWKyixn01OiVehds=,tag:qqlG0Y52fu8FDqI/yx3ivQ==,type:str]
                     logs: /var/log/grafana
                     plugins: /var/lib/grafana/plugins
                     provisioning: /etc/grafana/provisioning
@@ -237,8 +239,8 @@ spec:
                 auth.generic_oauth:
                     name: authentik
                     enabled: true
-                    client_id: ENC[AES256_GCM,data:k5TIhkbslUOjEJLZbTkkkfT9BKNCg4xb8qBGksLdaiOtsE5otqJPlyWqh4+FKz9+D5E=,iv:DVyRjIyNrEEgWPNb0HCDLjOP9/fMR8aSQFeB1o4+28I=,tag:RB211LaE4ndflIlHg39EFA==,type:str]
-                    client_secret: ENC[AES256_GCM,data:E9JLK4rY6gM1pzQBlARsZC8r8O6cZW12vZ+IbeFFGgYNTXcP/tHn4hozMj4iEkwMLuO2QGcP,iv:w9r/FuiVGfvQLXrz0DdjK2lsN6BHZp5ZtVK0BQZhhA0=,tag:6ifozNd919w+Wl1M/tfTOw==,type:str]
+                    client_id: ENC[AES256_GCM,data:TY2ixgfZI+aYrlxL51vVnCnlRixLMZd+/u2sBM3UcRWcdHtJ5XxRDhsyoW/GiYTT5Nk=,iv:4DAHEwPgo67yM3N0hF+0kbB4kbik/BDSx898ip7UYqs=,tag:054TcwOq3FhRvSveoImJ1A==,type:str]
+                    client_secret: ENC[AES256_GCM,data:RFqLq+7s2jZiStKiAcBH3Tw5/iEf+EjcDK10KKNuUUwQEssTBTDAWPpMNvksYtpSMnOX596c,iv:pyOvpTdgKKoRx1eD7r3Od7aKLIptsNnzu6b/oXgm2Gk=,tag:ODFuwRQBnVZE9Ux5KEgrPw==,type:str]
                     scopes: openid email profile
                     auth_url: https://auth.midnightthoughts.space/application/o/authorize/
                     token_url: https://auth.midnightthoughts.space/application/o/token/
@@ -259,48 +261,48 @@ spec:
                               title: CertManagerHittingRateLimits
                               condition: B
                               data:
-                                - refId: ENC[AES256_GCM,data:yA==,iv:OR+xQNsDLh0hjKcGfIfiZJfz0uY8kmCSdwRBCE17QXw=,tag:bsWKftlNH7rWedIhrITicA==,type:str]
+                                - refId: ENC[AES256_GCM,data:iQ==,iv:oynZe6tKAP2w2vRp2oSpmlS1ZC+7gNYvgVXEEphM+zY=,tag:Lk196AuEzxqziuoLu3U9wg==,type:str]
                                   relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:60fq,iv:LxxXcLXRDKv6F8sI/KfGmrGU8JZPcniKNVQ0E5Fxmcc=,tag:L/N8mVeRd7vMov4WfuN5ww==,type:int]
-                                    to: ENC[AES256_GCM,data:lA==,iv:rjwo9/KOmgBgk5p43pcZwVCAl56YGflAvXrQd0dga/M=,tag:TAZxIaIdSRq1BCpP3/kS0Q==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:1Qq5LHEUwRFm1w==,iv:2kOtARyzRQLEhtuw/aDOgYytlf7gRkXaGAzQn5YQ5yg=,tag:XGcMaFft2abl+PhUl2Q5Rw==,type:str]
+                                    from: ENC[AES256_GCM,data:Hcjh,iv:JBKnZK1AzTyTBfLHPq9UtKZOnNrkKIieI2BenjjEL2g=,tag:yQqdHvz3NJ2wq90ZFAmfow==,type:int]
+                                    to: ENC[AES256_GCM,data:2g==,iv:ub5g9pEPAilDJzfze4TlA+E1ryhM9/ixhdAHE5zECnQ=,tag:QNGJRMBiphf3jMzJT2tLhA==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:/X6DAQyR+a5/jA==,iv:8iQwIJ10h3/1pX/gSK77OxP7evpoc2sz2fi/O6q8oaI=,tag:RFtEeCHorTPzQJpaDfHm7w==,type:str]
                                   model:
-                                    editorMode: ENC[AES256_GCM,data:jKeQiQ==,iv:U0KV4XrAJeGIX04cUagJ4+Px0PMvvnKJZC0YbP6of70=,tag:haLMXltPHVQtMKGDCr0gMw==,type:str]
-                                    expr: ENC[AES256_GCM,data:pjF9obADEIev9UnASBPOoWPSSRIdMNsGKc7zZP8T5AzN9Gnxta9mUf02BAh5z19LdGVwiAAYvOXyUxMLoZFR2vTv17TmimVIH9iSoab1QZHttyzuacK/7abWb5XbGOr8vl0cOmHOMBV4V4d+bUFBraJN,iv:qmWsMf7yxNZ/YHF1hHGLENEr378/5qT9pqZ/lVbpqQM=,tag:vDOwezw8F3ZN4Ffp82reSw==,type:str]
-                                    instant: ENC[AES256_GCM,data:u0FiGg==,iv:yLHpAvW9ovkHrF+auz/UXiIyOUfOCbXij5NCKOZ7thA=,tag:MmmH08+J/b2fO8sYZUQ9Aw==,type:bool]
-                                    intervalMs: ENC[AES256_GCM,data:dC9n/g==,iv:Ht1/HfBasIY3ZXOG6pzafoYP/L7mHjAr7vQiHuifc9w=,tag:/rz0urlMMFp7ToZ/yakchw==,type:int]
-                                    legendFormat: ENC[AES256_GCM,data:2pyjKR2n,iv:BPpv3T5RPE9ivAzr/9WV/mn2wTIcx9uRL857qzEBK5w=,tag:olSxuqEmGLGidcig9isDrA==,type:str]
-                                    maxDataPoints: ENC[AES256_GCM,data:2JcNDBQ=,iv:ym8PbiRVLeIpBtnPzI1UQe4zTaSx7uc9HMIHA+TzMIE=,tag:bAxu4wv7DrEO6u+ReiLjMQ==,type:int]
-                                    range: ENC[AES256_GCM,data:cwcFRuU=,iv:IpVU1/TCPV+vWcOonKx5YX+2Dw4uwdrhIfth3aScAJI=,tag:8M5nu1xEooun7RDPgTpbKg==,type:bool]
-                                    refId: ENC[AES256_GCM,data:ZA==,iv:Vn0zZ8N/e1nixeAc4z+uQI8V5G3QGFpkEaMveA8Wh24=,tag:FhEQmE9jzOi07ibhKf89VA==,type:str]
-                                - refId: ENC[AES256_GCM,data:lA==,iv:+/E8FB3Lylz2kVp+VnpZk0QqLw2OwJtGuk1IMcGdWE0=,tag:YgRc8gT0BkyP2CpkVVOVDg==,type:str]
+                                    editorMode: ENC[AES256_GCM,data:VceUbg==,iv:+dNKrNFRTgExg8mQ05W47GG4RDYHZgMZCGZvVB/mFmM=,tag:D8tzKEcvm6iGqSwsZSL1KA==,type:str]
+                                    expr: ENC[AES256_GCM,data:kQ4KSbhEIwWozDXDX1TY2o/TCtifDfPPvNN285waQsmg8qWE3ASrJt+730WTRrMsoTNtivSVj8fdvnGedvNbQ4YIPXkQy+ooiUH39r+/YZNUdlHuK/i4DKAsS7G3nutI7/g1F/40Cu/+NL0R4soDeot4,iv:9U12OrUR1A10AQ/fbE1Tbme4ZcT4ecTLMIXSe6iG90A=,tag:vgq+uiGA8klo7IUtpUHMOA==,type:str]
+                                    instant: ENC[AES256_GCM,data:mthTIg==,iv:8ezUGNng1cAi1x7bbq6Tt4Swycgq8QjgcR4ykbC7hxg=,tag:gdRX7PPDDIyga+xisVIbSQ==,type:bool]
+                                    intervalMs: ENC[AES256_GCM,data:fgCMwA==,iv:gSL71dSqf2Jf2I8wuHZpj9ui18aNEF2W1SBNWhYd6EM=,tag:xs+Ct6MbJfZCoiP2+CFF6w==,type:int]
+                                    legendFormat: ENC[AES256_GCM,data:U0NAf2LJ,iv:efZJ8tVx0r5dyitv6E4NJYmQxvTcCf3jtY9E6V3JacU=,tag:Pmf6/QJBk7E/S42GtHhr0A==,type:str]
+                                    maxDataPoints: ENC[AES256_GCM,data:K2G5z9k=,iv:NA02n3gXHz9GKinN4cyLuhr5V7MBVwlVc9qL/DExRV4=,tag:DR3sFhRKdCDsCMUtF+YFew==,type:int]
+                                    range: ENC[AES256_GCM,data:3IkN1fA=,iv:iXOJMf+xJY/g9gndJYzCgeMOgSJvfbPXIaKg8Lp9ye0=,tag:KfRBJjAZ2nuKe+GPuxTKjw==,type:bool]
+                                    refId: ENC[AES256_GCM,data:MQ==,iv:XvZAzJ/tehf6OO6W++Y9I456u/2gLT4ACAOLTBvQBtk=,tag:gQd9lFL1ELugBK0SHnsd1w==,type:str]
+                                - refId: ENC[AES256_GCM,data:zA==,iv:skMtMZwT/cpdttL4LXulGzXMNC/b+9/xcuT5GhFM8Os=,tag:yBO/XqzUEgKvgDbR2CK59g==,type:str]
                                   relativeTimeRange:
-                                    from: ENC[AES256_GCM,data:4/9J,iv:WIXmgO4cuS8VVRpl7sYVB0vcgYQYeHsEdBW7JspQQFM=,tag:AiR4jP2qB6fdakPVhYCdoA==,type:int]
-                                    to: ENC[AES256_GCM,data:/Q==,iv:WYpl876IoEa3rqrfkZUmbygsp+8jxfJOgunYS3jRV+w=,tag:txBAq/85hphMQXe7UAAKhQ==,type:int]
-                                  datasourceUid: ENC[AES256_GCM,data:MOxXoJRfYT4=,iv:E1w6YCf19ylgOnPsPrUaFEijXyRtfmIOCU2gMc3V4gg=,tag:iJCG2Fouac9UkZOxPQQ7TQ==,type:str]
+                                    from: ENC[AES256_GCM,data:ttvW,iv:2SZ8aRTj73jVHG2GJyHHqRzQyIcOZFYMHwrEygGcBaU=,tag:XM6tpKA2rMvsucVXDld+6g==,type:int]
+                                    to: ENC[AES256_GCM,data:LA==,iv:FGP1gIfcZRbst+Yxk6r32BPZw7JSTCUoMJfzOFbe5cs=,tag:XFgOLvPWhYNTjyBi61g4LA==,type:int]
+                                  datasourceUid: ENC[AES256_GCM,data:xqNjnHrZr5s=,iv:4DoCFb5dicnN6rWolKINvA5xizbaLWuM2AkGACMWxtM=,tag:EndalWH4t1JIki7fmD2NoA==,type:str]
                                   model:
                                     conditions:
                                         - evaluator:
                                             params: []
-                                            type: ENC[AES256_GCM,data:RTE=,iv:6NCeJ1RjLzZTnvDZTHfPp7Ie/uafVLWbKTCua399whk=,tag:wYnQaomBlc9HX3w7bdLIlA==,type:str]
+                                            type: ENC[AES256_GCM,data:xA4=,iv:njO6MJxS/ItD89z8TzNKclmTOYvtX4nwmAKFlXokBIs=,tag:Jz/9CudnLaEP7aIsRkg6Rg==,type:str]
                                           operator:
-                                            type: ENC[AES256_GCM,data:W3F9,iv:n4FkevK6UtWwtybL6I7pjfNfpprIxzRzR2amHYNwGkI=,tag:gYYkl98oM9Yuup+l0hYIMA==,type:str]
+                                            type: ENC[AES256_GCM,data:NaDg,iv:HZCCb7E333+8H/DB0NiAN+hAcYpV3aThf8LKuPEemTg=,tag:xL26GW+PVDQjnt0JTAtsBA==,type:str]
                                           query:
                                             params:
-                                                - ENC[AES256_GCM,data:Jg==,iv:Gv7FPnzaizeIUocjYyXnZRsU1XT5JVIufy44mBeFX7w=,tag:sSSIna1UbxO8hLW4sQd6fA==,type:str]
+                                                - ENC[AES256_GCM,data:Tw==,iv:yGeFPmSBFz8i8TFiwLnegQ8BrzUoP6d2EDEK/Qb5Mpo=,tag:HH89R9YxvD9C03442j8yqQ==,type:str]
                                           reducer:
                                             params: []
-                                            type: ENC[AES256_GCM,data:19wdLg==,iv:mWyyab77628fBk6mYgt5RANa203oDqgto1Y0ARm23LM=,tag:E8szLr72WE7JWpavixXXgA==,type:str]
-                                          type: ENC[AES256_GCM,data:IrIq+cg=,iv:hgLQ63m7mCa4oOMGwKMWBUwOfeHian4qih7OXCKiPXY=,tag:XWg6RmDBVMgMOSWtAbZPPg==,type:str]
+                                            type: ENC[AES256_GCM,data:GxLkmA==,iv:ToBiJp5Ef5qctPK1cuIoh2mPoLa01p1IPqydGnccA/4=,tag:3DBU2Lonzv6MEwnojKuXbw==,type:str]
+                                          type: ENC[AES256_GCM,data:Q3E4MG4=,iv:sxsNKoiIk7dYFFOtr7QG/WYgV+Au81ooc2HE67goXg0=,tag:OduiMotlzOTePUF013tsIA==,type:str]
                                     datasource:
-                                        type: ENC[AES256_GCM,data:4aFCtmFfd6s=,iv:HSzoWYqd/vS508UCoLZLIybLOveHgpJ5vC/60Lbnp24=,tag:nSFTjn9/QOHRA7xVp7j8fg==,type:str]
-                                        uid: ENC[AES256_GCM,data:ld5ozaC6670=,iv:jN3OXsiT400W/Oq38tVBVCBJ8eG1B7AO3/ZTcoAkId4=,tag:C6SbQAqzoVfU7tS+F35WcA==,type:str]
-                                    expression: ENC[AES256_GCM,data:ng==,iv:5rlGzE4vRhpvQoth6dM06fH/cIXRTdOfZ07whsO3xTk=,tag:XKs+tfTiAJeUY1+GZWeUaw==,type:str]
-                                    intervalMs: ENC[AES256_GCM,data:GaSw6g==,iv:MrLHCRM/pRhwKQn5DKzcZj7r8SBDHxBBr61ECMW8/1k=,tag:8qGqE7V4mGzV72qkx8sH5g==,type:int]
-                                    maxDataPoints: ENC[AES256_GCM,data:VWowUsY=,iv:jymXTOInbCghbzRovH3s88u7Gq/tkx28l3sPSSR3wTg=,tag:CUFo6k4NX9AR4IdwcmfaHg==,type:int]
-                                    reducer: ENC[AES256_GCM,data:psQLNg==,iv:cD1YW14Zq2CxZcFUJnstGKgy1c2RqHJecm6RUv4GyDY=,tag:xQ0cLvjN8m5O2Ms/bMPNCw==,type:str]
-                                    refId: ENC[AES256_GCM,data:IQ==,iv:fDb4aI/F2LlL22tvE07sG8Kw3Th6MKMpGNuFbnDqt+4=,tag:mTViLNWxJe3PQeTCM9H1lg==,type:str]
-                                    type: ENC[AES256_GCM,data:UGg9eNjs,iv:AQoQFnQDBfak7BeiCpMfub/yGG8WEPVW7e2qo4YpBj0=,tag:o7isrqaJuayYqbOXk7wW3Q==,type:str]
+                                        type: ENC[AES256_GCM,data:UHfHs+YF0pk=,iv:iyaY1CncuS+KZFMRImkQwCbN3PEs/4dDsG/45uHUF88=,tag:lVrl8mdPW1ivnG31iHa2Pg==,type:str]
+                                        uid: ENC[AES256_GCM,data:OPHKr2wXKw4=,iv:KP9ggRCV7yrWczRUwd2F6ZRYjI1iTvNCsBZz3aGjWZE=,tag:+9AcRRm8e9PGBFooNOfhyg==,type:str]
+                                    expression: ENC[AES256_GCM,data:0Q==,iv:tfitU+4I3m/ZAaFa6q67PZjc2fqbnyC4s0hiLddZKwM=,tag:IGi+9B6zZWipdlWzvc5wDQ==,type:str]
+                                    intervalMs: ENC[AES256_GCM,data:lEiRzg==,iv:5qIBHXQ7+wtS2io36DnsZcRvy4u/VyMXySdA4UCKD3k=,tag:NtDIRWoIR01174zZ61s52A==,type:int]
+                                    maxDataPoints: ENC[AES256_GCM,data:jdfB9xg=,iv:rlonEqh1AWTUgdOh0NAuU1dXVgby09saYMJaV9JQNZo=,tag:UrLqg8usFWg4KwCVC1/tPA==,type:int]
+                                    reducer: ENC[AES256_GCM,data:qLYPYA==,iv:UTgaYl+r8eatJYu3+XcXZSxyK1yX85v57fUwx5UKwj8=,tag:JGo+lsReS46qGhX+ghc6kA==,type:str]
+                                    refId: ENC[AES256_GCM,data:IA==,iv:wwMXyJo8G85P9sTsFlkK1/QhqypzaNMKUR9xgGRzOXU=,tag:W/YMT3L1/pgvkuYHV3ahJQ==,type:str]
+                                    type: ENC[AES256_GCM,data:HwPSuWN/,iv:RF6Vz7xevcHw8DW6Um6+YQjW2tw/V2t3LK8UyY7j8FM=,tag:qMhPPrpsqjIaq0p35xckjw==,type:str]
                               noDataState: OK
                               execErrState: Error
                               for: 5m
@@ -323,14 +325,14 @@ spec:
                               sendReminder: true
                               frequency: 1m
                               settings:
-                                addresses: ENC[AES256_GCM,data:3FnRacHhuev8OjlSogfwpBPv0v9VJ6RDGI8LyDH0RhPGR8aspj7uh3HJTg==,iv:gF73hsvFfAPVD9NxlzpUl4D7mhkZVpQhr94X9sEzTWo=,tag:9/9WKQ2x40p/ztStoz1tQQ==,type:str]
+                                addresses: ENC[AES256_GCM,data:wlsXUeEjKsESOXjvZsAWBMwNEjP8G9pe9JLiJJSdoRnGK6vqzo21PETqKw==,iv:LTrdwuW14bSL4KCkK0Ii1Qw2z5pZsBnWSShUmA/it0Y=,tag:MNa5YM9XXeVEWi4tDtG3RA==,type:str]
                             - uid: ntfy-grafana
                               type: ntfy
                               settings:
                                 url: https://notify.mtrnord.blog
                                 topic: alertmanager
                                 authorization_scheme: Bearer
-                                authorization_credentials: ENC[AES256_GCM,data:YmvohKrFC2W2M/tKHS1a3qBrhovpSQbkmihx7TmEiAI=,iv:Zz/rLy8noCq/W8NOXBec0z5LhVbQlkL0U8d8GUpZh7c=,tag:/T2uShLInzkcFAw2dY4hHA==,type:str]
+                                authorization_credentials: ENC[AES256_GCM,data:3Mxgfo1D1QkzadJR+KpC+QE4RlvGoaioVLblX8zfb2o=,iv:ZYwPii5EiTJ8SOT9AF1ljHYx9WPbMh9+e7NEYqBGgHA=,tag:a5GMOFiw51kTK3HIjISYKQ==,type:str]
                               disableResolveMessage: false
                 policies.yaml:
                     apiVersion: 1
@@ -367,14 +369,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBMSXZ3VDZDdnVrUGxxZ29l
-            RE1BbnhlSHlYUjJ1eEdDWGhYMVFlaU9Wcm5ZCnNKemh4TzdaU1V2Qzl1bitqT1dS
-            RVZkdlBwS1pPWjYvRFcwWno0S1F4MWMKLS0tIDV4djd2VUVrUkdEUDBPTEREeXJG
-            SDBhY0NRT2h2bXd1OFZITTUyOTBOZTgK6+Irz4zGf4/dPVA3YFP7LiVfGC8TOq2f
-            3SyzsNhNe6aHxoWFfLhRiOjUyiiztjrzbKaiHSWb4kCRRwMDIbqFyQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBOCt1bzBoRzY4ekJVTmdG
+            dmMyYll6eTVDVFFXWEdVa3hqVW9MbS9UOUU0CnVQaUI4N2VIV09mVmlFWG1qYlR1
+            Nno0NmhFN21DYTRPT28rZVBUQnJHb2sKLS0tIHBIbzhJQ1VEY05yakxvaWt5ZGV5
+            TTRFQ2VCTDVNMDlHRFJWVDY1eEw1eTAKbr0B3VwAYhP6ATYbjuzRkkmmlVO58Jbq
+            P/fHPrtIjFPphtMO1HyvVvefZmrsExy+fEIicSetAaGCCNyEd/ddoA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-13T10:41:32Z"
-    mac: ENC[AES256_GCM,data:HOYJ7gNGdZQkRaR0MHZLLBUp1b+T83BYhNJJazNLDNhYmCaICzKCzz7JqKxzAAn3D21Fm8JcnA7LKq+k0eUPa2KhSSaYnGuusRi7pTIpugEXjMGJb6jAwDhvt2wiPl+zxWH0v6pRYCiV71xmRndRe6sfH2qRqAOv2yCOZ7qj41s=,iv:ynXWnHQhXTu9cfKWEjVJpMoCwg5vDYiaxA0RF6QzLSk=,tag:YYssuRkHGnGaCyMsFGTTog==,type:str]
+    lastmodified: "2026-03-13T10:55:35Z"
+    mac: ENC[AES256_GCM,data:MlkO9DU1aY6QcMpjjZI9GVWNHQEXM7594L3PLL/t/3Lt2ct7KqmWWh6YHGUyF97kQXeuCBarcBqzgsYJgKhE9irV+FBaIU4a2xW8QojYKrRfGjbim9REf4t6Chri3tVM1JLVZkDsEBGT+mFG9sHrdGV2i6qh3NoxDVIa5W7JhrQ=,iv:73RPk7s1PAxMM6NrAL8zw40W87lH0LRBaAucI9iN3kc=,tag:X2/nAWGa2Fbq2NsawcFJMQ==,type:str]
     pgp: []
     encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
     version: 3.9.1
@@ -406,14 +408,14 @@ sops:
         - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBMSXZ3VDZDdnVrUGxxZ29l
-            RE1BbnhlSHlYUjJ1eEdDWGhYMVFlaU9Wcm5ZCnNKemh4TzdaU1V2Qzl1bitqT1dS
-            RVZkdlBwS1pPWjYvRFcwWno0S1F4MWMKLS0tIDV4djd2VUVrUkdEUDBPTEREeXJG
-            SDBhY0NRT2h2bXd1OFZITTUyOTBOZTgK6+Irz4zGf4/dPVA3YFP7LiVfGC8TOq2f
-            3SyzsNhNe6aHxoWFfLhRiOjUyiiztjrzbKaiHSWb4kCRRwMDIbqFyQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBOCt1bzBoRzY4ekJVTmdG
+            dmMyYll6eTVDVFFXWEdVa3hqVW9MbS9UOUU0CnVQaUI4N2VIV09mVmlFWG1qYlR1
+            Nno0NmhFN21DYTRPT28rZVBUQnJHb2sKLS0tIHBIbzhJQ1VEY05yakxvaWt5ZGV5
+            TTRFQ2VCTDVNMDlHRFJWVDY1eEw1eTAKbr0B3VwAYhP6ATYbjuzRkkmmlVO58Jbq
+            P/fHPrtIjFPphtMO1HyvVvefZmrsExy+fEIicSetAaGCCNyEd/ddoA==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-13T10:41:32Z"
-    mac: ENC[AES256_GCM,data:HOYJ7gNGdZQkRaR0MHZLLBUp1b+T83BYhNJJazNLDNhYmCaICzKCzz7JqKxzAAn3D21Fm8JcnA7LKq+k0eUPa2KhSSaYnGuusRi7pTIpugEXjMGJb6jAwDhvt2wiPl+zxWH0v6pRYCiV71xmRndRe6sfH2qRqAOv2yCOZ7qj41s=,iv:ynXWnHQhXTu9cfKWEjVJpMoCwg5vDYiaxA0RF6QzLSk=,tag:YYssuRkHGnGaCyMsFGTTog==,type:str]
+    lastmodified: "2026-03-13T10:55:35Z"
+    mac: ENC[AES256_GCM,data:MlkO9DU1aY6QcMpjjZI9GVWNHQEXM7594L3PLL/t/3Lt2ct7KqmWWh6YHGUyF97kQXeuCBarcBqzgsYJgKhE9irV+FBaIU4a2xW8QojYKrRfGjbim9REf4t6Chri3tVM1JLVZkDsEBGT+mFG9sHrdGV2i6qh3NoxDVIa5W7JhrQ=,iv:73RPk7s1PAxMM6NrAL8zw40W87lH0LRBaAucI9iN3kc=,tag:X2/nAWGa2Fbq2NsawcFJMQ==,type:str]
     pgp: []
     encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
     version: 3.9.1
