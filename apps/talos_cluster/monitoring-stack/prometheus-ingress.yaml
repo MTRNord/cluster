@@ -1,0 +1,76 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+    name: prometheus
+    namespace: monitoring
+spec:
+    parentRefs:
+        - name: envoy-gateway
+          namespace: envoy-gateway
+    hostnames:
+        - prometheus.midnightthoughts.space
+    rules:
+        - backendRefs:
+            - name: prometheus-stack-kube-prom-prometheus
+              port: 9090
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkNFp6eGhxejdMSzZHWXY0
+            VkhCdHlXdHRWUVdTQnJWTm5sWVJRWmlWYlNrClRhMTcyQXRVN3BLWWVIYjRvTlp4
+            UjFFOWtCYnc2UHAxNm1CcUVKaVVHRmcKLS0tIDBydStOYlFVemtHVDlsTFA2ZGdB
+            RlZRQVRRb3pJUUxzUFRjUmptRXJBOGcK4+tQNnQh+eHpCUoeU0ruWBmLRiUvesSf
+            wE1x1aWg+dcRWuX7zjw8UWgrIpwRh++jha1R7oZ1lYRLi+6WhcWjHg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T19:24:00Z"
+    mac: ENC[AES256_GCM,data:ke9726909blNlfMQg53SeMZyWSzSSRzR8u/XHKu4u4ad1zIz3ePp9lCEGUdLrc4Dr02FxQSpQOezmC9DoXDM0gUhG4q9jARWhDOCpMEhp7W8WeYgqw6pQXNYqx9g7DE6Gd4omqYli897UDktSbmNTCSx23h8tXMUxxGVO/A8Ncs=,iv:j0AjJWAmIDQ1tWe8zEkjT0kzNwWiRobTr7JHthaHDlk=,tag:rLHld/bYAGdkNjs8s9izfQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    version: 3.9.1
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+    name: oidc-prometheus
+    namespace: monitoring
+spec:
+    targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: prometheus
+    oidc:
+        provider:
+            issuer: https://auth.midnightthoughts.space/application/o/grafana/
+            authorizationEndpoint: https://auth.midnightthoughts.space/application/o/authorize/
+            tokenEndpoint: https://auth.midnightthoughts.space/application/o/token/
+        clientID: Hi9j2holcUd89OwdmJgoaGppow6RrECQJiTq4Isk
+        clientSecret:
+            name: ENC[AES256_GCM,data:HHYmo/uHMaUR4ijVzlLKnT5EH3qOHfSW,iv:LGCJhFYtEVmYeFnAC1i8hPB4DszKdHLupWcYo68Mj9M=,tag:bU3XTDReabonGBBB2KvpOg==,type:str]
+        refreshToken: true
+        cookieDomain: midnightthoughts.space
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkNFp6eGhxejdMSzZHWXY0
+            VkhCdHlXdHRWUVdTQnJWTm5sWVJRWmlWYlNrClRhMTcyQXRVN3BLWWVIYjRvTlp4
+            UjFFOWtCYnc2UHAxNm1CcUVKaVVHRmcKLS0tIDBydStOYlFVemtHVDlsTFA2ZGdB
+            RlZRQVRRb3pJUUxzUFRjUmptRXJBOGcK4+tQNnQh+eHpCUoeU0ruWBmLRiUvesSf
+            wE1x1aWg+dcRWuX7zjw8UWgrIpwRh++jha1R7oZ1lYRLi+6WhcWjHg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-13T19:24:00Z"
+    mac: ENC[AES256_GCM,data:ke9726909blNlfMQg53SeMZyWSzSSRzR8u/XHKu4u4ad1zIz3ePp9lCEGUdLrc4Dr02FxQSpQOezmC9DoXDM0gUhG4q9jARWhDOCpMEhp7W8WeYgqw6pQXNYqx9g7DE6Gd4omqYli897UDktSbmNTCSx23h8tXMUxxGVO/A8Ncs=,iv:j0AjJWAmIDQ1tWe8zEkjT0kzNwWiRobTr7JHthaHDlk=,tag:rLHld/bYAGdkNjs8s9izfQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret)$
+    version: 3.9.1
