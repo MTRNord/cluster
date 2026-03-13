@@ -1,0 +1,365 @@
+storage:
+  type: sqlite
+  path: /data/gatus.db
+
+metrics: true
+
+web:
+  port: 8080
+
+ui:
+  title: "Status | midnightthoughts.space"
+  header: "Service Status"
+  dark-mode: true
+
+# Announcements display a banner at the top of the status page.
+# Useful for communicating planned maintenance or incidents.
+# Types: outage, warning, information, operational, none
+# Add new entries at the top — they're shown in reverse chronological order.
+# Set archived: true to hide old announcements without deleting them.
+#
+# announcements:
+#   - timestamp: 2026-03-13T10:00:00Z
+#     type: warning
+#     message: "Scheduled maintenance 10:00-12:00 UTC — some services may be unavailable."
+#   - timestamp: 2026-03-13T12:00:00Z
+#     type: operational
+#     message: "Maintenance completed. All services restored."
+#     archived: false
+
+endpoints:
+
+  ##############################################################################
+  # DNS
+  ##############################################################################
+
+  - name: dns-a Reachability
+    group: DNS
+    url: "tcp://46.62.175.246:53"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: dns-b Reachability
+    group: DNS
+    url: "tcp://46.62.199.69:53"
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: dns-a Authoritative (nordgedanken.dev)
+    group: DNS
+    url: "46.62.175.246:53"
+    dns:
+      query-type: "A"
+      query-name: "nordgedanken.dev"
+    interval: 2m
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+
+  - name: dns-b Authoritative (nordgedanken.dev)
+    group: DNS
+    url: "46.62.199.69:53"
+    dns:
+      query-type: "A"
+      query-name: "nordgedanken.dev"
+    interval: 2m
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+
+  - name: dns-a Authoritative (midnightthoughts.space)
+    group: DNS
+    url: "46.62.175.246:53"
+    dns:
+      query-type: "A"
+      query-name: "midnightthoughts.space"
+    interval: 2m
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+
+  - name: dns-b Authoritative (midnightthoughts.space)
+    group: DNS
+    url: "46.62.199.69:53"
+    dns:
+      query-type: "A"
+      query-name: "midnightthoughts.space"
+    interval: 2m
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+
+  - name: dns-a Recursive
+    group: DNS
+    url: "46.62.175.246:53"
+    dns:
+      query-type: "A"
+      query-name: "one.one.one.one"
+    interval: 5m
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+
+  - name: dns-b Recursive
+    group: DNS
+    url: "46.62.199.69:53"
+    dns:
+      query-type: "A"
+      query-name: "one.one.one.one"
+    interval: 5m
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+
+  ##############################################################################
+  # INFRASTRUCTURE
+  ##############################################################################
+
+  - name: Authentik (SSO)
+    group: Infrastructure
+    url: "https://auth.midnightthoughts.space/-/health/live/"
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[RESPONSE_TIME] < 5000"
+
+  - name: Grafana
+    group: Infrastructure
+    url: "https://grafana.midnightthoughts.space/api/health"
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: ntfy
+    group: Infrastructure
+    url: "https://notify.mtrnord.blog/v1/health"
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].healthy == true"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Flux Webhook
+    group: Infrastructure
+    url: "https://webhook.kubernetes.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == any(200, 404)"  # endpoint exists, auth required
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  ##############################################################################
+  # SOCIAL & COMMUNICATION
+  ##############################################################################
+
+  - name: GoToSocial
+    group: Social
+    url: "https://gts.mtrnord.blog/livez"
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[RESPONSE_TIME] < 3000"
+
+  - name: Matrix (continuwuity)
+    group: Social
+    url: "https://matrix.mtrnord.blog/_matrix/client/versions"
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "has([BODY].versions) == true"
+
+  - name: Matrix Well-Known
+    group: Social
+    url: "https://mtrnord.blog/.well-known/matrix/server"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Matrix Client Well-Known
+    group: Social
+    url: "https://mtrnord.blog/.well-known/matrix/client"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Draupnir
+    group: Social
+    url: "https://draupnir.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == any(200, 404)"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  ##############################################################################
+  # MAIL
+  ##############################################################################
+
+  - name: SMTP (25)
+    group: Mail
+    url: "tcp://mail.midnightthoughts.space:25"
+    interval: 2m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: SMTPS (465)
+    group: Mail
+    url: "tcp://mail.midnightthoughts.space:465"
+    interval: 2m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: SMTP Submission (587)
+    group: Mail
+    url: "tcp://mail.midnightthoughts.space:587"
+    interval: 2m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: IMAPS (993)
+    group: Mail
+    url: "tcp://mail.midnightthoughts.space:993"
+    interval: 2m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: MTA-STS
+    group: Mail
+    url: "https://mta-sts.midnightthoughts.space/.well-known/mta-sts.txt"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: WKD (nordgedanken.dev)
+    group: Mail
+    url: "https://openpgpkey.nordgedanken.dev/.well-known/openpgpkey/nordgedanken.dev/policy"
+    interval: 15m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  ##############################################################################
+  # PERSONAL SERVICES
+  ##############################################################################
+
+  - name: Vaultwarden
+    group: Personal
+    url: "https://vault.midnightthoughts.space/alive"
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Immich
+    group: Personal
+    url: "https://immich.mtrnord.blog/api/server/ping"
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].res == pong"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: FreshRSS
+    group: Personal
+    url: "https://rss.mtrnord.blog"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Bookwyrm
+    group: Personal
+    url: "https://books.mtrnord.blog"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: ActualBudget
+    group: Personal
+    url: "https://budget.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Peertube
+    group: Personal
+    url: "https://peertube.mtrnord.blog"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Collabora
+    group: Personal
+    url: "https://collabora.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  ##############################################################################
+  # PRODUCTIVITY
+  ##############################################################################
+
+  - name: Kimai
+    group: Productivity
+    url: "https://kimai.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Plane
+    group: Productivity
+    url: "https://plane.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Weblate
+    group: Productivity
+    url: "https://weblate.mtrnord.blog"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  ##############################################################################
+  # PUBLISHING & DEV
+  ##############################################################################
+
+  - name: Blog
+    group: Publishing
+    url: "https://mtrnord.blog"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: cgit
+    group: Publishing
+    url: "https://git.midnightthoughts.space"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Connectivity Tester
+    group: Publishing
+    url: "https://connectivity-tester.mtrnord.blog"
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+
+  - name: Connectivity Tester API
+    group: Publishing
+    url: "https://api.connectivity-tester.mtrnord.blog/api/federation/federation-ok?server_name=mtrnord.blog"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
