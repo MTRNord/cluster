@@ -19,8 +19,8 @@ spec:
                     )
                     unless on(instance)
                     label_replace(
-                      kube_node_role{role="control-plane"} * on(node) group_left(internal_ip) kube_node_info,
-                      "instance", "$1:9100", "internal_ip", "(.*)"
+                      kube_node_status_addresses{type="InternalIP"} * on(node) group_left() kube_node_role{role="control-plane"},
+                      "instance", "$1:9100", "address", "(.*)"
                     )
                 for: 15m
                 labels:
