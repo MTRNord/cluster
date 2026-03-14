@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+    name: custom-node-rules
+    namespace: monitoring
+    labels:
+        release: prometheus-stack
+spec:
+    groups:
+        - name: custom.node.rules
+          rules:
+              # NodeMemoryMajorPagesFaults re-added with control-plane nodes excluded.
+              # Control plane nodes are intentionally undersized and expected to have
+              # occasional major page faults; alerting on them causes noise.
+              - alert: NodeMemoryMajorPagesFaults
+                expr: |
+                    (
+                      rate(node_vmstat_pgmajfault{job="node-exporter"}[5m]) > 500
+                    )
+                    unless on(instance)
+                    label_replace(
+                      kube_node_role{role="control-plane"} * on(node) group_left(internal_ip) kube_node_info,
+                      "instance", "$1:9100", "internal_ip", "(.*)"
+                    )
+                for: 15m
+                labels:
+                    severity: warning
+                annotations:
+                    description: 'Memory major pages are occurring at very high rate at {{ $labels.instance }}, 500 major page faults per second for the last 15 minutes, is currently at {{ $value | humanize }}. Please check that there is enough memory available at this instance.'
+                    runbook_url: https://runbooks.prometheus-operator.dev/runbooks/node/nodememorymajorpagesfaults
+                    summary: Memory major page faults are occurring at very high rate.
