@@ -339,6 +339,11 @@ spec:
                             - grafana_folder
                             - alertname
         kube-state-metrics:
+            rbac:
+                extraRules:
+                    - apiGroups: ["postgresql.cnpg.io"]
+                      resources: ["backups"]
+                      verbs: ["list", "watch"]
             customResourceState:
                 enabled: true
                 config:
