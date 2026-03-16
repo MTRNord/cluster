@@ -339,6 +339,8 @@ spec:
                             - grafana_folder
                             - alertname
         kube-state-metrics:
+            metricLabelsAllowlist:
+                - nodes=[topology.kubernetes.io/zone]
             rbac:
                 extraRules:
                     - apiGroups: ["postgresql.cnpg.io"]
