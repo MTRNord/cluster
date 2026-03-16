@@ -1311,7 +1311,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "max(cnpg_backup_stopped_at{namespace=\"$namespace\"})",
+                    "expr": "max(kube_customresource_cnpg_backup_stopped_at{namespace=\"$namespace\"})",
                     "instant": true,
                     "legendFormat": "__auto",
                     "range": false,
@@ -1960,7 +1960,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "code",
-                    "expr": "time() - max(cnpg_backup_stopped_at{namespace=\"$namespace\"})",
+                    "expr": "time() - max(kube_customresource_cnpg_backup_stopped_at{namespace=\"$namespace\"})",
                     "legendFormat": "Backups",
                     "range": true,
                     "refId": "BACKUPS"
@@ -2760,7 +2760,7 @@
                     },
                     "editorMode": "code",
                     "exemplar": false,
-                    "expr": "min(cnpg_backup_stopped_at{namespace=\"$namespace\"}) * 1000",
+                    "expr": "min(kube_customresource_cnpg_backup_stopped_at{namespace=\"$namespace\"}) * 1000",
                     "format": "time_series",
                     "instant": true,
                     "interval": "",
