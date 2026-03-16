@@ -338,6 +338,35 @@ spec:
                           group_by:
                             - grafana_folder
                             - alertname
+        kube-state-metrics:
+            customResourceState:
+                enabled: true
+                config:
+                    kind: CustomResourceStateMetrics
+                    spec:
+                        resources:
+                            - groupVersionKind:
+                                group: postgresql.cnpg.io
+                                version: v1
+                                kind: Backup
+                              labelsFromPath:
+                                cluster: [metadata, labels, "cnpg.io/cluster"]
+                                backup_name: [metadata, name]
+                              metrics:
+                                  - name: cnpg_backup_stopped_at
+                                    help: "Unix timestamp when the CNPG backup completed (status.stoppedAt)"
+                                    each:
+                                        type: Gauge
+                                        gauge:
+                                            path: [status, stoppedAt]
+                                            nilIsZero: true
+                                  - name: cnpg_backup_started_at
+                                    help: "Unix timestamp when the CNPG backup started (status.startedAt)"
+                                    each:
+                                        type: Gauge
+                                        gauge:
+                                            path: [status, startedAt]
+                                            nilIsZero: true
     postRenderers:
         - kustomize:
             patches:
