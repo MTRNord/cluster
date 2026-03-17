@@ -45,8 +45,8 @@ spec:
     # Raise API client limits — default 20 QPS / 30 burst causes context deadline exceeded
     # when listing node-agent pods across many pods concurrently during backup.
     extraArgs:
-      - --client-qps=100
-      - --client-burst=200
+      client-qps: "100"
+      client-burst: "200"
 
     configuration:
       # EnableCSI: built-in since v1.14, enables CSI snapshots for Longhorn volumes
