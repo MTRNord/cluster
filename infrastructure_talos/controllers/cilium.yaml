@@ -130,6 +130,13 @@ spec:
           maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: ScheduleAnyway
+    # Mutual auth is redundant with WireGuard encryption already enabled;
+    # explicitly disable to match terraform module defaults (1.19.1)
+    authentication:
+      mutual:
+        enabled: false
+    # Apply network policies to local-cluster traffic by default (1.19.1 default)
+    policyDefaultLocalCluster: true
     policyCIDRMatchMode: nodes
     prometheus:
       enabled: true
