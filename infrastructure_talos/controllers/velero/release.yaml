@@ -28,12 +28,13 @@ spec:
     deployNodeAgent: true
 
     nodeAgent:
-      tolerations:
-        # Allow node-agent to run on control plane nodes so that DaemonSet pods
-        # scheduled there (Cilium, hcloud-csi-controller) can have their volumes backed up.
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
 
     metrics:
       enabled: true
