@@ -68,6 +68,22 @@ spec:
           provider: aws
           config:
             region: hel1
+      # Kopia repository maintenance job configuration.
+      # Without resource limits, 30+ concurrent maintenance jobs fill the node's
+      # ephemeral storage, causing DiskPressure → Velero pod eviction → backup failure.
+      repositoryMaintenanceJob:
+        repositoryConfigData:
+          global:
+            keepLatestMaintenanceJobs: 3
+            podResources:
+              cpuRequest: "100m"
+              cpuLimit: "500m"
+              memoryRequest: "128Mi"
+              memoryLimit: "1Gi"
+              # Limit ephemeral storage to prevent DiskPressure on nodes
+              # (30+ concurrent maintenance jobs can fill node's local storage)
+              ephemeralStorageRequest: "200Mi"
+              ephemeralStorageLimit: "2Gi"
 
     credentials:
       useSecret: true
