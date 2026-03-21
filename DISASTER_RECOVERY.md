@@ -1,6 +1,6 @@
 # Disaster Recovery Runbook — cluster-2025
 
-Last updated: 2026-02-28
+Last updated: 2026-03-21
 
 ---
 
@@ -19,9 +19,11 @@ This cluster has three layers of backup:
 
 ---
 
-## Scenario 1: Single Application Recovery
+## Scenario 1: Single Application Recovery (Velero Kopia)
 
 Use this when one app's data is corrupt or accidentally deleted.
+
+### Quick reference
 
 ```bash
 # List available backups
@@ -30,24 +32,110 @@ velero backup get
 # See what's in a backup
 velero backup describe cluster-backup-0000-20260228000000 --details
 
-# Restore a single namespace
-velero restore create --from-backup cluster-backup-0600-20260228060000 \
+# Restore a single namespace (full — recommended, see gotchas below)
+velero restore create my-restore \
+  --from-backup cluster-backup-0600-20260228060000 \
   --include-namespaces=<namespace> \
-  --wait
+  --existing-resource-policy=none
 
-# Restore a single resource
-velero restore create --from-backup cluster-backup-0600-20260228060000 \
-  --include-namespaces=<namespace> \
-  --include-resources=persistentvolumeclaims,persistentvolumes \
-  --wait
-```
+# Monitor kopia (file) restore progress
+kubectl -n velero get podvolumerestore -o wide
 
-To restore to a different namespace (e.g. testing a restore without overwriting live data):
-```bash
+# Restore to a different namespace (test without overwriting live data)
 velero restore create --from-backup cluster-backup-0600-20260228060000 \
   --include-namespaces=myapp \
-  --namespace-mappings myapp:myapp-restored \
-  --wait
+  --namespace-mappings myapp:myapp-restored
+```
+
+### Critical: how Velero Kopia volume restore actually works
+
+Kopia does NOT restore data directly into a PVC. Instead:
+1. Velero restores the **pod** (with an injected `restore-wait` init container)
+2. The node-agent writes backup data into the PVC while the init container waits
+3. Only after kopia completes does the main container start
+
+**Consequence:** restoring only PVCs/PVs (`--include-resources=persistentvolumeclaims,persistentvolumes`) creates an empty PVC shell — no data is written. **Always include pods** or restore the full namespace.
+
+### Correct procedure for a namespace with a running Deployment
+
+If Flux has already reconciled the namespace (Deployment + RS exist at current replicas), a naive restore will fail silently: the RS kills the restored pod before kopia can run.
+
+**Step 1: Suspend Flux to prevent it from fighting the restore**
+
+```bash
+flux suspend kustomization apps
+```
+
+**Step 2: Delete the Deployment and all ReplicaSets in the namespace**
+
+This is necessary because `--existing-resource-policy=none` (Velero default) will skip existing resources, leaving the RS at `replicas=0`, which immediately deletes the restored pod.
+
+```bash
+kubectl -n <namespace> delete deploy <name>
+kubectl -n <namespace> delete rs --all
+kubectl -n <namespace> delete pvc <name>   # also delete the (possibly empty/corrupt) PVC
+```
+
+**Step 3: Run the restore**
+
+```bash
+velero restore create <restore-name> \
+  --from-backup <backup-name> \
+  --include-namespaces <namespace> \
+  --existing-resource-policy=none
+```
+
+Velero will restore the Deployment (with `replicas=1` from backup), RS (desired=1), pod (with kopia init container), and PVC. Since the RS wants exactly 1 pod and Velero provides exactly 1, the RS will not kill the pod.
+
+**Step 4: Monitor kopia progress**
+
+```bash
+# Watch bytes written
+kubectl -n velero get podvolumerestore -o wide -w
+
+# Check pod init container status
+kubectl -n <namespace> get pods -w
+# Pod should be in Init:0/1 while kopia runs, then 0/1 while app starts
+```
+
+**Step 5: After data confirmed, resume Flux**
+
+```bash
+# Verify data is present (app starts, or run a debug pod to inspect PVC)
+kubectl -n <namespace> logs <pod>
+
+# Resume Flux — it will reconcile the Deployment back to the state in git
+flux resume kustomization apps
+```
+
+### Stuck restore: finalizer deadlock
+
+If a restore gets stuck in `InProgress (Deleting)` due to a failed kopia operation (e.g., the pod was killed before kopia could write anything):
+
+```bash
+# Force-remove the finalizer — safe if no kopia operations were in flight
+kubectl -n velero patch restore <restore-name> \
+  --type=json -p='[{"op":"remove","path":"/metadata/finalizers"}]'
+```
+
+This is safe when the restored pod was deleted immediately (kopia never started) — there is no kopia state to clean up.
+
+### Backup consistency: databases being written during backup
+
+Velero Kopia takes a file-system snapshot of a live volume. For databases like RocksDB (continuwuity/conduwuit), the backup may capture an inconsistent state if:
+- The database was in recovery mode during backup
+- The CURRENT file was written pointing to a MANIFEST that was later renamed/replaced before the snapshot completed
+
+**Symptom:** restored pod fails with `IO error: No such file or directory: /data/MANIFEST-XXXXXX`
+
+**Fix:** try an older backup (e.g., 06:00 instead of 18:00) taken when the database was in a stable state. Check backup timestamps vs. when the problem started.
+
+```bash
+# List all backups with timestamps
+velero backup get
+
+# Inspect which backup point to use
+velero backup describe <backup-name> | grep Created
 ```
 
 ---
@@ -361,7 +449,13 @@ Something is broken
 
 ## Known Gotchas
 
-- **hcloud-volumes Kopia backup consistency**: Kopia copies files from live pods. For databases other than postgres (which uses CNPG's own WAL-based backup), backups may be inconsistent if the app is writing during backup. Consider pre-backup hooks or accepting slight inconsistency.
+- **hcloud-volumes Kopia backup consistency**: Kopia copies files from live pods. For databases other than postgres (which uses CNPG's own WAL-based backup), backups may be inconsistent if the app is writing during backup. Consider pre-backup hooks or accepting slight inconsistency. For RocksDB databases (conduwuit/continuwuity), a backup taken during recovery mode may reference a MANIFEST file that doesn't exist in the snapshot — try an earlier backup in that case.
+- **Velero Kopia requires pods to write PVC data**: Kopia injects a `restore-wait` init container into restored pods to write data. Restoring only PVCs creates empty shells. Always restore the full namespace or explicitly include pods.
+- **RS at replicas=0 kills restored pods**: If the Deployment/RS already exist in the cluster at `replicas=0` (e.g., Flux reconciled before restore), the RS deletes the kopia pod before data can be written. Fix: delete the Deployment and all RSes first, so Velero restores them fresh from backup at `replicas=1`.
+- **Velero restore finalizer deadlock**: A restore stuck in `InProgress (Deleting)` has a `restores.velero.io/external-resources-finalizer` that blocks deletion. Remove with `kubectl -n velero patch restore <name> --type=json -p='[{"op":"remove","path":"/metadata/finalizers"}]'` — safe when kopia never started.
+- **Suspend Flux before disaster recovery**: Flux reconciles frequently. If not suspended, it will override restored Deployments (e.g., reset replicas to what's in git) or create RSes that fight with Velero. Always run `flux suspend kustomization apps` before a restore, and `flux resume kustomization apps` after.
 - **Velero Schedule CRDs**: Velero CRDs (incl. `Schedule`) are installed by the HelmRelease (infra-controllers). Schedules themselves live in infra-configs which runs after controllers — this is why they're in `infrastructure_talos/configs/velero-schedules.yaml` not in the velero controller directory.
 - **node-agent PodSecurity**: Kopia's `node-agent` DaemonSet requires `hostPath` volumes. The `velero` namespace must have `pod-security.kubernetes.io/enforce: privileged`.
 - **Longhorn backup disk space**: Longhorn snapshots are space-expensive during generation. Prefer Velero (Kopia) for volume backups where possible.
+- **Longhorn snapshots taken during recovery/expansion are unsafe**: A snapshot taken while a volume was being expanded or used for database recovery may not be usable. Prefer Velero backups taken at scheduled times when the app was quiescent.
+- **startupProbe for databases with variable startup time**: For apps like conduwuit/continuwuity that open a RocksDB database (startup time varies by DB size and WAL replay), use a `startupProbe` instead of `initialDelaySeconds`. startupProbe gives a large budget (e.g., `failureThreshold: 18, periodSeconds: 10` = 3 minutes) without delaying health signaling once the app is actually ready. Kubernetes does NOT run liveness/readiness probes until all init containers AND the startupProbe succeed — so kopia data is fully written before the app is probed.
