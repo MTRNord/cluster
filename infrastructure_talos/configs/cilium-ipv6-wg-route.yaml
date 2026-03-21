@@ -1,0 +1,52 @@
+---
+# Adds a kernel route for the IPv6 pod CIDR via cilium_wg0 on every node.
+#
+# With Cilium WireGuard + dual-stack, Cilium routes pod IPv6 traffic entirely
+# in BPF without installing kernel routes. This is fine for regular pods but
+# breaks cilium-health secondary endpoint probes which run from the host
+# network namespace and rely on kernel routing.
+#
+# The more-specific per-node /64 routes via cilium_host still take priority
+# for local pod traffic (longest prefix match wins).
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cilium-ipv6-wg-route
+  namespace: kube-system
+  labels:
+    app: cilium-ipv6-wg-route
+spec:
+  selector:
+    matchLabels:
+      app: cilium-ipv6-wg-route
+  template:
+    metadata:
+      labels:
+        app: cilium-ipv6-wg-route
+    spec:
+      hostNetwork: true
+      tolerations:
+        - operator: Exists
+      priorityClassName: system-node-critical
+      containers:
+        - name: route-keeper
+          image: alpine:3.21
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                if ip link show cilium_wg0 > /dev/null 2>&1; then
+                  ip -6 route replace fd00:10:244::/56 dev cilium_wg0 2>/dev/null
+                fi
+                sleep 30
+              done
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 1m
+              memory: 8Mi
+            limits:
+              cpu: 10m
+              memory: 16Mi
