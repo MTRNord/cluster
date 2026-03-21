@@ -18,24 +18,24 @@ spec:
         app: connectivity-tester-stage
     spec:
       automountServiceAccountToken: false
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - connectivity-tester-stage
-              topologyKey: "kubernetes.io/hostname"
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - connectivity-tester-api
-              topologyKey: "kubernetes.io/hostname"
-      hostNetwork: true
+      # affinity:
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchExpressions:
+      #             - key: app
+      #               operator: In
+      #               values:
+      #                 - connectivity-tester-stage
+      #         topologyKey: "kubernetes.io/hostname"
+      #       - labelSelector:
+      #           matchExpressions:
+      #             - key: app
+      #               operator: In
+      #               values:
+      #                 - connectivity-tester-api
+      #         topologyKey: "kubernetes.io/hostname"
+      # hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: federation-tester-api
