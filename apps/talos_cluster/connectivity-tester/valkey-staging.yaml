@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connectivity-tester-valkey-stage
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: connectivity-tester-valkey-stage
+  template:
+    metadata:
+      labels:
+        app: connectivity-tester-valkey-stage
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      containers:
+        - name: valkey
+          image: valkey/valkey:8-alpine
+          ports:
+            - containerPort: 6379
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: connectivity-tester-valkey-stage
+  namespace: matrix
+spec:
+  selector:
+    app: connectivity-tester-valkey-stage
+  ports:
+    - port: 6379
+      targetPort: 6379
