@@ -13,6 +13,12 @@ spec:
     metadata:
       labels:
         app: continuwuity
+      annotations:
+        # Freeze the process during Velero backup to ensure consistent RocksDB snapshot
+        pre.hook.backup.velero.io/command: '["/bin/sh", "-c", "kill -SIGSTOP 1"]'
+        pre.hook.backup.velero.io/timeout: "30s"
+        post.hook.backup.velero.io/command: '["/bin/sh", "-c", "kill -SIGCONT 1"]'
+        post.hook.backup.velero.io/timeout: "30s"
     spec:
       automountServiceAccountToken: false
       enableServiceLinks: false
@@ -38,7 +44,7 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "500m"
-          image: forgejo.ellis.link/continuwuation/continuwuity:main
+          image: ghcr.io/mtrnord/cluster/continuwuity:main
           #image: forgejo.ellis.link/continuwuation/continuwuity:pr-1099-head
           imagePullPolicy: Always
           ports:
