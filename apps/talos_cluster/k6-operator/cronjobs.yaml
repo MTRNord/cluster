@@ -73,7 +73,7 @@ spec:
                   TIMEOUT=300
                   START=$(date +%s)
                   while true; do
-                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null) || break
                     echo "Stage: ${STAGE}"
                     case "${STAGE}" in finished|error) break ;; esac
                     [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
@@ -145,7 +145,7 @@ spec:
                   TIMEOUT=300
                   START=$(date +%s)
                   while true; do
-                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null) || break
                     echo "Stage: ${STAGE}"
                     case "${STAGE}" in finished|error) break ;; esac
                     [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
@@ -217,7 +217,7 @@ spec:
                   TIMEOUT=600
                   START=$(date +%s)
                   while true; do
-                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null) || break
                     echo "Stage: ${STAGE}"
                     case "${STAGE}" in finished|error) break ;; esac
                     [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
@@ -293,7 +293,7 @@ spec:
                   TIMEOUT=2700
                   START=$(date +%s)
                   while true; do
-                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null) || break
                     echo "Stage: ${STAGE}"
                     case "${STAGE}" in finished|error) break ;; esac
                     [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
