@@ -27,9 +27,18 @@ spec:
         spec:
           serviceAccountName: k6-cronjob
           restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: runner
-              image: bitnami/kubectl:1.32
+              image: docker.io/alpine/k8s:1.32.3
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               command:
                 - /bin/sh
                 - -c
@@ -88,9 +97,18 @@ spec:
         spec:
           serviceAccountName: k6-cronjob
           restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: runner
-              image: bitnami/kubectl:1.32
+              image: docker.io/alpine/k8s:1.32.3
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               command:
                 - /bin/sh
                 - -c
@@ -149,9 +167,18 @@ spec:
         spec:
           serviceAccountName: k6-cronjob
           restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: runner
-              image: bitnami/kubectl:1.32
+              image: docker.io/alpine/k8s:1.32.3
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               command:
                 - /bin/sh
                 - -c
@@ -210,9 +237,18 @@ spec:
         spec:
           serviceAccountName: k6-cronjob
           restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: runner
-              image: bitnami/kubectl:1.32
+              image: docker.io/alpine/k8s:1.32.3
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               command:
                 - /bin/sh
                 - -c
