@@ -60,7 +60,7 @@ spec:
                       configMap:
                         name: k6-scripts
                         file: smoke.js
-                    arguments: --out prometheus-rw
+                    arguments: --out experimental-prometheus-rw
                     runner:
                       env:
                         - name: K6_PROMETHEUS_RW_SERVER_URL
@@ -132,7 +132,7 @@ spec:
                       configMap:
                         name: k6-scripts
                         file: health.js
-                    arguments: --out prometheus-rw
+                    arguments: --out experimental-prometheus-rw
                     runner:
                       env:
                         - name: K6_PROMETHEUS_RW_SERVER_URL
@@ -204,7 +204,7 @@ spec:
                       configMap:
                         name: k6-scripts
                         file: federation.js
-                    arguments: --out prometheus-rw
+                    arguments: --out experimental-prometheus-rw
                     runner:
                       env:
                         - name: K6_PROMETHEUS_RW_SERVER_URL
@@ -276,7 +276,7 @@ spec:
                       configMap:
                         name: k6-scripts
                         file: soak-with-memory-check.js
-                    arguments: --out prometheus-rw
+                    arguments: --out experimental-prometheus-rw
                     runner:
                       env:
                         - name: K6_PROMETHEUS_RW_SERVER_URL
