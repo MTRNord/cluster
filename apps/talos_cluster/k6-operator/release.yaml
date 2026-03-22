@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: k6-operator
+  namespace: k6-operator
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: k6-operator
+      version: "4.3.x"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: k6-operator
+      interval: 60m
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  values: {}

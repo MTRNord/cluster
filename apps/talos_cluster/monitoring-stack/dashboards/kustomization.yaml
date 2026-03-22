@@ -78,3 +78,12 @@ configMapGenerator:
         grafana_dashboard: "1"
       annotations:
         grafana_folder: Postgres
+  - name: grafana-dashboards-k6
+    namespace: monitoring
+    files:
+      - k6-prometheus.json=k6-prometheus.json
+    options:
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        grafana_folder: k6

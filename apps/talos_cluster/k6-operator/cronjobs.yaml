@@ -1,0 +1,258 @@
+# Common env vars injected into every k6 TestRun runner via the CronJob shell scripts:
+#   K6_PROMETHEUS_RW_SERVER_URL — pushes metrics to Prometheus remote-write receiver
+#   K6_PROMETHEUS_RW_STALE_MARKERS — marks stale series when the test ends
+#   BASE_URL — connectivity-tester-stage internal cluster address
+#
+# SERVER_NAMES is intentionally NOT set; config.js default (matrix.org,maunium.net,mtrnord.blog) is used.
+#
+# cleanup: "post" on every TestRun tells the operator to delete the TestRun object
+# after all pods complete, so stale objects don't accumulate even if the CronJob
+# pod crashes before it can run its own kubectl delete at the end.
+---
+# ── Smoke: every 5 minutes, ~10 s, sanity check all endpoints ──────────────
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k6-smoke
+  namespace: k6-operator
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: k6-cronjob
+          restartPolicy: OnFailure
+          containers:
+            - name: runner
+              image: bitnami/kubectl:1.32
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  NAME="k6-smoke-$(date +%s)"
+                  kubectl -n matrix apply -f - << EOF
+                  apiVersion: k6.io/v1alpha1
+                  kind: TestRun
+                  metadata:
+                    name: ${NAME}
+                    namespace: matrix
+                  spec:
+                    parallelism: 1
+                    cleanup: "post"
+                    script:
+                      configMap:
+                        name: k6-scripts
+                        file: smoke.js
+                    arguments: --out prometheus-rw
+                    runner:
+                      env:
+                        - name: K6_PROMETHEUS_RW_SERVER_URL
+                          value: http://prometheus-operated.monitoring.svc.cluster.local:9090/api/v1/write
+                        - name: K6_PROMETHEUS_RW_STALE_MARKERS
+                          value: "true"
+                        - name: BASE_URL
+                          value: http://connectivity-tester-stage.matrix.svc.cluster.local:8080
+                  EOF
+                  TIMEOUT=300
+                  START=$(date +%s)
+                  while true; do
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    echo "Stage: ${STAGE}"
+                    case "${STAGE}" in finished|error) break ;; esac
+                    [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
+                    sleep 10
+                  done
+                  kubectl -n matrix delete testrun/"${NAME}" --ignore-not-found
+---
+# ── Health: every 30 minutes, 30 s, /healthz load baseline ─────────────────
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k6-health
+  namespace: k6-operator
+spec:
+  schedule: "*/30 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: k6-cronjob
+          restartPolicy: OnFailure
+          containers:
+            - name: runner
+              image: bitnami/kubectl:1.32
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  NAME="k6-health-$(date +%s)"
+                  kubectl -n matrix apply -f - << EOF
+                  apiVersion: k6.io/v1alpha1
+                  kind: TestRun
+                  metadata:
+                    name: ${NAME}
+                    namespace: matrix
+                  spec:
+                    parallelism: 1
+                    cleanup: "post"
+                    script:
+                      configMap:
+                        name: k6-scripts
+                        file: health.js
+                    arguments: --out prometheus-rw
+                    runner:
+                      env:
+                        - name: K6_PROMETHEUS_RW_SERVER_URL
+                          value: http://prometheus-operated.monitoring.svc.cluster.local:9090/api/v1/write
+                        - name: K6_PROMETHEUS_RW_STALE_MARKERS
+                          value: "true"
+                        - name: BASE_URL
+                          value: http://connectivity-tester-stage.matrix.svc.cluster.local:8080
+                  EOF
+                  TIMEOUT=300
+                  START=$(date +%s)
+                  while true; do
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    echo "Stage: ${STAGE}"
+                    case "${STAGE}" in finished|error) break ;; esac
+                    [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
+                    sleep 10
+                  done
+                  kubectl -n matrix delete testrun/"${NAME}" --ignore-not-found
+---
+# ── Federation: every 30 minutes, ~60 s, 3+5 VUs across two scenarios ──────
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k6-federation
+  namespace: k6-operator
+spec:
+  schedule: "15,45 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: k6-cronjob
+          restartPolicy: OnFailure
+          containers:
+            - name: runner
+              image: bitnami/kubectl:1.32
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  NAME="k6-federation-$(date +%s)"
+                  kubectl -n matrix apply -f - << EOF
+                  apiVersion: k6.io/v1alpha1
+                  kind: TestRun
+                  metadata:
+                    name: ${NAME}
+                    namespace: matrix
+                  spec:
+                    parallelism: 1
+                    cleanup: "post"
+                    script:
+                      configMap:
+                        name: k6-scripts
+                        file: federation.js
+                    arguments: --out prometheus-rw
+                    runner:
+                      env:
+                        - name: K6_PROMETHEUS_RW_SERVER_URL
+                          value: http://prometheus-operated.monitoring.svc.cluster.local:9090/api/v1/write
+                        - name: K6_PROMETHEUS_RW_STALE_MARKERS
+                          value: "true"
+                        - name: BASE_URL
+                          value: http://connectivity-tester-stage.matrix.svc.cluster.local:8080
+                  EOF
+                  TIMEOUT=600
+                  START=$(date +%s)
+                  while true; do
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    echo "Stage: ${STAGE}"
+                    case "${STAGE}" in finished|error) break ;; esac
+                    [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
+                    sleep 10
+                  done
+                  kubectl -n matrix delete testrun/"${NAME}" --ignore-not-found
+---
+# ── Soak: every 6 hours (on the hour), 30 min, memory leak detection ────────
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k6-soak
+  namespace: k6-operator
+spec:
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          serviceAccountName: k6-cronjob
+          restartPolicy: OnFailure
+          containers:
+            - name: runner
+              image: bitnami/kubectl:1.32
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  NAME="k6-soak-$(date +%s)"
+                  kubectl -n matrix apply -f - << EOF
+                  apiVersion: k6.io/v1alpha1
+                  kind: TestRun
+                  metadata:
+                    name: ${NAME}
+                    namespace: matrix
+                  spec:
+                    parallelism: 1
+                    cleanup: "post"
+                    script:
+                      configMap:
+                        name: k6-scripts
+                        file: soak-with-memory-check.js
+                    arguments: --out prometheus-rw
+                    runner:
+                      env:
+                        - name: K6_PROMETHEUS_RW_SERVER_URL
+                          value: http://prometheus-operated.monitoring.svc.cluster.local:9090/api/v1/write
+                        - name: K6_PROMETHEUS_RW_STALE_MARKERS
+                          value: "true"
+                        - name: BASE_URL
+                          value: http://connectivity-tester-stage.matrix.svc.cluster.local:8080
+                        - name: PROMETHEUS_URL
+                          value: http://prometheus-operated.monitoring.svc.cluster.local:9090
+                        - name: MEMORY_GROWTH_THRESHOLD
+                          value: "0.30"
+                  EOF
+                  TIMEOUT=2700
+                  START=$(date +%s)
+                  while true; do
+                    STAGE=$(kubectl -n matrix get testrun/"${NAME}" -o jsonpath='{.status.stage}' 2>/dev/null || true)
+                    echo "Stage: ${STAGE}"
+                    case "${STAGE}" in finished|error) break ;; esac
+                    [ $(($(date +%s) - START)) -ge ${TIMEOUT} ] && { echo "Timed out"; break; }
+                    sleep 30
+                  done
+                  kubectl -n matrix delete testrun/"${NAME}" --ignore-not-found
