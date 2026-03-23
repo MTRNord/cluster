@@ -167,7 +167,7 @@ spec:
             dn: cn=stalwart-bind,ou=users,dc=ldap,dc=midnightthoughts,dc=space
             secret: "%{env:LDAP_BIND_SECRET}%"
           filter:
-            name: "(&(objectClass=user)(cn=?))"
+            name: "(&(objectClass=user)(|(cn=?)(mail=?)))"
             email: "(&(objectClass=user)(|(mail=?)(mailAlias=?)))"
           attributes:
             name: cn
