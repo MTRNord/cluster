@@ -117,6 +117,7 @@ spec:
           - "http.use-x-forwarded"
           - "report.domain"
           - "queue.*"
+          - "calendar.*"
 
       authentication:
         fallback-admin:
@@ -132,6 +133,11 @@ spec:
 
       http:
         use-x-forwarded: true
+
+      calendar:
+        scheduling:
+          http-rsvp:
+            url: https://webmail.midnightthoughts.space
 
       # ── Storage ─────────────────────────────────────────────────────────
       storage:
@@ -166,7 +172,6 @@ spec:
       # ── Listeners (proxy-protocol from Envoy Gateway) ────────────────────
       server:
         hostname: mail.midnightthoughts.space
-        url: https://webmail.midnightthoughts.space
         listener:
           smtp:
             bind: ["[::]:25"]
