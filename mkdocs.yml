@@ -1,0 +1,50 @@
+site_name: Midnightthoughts GitOps
+site_description: Kubernetes GitOps configuration for the Midnightthoughts infrastructure
+
+docs_dir: docs
+
+watch:
+  - apps
+  - infrastructure_talos
+  - clusters
+  - scripts
+  - README.md
+  - DISASTER_RECOVERY.md
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+  - gen-files:
+      scripts:
+        - docs/gen_pages.py
+  - awesome-pages:
+      filename: .pages
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - toc:
+      permalink: true

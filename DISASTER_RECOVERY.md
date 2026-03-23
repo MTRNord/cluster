@@ -1,4 +1,4 @@
-# Disaster Recovery Runbook — cluster-2025
+# Disaster Recovery Runbook
 
 Last updated: 2026-03-21
 
@@ -8,12 +8,12 @@ Last updated: 2026-03-21
 
 This cluster has three layers of backup:
 
-| Layer | Tool | Scope | Frequency | Retention | Storage |
-|---|---|---|---|---|---|
-| Application + Volumes | Velero (Kopia) | All namespaces + hcloud-volumes | 4× daily (0,6,12,18 UTC) | 14 days | `mtrnord-talos-velero` S3 bucket |
-| Longhorn Volumes | Longhorn backup (incremental, full every 14d) | All Longhorn volumes (group: default) | Daily 02:00 UTC | 14 backups | `mtrnord-longhorn-backup` S3 bucket |
-| Longhorn Config | Longhorn system-backup | Longhorn settings + metadata | Daily 05:00 UTC | 7 backups | `mtrnord-longhorn-backup` S3 bucket |
-| PostgreSQL WAL | CNPG barman-cloud | postgres-cluster | Continuous + scheduled | 30 days | `mtrnord-talos-pg-backup` S3 bucket |
+| Layer                 | Tool                                          | Scope                                 | Frequency                | Retention  | Storage                             |
+| --------------------- | --------------------------------------------- | ------------------------------------- | ------------------------ | ---------- | ----------------------------------- |
+| Application + Volumes | Velero (Kopia)                                | All namespaces + hcloud-volumes       | 4× daily (0,6,12,18 UTC) | 14 days    | `mtrnord-talos-velero` S3 bucket    |
+| Longhorn Volumes      | Longhorn backup (incremental, full every 14d) | All Longhorn volumes (group: default) | Daily 02:00 UTC          | 14 backups | `mtrnord-longhorn-backup` S3 bucket |
+| Longhorn Config       | Longhorn system-backup                        | Longhorn settings + metadata          | Daily 05:00 UTC          | 7 backups  | `mtrnord-longhorn-backup` S3 bucket |
+| PostgreSQL WAL        | CNPG barman-cloud                             | postgres-cluster                      | Continuous + scheduled   | 30 days    | `mtrnord-talos-pg-backup` S3 bucket |
 
 > **Key constraint**: hcloud-volumes CSI does NOT support snapshots. Velero uses Kopia (file-system copy into S3) for those volumes, which requires applications to be quiesced or tolerant of slightly inconsistent snapshots.
 
@@ -50,6 +50,7 @@ velero restore create --from-backup cluster-backup-0600-20260228060000 \
 ### Critical: how Velero Kopia volume restore actually works
 
 Kopia does NOT restore data directly into a PVC. Instead:
+
 1. Velero restores the **pod** (with an injected `restore-wait` init container)
 2. The node-agent writes backup data into the PVC while the init container waits
 3. Only after kopia completes does the main container start
@@ -123,6 +124,7 @@ This is safe when the restored pod was deleted immediately (kopia never started)
 ### Backup consistency: databases being written during backup
 
 Velero Kopia takes a file-system snapshot of a live volume. For databases like RocksDB (continuwuity/conduwuit), the backup may capture an inconsistent state if:
+
 - The database was in recovery mode during backup
 - The CURRENT file was written pointing to a MANIFEST that was later renamed/replaced before the snapshot completed
 
@@ -174,7 +176,7 @@ bootstrap:
   recovery:
     source: pg-s3-backup
     recoveryTarget:
-      targetTime: "2026-02-27T20:00:00Z"   # RFC 3339, adjust as needed
+      targetTime: "2026-02-27T20:00:00Z" # RFC 3339, adjust as needed
 ```
 
 ### 2c. Important lessons from past migrations
@@ -224,30 +226,34 @@ Backup target: `s3://mtrnord-longhorn-backup` (Hetzner Object Storage HEL1)
 
 **Current configuration:**
 
-| Job name | Type | Schedule | Group | Retain | Concurrency | Notes |
-|---|---|---|---|---|---|---|
-| `volume-backup` | `backup` | `0 2 * * *` (02:00) | default | 14 | 2 | Volume data → S3. Primary recovery source. Incremental, full every 14 days. |
-| `post-backup-cleanup` | `snapshot-delete` | `0 3 * * *` (03:00) | default | 2 | 2 | Enforces max 2 snapshots per volume after backup runs. Prevents copy/move failures. |
-| `system-backup` | `system-backup` | `0 5 * * *` (05:00) | — | 7 | — | Longhorn config/metadata backup. `volume-backup-policy: if-not-present`. |
-| `filesystem-trim` | `filesystem-trim` | `0 4 * * *` (04:00) | default | — | 2 | Reclaim space from deleted files. Runs between backup (02:00) and system-backup (05:00). |
+| Job name              | Type              | Schedule            | Group   | Retain | Concurrency | Notes                                                                                    |
+| --------------------- | ----------------- | ------------------- | ------- | ------ | ----------- | ---------------------------------------------------------------------------------------- |
+| `volume-backup`       | `backup`          | `0 2 * * *` (02:00) | default | 14     | 2           | Volume data → S3. Primary recovery source. Incremental, full every 14 days.              |
+| `post-backup-cleanup` | `snapshot-delete` | `0 3 * * *` (03:00) | default | 2      | 2           | Enforces max 2 snapshots per volume after backup runs. Prevents copy/move failures.      |
+| `system-backup`       | `system-backup`   | `0 5 * * *` (05:00) | —       | 7      | —           | Longhorn config/metadata backup. `volume-backup-policy: if-not-present`.                 |
+| `filesystem-trim`     | `filesystem-trim` | `0 4 * * *` (04:00) | default | —      | 2           | Reclaim space from deleted files. Runs between backup (02:00) and system-backup (05:00). |
 
 **Global Longhorn settings:**
+
 - Max snapshots per volume: **5** (hard ceiling, monitoring before raising — `snapshot-delete` retain=2 enforces the soft limit, leaving 3 slots for system snapshots during replica rebuilds)
 - Backup target: `s3://mtrnord-longhorn-backup` (Hetzner Object Storage HEL1)
 
 **Why no `snapshot` or `snapshot-cleanup` job:**
+
 - No `snapshot` job: with a low global snapshot limit, an hourly retain=24 would immediately hit the ceiling. Velero (6h) + Longhorn backup (daily) provide sufficient recovery points without in-cluster snapshots.
 - No `snapshot-cleanup`: redundant when `backup` job does pre-backup cleanup and `snapshot-delete` enforces the count hard limit.
 
 ### 3a. Restore a single Longhorn volume from backup
 
 **Via Longhorn UI (easiest):**
+
 1. Go to Longhorn UI → Backup
 2. Find the volume backup
 3. Click Restore → enter a name for the restored volume
 4. Once restored, create a PVC pointing to the new volume or update the app's PVC
 
 **Via kubectl:**
+
 ```bash
 # List available backups
 kubectl -n longhorn-system get backups.longhorn.io
@@ -308,12 +314,12 @@ Velero recreates the VolumeSnapshot and Longhorn restores the volume from it aut
 
 ### 3d. Which method to use?
 
-| Situation | Best method |
-|---|---|
-| Single volume, recent data loss | Longhorn UI restore (3a) |
-| Need data from >4 days ago | Velero restore (3c) — 14-day retention |
-| Total Longhorn state loss | Longhorn system-backup restore (3b) |
-| App namespace fully deleted | Velero namespace restore (Scenario 1) |
+| Situation                       | Best method                            |
+| ------------------------------- | -------------------------------------- |
+| Single volume, recent data loss | Longhorn UI restore (3a)               |
+| Need data from >4 days ago      | Velero restore (3c) — 14-day retention |
+| Total Longhorn state loss       | Longhorn system-backup restore (3b)    |
+| App namespace fully deleted     | Velero namespace restore (Scenario 1)  |
 
 ---
 
@@ -322,6 +328,7 @@ Velero recreates the VolumeSnapshot and Longhorn restores the volume from it aut
 Use this when the entire cluster is gone and you need to rebuild from scratch.
 
 ### Prerequisites
+
 - Terraform state intact (in Hetzner Cloud or backed up)
 - Access to S3 buckets: `mtrnord-talos-velero` and `mtrnord-talos-pg-backup`
 - Age private key (stored separately — see below)
@@ -409,16 +416,16 @@ flux get ks apps
 
 ## Key Backup Locations
 
-| What | Where | Path |
-|---|---|---|
-| Velero backups (all namespaces + volumes) | Hetzner Object Storage HEL1 | `mtrnord-talos-velero` bucket |
-| Postgres WAL archives | Hetzner Object Storage HEL1 | `mtrnord-talos-pg-backup/pg-base-backup/pg-cluster-v2/` |
-| Postgres scheduled base backups | same bucket | `mtrnord-talos-pg-backup/pg-base-backup/pg-cluster-v2/base/` |
-| Longhorn volume backups | Hetzner Object Storage HEL1 | `mtrnord-longhorn-backup` bucket |
-| Longhorn system backups | same bucket | `mtrnord-longhorn-backup` bucket |
-| GitOps repo | GitHub | MTRNord/gitops |
-| Terraform state | Hetzner Cloud S3 / local | cluster2025-talos/cloud/terraform.tfstate |
-| Age private key | Local machine | `~/.config/sops/age/keys.txt` or `age.agekey` |
+| What                                      | Where                       | Path                                                         |
+| ----------------------------------------- | --------------------------- | ------------------------------------------------------------ |
+| Velero backups (all namespaces + volumes) | Hetzner Object Storage HEL1 | `mtrnord-talos-velero` bucket                                |
+| Postgres WAL archives                     | Hetzner Object Storage HEL1 | `mtrnord-talos-pg-backup/pg-base-backup/pg-cluster-v2/`      |
+| Postgres scheduled base backups           | same bucket                 | `mtrnord-talos-pg-backup/pg-base-backup/pg-cluster-v2/base/` |
+| Longhorn volume backups                   | Hetzner Object Storage HEL1 | `mtrnord-longhorn-backup` bucket                             |
+| Longhorn system backups                   | same bucket                 | `mtrnord-longhorn-backup` bucket                             |
+| GitOps repo                               | GitHub                      | MTRNord/gitops                                               |
+| Terraform state                           | Hetzner Cloud S3 / local    | cluster2025-talos/cloud/terraform.tfstate                    |
+| Age private key                           | Local machine               | `~/.config/sops/age/keys.txt` or `age.agekey`                |
 
 > **CRITICAL**: The age private key is the master key for all cluster secrets. Store it in a password manager (Bitwarden, etc.) in addition to the local file. Without it you cannot decrypt any secret in the cluster.
 
