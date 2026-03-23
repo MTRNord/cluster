@@ -357,10 +357,10 @@ spec:
               recipient_delimiter = +
               unknown_local_recipient_reject_code = 550
               owner_request_special = no
-              transport_maps = regexp:/etc/postfix/mailman/postfix_lmtp
+              transport_maps = hash:/etc/postfix/phorge_transport regexp:/etc/postfix/mailman/postfix_lmtp
               local_recipient_maps = $alias_maps regexp:/etc/postfix/mailman/postfix_lmtp
               virtual_mailbox_domains = texthash:/etc/postfix/vmailbox regexp:/etc/postfix/mailman/postfix_lmtp
-              relay_domains = {{`${{$compatibility_level} < {2} ? {$mydestination} : {}}`}} regexp:/etc/postfix/mailman/postfix_domains
+              relay_domains = phorge.mtrnord.blog {{`${{$compatibility_level} < {2} ? {$mydestination} : {}}`}} regexp:/etc/postfix/mailman/postfix_domains
       user-patches.sh:
         create: true
         path: user-patches.sh
@@ -383,6 +383,10 @@ spec:
           # Enable PROXY Protocol support (different setting as port 25 is handled via postscreen), optionally configure a `syslog_name` to distinguish in logs:
           postconf -P 12525/inet/postscreen_upstream_proxy_protocol=haproxy 12525/inet/postscreen_cache_map=proxy:btree:\$data_directory/postscreen_12525_cache 12525/inet/syslog_name=postfix/smtpd-proxyprotocol
           {{- end }}
+
+          # Relay transport for phorge.mtrnord.blog → dns-a (10.0.64.129) on Hetzner private network
+          printf 'phorge.mtrnord.blog\tsmtp:[10.0.64.129]:25\n' > /etc/postfix/phorge_transport
+          postmap /etc/postfix/phorge_transport
       custom-commands.conf:
         create: true
         path: rspamd/custom-commands.conf
