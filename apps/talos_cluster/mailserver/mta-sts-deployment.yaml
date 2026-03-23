@@ -87,7 +87,8 @@ metadata:
   name: mta-sts-nginx-config
   namespace: mailserver
 data:
-  default.conf: "server {\n    listen 8080;\n    server_name _;\n    \n    root /usr/share/nginx/html;\n    index index.html;\n\n    # Security headers\n    add_header X-Content-Type-Options nosniff;\n
+  default.conf:
+    "server {\n    listen 8080;\n    server_name _;\n    \n    root /usr/share/nginx/html;\n    index index.html;\n\n    # Security headers\n    add_header X-Content-Type-Options nosniff;\n
     \   add_header X-Frame-Options DENY;\n    add_header X-XSS-Protection \"1; mode=block\";\n\n    # MTA-STS specific configuration\n    location /.well-known/mta-sts.txt {\n        add_header Content-Type
     \"text/plain; charset=utf-8\";\n        add_header Cache-Control \"max-age=604800\";\n        try_files $uri =404;\n    }\n\n    # Health check endpoint\n    location /health {\n        access_log off;\n
     \       return 200 \"healthy\\n\";\n        add_header Content-Type text/plain;\n    }\n\n    # Deny access to other locations\n    location / {\n        return 404;\n    }\n\n    # Disable server tokens\n
@@ -109,22 +110,22 @@ spec:
       targetPort: http
       protocol: TCP
   type: ClusterIP
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: mailserver-mta-sts
-  namespace: mailserver
-spec:
-  parentRefs:
-    - name: envoy-gateway
-      namespace: envoy-gateway
-  hostnames:
-    - mta-sts.midnightthoughts.space
-  rules:
-    - backendRefs:
-        - name: mta-sts-server
-          port: 8080
-      timeouts:
-        request: 240s
-        backendRequest: 0s
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   name: mailserver-mta-sts
+#   namespace: mailserver
+# spec:
+#   parentRefs:
+#     - name: envoy-gateway
+#       namespace: envoy-gateway
+#   hostnames:
+#     - mta-sts.midnightthoughts.space
+#   rules:
+#     - backendRefs:
+#         - name: mta-sts-server
+#           port: 8080
+#       timeouts:
+#         request: 240s
+#         backendRequest: 0s
