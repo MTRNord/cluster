@@ -161,16 +161,16 @@ spec:
       directory:
         ldap:
           type: ldap
-          url: ldap://ak-outpost-ldap.authentik.svc.cluster.local:389
+          url: ldap://ldap.midnightthoughts.space:389
           base-dn: dc=ldap,dc=midnightthoughts,dc=space
           bind:
             dn: cn=stalwart-bind,ou=users,dc=ldap,dc=midnightthoughts,dc=space
             secret: "%{env:LDAP_BIND_SECRET}%"
           filter:
-            name: "(&(objectClass=inetOrgPerson)(uid=?))"
-            email: "(&(objectClass=inetOrgPerson)(|(mail=?)(mailAlias=?)))"
+            name: "(&(objectClass=user)(cn=?))"
+            email: "(&(objectClass=user)(|(mail=?)(mailAlias=?)))"
           attributes:
-            name: uid
+            name: cn
             email: mail
             email-alias: mailAlias
 
