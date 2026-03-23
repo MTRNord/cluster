@@ -1,0 +1,1939 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kubernetes GitOps configuration for the Midnightthoughts infrastructure">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../apps/talos_cluster/k6-operator/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Disaster Recovery Runbook - Midnightthoughts GitOps</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#disaster-recovery-runbook" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Midnightthoughts GitOps" class="md-header__button md-logo" aria-label="Midnightthoughts GitOps" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Midnightthoughts GitOps
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Disaster Recovery Runbook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Midnightthoughts GitOps
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Disaster Recovery Runbook
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../apps/talos_cluster/k6-operator/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Applications
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Midnightthoughts GitOps" class="md-nav__button md-logo" aria-label="Midnightthoughts GitOps" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Midnightthoughts GitOps
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightthoughts GitOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Disaster Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Disaster Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-1-single-application-recovery-velero-kopia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Single Application Recovery (Velero Kopia)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 1: Single Application Recovery (Velero Kopia)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-how-velero-kopia-volume-restore-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical: how Velero Kopia volume restore actually works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correct-procedure-for-a-namespace-with-a-running-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correct procedure for a namespace with a running Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stuck-restore-finalizer-deadlock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stuck restore: finalizer deadlock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-consistency-databases-being-written-during-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup consistency: databases being written during backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-2-postgresql-point-in-time-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: PostgreSQL Point-in-Time Recovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 2: PostgreSQL Point-in-Time Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2a-recover-to-latest-eg-after-accidental-table-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2a. Recover to latest (e.g. after accidental table drop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2b-point-in-time-recovery-pitr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2b. Point-in-Time Recovery (PITR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2c-important-lessons-from-past-migrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2c. Important lessons from past migrations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2d-full-postgres-recovery-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2d. Full postgres recovery procedure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-3-longhorn-volume-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Longhorn Volume Recovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 3: Longhorn Volume Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#longhorn-recurring-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Longhorn Recurring Jobs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3a-restore-a-single-longhorn-volume-from-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3a. Restore a single Longhorn volume from backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3b-restore-from-longhorn-system-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3b. Restore from Longhorn system-backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3c-restore-longhorn-volume-via-velero-csi-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3c. Restore Longhorn volume via Velero CSI snapshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3d-which-method-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3d. Which method to use?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-4-full-cluster-recovery-total-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Full Cluster Recovery (Total Loss)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 4: Full Cluster Recovery (Total Loss)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-rebuild-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Rebuild infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-bootstrap-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Bootstrap Flux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-provide-age-key-for-sops-decryption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Provide age key for SOPS decryption
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-wait-for-core-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Wait for core infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-restore-from-velero" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Restore from Velero
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-restore-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Restore PostgreSQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-backup-locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Backup Locations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovery-decision-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recovery Decision Tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#known-gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Gotchas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Talos Cluster
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Talos Cluster
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../apps/talos_cluster/k6-operator/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K6 operator
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    K6 operator
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-1-single-application-recovery-velero-kopia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Single Application Recovery (Velero Kopia)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 1: Single Application Recovery (Velero Kopia)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-how-velero-kopia-volume-restore-actually-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Critical: how Velero Kopia volume restore actually works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#correct-procedure-for-a-namespace-with-a-running-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correct procedure for a namespace with a running Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stuck-restore-finalizer-deadlock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stuck restore: finalizer deadlock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-consistency-databases-being-written-during-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup consistency: databases being written during backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-2-postgresql-point-in-time-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: PostgreSQL Point-in-Time Recovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 2: PostgreSQL Point-in-Time Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2a-recover-to-latest-eg-after-accidental-table-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2a. Recover to latest (e.g. after accidental table drop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2b-point-in-time-recovery-pitr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2b. Point-in-Time Recovery (PITR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2c-important-lessons-from-past-migrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2c. Important lessons from past migrations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2d-full-postgres-recovery-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2d. Full postgres recovery procedure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-3-longhorn-volume-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Longhorn Volume Recovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 3: Longhorn Volume Recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#longhorn-recurring-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Longhorn Recurring Jobs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3a-restore-a-single-longhorn-volume-from-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3a. Restore a single Longhorn volume from backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3b-restore-from-longhorn-system-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3b. Restore from Longhorn system-backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3c-restore-longhorn-volume-via-velero-csi-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3c. Restore Longhorn volume via Velero CSI snapshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3d-which-method-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3d. Which method to use?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scenario-4-full-cluster-recovery-total-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Full Cluster Recovery (Total Loss)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scenario 4: Full Cluster Recovery (Total Loss)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-rebuild-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Rebuild infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-bootstrap-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Bootstrap Flux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-provide-age-key-for-sops-decryption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Provide age key for SOPS decryption
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-wait-for-core-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Wait for core infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-restore-from-velero" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Restore from Velero
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-restore-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Restore PostgreSQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-backup-locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Backup Locations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recovery-decision-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recovery Decision Tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#known-gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Gotchas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="disaster-recovery-runbook">Disaster Recovery Runbook<a class="headerlink" href="#disaster-recovery-runbook" title="Permanent link">&para;</a></h1>
+<p>Last updated: 2026-03-21</p>
+<hr />
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This cluster has three layers of backup:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Tool</th>
+<th>Scope</th>
+<th>Frequency</th>
+<th>Retention</th>
+<th>Storage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application + Volumes</td>
+<td>Velero (Kopia)</td>
+<td>All namespaces + hcloud-volumes</td>
+<td>4× daily (0,6,12,18 UTC)</td>
+<td>14 days</td>
+<td><code>mtrnord-talos-velero</code> S3 bucket</td>
+</tr>
+<tr>
+<td>Longhorn Volumes</td>
+<td>Longhorn backup (incremental, full every 14d)</td>
+<td>All Longhorn volumes (group: default)</td>
+<td>Daily 02:00 UTC</td>
+<td>14 backups</td>
+<td><code>mtrnord-longhorn-backup</code> S3 bucket</td>
+</tr>
+<tr>
+<td>Longhorn Config</td>
+<td>Longhorn system-backup</td>
+<td>Longhorn settings + metadata</td>
+<td>Daily 05:00 UTC</td>
+<td>7 backups</td>
+<td><code>mtrnord-longhorn-backup</code> S3 bucket</td>
+</tr>
+<tr>
+<td>PostgreSQL WAL</td>
+<td>CNPG barman-cloud</td>
+<td>postgres-cluster</td>
+<td>Continuous + scheduled</td>
+<td>30 days</td>
+<td><code>mtrnord-talos-pg-backup</code> S3 bucket</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key constraint</strong>: hcloud-volumes CSI does NOT support snapshots. Velero uses Kopia (file-system copy into S3) for those volumes, which requires applications to be quiesced or tolerant of slightly inconsistent snapshots.</p>
+</blockquote>
+<hr />
+<h2 id="scenario-1-single-application-recovery-velero-kopia">Scenario 1: Single Application Recovery (Velero Kopia)<a class="headerlink" href="#scenario-1-single-application-recovery-velero-kopia" title="Permanent link">&para;</a></h2>
+<p>Use this when one app's data is corrupt or accidentally deleted.</p>
+<h3 id="quick-reference">Quick reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># List available backups</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>velero<span class="w"> </span>backup<span class="w"> </span>get
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># See what&#39;s in a backup</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>velero<span class="w"> </span>backup<span class="w"> </span>describe<span class="w"> </span>cluster-backup-0000-20260228000000<span class="w"> </span>--details
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Restore a single namespace (full — recommended, see gotchas below)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>my-restore<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span>--from-backup<span class="w"> </span>cluster-backup-0600-20260228060000<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span>--include-namespaces<span class="o">=</span>&lt;namespace&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span>--existing-resource-policy<span class="o">=</span>none
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># Monitor kopia (file) restore progress</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>get<span class="w"> </span>podvolumerestore<span class="w"> </span>-o<span class="w"> </span>wide
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1"># Restore to a different namespace (test without overwriting live data)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>--from-backup<span class="w"> </span>cluster-backup-0600-20260228060000<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span>--include-namespaces<span class="o">=</span>myapp<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span>--namespace-mappings<span class="w"> </span>myapp:myapp-restored
+</code></pre></div>
+<h3 id="critical-how-velero-kopia-volume-restore-actually-works">Critical: how Velero Kopia volume restore actually works<a class="headerlink" href="#critical-how-velero-kopia-volume-restore-actually-works" title="Permanent link">&para;</a></h3>
+<p>Kopia does NOT restore data directly into a PVC. Instead:</p>
+<ol>
+<li>Velero restores the <strong>pod</strong> (with an injected <code>restore-wait</code> init container)</li>
+<li>The node-agent writes backup data into the PVC while the init container waits</li>
+<li>Only after kopia completes does the main container start</li>
+</ol>
+<p><strong>Consequence:</strong> restoring only PVCs/PVs (<code>--include-resources=persistentvolumeclaims,persistentvolumes</code>) creates an empty PVC shell — no data is written. <strong>Always include pods</strong> or restore the full namespace.</p>
+<h3 id="correct-procedure-for-a-namespace-with-a-running-deployment">Correct procedure for a namespace with a running Deployment<a class="headerlink" href="#correct-procedure-for-a-namespace-with-a-running-deployment" title="Permanent link">&para;</a></h3>
+<p>If Flux has already reconciled the namespace (Deployment + RS exist at current replicas), a naive restore will fail silently: the RS kills the restored pod before kopia can run.</p>
+<p><strong>Step 1: Suspend Flux to prevent it from fighting the restore</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>flux<span class="w"> </span><span class="nb">suspend</span><span class="w"> </span>kustomization<span class="w"> </span>apps
+</code></pre></div>
+<p><strong>Step 2: Delete the Deployment and all ReplicaSets in the namespace</strong></p>
+<p>This is necessary because <code>--existing-resource-policy=none</code> (Velero default) will skip existing resources, leaving the RS at <code>replicas=0</code>, which immediately deletes the restored pod.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span>delete<span class="w"> </span>deploy<span class="w"> </span>&lt;name&gt;
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span>delete<span class="w"> </span>rs<span class="w"> </span>--all
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span>delete<span class="w"> </span>pvc<span class="w"> </span>&lt;name&gt;<span class="w">   </span><span class="c1"># also delete the (possibly empty/corrupt) PVC</span>
+</code></pre></div>
+<p><strong>Step 3: Run the restore</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>&lt;restore-name&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--from-backup<span class="w"> </span>&lt;backup-name&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--include-namespaces<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--existing-resource-policy<span class="o">=</span>none
+</code></pre></div>
+<p>Velero will restore the Deployment (with <code>replicas=1</code> from backup), RS (desired=1), pod (with kopia init container), and PVC. Since the RS wants exactly 1 pod and Velero provides exactly 1, the RS will not kill the pod.</p>
+<p><strong>Step 4: Monitor kopia progress</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Watch bytes written</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>get<span class="w"> </span>podvolumerestore<span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Check pod init container status</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-w
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Pod should be in Init:0/1 while kopia runs, then 0/1 while app starts</span>
+</code></pre></div>
+<p><strong>Step 5: After data confirmed, resume Flux</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Verify data is present (app starts, or run a debug pod to inspect PVC)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span>logs<span class="w"> </span>&lt;pod&gt;
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Resume Flux — it will reconcile the Deployment back to the state in git</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>flux<span class="w"> </span>resume<span class="w"> </span>kustomization<span class="w"> </span>apps
+</code></pre></div>
+<h3 id="stuck-restore-finalizer-deadlock">Stuck restore: finalizer deadlock<a class="headerlink" href="#stuck-restore-finalizer-deadlock" title="Permanent link">&para;</a></h3>
+<p>If a restore gets stuck in <code>InProgress (Deleting)</code> due to a failed kopia operation (e.g., the pod was killed before kopia could write anything):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Force-remove the finalizer — safe if no kopia operations were in flight</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>patch<span class="w"> </span>restore<span class="w"> </span>&lt;restore-name&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--type<span class="o">=</span>json<span class="w"> </span>-p<span class="o">=</span><span class="s1">&#39;[{&quot;op&quot;:&quot;remove&quot;,&quot;path&quot;:&quot;/metadata/finalizers&quot;}]&#39;</span>
+</code></pre></div>
+<p>This is safe when the restored pod was deleted immediately (kopia never started) — there is no kopia state to clean up.</p>
+<h3 id="backup-consistency-databases-being-written-during-backup">Backup consistency: databases being written during backup<a class="headerlink" href="#backup-consistency-databases-being-written-during-backup" title="Permanent link">&para;</a></h3>
+<p>Velero Kopia takes a file-system snapshot of a live volume. For databases like RocksDB (continuwuity/conduwuit), the backup may capture an inconsistent state if:</p>
+<ul>
+<li>The database was in recovery mode during backup</li>
+<li>The CURRENT file was written pointing to a MANIFEST that was later renamed/replaced before the snapshot completed</li>
+</ul>
+<p><strong>Symptom:</strong> restored pod fails with <code>IO error: No such file or directory: /data/MANIFEST-XXXXXX</code></p>
+<p><strong>Fix:</strong> try an older backup (e.g., 06:00 instead of 18:00) taken when the database was in a stable state. Check backup timestamps vs. when the problem started.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># List all backups with timestamps</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>velero<span class="w"> </span>backup<span class="w"> </span>get
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Inspect which backup point to use</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>velero<span class="w"> </span>backup<span class="w"> </span>describe<span class="w"> </span>&lt;backup-name&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Created
+</code></pre></div>
+<hr />
+<h2 id="scenario-2-postgresql-point-in-time-recovery">Scenario 2: PostgreSQL Point-in-Time Recovery<a class="headerlink" href="#scenario-2-postgresql-point-in-time-recovery" title="Permanent link">&para;</a></h2>
+<p>CNPG continuously archives WALs to S3. This allows recovery to any point within the 30-day retention window.</p>
+<h3 id="2a-recover-to-latest-eg-after-accidental-table-drop">2a. Recover to latest (e.g. after accidental table drop)<a class="headerlink" href="#2a-recover-to-latest-eg-after-accidental-table-drop" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Stop services that use postgres (reduce connections)</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Then edit cnpg-cluster.yaml to add a recovery bootstrap:</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>bootstrap:
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span>recovery:
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span>source:<span class="w"> </span>pg-s3-backup
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span>recoveryTarget:
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">      </span>targetTLI:<span class="w"> </span>latest<span class="w">   </span><span class="c1"># or use targetTime for PITR</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>externalClusters:
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>pg-s3-backup
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span>plugin:
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">      </span>name:<span class="w"> </span>barman-cloud.cloudnative-pg.io
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">      </span>parameters:
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">        </span>barmanObjectName:<span class="w"> </span>hetzner-base-backup
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">        </span>serverName:<span class="w"> </span>pg-cluster-v2<span class="w">   </span><span class="c1"># original WAL archive path</span>
+</code></pre></div>
+<p>Also change <code>plugins.parameters.serverName</code> to something new (e.g. <code>pg-cluster-v2-restored</code>) to avoid "expected empty archive" error.</p>
+<h3 id="2b-point-in-time-recovery-pitr">2b. Point-in-Time Recovery (PITR)<a class="headerlink" href="#2b-point-in-time-recovery-pitr" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">bootstrap</span><span class="p">:</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">recovery</span><span class="p">:</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pg-s3-backup</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">recoveryTarget</span><span class="p">:</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="nt">targetTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2026-02-27T20:00:00Z&quot;</span><span class="w"> </span><span class="c1"># RFC 3339, adjust as needed</span>
+</code></pre></div>
+<h3 id="2c-important-lessons-from-past-migrations">2c. Important lessons from past migrations<a class="headerlink" href="#2c-important-lessons-from-past-migrations" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>DO NOT use <code>bootstrap.recovery.backup.name</code></strong> with the barman-cloud plugin — causes "missing Azure credentials" error. Always use <code>externalClusters</code> + <code>source</code>.</li>
+<li><strong>Set a different <code>serverName</code> in <code>plugins</code></strong> from the recovery <code>serverName</code> — otherwise WAL archiver fails with "expected empty archive".</li>
+<li><strong>If timeline mismatch error</strong>: add <code>targetTLI: latest</code> or use <code>targetTime</code> before the timeline switch.</li>
+<li><strong>Deleting the CNPG Cluster object ALSO deletes the PVCs</strong> by default. Before deleting for migration, verify <code>deletionPolicy</code> or set it to <code>retain</code>.</li>
+<li>After recovery: remove the <code>bootstrap</code> and <code>externalClusters</code> sections from <code>cnpg-cluster.yaml</code> once the cluster is healthy.</li>
+</ul>
+<h3 id="2d-full-postgres-recovery-procedure">2d. Full postgres recovery procedure<a class="headerlink" href="#2d-full-postgres-recovery-procedure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># 1. Scale down apps using postgres</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>flux<span class="w"> </span><span class="nb">suspend</span><span class="w"> </span>kustomization<span class="w"> </span>apps
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># 2. Delete the existing (broken) cluster</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>postgres-cluster<span class="w"> </span>delete<span class="w"> </span>cluster<span class="w"> </span>pg-cluster-v2
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># 3. Edit gitops/infrastructure_talos/configs/cnpg-cluster.yaml:</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1">#    - Add bootstrap + externalClusters as above</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1">#    - Set storage.storageClass: hcloud-volumes (or longhorn if migrated)</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="c1">#    - Set plugins.parameters.serverName: pg-cluster-v2-restored</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="c1"># 4. Commit + push and let Flux apply</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>git<span class="w"> </span>add<span class="w"> </span>infrastructure_talos/configs/cnpg-cluster.yaml
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;recovery: restore pg-cluster-v2 from S3 backup&quot;</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>git<span class="w"> </span>push
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="c1"># 5. Watch recovery</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>postgres-cluster<span class="w"> </span>get<span class="w"> </span>cluster<span class="w"> </span>pg-cluster-v2<span class="w"> </span>-w
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>postgres-cluster<span class="w"> </span>logs<span class="w"> </span>-l<span class="w"> </span>cnpg.io/cluster<span class="o">=</span>pg-cluster-v2<span class="w"> </span>-f
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="c1"># 6. Once Ready: resume apps</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>flux<span class="w"> </span>resume<span class="w"> </span>kustomization<span class="w"> </span>apps
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="c1"># 7. Cleanup: remove bootstrap/externalClusters from cnpg-cluster.yaml and commit</span>
+</code></pre></div>
+<hr />
+<h2 id="scenario-3-longhorn-volume-recovery">Scenario 3: Longhorn Volume Recovery<a class="headerlink" href="#scenario-3-longhorn-volume-recovery" title="Permanent link">&para;</a></h2>
+<h3 id="longhorn-recurring-jobs">Longhorn Recurring Jobs<a class="headerlink" href="#longhorn-recurring-jobs" title="Permanent link">&para;</a></h3>
+<p>Backup target: <code>s3://mtrnord-longhorn-backup</code> (Hetzner Object Storage HEL1)</p>
+<p><strong>Current configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Job name</th>
+<th>Type</th>
+<th>Schedule</th>
+<th>Group</th>
+<th>Retain</th>
+<th>Concurrency</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>volume-backup</code></td>
+<td><code>backup</code></td>
+<td><code>0 2 * * *</code> (02:00)</td>
+<td>default</td>
+<td>14</td>
+<td>2</td>
+<td>Volume data → S3. Primary recovery source. Incremental, full every 14 days.</td>
+</tr>
+<tr>
+<td><code>post-backup-cleanup</code></td>
+<td><code>snapshot-delete</code></td>
+<td><code>0 3 * * *</code> (03:00)</td>
+<td>default</td>
+<td>2</td>
+<td>2</td>
+<td>Enforces max 2 snapshots per volume after backup runs. Prevents copy/move failures.</td>
+</tr>
+<tr>
+<td><code>system-backup</code></td>
+<td><code>system-backup</code></td>
+<td><code>0 5 * * *</code> (05:00)</td>
+<td>—</td>
+<td>7</td>
+<td>—</td>
+<td>Longhorn config/metadata backup. <code>volume-backup-policy: if-not-present</code>.</td>
+</tr>
+<tr>
+<td><code>filesystem-trim</code></td>
+<td><code>filesystem-trim</code></td>
+<td><code>0 4 * * *</code> (04:00)</td>
+<td>default</td>
+<td>—</td>
+<td>2</td>
+<td>Reclaim space from deleted files. Runs between backup (02:00) and system-backup (05:00).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Global Longhorn settings:</strong></p>
+<ul>
+<li>Max snapshots per volume: <strong>5</strong> (hard ceiling, monitoring before raising — <code>snapshot-delete</code> retain=2 enforces the soft limit, leaving 3 slots for system snapshots during replica rebuilds)</li>
+<li>Backup target: <code>s3://mtrnord-longhorn-backup</code> (Hetzner Object Storage HEL1)</li>
+</ul>
+<p><strong>Why no <code>snapshot</code> or <code>snapshot-cleanup</code> job:</strong></p>
+<ul>
+<li>No <code>snapshot</code> job: with a low global snapshot limit, an hourly retain=24 would immediately hit the ceiling. Velero (6h) + Longhorn backup (daily) provide sufficient recovery points without in-cluster snapshots.</li>
+<li>No <code>snapshot-cleanup</code>: redundant when <code>backup</code> job does pre-backup cleanup and <code>snapshot-delete</code> enforces the count hard limit.</li>
+</ul>
+<h3 id="3a-restore-a-single-longhorn-volume-from-backup">3a. Restore a single Longhorn volume from backup<a class="headerlink" href="#3a-restore-a-single-longhorn-volume-from-backup" title="Permanent link">&para;</a></h3>
+<p><strong>Via Longhorn UI (easiest):</strong></p>
+<ol>
+<li>Go to Longhorn UI → Backup</li>
+<li>Find the volume backup</li>
+<li>Click Restore → enter a name for the restored volume</li>
+<li>Once restored, create a PVC pointing to the new volume or update the app's PVC</li>
+</ol>
+<p><strong>Via kubectl:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># List available backups</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>longhorn-system<span class="w"> </span>get<span class="w"> </span>backups.longhorn.io
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Restore by creating a Volume CR pointing to the backup</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="s">apiVersion: longhorn.io/v1beta2</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="s">kind: Volume</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="s">metadata:</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="s">  name: restored-volume</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="s">  namespace: longhorn-system</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="s">spec:</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="s">  fromBackup: &quot;s3://your-bucket?backup=backup-name&amp;volume=volume-name&quot;</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="s">  numberOfReplicas: 2</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="s">  size: &quot;10Gi&quot;</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="s">EOF</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="c1"># Then create a PVC that binds to it (via Longhorn UI or static PV/PVC)</span>
+</code></pre></div>
+<h3 id="3b-restore-from-longhorn-system-backup">3b. Restore from Longhorn system-backup<a class="headerlink" href="#3b-restore-from-longhorn-system-backup" title="Permanent link">&para;</a></h3>
+<p>System backups capture the entire Longhorn state (volumes + settings).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># List system backups</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>longhorn-system<span class="w"> </span>get<span class="w"> </span>systembackups.longhorn.io
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Restore a system backup (this restores Longhorn settings + volumes)</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Do this in Longhorn UI: Settings → System Backup → Restore</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1"># OR via CR:</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="s">apiVersion: longhorn.io/v1beta2</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="s">kind: SystemRestore</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="s">metadata:</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="s">  name: restore-from-system-backup</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="s">  namespace: longhorn-system</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="s">spec:</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="s">  systemBackup: &lt;system-backup-name&gt;</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="s">EOF</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>longhorn-system<span class="w"> </span>get<span class="w"> </span>systemrestores<span class="w"> </span>-w
+</code></pre></div>
+<blockquote>
+<p><strong>Warning</strong>: System restore overwrites current Longhorn settings. Only use for full Longhorn recovery, not single-volume restore.</p>
+</blockquote>
+<h3 id="3c-restore-longhorn-volume-via-velero-csi-snapshot">3c. Restore Longhorn volume via Velero CSI snapshot<a class="headerlink" href="#3c-restore-longhorn-volume-via-velero-csi-snapshot" title="Permanent link">&para;</a></h3>
+<p>If Velero captured a CSI snapshot (via the <code>longhorn-velero-vsc</code> VolumeSnapshotClass):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>--from-backup<span class="w"> </span>cluster-backup-0600-20260228060000<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span>--include-namespaces<span class="o">=</span>&lt;namespace&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span>--wait
+</code></pre></div>
+<p>Velero recreates the VolumeSnapshot and Longhorn restores the volume from it automatically.</p>
+<h3 id="3d-which-method-to-use">3d. Which method to use?<a class="headerlink" href="#3d-which-method-to-use" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Best method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single volume, recent data loss</td>
+<td>Longhorn UI restore (3a)</td>
+</tr>
+<tr>
+<td>Need data from &gt;4 days ago</td>
+<td>Velero restore (3c) — 14-day retention</td>
+</tr>
+<tr>
+<td>Total Longhorn state loss</td>
+<td>Longhorn system-backup restore (3b)</td>
+</tr>
+<tr>
+<td>App namespace fully deleted</td>
+<td>Velero namespace restore (Scenario 1)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="scenario-4-full-cluster-recovery-total-loss">Scenario 4: Full Cluster Recovery (Total Loss)<a class="headerlink" href="#scenario-4-full-cluster-recovery-total-loss" title="Permanent link">&para;</a></h2>
+<p>Use this when the entire cluster is gone and you need to rebuild from scratch.</p>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Terraform state intact (in Hetzner Cloud or backed up)</li>
+<li>Access to S3 buckets: <code>mtrnord-talos-velero</code> and <code>mtrnord-talos-pg-backup</code></li>
+<li>Age private key (stored separately — see below)</li>
+<li>All secrets in gitops repo are SOPS-encrypted — need age key to decrypt</li>
+</ul>
+<h3 id="step-1-rebuild-infrastructure">Step 1: Rebuild infrastructure<a class="headerlink" href="#step-1-rebuild-infrastructure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">cd</span><span class="w"> </span>cluster2025-talos/cloud
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>terraform<span class="w"> </span>apply<span class="w">    </span><span class="c1"># recreates cloud VMs, network, firewall, kubeconfig</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># For Proxmox nodes: re-apply Talos machineconfig</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="nb">cd</span><span class="w"> </span>cluster2025-talos/proxmox
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>terraform<span class="w"> </span>apply<span class="w"> </span>-var-file<span class="o">=</span>proxmox.tfvars
+</code></pre></div>
+<h3 id="step-2-bootstrap-flux">Step 2: Bootstrap Flux<a class="headerlink" href="#step-2-bootstrap-flux" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Flux bootstrap will re-deploy all controllers and apps from gitops repo</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>flux<span class="w"> </span>bootstrap<span class="w"> </span>github<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span>--owner<span class="o">=</span>MTRNord<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span>--repository<span class="o">=</span>gitops<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span>--branch<span class="o">=</span>main<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span>--path<span class="o">=</span>clusters/talos_cluster
+</code></pre></div>
+<p>Or using your existing bootstrap method.</p>
+<h3 id="step-3-provide-age-key-for-sops-decryption">Step 3: Provide age key for SOPS decryption<a class="headerlink" href="#step-3-provide-age-key-for-sops-decryption" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># The age private key must exist as a secret in flux-system</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-system<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>sops-age<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span>--from-file<span class="o">=</span>age.agekey<span class="o">=</span>/path/to/age.agekey
+</code></pre></div>
+<p>Without this, Flux cannot decrypt any SOPS-encrypted secrets (postgres credentials, velero credentials, etc.).</p>
+<h3 id="step-4-wait-for-core-infrastructure">Step 4: Wait for core infrastructure<a class="headerlink" href="#step-4-wait-for-core-infrastructure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Wait for Velero, Longhorn, cert-manager, CNPG to be Ready</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>flux<span class="w"> </span>get<span class="w"> </span>kustomization
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>flux<span class="w"> </span>get<span class="w"> </span>helmrelease<span class="w"> </span>-A
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>velero<span class="w"> </span>get<span class="w"> </span>pods
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>longhorn-system<span class="w"> </span>get<span class="w"> </span>pods
+</code></pre></div>
+<h3 id="step-5-restore-from-velero">Step 5: Restore from Velero<a class="headerlink" href="#step-5-restore-from-velero" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Find the most recent backup</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>velero<span class="w"> </span>backup<span class="w"> </span>get
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Full cluster restore (all namespaces)</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>velero<span class="w"> </span>restore<span class="w"> </span>create<span class="w"> </span>full-restore<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">  </span>--from-backup<span class="w"> </span>cluster-backup-0000-20260228000000<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">  </span>--exclude-namespaces<span class="o">=</span>velero,longhorn-system,kube-system,flux-system,cert-manager<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">  </span>--wait
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># Flux will already manage velero/longhorn/etc — exclude those to avoid conflicts</span>
+</code></pre></div>
+<h3 id="step-6-restore-postgresql">Step 6: Restore PostgreSQL<a class="headerlink" href="#step-6-restore-postgresql" title="Permanent link">&para;</a></h3>
+<p>After Velero restores the <code>postgres-cluster</code> namespace, the CNPG operator will see the Cluster CR but the PVCs may not exist. If so, follow Scenario 2d above to recover from S3 WAL archives.</p>
+<p>If Velero successfully restored the PVCs (hcloud-volumes Kopia backup), CNPG should recover automatically once the operator is running.</p>
+<h3 id="step-7-verify">Step 7: Verify<a class="headerlink" href="#step-7-verify" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Check all pods running</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>Running<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>Completed
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Check postgres</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>postgres-cluster<span class="w"> </span>get<span class="w"> </span>cluster<span class="w"> </span>pg-cluster-v2
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># Check apps</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>flux<span class="w"> </span>get<span class="w"> </span>ks<span class="w"> </span>apps
+</code></pre></div>
+<hr />
+<h2 id="key-backup-locations">Key Backup Locations<a class="headerlink" href="#key-backup-locations" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Velero backups (all namespaces + volumes)</td>
+<td>Hetzner Object Storage HEL1</td>
+<td><code>mtrnord-talos-velero</code> bucket</td>
+</tr>
+<tr>
+<td>Postgres WAL archives</td>
+<td>Hetzner Object Storage HEL1</td>
+<td><code>mtrnord-talos-pg-backup/pg-base-backup/pg-cluster-v2/</code></td>
+</tr>
+<tr>
+<td>Postgres scheduled base backups</td>
+<td>same bucket</td>
+<td><code>mtrnord-talos-pg-backup/pg-base-backup/pg-cluster-v2/base/</code></td>
+</tr>
+<tr>
+<td>Longhorn volume backups</td>
+<td>Hetzner Object Storage HEL1</td>
+<td><code>mtrnord-longhorn-backup</code> bucket</td>
+</tr>
+<tr>
+<td>Longhorn system backups</td>
+<td>same bucket</td>
+<td><code>mtrnord-longhorn-backup</code> bucket</td>
+</tr>
+<tr>
+<td>GitOps repo</td>
+<td>GitHub</td>
+<td>MTRNord/gitops</td>
+</tr>
+<tr>
+<td>Terraform state</td>
+<td>Hetzner Cloud S3 / local</td>
+<td>cluster2025-talos/cloud/terraform.tfstate</td>
+</tr>
+<tr>
+<td>Age private key</td>
+<td>Local machine</td>
+<td><code>~/.config/sops/age/keys.txt</code> or <code>age.agekey</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>CRITICAL</strong>: The age private key is the master key for all cluster secrets. Store it in a password manager (Bitwarden, etc.) in addition to the local file. Without it you cannot decrypt any secret in the cluster.</p>
+</blockquote>
+<hr />
+<h2 id="recovery-decision-tree">Recovery Decision Tree<a class="headerlink" href="#recovery-decision-tree" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Something is broken
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    │
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    ├── Single app data loss / corruption
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>    │       └── Velero restore of that namespace (Scenario 1)
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    │
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    ├── PostgreSQL data loss / corruption
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    │       ├── Minor (table drop, bad migration)
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    │       │       └── CNPG PITR to before the event (Scenario 2)
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    │       └── Major (cluster deleted, storage gone)
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>    │               └── Full CNPG recovery from S3 (Scenario 2d)
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>    │
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>    ├── Longhorn volume corrupted
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>    │       └── Restore from Longhorn backup or Velero CSI snapshot (Scenario 3)
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>    │
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>    └── Total cluster loss
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>            └── Rebuild Terraform → Bootstrap Flux → Velero restore → CNPG restore (Scenario 4)
+</code></pre></div>
+<hr />
+<h2 id="known-gotchas">Known Gotchas<a class="headerlink" href="#known-gotchas" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>hcloud-volumes Kopia backup consistency</strong>: Kopia copies files from live pods. For databases other than postgres (which uses CNPG's own WAL-based backup), backups may be inconsistent if the app is writing during backup. Consider pre-backup hooks or accepting slight inconsistency. For RocksDB databases (conduwuit/continuwuity), a backup taken during recovery mode may reference a MANIFEST file that doesn't exist in the snapshot — try an earlier backup in that case.</li>
+<li><strong>Velero Kopia requires pods to write PVC data</strong>: Kopia injects a <code>restore-wait</code> init container into restored pods to write data. Restoring only PVCs creates empty shells. Always restore the full namespace or explicitly include pods.</li>
+<li><strong>RS at replicas=0 kills restored pods</strong>: If the Deployment/RS already exist in the cluster at <code>replicas=0</code> (e.g., Flux reconciled before restore), the RS deletes the kopia pod before data can be written. Fix: delete the Deployment and all RSes first, so Velero restores them fresh from backup at <code>replicas=1</code>.</li>
+<li><strong>Velero restore finalizer deadlock</strong>: A restore stuck in <code>InProgress (Deleting)</code> has a <code>restores.velero.io/external-resources-finalizer</code> that blocks deletion. Remove with <code>kubectl -n velero patch restore &lt;name&gt; --type=json -p='[{"op":"remove","path":"/metadata/finalizers"}]'</code> — safe when kopia never started.</li>
+<li><strong>Suspend Flux before disaster recovery</strong>: Flux reconciles frequently. If not suspended, it will override restored Deployments (e.g., reset replicas to what's in git) or create RSes that fight with Velero. Always run <code>flux suspend kustomization apps</code> before a restore, and <code>flux resume kustomization apps</code> after.</li>
+<li><strong>Velero Schedule CRDs</strong>: Velero CRDs (incl. <code>Schedule</code>) are installed by the HelmRelease (infra-controllers). Schedules themselves live in infra-configs which runs after controllers — this is why they're in <code>infrastructure_talos/configs/velero-schedules.yaml</code> not in the velero controller directory.</li>
+<li><strong>node-agent PodSecurity</strong>: Kopia's <code>node-agent</code> DaemonSet requires <code>hostPath</code> volumes. The <code>velero</code> namespace must have <code>pod-security.kubernetes.io/enforce: privileged</code>.</li>
+<li><strong>Longhorn backup disk space</strong>: Longhorn snapshots are space-expensive during generation. Prefer Velero (Kopia) for volume backups where possible.</li>
+<li><strong>Longhorn snapshots taken during recovery/expansion are unsafe</strong>: A snapshot taken while a volume was being expanded or used for database recovery may not be usable. Prefer Velero backups taken at scheduled times when the app was quiescent.</li>
+<li><strong>startupProbe for databases with variable startup time</strong>: For apps like conduwuit/continuwuity that open a RocksDB database (startup time varies by DB size and WAL replay), use a <code>startupProbe</code> instead of <code>initialDelaySeconds</code>. startupProbe gives a large budget (e.g., <code>failureThreshold: 18, periodSeconds: 10</code> = 3 minutes) without delaying health signaling once the app is actually ready. Kubernetes does NOT run liveness/readiness probes until all init containers AND the startupProbe succeed — so kopia data is fully written before the app is probed.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
