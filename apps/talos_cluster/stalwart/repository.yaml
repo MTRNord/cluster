@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: wrenix
+  namespace: stalwart
+spec:
+  type: oci
+  url: oci://codeberg.org/wrenix/helm-charts
+  interval: 12h

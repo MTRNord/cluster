@@ -162,6 +162,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: nordgedanken.dev-tls
+    - name: https-stalwart-nordgedanken
+      protocol: HTTPS
+      hostname: "stalwart.nordgedanken.dev"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: stalwart.nordgedanken.dev-tls
     - name: https-openpgpkey.nordgedanken.dev
       protocol: HTTPS
       hostname: "openpgpkey.nordgedanken.dev"

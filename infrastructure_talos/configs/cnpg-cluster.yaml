@@ -291,6 +291,12 @@ spec:
         superuser: false
         passwordSecret:
           name: persephone
+      - name: stalwart
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: stalwart
   bootstrap:
     recovery:
       source: pg-s3-backup
@@ -590,6 +596,18 @@ metadata:
 spec:
   name: persephone
   owner: persephone
+  ensure: present
+  cluster:
+    name: pg-cluster-v2
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: stalwart
+  namespace: postgres-cluster
+spec:
+  name: stalwart
+  owner: stalwart
   ensure: present
   cluster:
     name: pg-cluster-v2

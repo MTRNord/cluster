@@ -1,0 +1,259 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: stalwart-mail
+  namespace: stalwart
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: stalwart-mail
+      version: "1.0.x"
+      sourceRef:
+        kind: HelmRepository
+        name: wrenix
+        namespace: stalwart
+      interval: 60m
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  values:
+    replicaCount: 1
+
+    image:
+      registry: ghcr.io
+      repository: stalwartlabs/stalwart
+      pullPolicy: IfNotPresent
+
+    # Don't use the chart's built-in secret — we manage our own stalwart-secret
+    secrets:
+      create: false
+
+    # Env vars from stalwart-secret (S3, DB, admin password, LDAP)
+    env:
+      - name: PG_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: stalwart-secret
+            key: pg-password
+      - name: S3_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: stalwart-secret
+            key: s3-access-key
+      - name: S3_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: stalwart-secret
+            key: s3-secret-key
+      - name: FALLBACK_ADMIN_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: stalwart-secret
+            key: admin-password
+      - name: METRICS_USERNAME
+        value: prometheus
+      - name: METRICS_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: stalwart-secret
+            key: metrics-password
+      - name: LDAP_BIND_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: stalwart-secret
+            key: ldap-bind-password
+
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 10Gi
+      accessMode: ReadWriteMany
+
+    # cert-manager issues the TLS cert used by SMTP/IMAP TLS listeners
+    certificate:
+      certmanager:
+        enabled: true
+        issuerRef:
+          group: cert-manager.io
+          kind: ClusterIssuer
+          name: letsencrypt-prod
+        dnsNames:
+          - mail.midnightthoughts.space
+          - mail.nordgedanken.dev
+
+    prometheus:
+      servicemonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
+
+    config:
+      # Keys stored in the local config file (not the DB)
+      config:
+        local-keys:
+          - "store.*"
+          - "directory.*"
+          - "tracer.*"
+          - "!server.blocked-ip.*"
+          - "server.*"
+          - "authentication.fallback-admin.*"
+          - "cluster.*"
+          - "config.local-keys.*"
+          - "storage.data"
+          - "storage.blob"
+          - "storage.lookup"
+          - "storage.fts"
+          - "storage.directory"
+          - "certificate.*"
+          - "server.allowed-ip.*"
+          - "metrics.prometheus.*"
+          - "auth.dkim.sign.*"
+          - "auth.dkim.verify"
+          - "http.use-x-forwarded"
+          - "report.domain"
+          - "queue.*"
+
+      authentication:
+        fallback-admin:
+          user: admin
+          secret: "%{env:FALLBACK_ADMIN_SECRET}%"
+
+      metrics:
+        prometheus:
+          enable: true
+          auth:
+            username: "%{env:METRICS_USERNAME}%"
+            secret: "%{env:METRICS_SECRET}%"
+
+      http:
+        use-x-forwarded: true
+
+      # ── Storage ─────────────────────────────────────────────────────────
+      storage:
+        data: db
+        blob: s3blob
+        fts: db
+        lookup: db
+        directory: ldap
+
+      store:
+        db:
+          type: postgresql
+          host: pg-cluster-v2-rw.postgres-cluster.svc.cluster.local
+          port: 5432
+          database: stalwart
+          user: stalwart
+          password: "%{env:PG_PASSWORD}%"
+        s3blob:
+          type: s3
+          bucket: midnightthoughts-stalwart
+          region: hel1
+          endpoint: https://hel1.your-objectstorage.com
+          access-key: "%{env:S3_ACCESS_KEY}%"
+          secret-key: "%{env:S3_SECRET_KEY}%"
+
+      # ── Directory (Authentik LDAP) ───────────────────────────────────────
+      directory:
+        ldap:
+          type: ldap
+          url: ldap://ak-outpost-ldap.authentik.svc.cluster.local:389
+          base-dn: dc=ldap,dc=midnightthoughts,dc=space
+          bind:
+            dn: cn=stalwart-bind,ou=users,dc=ldap,dc=midnightthoughts,dc=space
+            secret: "%{env:LDAP_BIND_SECRET}%"
+          filter:
+            name: "(&(objectClass=inetOrgPerson)(uid=?))"
+            email: "(&(objectClass=inetOrgPerson)(|(mail=?)(mailAlias=?)))"
+          attributes:
+            name: uid
+            email: mail
+            email-alias: mailAlias
+
+      # ── Listeners (proxy-protocol from Envoy Gateway) ────────────────────
+      server:
+        hostname: mail.midnightthoughts.space
+        listener:
+          smtp:
+            bind: ["[::]:25"]
+            protocol: smtp
+            proxy:
+              trusted-networks:
+                - 10.0.0.0/8
+                - fd00::/8
+          submission:
+            bind: ["[::]:587"]
+            protocol: smtp
+            proxy:
+              trusted-networks:
+                - 10.0.0.0/8
+                - fd00::/8
+          submissions:
+            bind: ["[::]:465"]
+            protocol: smtp
+            tls:
+              implicit: true
+            proxy:
+              trusted-networks:
+                - 10.0.0.0/8
+                - fd00::/8
+          imap:
+            bind: ["[::]:143"]
+            protocol: imap
+            proxy:
+              trusted-networks:
+                - 10.0.0.0/8
+                - fd00::/8
+          imaptls:
+            bind: ["[::]:993"]
+            protocol: imap
+            tls:
+              implicit: true
+            proxy:
+              trusted-networks:
+                - 10.0.0.0/8
+                - fd00::/8
+          http:
+            bind: ["[::]:80"]
+            protocol: http
+
+      # ── TLS certificate (cert-manager) ────────────────────────────────────
+      certificate:
+        default:
+          default: true
+          cert: "%{file:/opt/stalwart/etc/certs/tls.crt}%"
+          private-key: "%{file:/opt/stalwart/etc/certs/tls.key}%"
+
+      # ── DKIM signing ──────────────────────────────────────────────────────
+      auth:
+        dkim:
+          sign:
+            - if: "listener != 'smtp' && is_local_domain('', sender_domain)"
+              then: "['rsa-' + sender_domain, 'ed25519-' + sender_domain]"
+            - else: false
+          verify: relaxed
+
+      # ── Routing ───────────────────────────────────────────────────────────
+      queue:
+        route:
+          phorge-relay:
+            type: relay
+            address: 10.0.64.129
+            port: 25
+            protocol: smtp
+            tls:
+              implicit: false
+              allow-invalid-certs: true
+        strategy:
+          route:
+            - if: "rcpt_domain == 'phorge.mtrnord.blog'"
+              then: "'phorge-relay'"
+            - else: "'mx'"
+
+      tracer:
+        stdout:
+          enable: true
+          type: stdout
+          level: info
+          ansi: false
