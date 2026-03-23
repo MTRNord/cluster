@@ -168,6 +168,7 @@ spec:
             secret: "%{env:LDAP_BIND_SECRET}%"
             auth:
               enable: true
+              dn: "cn=?,ou=users,dc=ldap,dc=midnightthoughts,dc=space"
           filter:
             name: "(&(objectClass=user)(|(cn=?)(mail=?)))"
             email: "(&(objectClass=user)(|(mail=?)(mailAlias=?)))"
