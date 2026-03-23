@@ -137,7 +137,7 @@ spec:
       calendar:
         scheduling:
           http-rsvp:
-            url: https://webmail.midnightthoughts.space
+            url: https://webmail.midnightthoughts.space/calendar/rsvp
 
       # ── Storage ─────────────────────────────────────────────────────────
       storage:
@@ -252,6 +252,9 @@ spec:
             protocol: lmtp
         strategy:
           route:
+            # TODO: remove once nordgedanken.dev is migrated to Stalwart
+            - if: "rcpt_domain == 'nordgedanken.dev'"
+              then: "'mx'"
             - if: "rcpt_domain == 'lists.midnightthoughts.space'"
               then: "'mailman-lmtp'"
             - if: "rcpt_domain == 'phorge.mtrnord.blog'"
