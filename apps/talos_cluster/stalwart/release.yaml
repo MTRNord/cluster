@@ -237,8 +237,15 @@ spec:
             tls:
               implicit: false
               allow-invalid-certs: true
+          mailman-lmtp:
+            type: relay
+            address: mailman.mailserver.svc.cluster.local
+            port: 8024
+            protocol: lmtp
         strategy:
           route:
+            - if: "rcpt_domain == 'lists.midnightthoughts.space'"
+              then: "'mailman-lmtp'"
             - if: "rcpt_domain == 'phorge.mtrnord.blog'"
               then: "'phorge-relay'"
             - else: "'mx'"
