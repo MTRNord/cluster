@@ -171,6 +171,10 @@ spec:
             email: "(&(objectClass=user)(|(mail=?)(mailAlias=?)))"
           attributes:
             name: cn
+            class: objectClass
+            secret: userPassword
+            groups:
+              - memberOf
             email: mail
             email-alias: mailAlias
 
