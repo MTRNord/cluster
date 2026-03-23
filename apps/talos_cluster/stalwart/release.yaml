@@ -229,6 +229,8 @@ spec:
       # ── Routing ───────────────────────────────────────────────────────────
       queue:
         route:
+          local:
+            type: local
           phorge-relay:
             type: relay
             address: 10.0.64.129
@@ -248,6 +250,8 @@ spec:
               then: "'mailman-lmtp'"
             - if: "rcpt_domain == 'phorge.mtrnord.blog'"
               then: "'phorge-relay'"
+            - if: "is_local_domain('', rcpt_domain)"
+              then: "'local'"
             - else: "'mx'"
 
       tracer:
