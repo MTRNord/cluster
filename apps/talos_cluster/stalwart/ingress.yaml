@@ -11,9 +11,45 @@ spec:
     - name: envoy-gateway
       namespace: envoy-gateway
       sectionName: https-webmail-midnightthoughts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-midnightthoughts-mta-sts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-autoconfig-midnightthoughts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-autodiscover-midnightthoughts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-autoconfig-lists-midnightthoughts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-autodiscover-lists-midnightthoughts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-mta-sts-lists-midnightthoughts
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-autoconfig-phorge
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-autodiscover-phorge
+    - name: envoy-gateway
+      namespace: envoy-gateway
+      sectionName: https-mta-sts-phorge
   hostnames:
     - stalwart.nordgedanken.dev
     - webmail.midnightthoughts.space
+    - mta-sts.midnightthoughts.space
+    - autoconfig.midnightthoughts.space
+    - autodiscover.midnightthoughts.space
+    - autoconfig.lists.midnightthoughts.space
+    - autodiscover.lists.midnightthoughts.space
+    - mta-sts.lists.midnightthoughts.space
+    - autoconfig.phorge.mtrnord.blog
+    - autodiscover.phorge.mtrnord.blog
+    - mta-sts.phorge.mtrnord.blog
   rules:
     - backendRefs:
         - name: stalwart-mail

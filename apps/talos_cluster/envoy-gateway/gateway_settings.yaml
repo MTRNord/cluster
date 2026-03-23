@@ -186,6 +186,102 @@ spec:
         certificateRefs:
           - kind: Secret
             name: webmail.midnightthoughts.space-tls
+    - name: https-autoconfig-midnightthoughts
+      protocol: HTTPS
+      hostname: "autoconfig.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autoconfig.midnightthoughts.space-tls
+    - name: https-autodiscover-midnightthoughts
+      protocol: HTTPS
+      hostname: "autodiscover.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autodiscover.midnightthoughts.space-tls
+    - name: https-autoconfig-lists-midnightthoughts
+      protocol: HTTPS
+      hostname: "autoconfig.lists.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autoconfig.lists.midnightthoughts.space-tls
+    - name: https-autodiscover-lists-midnightthoughts
+      protocol: HTTPS
+      hostname: "autodiscover.lists.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autodiscover.lists.midnightthoughts.space-tls
+    - name: https-mta-sts-lists-midnightthoughts
+      protocol: HTTPS
+      hostname: "mta-sts.lists.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: mta-sts.lists.midnightthoughts.space-tls
+    - name: https-autoconfig-phorge
+      protocol: HTTPS
+      hostname: "autoconfig.phorge.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autoconfig.phorge.mtrnord.blog-tls
+    - name: https-autodiscover-phorge
+      protocol: HTTPS
+      hostname: "autodiscover.phorge.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autodiscover.phorge.mtrnord.blog-tls
+    - name: https-mta-sts-phorge
+      protocol: HTTPS
+      hostname: "mta-sts.phorge.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: mta-sts.phorge.mtrnord.blog-tls
     - name: https-openpgpkey.nordgedanken.dev
       protocol: HTTPS
       hostname: "openpgpkey.nordgedanken.dev"
