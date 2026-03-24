@@ -117,7 +117,7 @@ spec:
           - "http.use-x-forwarded"
           - "report.domain"
           - "queue.*"
-          - "session.rcpt.relay"
+          - "session.rcpt.directory"
           - "calendar.*"
 
       authentication:
@@ -236,10 +236,10 @@ spec:
       # ── SMTP session: relay lists domain without directory lookup ─────────
       session:
         rcpt:
-          relay:
+          directory:
             - if: "rcpt_domain == 'lists.midnightthoughts.space' || rcpt_domain == 'phorge.mtrnord.blog'"
-              then: true
-            - else: false
+              then: "'*'"
+            - else: "'default'"
 
       # ── Routing ───────────────────────────────────────────────────────────
       queue:
