@@ -167,6 +167,27 @@ jobs:
           verbose: true
           outputFile: results.sarif
 
+      - name: Fix Kubescape SARIF artifact locations
+        if: always()
+        run: |
+          if [ -f results.sarif ]; then
+            jq '
+              .runs[].results[] |= (
+                if .locations then
+                  .locations[] |= (
+                    if .physicalLocation then
+                      .physicalLocation.artifactLocation.uri //= "unknown"
+                    else
+                      .physicalLocation = {"artifactLocation": {"uri": "unknown"}}
+                    end
+                  )
+                else
+                  .locations = [{"physicalLocation": {"artifactLocation": {"uri": "unknown"}}}]
+                end
+              )
+            ' results.sarif > results-fixed.sarif && mv results-fixed.sarif results.sarif
+          fi
+
       - name: Upload Kubescape results to GitHub Security
         uses: github/codeql-action/upload-sarif@38697555549f1db7851b81482ff19f1fa5c4fedc # v4
         if: always()
