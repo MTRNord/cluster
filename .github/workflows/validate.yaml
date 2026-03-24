@@ -27,9 +27,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@main
+        uses: fluxcd/flux2/action@580ef30c8f2b7be175d81bfe8d966314c6617faf # main
 
       - name: Setup tools
         run: |
@@ -68,6 +70,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Run gitleaks
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
@@ -112,7 +115,7 @@ jobs:
           cat /tmp/images_final.txt
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # master
         with:
           scan-type: "config"
           scan-ref: "."
@@ -135,6 +138,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Setup tools
         run: |
@@ -153,7 +158,7 @@ jobs:
           ls -la manifests/
 
       - name: Run Kubescape
-        uses: kubescape/github-action@main
+        uses: kubescape/github-action@47d8e4561a2a1be8e22a4edfbd02c0b97f7335cb # main
         continue-on-error: true
         with:
           files: "manifests/"
@@ -174,6 +179,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: YAML Lint
         uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3
