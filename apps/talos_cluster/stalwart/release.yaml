@@ -37,6 +37,13 @@ spec:
                 value:
                   key: metrics-username
                   name: stalwart-secret
+              - op: add
+                path: /spec/endpoints/0/metricRelabelings
+                value:
+                  - sourceLabels: [__name__]
+                    regex: (.+)
+                    targetLabel: __name__
+                    replacement: stalwart_$1
   values:
     replicaCount: 1
 
