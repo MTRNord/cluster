@@ -117,6 +117,7 @@ spec:
           - "http.use-x-forwarded"
           - "report.domain"
           - "queue.*"
+          - "session.rcpt.relay"
           - "calendar.*"
 
       authentication:
@@ -231,6 +232,14 @@ spec:
               then: "['rsa-' + sender_domain, 'ed25519-' + sender_domain]"
             - else: false
           verify: relaxed
+
+      # ── SMTP session: relay lists domain without directory lookup ─────────
+      session:
+        rcpt:
+          relay:
+            - if: "rcpt_domain == 'lists.midnightthoughts.space' || rcpt_domain == 'phorge.mtrnord.blog'"
+              then: true
+            - else: false
 
       # ── Routing ───────────────────────────────────────────────────────────
       queue:
