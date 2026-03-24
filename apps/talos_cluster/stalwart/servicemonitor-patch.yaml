@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: stalwart-mail
+  namespace: stalwart
+spec:
+  endpoints:
+    - basicAuth:
+        password:
+          key: metrics-password
+          name: stalwart-secret
+        username:
+          key: metrics-username
+          name: stalwart-secret
+      path: /metrics/prometheus
+      port: http
