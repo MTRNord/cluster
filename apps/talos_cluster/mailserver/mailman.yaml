@@ -90,13 +90,13 @@ spec:
                   name: mailman-passwords
                   key: restpassword
             - name: SMTP_HOST
-              value: stalwart-mail.stalwart.svc.cluster.local
+              value: mail.midnightthoughts.space
             - name: SMTP_PORT
-              value: "587"
+              value: "465"
             - name: SMTP_USE_SSL
-              value: "false"
+              value: "true"
             - name: SMTP_SECURE_MODE
-              value: "starttls"
+              value: "smtps"
             - name: SMTP_HOST_USER
               valueFrom:
                 secretKeyRef:
