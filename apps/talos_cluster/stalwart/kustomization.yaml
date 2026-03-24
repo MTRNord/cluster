@@ -8,10 +8,3 @@ resources:
   - ingress.yaml
   - routing.yaml
 
-patches:
-  - path: servicemonitor-patch.yaml
-    target:
-      group: monitoring.coreos.com
-      version: v1
-      kind: ServiceMonitor
-      name: stalwart-mail

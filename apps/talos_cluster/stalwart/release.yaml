@@ -18,6 +18,25 @@ spec:
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: monitoring.coreos.com
+              version: v1
+              kind: ServiceMonitor
+              name: stalwart-mail
+            patch: |
+              - op: replace
+                path: /spec/endpoints/0/basicAuth/password
+                value:
+                  key: metrics-password
+                  name: stalwart-secret
+              - op: replace
+                path: /spec/endpoints/0/basicAuth/username
+                value:
+                  key: metrics-username
+                  name: stalwart-secret
   values:
     replicaCount: 1
 
