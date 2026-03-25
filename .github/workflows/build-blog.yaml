@@ -36,7 +36,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Install cosign
-        uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
+        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
 
       - name: Extract metadata
         id: meta
@@ -66,11 +66,7 @@ jobs:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_OCI_EXPERIMENTAL: "1"
           COSIGN_EXPERIMENTAL: "1"
-          DIGEST: ${{ steps.build.outputs.digest }}
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
             --registry-referrers-mode=oci-1-1 \
             registry.midnightthoughts.space/mtrnord/blog:latest
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
-            --registry-referrers-mode=oci-1-1 \
-            registry.midnightthoughts.space/mtrnord/blog@${DIGEST}
