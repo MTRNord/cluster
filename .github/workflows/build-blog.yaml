@@ -48,6 +48,7 @@ jobs:
             org.opencontainers.image.title=blog
           tags: |
             type=raw,value=latest
+            type=raw,value={{date 'YYYYMMDD-HHmmss'}}
             type=sha,prefix=sha-
 
       - name: Build and push
