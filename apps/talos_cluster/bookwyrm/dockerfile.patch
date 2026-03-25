@@ -1,0 +1,15 @@
+diff --git a/Dockerfile b/Dockerfile
+index 82b0c92c5..88ab077c7 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -6,7 +6,7 @@ RUN mkdir /app /app/static /app/images
+
+ WORKDIR /app
+
+-RUN apt-get update && apt-get install -y gettext libgettextpo-dev tidy && apt-get clean
++RUN apt-get update && apt-get install -y gettext libgettextpo-dev tidy libsass-dev && apt-get clean
+
+-COPY requirements.txt /app/
+-RUN pip install -r requirements.txt --no-cache-dir
++COPY . /app
++RUN env SYSTEM_SASS="true" pip install -r requirements.txt --no-cache-dir

@@ -5,6 +5,7 @@ on:
     branches: ["main"]
     paths:
       - ".github/workflows/build-bookwyrm.yaml"
+      - "apps/talos_cluster/bookwyrm/dockerfile.patch"
   schedule:
     # Check for new upstream releases daily at 04:00 UTC
     - cron: "0 4 * * *"
@@ -13,6 +14,10 @@ on:
       version:
         description: "Bookwyrm version to build (e.g. v0.8.3). Leave empty to use latest upstream release."
         required: false
+      force:
+        description: "Force rebuild even if tag already exists in registry"
+        required: false
+        default: "false"
 
 permissions:
   contents: read
@@ -30,6 +35,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_VERSION: ${{ inputs.version }}
+          INPUT_FORCE: ${{ inputs.force }}
         run: |
           if [ -n "$INPUT_VERSION" ]; then
             NEW="$INPUT_VERSION"
@@ -38,15 +44,20 @@ jobs:
           fi
           echo "new_version=$NEW" >> "$GITHUB_OUTPUT"
 
-          # Check if this tag already exists in the registry (anonymous read)
-          TAGS=$(curl -sf "https://registry.midnightthoughts.space/v2/mtrnord/bookwyrm/tags/list" \
-            | grep -o '"tags":\[[^]]*\]' || echo "")
-          if echo "$TAGS" | grep -q "\"${NEW}\""; then
-            echo "needs_build=false" >> "$GITHUB_OUTPUT"
-            echo "Tag ${NEW} already exists in registry, skipping build"
-          else
+          if [ "$INPUT_FORCE" = "true" ]; then
             echo "needs_build=true" >> "$GITHUB_OUTPUT"
-            echo "Tag ${NEW} not found in registry, will build"
+            echo "Force rebuild requested for tag ${NEW}"
+          else
+            # Check if this tag already exists in the registry (anonymous read)
+            TAGS=$(curl -sf "https://registry.midnightthoughts.space/v2/mtrnord/bookwyrm/tags/list" \
+              | grep -o '"tags":\[[^]]*\]' || echo "")
+            if echo "$TAGS" | grep -q "\"${NEW}\""; then
+              echo "needs_build=false" >> "$GITHUB_OUTPUT"
+              echo "Tag ${NEW} already exists in registry, skipping build"
+            else
+              echo "needs_build=true" >> "$GITHUB_OUTPUT"
+              echo "Tag ${NEW} not found in registry, will build"
+            fi
           fi
 
   build:
@@ -62,6 +73,15 @@ jobs:
           repository: bookwyrm-social/bookwyrm
           ref: ${{ needs.check.outputs.new_version }}
           persist-credentials: false
+
+      - name: Checkout gitops for Dockerfile patch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          path: _gitops
+          persist-credentials: false
+
+      - name: Apply Dockerfile patch
+        run: git apply _gitops/apps/talos_cluster/bookwyrm/dockerfile.patch
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
