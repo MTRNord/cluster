@@ -71,9 +71,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm redis-cache.2.7.0.zip
 # Install ActivityPub plugin
-RUN wget -q https://downloads.wordpress.org/plugin/activitypub.8.0.0.zip \
-    && unzip -q activitypub.8.0.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm activitypub.8.0.0.zip
+RUN wget -q https://downloads.wordpress.org/plugin/activitypub.8.0.2.zip \
+    && unzip -q activitypub.8.0.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm activitypub.8.0.2.zip
 # Install Embed Optimizer
 RUN wget -q https://downloads.wordpress.org/plugin/embed-optimizer.1.0.0-beta5.zip \
     && unzip -q embed-optimizer.1.0.0-beta5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -83,9 +83,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/auto-sizes.1.7.0.zip \
     && unzip -q auto-sizes.1.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm auto-sizes.1.7.0.zip
 # Install Friends
-RUN wget -q https://downloads.wordpress.org/plugin/friends.3.6.0.zip \
-    && unzip -q friends.3.6.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm friends.3.6.0.zip
+RUN wget -q https://downloads.wordpress.org/plugin/friends.4.0.0.zip \
+    && unzip -q friends.4.0.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm friends.4.0.0.zip
 # Install Image Placeholders
 RUN wget -q https://downloads.wordpress.org/plugin/dominant-color-images.1.2.1.zip \
     && unzip -q dominant-color-images.1.2.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
