@@ -70,7 +70,11 @@ spec:
               }
             },
             "accessControl": {
-              "anonymousPolicy": ["read"],
+              "repositories": {
+                "**": {
+                  "anonymousPolicy": ["read"]
+                }
+              },
               "adminPolicy": {
                 "users": ["admin"],
                 "actions": ["read", "create", "update", "delete"]
