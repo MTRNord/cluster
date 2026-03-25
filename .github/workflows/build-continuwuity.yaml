@@ -67,7 +67,13 @@ jobs:
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_OCI_EXPERIMENTAL: "1"
+          COSIGN_EXPERIMENTAL: "1"
           DIGEST: ${{ steps.build.outputs.digest }}
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
+            --registry-referrers-mode=oci-1-1 \
+            registry.midnightthoughts.space/mtrnord/cluster/continuwuity:main
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
+            --registry-referrers-mode=oci-1-1 \
             registry.midnightthoughts.space/mtrnord/cluster/continuwuity@${DIGEST}
