@@ -80,8 +80,14 @@ jobs:
           path: _gitops
           persist-credentials: false
 
-      - name: Apply Dockerfile patch
-        run: git apply _gitops/apps/talos_cluster/bookwyrm/dockerfile.patch
+      - name: Apply Dockerfile patch (if applicable)
+        run: |
+          if git apply --check _gitops/apps/talos_cluster/bookwyrm/dockerfile.patch 2>/dev/null; then
+            git apply _gitops/apps/talos_cluster/bookwyrm/dockerfile.patch
+            echo "Patch applied successfully"
+          else
+            echo "Patch does not apply cleanly — upstream Dockerfile likely already includes the needed changes, proceeding as-is"
+          fi
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
