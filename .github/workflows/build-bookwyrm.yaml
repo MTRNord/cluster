@@ -1,6 +1,10 @@
 name: Build Bookwyrm Image
 
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/build-bookwyrm.yaml"
   schedule:
     # Check for new upstream releases daily at 04:00 UTC
     - cron: "0 4 * * *"
