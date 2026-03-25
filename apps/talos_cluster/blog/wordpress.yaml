@@ -30,7 +30,7 @@ spec:
         fsGroup: 33
       containers:
         - name: wordpress
-          image: registry.midnightthoughts.space/mtrnord/blog:latest
+          image: registry.midnightthoughts.space/mtrnord/blog:latest # {"$imagepolicy": "flux-system:blog"}
           env:
             - name: DB_HOST
               value: mysql-service.blog.svc.cluster.local
