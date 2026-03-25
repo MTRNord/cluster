@@ -78,5 +78,6 @@ jobs:
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
             --new-bundle-format=false \
+            --use-signing-config=false \
             --registry-referrers-mode=oci-1-1 \
             "registry.midnightthoughts.space/mtrnord/cluster/continuwuity@${DIGEST}"
