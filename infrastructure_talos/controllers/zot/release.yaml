@@ -44,3 +44,14 @@ spec:
     externalSecrets:
       - secretName: zot-secret
         mountPath: /etc/zot
+
+    # Mount cosign public key into _cosign directory so it persists across pod restarts
+    extraVolumes:
+      - name: cosign-pubkey
+        configMap:
+          name: zot-cosign-pubkey
+
+    extraVolumeMounts:
+      - name: cosign-pubkey
+        mountPath: /var/lib/registry/_cosign/cosign.pub
+        subPath: cosign.pub
