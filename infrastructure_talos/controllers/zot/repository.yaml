@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: zot
+  namespace: zot
+spec:
+  interval: 24h
+  type: oci
+  url: oci://ghcr.io/project-zot/helm-zot

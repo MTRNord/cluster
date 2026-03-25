@@ -821,6 +821,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: opencost.k8s.midnightthoughts.space-tls
+    - name: https-registry-midnightthoughts
+      protocol: HTTPS
+      hostname: "registry.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: registry.midnightthoughts.space-tls
     - name: http
       protocol: HTTP
       port: 80
