@@ -52,7 +52,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: bookwyrm-update
-          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.2 # {"$imagepolicy": "flux-system:bookwyrm"}
+          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.5 # {"$imagepolicy": "flux-system:bookwyrm"}
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -356,7 +356,7 @@ spec:
               containerPort: 8080
               protocol: TCP
         - name: bookwyrm-web
-          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.2 # {"$imagepolicy": "flux-system:bookwyrm"}
+          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.5 # {"$imagepolicy": "flux-system:bookwyrm"}
           imagePullPolicy: Always
           command: ["gunicorn"]
           args:
@@ -506,7 +506,7 @@ spec:
               containerPort: 8000
               protocol: TCP
         - name: bookwyrm-celery-worker
-          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.2 # {"$imagepolicy": "flux-system:bookwyrm"}
+          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.5 # {"$imagepolicy": "flux-system:bookwyrm"}
           imagePullPolicy: Always
           command: ["celery"]
           args:
@@ -652,7 +652,7 @@ spec:
             - name: DATA_UPLOAD_MAX_MEMORY_MiB
               value: "100"
         - name: bookwyrm-celery-beat
-          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.2 # {"$imagepolicy": "flux-system:bookwyrm"}
+          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.5 # {"$imagepolicy": "flux-system:bookwyrm"}
           imagePullPolicy: Always
           command: ["celery"]
           args:
@@ -798,7 +798,7 @@ spec:
             - name: DATA_UPLOAD_MAX_MEMORY_MiB
               value: "100"
         - name: bookwyrm-flower
-          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.2 # {"$imagepolicy": "flux-system:bookwyrm"}
+          image: registry.midnightthoughts.space/mtrnord/bookwyrm:v0.8.5 # {"$imagepolicy": "flux-system:bookwyrm"}
           imagePullPolicy: Always
           command: ["celery"]
           args:
