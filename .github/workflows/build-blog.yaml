@@ -1,14 +1,11 @@
-name: Build Continuwuity Wrapper Image
+name: Build Blog Image
 
 on:
   push:
     branches: ["main"]
     paths:
-      - "apps/talos_cluster/continuwuity/Dockerfile"
-      - ".github/workflows/build-continuwuity.yaml"
-  schedule:
-    # Rebuild daily at 03:00 UTC to pick up upstream :main changes
-    - cron: "0 3 * * *"
+      - "apps/talos_cluster/blog/docker/**"
+      - ".github/workflows/build-blog.yaml"
   workflow_dispatch:
 
 permissions:
@@ -38,24 +35,24 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
+      - name: Install cosign
+        uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6
         with:
-          images: registry.midnightthoughts.space/mtrnord/cluster/continuwuity
+          images: registry.midnightthoughts.space/mtrnord/blog
           tags: |
-            type=raw,value=main
+            type=raw,value=latest
             type=sha,prefix=sha-
-
-      - name: Install cosign
-        uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
 
       - name: Build and push
         id: build
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
         with:
-          context: apps/talos_cluster/continuwuity
-          file: apps/talos_cluster/continuwuity/Dockerfile
+          context: apps/talos_cluster/blog/docker
+          file: apps/talos_cluster/blog/docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -70,4 +67,4 @@ jobs:
           DIGEST: ${{ steps.build.outputs.digest }}
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY \
-            registry.midnightthoughts.space/mtrnord/cluster/continuwuity@${DIGEST}
+            registry.midnightthoughts.space/mtrnord/blog@${DIGEST}
