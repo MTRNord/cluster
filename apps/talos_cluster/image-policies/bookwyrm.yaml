@@ -1,0 +1,20 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: bookwyrm
+  namespace: flux-system
+spec:
+  image: registry.midnightthoughts.space/mtrnord/bookwyrm
+  interval: 1h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: bookwyrm
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: bookwyrm
+  policy:
+    semver:
+      range: ">=v0.8.0"
