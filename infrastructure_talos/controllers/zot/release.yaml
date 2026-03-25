@@ -53,7 +53,7 @@ spec:
             "storageDriver": {
               "name": "s3",
               "region": "hel1",
-              "regionEndpoint": "https://hel1.your-objectstorage.com",
+              "regionendpoint": "https://hel1.your-objectstorage.com",
               "bucket": "midnightthoughts-registry",
               "forcepathstyle": true,
               "secure": true,
@@ -67,6 +67,13 @@ spec:
             "auth": {
               "htpasswd": {
                 "path": "/htpasswd/htpasswd"
+              }
+            },
+            "accessControl": {
+              "anonymousPolicy": ["read"],
+              "adminPolicy": {
+                "users": ["admin"],
+                "actions": ["read", "create", "update", "delete"]
               }
             }
           },
@@ -89,13 +96,6 @@ spec:
               "prometheus": {
                 "path": "/metrics"
               }
-            }
-          },
-          "accessControl": {
-            "anonymousPolicy": ["read"],
-            "adminPolicy": {
-              "users": ["admin"],
-              "actions": ["read", "create", "update", "delete"]
             }
           }
         }
