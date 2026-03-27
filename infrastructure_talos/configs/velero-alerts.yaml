@@ -11,13 +11,15 @@ spec:
       rules:
         - alert: VeleroBackupPartialFailure
           expr: |
-            increase(velero_backup_partial_failure_total{schedule!=""}[1h]) > 0
+            increase(velero_backup_partial_failure_total{schedule!=""}[6h]) > 0
+            and on(schedule)
+            (time() - velero_backup_last_successful_timestamp{schedule!=""}) > 21600
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: "Velero backup partially failed"
-            description: "Schedule {{ $labels.schedule }} has partial failures in the last hour."
+            summary: "Velero backup partially failed and no recent success"
+            description: "Schedule {{ $labels.schedule }} has partial failures and no successful backup in the last 6 hours."
 
         - alert: VeleroBackupFailure
           expr: |

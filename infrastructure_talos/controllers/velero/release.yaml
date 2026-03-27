@@ -28,13 +28,15 @@ spec:
     deployNodeAgent: true
 
     nodeAgent:
+      extraArgs:
+        - --uploader-concurrency=4
       resources:
         requests:
           cpu: 100m
-          memory: 128Mi
+          memory: 256Mi
         limits:
-          cpu: "1"
-          memory: 1Gi
+          cpu: "2"
+          memory: 2Gi
 
     metrics:
       enabled: true
