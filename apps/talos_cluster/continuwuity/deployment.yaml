@@ -61,25 +61,24 @@ spec:
           env:
             - name: CONTINUWUITY_CONFIG
               value: /etc/conduwuit/conduwuit.toml
-          # Probes removed for RocksDB repair — restored in step 3c
-          # startupProbe:
-          #   httpGet:
-          #     path: /_matrix/client/versions
-          #     port: 8448
-          #   failureThreshold: 18
-          #   periodSeconds: 10
-          #   timeoutSeconds: 5
-          # livenessProbe:
-          #   httpGet:
-          #     path: /_matrix/client/versions
-          #     port: 8448
-          #   timeoutSeconds: 5
-          #   failureThreshold: 10
-          # readinessProbe:
-          #   httpGet:
-          #     path: /_matrix/client/versions
-          #     port: 8448
-          #   timeoutSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8448
+            failureThreshold: 18
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8448
+            timeoutSeconds: 5
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: 8448
+            timeoutSeconds: 5
       # Mount the continuwuity config which is stored in the continuwuity-config secret at the config path and should go to /config.yaml
       volumes:
         - name: continuwuity-config
@@ -103,73 +102,72 @@ spec:
       protocol: TCP
       port: 8448
       targetPort: 8448
-# --- HTTPRoute and BackendTrafficPolicy commented out for RocksDB repair — restored in step 3c ---
-# ---
-# apiVersion: gateway.networking.k8s.io/v1
-# kind: HTTPRoute
-# metadata:
-#   name: continuwuity
-#   namespace: continuwuity
-# spec:
-#   parentRefs:
-#     - name: envoy-gateway
-#       namespace: envoy-gateway
-#   hostnames:
-#     - matrix.mtrnord.blog
-#   rules:
-#     # Client traffic (sync, login, media, etc.)
-#     - name: client-traffic
-#       matches:
-#         - path:
-#             type: PathPrefix
-#             value: /_matrix/client
-#       backendRefs:
-#         - name: continuwuity
-#           port: 8448
-#       timeouts:
-#         request: 240s
-#         backendRequest: 0s
-#     - name: media-traffic
-#       matches:
-#         - path:
-#             type: PathPrefix
-#             value: /_matrix/media
-#       backendRefs:
-#         - name: continuwuity
-#           port: 8448
-#     # Federation traffic
-#     - name: federation-traffic
-#       matches:
-#         - path:
-#             type: PathPrefix
-#             value: /_matrix/federation
-#       backendRefs:
-#         - name: continuwuity
-#           port: 8448
-#       timeouts:
-#         request: 240s
-#         backendRequest: 0s
-#     # Fallback (anything else Matrix-y)
-#     - name: fallback
-#       backendRefs:
-#         - name: continuwuity
-#           port: 8448
-# ---
-# apiVersion: gateway.envoyproxy.io/v1alpha1
-# kind: BackendTrafficPolicy
-# metadata:
-#   name: continuwuity-general-ratelimit
-#   namespace: continuwuity
-# spec:
-#   targetRefs:
-#     - group: gateway.networking.k8s.io
-#       kind: HTTPRoute
-#       name: continuwuity
-#   circuitBreaker:
-#     maxConnections: 1500
-#     maxPendingRequests: 300
-#     maxParallelRequests: 700
-#     maxParallelRetries: 50
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: continuwuity
+  namespace: continuwuity
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - matrix.mtrnord.blog
+  rules:
+    # Client traffic (sync, login, media, etc.)
+    - name: client-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /_matrix/client
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+    - name: media-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /_matrix/media
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+    # Federation traffic
+    - name: federation-traffic
+      matches:
+        - path:
+            type: PathPrefix
+            value: /_matrix/federation
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+      timeouts:
+        request: 240s
+        backendRequest: 0s
+    # Fallback (anything else Matrix-y)
+    - name: fallback
+      backendRefs:
+        - name: continuwuity
+          port: 8448
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: continuwuity-general-ratelimit
+  namespace: continuwuity
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: continuwuity
+  circuitBreaker:
+    maxConnections: 1500
+    maxPendingRequests: 300
+    maxParallelRequests: 700
+    maxParallelRetries: 50
 ## Blocked by https://github.com/envoyproxy/gateway/pull/6888
 # ---
 # apiVersion: gateway.envoyproxy.io/v1alpha1
