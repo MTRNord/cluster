@@ -4,7 +4,7 @@ FROM forgejo.ellis.link/continuwuation/continuwuity:main AS upstream
 
 FROM debian:12-slim
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends procps \
+    && apt-get install -y --no-install-recommends procps rocksdb-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy binary and shared libraries from the upstream scratch image
