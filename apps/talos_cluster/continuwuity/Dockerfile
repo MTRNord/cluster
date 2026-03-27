@@ -24,6 +24,7 @@ RUN cmake -B build \
         -DWITH_GFLAGS=ON \
         -DROCKSDB_BUILD_SHARED=OFF \
         -DUSE_RTTI=ON \
+        -DCMAKE_CXX_FLAGS="-Wno-restrict" \
     && cmake --build build --target ldb sst_dump -j$(nproc)
 
 FROM debian:12-slim
