@@ -3,13 +3,13 @@
  *
  * Override via environment variables:
  *   BASE_URL=http://prod:8080 k6 run federation.js
- *   SERVER_NAMES=matrix.org,maunium.net k6 run federation.js
+ *   SERVER_NAMES=mtrnord.blog k6 run federation.js
  */
 
-export const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
+export const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
 
 // Comma-separated list of Matrix server names to test against
-export const SERVER_NAMES = (__ENV.SERVER_NAMES || 'matrix.org,maunium.net,mtrnord.blog').split(',');
+export const SERVER_NAMES = (__ENV.SERVER_NAMES || "mtrnord.blog").split(",");
 
 /** Pick a random entry from an array */
 export function randomItem(arr) {
@@ -24,6 +24,6 @@ export function randomItem(arr) {
  * Adjust per-test as needed.
  */
 export const DEFAULT_THRESHOLDS = {
-  http_req_failed: ['rate<0.05'],      // fewer than 5% errors
-  http_req_duration: ['p(95)<10000'],  // 95th percentile under 10s
+  http_req_failed: ["rate<0.05"], // fewer than 5% errors
+  http_req_duration: ["p(95)<10000"], // 95th percentile under 10s
 };
