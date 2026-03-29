@@ -1,5 +1,6 @@
-# Registers QEMU x86_64 binfmt_misc handler on every arm64 node so that
+# Registers QEMU x86_64 binfmt_misc handler on worker nodes so that
 # buildkitd can transparently cross-compile linux/amd64 images.
+# Runs on workers only — control-plane nodes are excluded via nodeAffinity.
 #
 # tonistiigi/binfmt uses the kernel "F" (fixed-binary) flag, meaning the
 # QEMU binary fd is held by the kernel and persists even if this pod restarts.
@@ -20,9 +21,14 @@ spec:
       labels:
         app: binfmt
     spec:
-      # Run as quickly as possible on every node (including control-plane)
-      tolerations:
-        - operator: Exists
+      # Only worker nodes run builds — no need for binfmt on control plane
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
       initContainers:
         - name: binfmt-install
           image: tonistiigi/binfmt:latest
