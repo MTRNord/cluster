@@ -146,7 +146,7 @@ data:
             return
         os.makedirs(store_path, exist_ok=True)
         with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
-            tar.extractall(store_path)
+            tar.extractall(store_path, filter="data")
         print(f"  Crypto store restored from S3 ({len(data)} bytes).")
 
 
@@ -306,75 +306,77 @@ data:
 
 
     # SSSS bootstrap: fetch and import key backup
-    async def bootstrap_crypto_from_ssss(client: AsyncClient, recovery_key_str: str):
-        """
-        Decrypt the megolm backup private key from SSSS, fetch all backed-up room
-        keys, decrypt them, and import them into the local crypto store.
-        Called once per account on first login.
-        """
-        print("  Bootstrapping crypto from SSSS key backup...")
+    def _parse_account_data(sync_resp) -> dict:
+        """Extract account data events from a SyncResponse into a {type: event} dict."""
+        result = {}
+        for event in getattr(sync_resp, "account_data", []):
+            key = getattr(event, "type", None) or getattr(event, "event_type", None)
+            if key:
+                result[key] = event
+        return result
 
+
+    async def _decrypt_ssss_backup_key(account_data: dict, recovery_key_str: str) -> str | None:
+        """
+        Decrypt and return the base64-encoded megolm backup private key from SSSS.
+        Returns None if SSSS data is missing or decryption fails.
+        """
         raw_key = decode_recovery_key(recovery_key_str)
 
-        # 1. Find the default SSSS key ID
-        default_key_event = client.account_data.get("m.secret_storage.default_key")
+        default_key_event = account_data.get("m.secret_storage.default_key")
         if not default_key_event:
-            print("  Warning: no m.secret_storage.default_key in account data — skipping SSSS bootstrap")
-            return
+            print("  Warning: no m.secret_storage.default_key in account data")
+            return None
         key_id = getattr(default_key_event, "content", {}).get("key")
         if not key_id:
-            print("  Warning: m.secret_storage.default_key has no 'key' field — skipping")
-            return
-        print(f"  SSSS key ID: {key_id}")
+            print("  Warning: m.secret_storage.default_key has no 'key' field")
+            return None
 
-        # 2. Decrypt the megolm backup private key from SSSS
-        backup_secret_event = client.account_data.get("m.megolm_backup.v1")
+        backup_secret_event = account_data.get("m.megolm_backup.v1")
         if not backup_secret_event:
-            print("  Warning: no m.megolm_backup.v1 account data — skipping SSSS bootstrap")
-            return
+            print("  Warning: no m.megolm_backup.v1 in account data")
+            return None
         encrypted_map = getattr(backup_secret_event, "content", {}).get("encrypted", {})
         if key_id not in encrypted_map:
-            print(f"  Warning: key_id {key_id} not in backup secret encrypted map — skipping")
-            return
+            print(f"  Warning: key_id {key_id} not found in backup secret encrypted map")
+            return None
 
         backup_key_bytes = ssss_decrypt(encrypted_map[key_id], raw_key, "m.megolm_backup.v1")
-        backup_private_key_b64 = backup_key_bytes.decode().strip()
-        print("  Decrypted megolm backup private key from SSSS.")
+        return backup_key_bytes.decode().strip()
 
-        # 3. Fetch all backed-up sessions from the server
-        backup_version_resp = await client.get_backup_keys_version()
-        if isinstance(backup_version_resp, Exception) or not hasattr(backup_version_resp, "version"):
-            # Fall back to direct HTTP call
-            import urllib.request
-            url = f"{HOMESERVER}/_matrix/client/v3/room_keys/version"
-            req = urllib.request.Request(
-                url, headers={"Authorization": f"Bearer {client.access_token}"}
-            )
-            with urllib.request.urlopen(req, timeout=15) as r:
-                backup_info = json.loads(r.read())
-            backup_version = backup_info["version"]
-        else:
-            backup_version = backup_version_resp.version
+
+    async def import_key_backup(client: AsyncClient, backup_private_key_b64: str):
+        """
+        Fetch all sessions from the server-side key backup, decrypt them with the
+        backup private key, and import them into the local crypto store.
+        Called on every run so newly backed-up sessions are always available.
+        """
+        import urllib.request
+        from olm.pk import PkDecryption, PkMessage
+
+        # Resolve backup version
+        url = f"{HOMESERVER}/_matrix/client/v3/room_keys/version"
+        req = urllib.request.Request(
+            url, headers={"Authorization": f"Bearer {client.access_token}"}
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            backup_version = json.loads(r.read())["version"]
         print(f"  Key backup version: {backup_version}")
 
-        import urllib.request
+        # Fetch all backed-up sessions
         url = f"{HOMESERVER}/_matrix/client/v3/room_keys/keys?version={backup_version}"
         req = urllib.request.Request(
             url, headers={"Authorization": f"Bearer {client.access_token}"}
         )
         with urllib.request.urlopen(req, timeout=60) as r:
-            backup_data = json.loads(r.read())
-        rooms = backup_data.get("rooms", {})
+            rooms = json.loads(r.read()).get("rooms", {})
         print(f"  Fetched key backup: {len(rooms)} rooms")
 
-        # 4. Decrypt each session using olm PK decryption
-        from olm.pk import PkDecryption, PkMessage
-
+        # Decrypt with olm PK
         private_key_bytes = base64.b64decode(backup_private_key_b64)
         try:
             pk_dec = PkDecryption.from_private_key(private_key_bytes)
         except AttributeError:
-            # older python-olm: construct object and inject private key
             pk_dec = PkDecryption()
             pk_dec._private_key = private_key_bytes
 
@@ -383,12 +385,11 @@ data:
             for session_id, session_info in room_data.get("sessions", {}).items():
                 sd = session_info.get("session_data", {})
                 try:
-                    msg = PkMessage(
+                    plaintext = pk_dec.decrypt(PkMessage(
                         ephemeral_key=sd["ephemeral"],
                         mac=sd["mac"],
                         ciphertext=sd["ciphertext"],
-                    )
-                    plaintext = pk_dec.decrypt(msg)
+                    ))
                     session_obj = json.loads(plaintext)
                     sessions_to_import.append({
                         "algorithm":   "m.megolm.v1.aes-sha2",
@@ -404,7 +405,6 @@ data:
                     print(f"    Warning: failed to decrypt session {session_id} in {room_id}: {e}")
 
         print(f"  Decrypted {len(sessions_to_import)} sessions; importing...")
-
         if sessions_to_import:
             tmp = tempfile.mktemp(suffix=".megolm")
             try:
@@ -414,7 +414,21 @@ data:
             finally:
                 if os.path.exists(tmp):
                     os.unlink(tmp)
-            print(f"  Imported {len(sessions_to_import)} room sessions from key backup.")
+            print(f"  Imported {len(sessions_to_import)} sessions from key backup.")
+
+
+    async def bootstrap_crypto_from_ssss(client: AsyncClient, account_data: dict, recovery_key_str: str):
+        """
+        First-run only: decrypt the SSSS backup key and store it in session.json.
+        Then import the key backup (also done on every subsequent run via import_key_backup).
+        """
+        print("  Bootstrapping crypto from SSSS...")
+        backup_private_key_b64 = await _decrypt_ssss_backup_key(account_data, recovery_key_str)
+        if not backup_private_key_b64:
+            print("  Warning: could not decrypt SSSS backup key — skipping")
+            return None
+        print("  Decrypted megolm backup private key from SSSS.")
+        return backup_private_key_b64
 
 
     # Room helpers
@@ -635,26 +649,51 @@ data:
                 json.dump({"next_batch": sync_resp.next_batch}, f)
             print(f"  Sync done. Rooms: {len(client.rooms)}")
 
-            # 4. SSSS bootstrap on first login (after sync so account_data is populated)
+            # Account data from sync response (nio doesn't accumulate it on the client object)
+            account_data = _parse_account_data(sync_resp)
+
+            # 4. SSSS bootstrap on first login (after sync so account_data is available).
+            # Only reads from account_data and decrypts locally — no server writes.
             if not session.get("ssss_bootstrapped"):
                 try:
-                    await bootstrap_crypto_from_ssss(client, account["ssss_key"])
-                    session["ssss_bootstrapped"] = True
-                    save_session(account["store"], session)
+                    backup_private_key_b64 = await bootstrap_crypto_from_ssss(
+                        client, account_data, account["ssss_key"]
+                    )
+                    if backup_private_key_b64:
+                        session["backup_private_key"] = backup_private_key_b64
+                        session["ssss_bootstrapped"] = True
+                        save_session(account["store"], session)
                 except Exception as e:
                     print(f"  Warning: SSSS bootstrap failed: {e}", file=sys.stderr)
 
-            # 5. DM room set
-            dm_map   = {}
-            ad_event = client.account_data.get("m.direct")
-            if ad_event:
-                dm_map = getattr(ad_event, "content", {}) or {}
-            dm_rooms = set()
-            for room_ids in dm_map.values():
-                if isinstance(room_ids, list):
-                    dm_rooms.update(room_ids)
+            # 5. Import key backup on every run so newly backed-up sessions are available.
+            if session.get("backup_private_key"):
+                try:
+                    await import_key_backup(client, session["backup_private_key"])
+                except Exception as e:
+                    print(f"  Warning: key backup import failed: {e}", file=sys.stderr)
+            else:
+                print("  Skipping key backup import (no backup_private_key in session yet)")
 
-            # 6. Room list
+            # 6. DM room set — prefer list_direct_rooms() (nio PR #451) with fallback
+            dm_rooms: set = set()
+            try:
+                dm_resp = await client.list_direct_rooms()
+                if hasattr(dm_resp, "rooms") and isinstance(dm_resp.rooms, dict):
+                    for room_ids in dm_resp.rooms.values():
+                        if isinstance(room_ids, list):
+                            dm_rooms.update(room_ids)
+                else:
+                    raise AttributeError("unexpected list_direct_rooms response")
+            except Exception:
+                # Fallback: parse m.direct from sync account data manually
+                ad_event = account_data.get("m.direct")
+                dm_map   = getattr(ad_event, "content", {}) or {} if ad_event else {}
+                for room_ids in dm_map.values():
+                    if isinstance(room_ids, list):
+                        dm_rooms.update(room_ids)
+
+            # 7. Room list
             print("  Building room list...")
             rooms_data = []
             for room_id, room in client.rooms.items():
@@ -677,7 +716,7 @@ data:
             s3_put(f"{prefix}/rooms-latest.json",     rooms_json, "application/json")
             print(f"  Uploaded rooms ({len(rooms_data)} rooms)")
 
-            # 7. E2EE key export
+            # 8. E2EE key export
             print("  Exporting E2EE keys...")
             try:
                 key_file = tempfile.mktemp(suffix=".bin")
@@ -691,7 +730,7 @@ data:
             except Exception as e:
                 print(f"  Warning: key export failed: {e}", file=sys.stderr)
 
-            # 8. Incremental history + media + profile updates
+            # 9. Incremental history + media + profile updates
             print("  Backing up history / media / profile updates...")
             for room_id in list(client.rooms.keys()):
                 try:
