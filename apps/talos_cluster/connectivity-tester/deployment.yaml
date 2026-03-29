@@ -96,10 +96,12 @@ metadata:
   name: connectivity-tester-api
   namespace: matrix
 spec:
+  replicas: 2
   progressDeadlineSeconds: 120
   strategy:
     rollingUpdate:
       maxUnavailable: 0
+      maxSurge: 1
     type: RollingUpdate
   selector:
     matchLabels:
