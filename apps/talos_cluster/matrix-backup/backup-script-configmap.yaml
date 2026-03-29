@@ -365,6 +365,58 @@ data:
         return backup_key_bytes.decode().strip()
 
 
+    def _olm_pk_decrypt(private_key_bytes: bytes, ciphertext_b64: str, mac_b64: str, ephemeral_b64: str) -> str:
+        """
+        Decrypt an olm PK-encrypted payload using the cryptography library directly,
+        avoiding the need for PkDecryption.from_private_key (requires libolm >= 3.2.3).
+
+        Olm PK decryption spec:
+          1. ECDH(our_private, ephemeral_public) → shared_secret (X25519)
+          2. HKDF-SHA256(salt=\\x00*32, ikm=shared_secret, info=b"OLM_KEYS") → 80 bytes
+             → aes_key[0:32], mac_key[32:64], iv[64:80]
+          3. Verify HMAC-SHA256(mac_key, ciphertext) == mac
+          4. AES-256-CBC decrypt(aes_key, iv, ciphertext), unpad PKCS7
+        """
+        from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
+        from cryptography.hazmat.primitives import padding as sym_padding
+
+        def _b64decode(s: str) -> bytes:
+            return base64.b64decode(s + "=" * (-len(s) % 4))
+
+        ciphertext   = _b64decode(ciphertext_b64)
+        mac          = _b64decode(mac_b64)
+        ephemeral_pub = _b64decode(ephemeral_b64)
+
+        # X25519 ECDH
+        priv = X25519PrivateKey.from_private_bytes(private_key_bytes)
+        shared_secret = priv.exchange(X25519PublicKey.from_public_bytes(ephemeral_pub))
+
+        # HKDF key derivation
+        derived = HKDF(
+            algorithm=hashes.SHA256(),
+            length=80,
+            salt=b"\x00" * 32,
+            info=b"OLM_KEYS",
+            backend=default_backend(),
+        ).derive(shared_secret)
+        aes_key = derived[:32]
+        mac_key = derived[32:64]
+        iv      = derived[64:80]
+
+        # MAC verification
+        expected_mac = hmac_lib.new(mac_key, ciphertext, hashlib.sha256).digest()
+        if not hmac_lib.compare_digest(expected_mac, mac):
+            raise ValueError("BAD_MESSAGE_MAC")
+
+        # AES-256-CBC decryption + PKCS7 unpad
+        cipher = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
+        dec    = cipher.decryptor()
+        padded = dec.update(ciphertext) + dec.finalize()
+        unpadder  = sym_padding.PKCS7(128).unpadder()
+        plaintext = unpadder.update(padded) + unpadder.finalize()
+        return plaintext.decode()
+
+
     async def import_key_backup(client: AsyncClient, backup_private_key_b64: str):
         """
         Fetch all sessions from the server-side key backup, decrypt them with the
@@ -372,15 +424,15 @@ data:
         Called on every run so newly backed-up sessions are always available.
         """
         import urllib.request
-        from olm.pk import PkDecryption, PkMessage
 
-        # Resolve backup version
+        # Resolve backup version and expected public key
         url = f"{HOMESERVER}/_matrix/client/v3/room_keys/version"
         req = urllib.request.Request(
             url, headers={"Authorization": f"Bearer {client.access_token}"}
         )
         with urllib.request.urlopen(req, timeout=15) as r:
-            backup_version = json.loads(r.read())["version"]
+            backup_info = json.loads(r.read())
+        backup_version = backup_info["version"]
         print(f"  Key backup version: {backup_version}")
 
         # Fetch all backed-up sessions
@@ -392,26 +444,20 @@ data:
             rooms = json.loads(r.read()).get("rooms", {})
         print(f"  Fetched key backup: {len(rooms)} rooms")
 
-        # Decrypt with olm PK.
-        # Matrix stores the key as unpadded base64; add padding before decoding.
-        padded = backup_private_key_b64 + "=" * (-len(backup_private_key_b64) % 4)
-        private_key_bytes = base64.b64decode(padded)
-        try:
-            pk_dec = PkDecryption.from_private_key(private_key_bytes)
-        except AttributeError:
-            pk_dec = PkDecryption()
-            pk_dec._private_key = private_key_bytes
+        # Decode the private key (Matrix stores as unpadded base64)
+        private_key_bytes = base64.b64decode(backup_private_key_b64 + "=" * (-len(backup_private_key_b64) % 4))
 
         sessions_to_import = []
         for room_id, room_data in rooms.items():
             for session_id, session_info in room_data.get("sessions", {}).items():
                 sd = session_info.get("session_data", {})
                 try:
-                    plaintext = pk_dec.decrypt(PkMessage(
-                        ephemeral_key=sd["ephemeral"],
-                        mac=sd["mac"],
-                        ciphertext=sd["ciphertext"],
-                    ))
+                    plaintext  = _olm_pk_decrypt(
+                        private_key_bytes,
+                        sd["ciphertext"],
+                        sd["mac"],
+                        sd["ephemeral"],
+                    )
                     session_obj = json.loads(plaintext)
                     sessions_to_import.append({
                         "algorithm":   "m.megolm.v1.aes-sha2",
@@ -558,25 +604,106 @@ data:
         s3_put(log_key, existing + json.dumps(record).encode() + b"\n", "application/x-ndjson")
 
 
+    # Media message types to download
+    MEDIA_MSGTYPES = {"m.image", "m.file", "m.video", "m.audio"}
+
+
+    async def _process_event(client, src: dict, room_id: str, prefix: str, is_dm: bool):
+        """Handle media download and profile-update side-effects for one event."""
+        content = src.get("content", {})
+        event_type = src.get("type", "")
+        sender = str(src.get("sender", ""))
+
+        # Media: all types in DMs; only our-user files in other rooms
+        if event_type == "m.room.message" and content.get("msgtype") in MEDIA_MSGTYPES:
+            if is_dm or sender.endswith(OUR_HOMESERVER_SUFFIX):
+                mxc = content.get("url", "")
+                if mxc:
+                    await store_media(client, mxc, prefix, label="media")
+
+        # Stickers (m.sticker) always have a url directly in content
+        if event_type == "m.sticker":
+            if is_dm or sender.endswith(OUR_HOMESERVER_SUFFIX):
+                mxc = content.get("url", "")
+                if mxc:
+                    await store_media(client, mxc, prefix, label="media")
+
+        # Profile changes (display name / avatar in m.room.member state events)
+        if event_type == "m.room.member":
+            src["room_id"] = room_id
+            await record_profile_update(client, src, prefix)
+
+
+    def _event_to_record(src: dict) -> dict:
+        return {
+            "event_id":         src.get("event_id"),
+            "sender":           src.get("sender"),
+            "type":             src.get("type"),
+            "origin_server_ts": src.get("origin_server_ts"),
+            "content":          src.get("content", {}),
+        }
+
+
     # History pagination
-    async def paginate_history(client, room_id: str, prefix: str):
-        room_key   = safe_room_key(room_id)
-        cursor_s3  = f"{prefix}/history-cursor/{room_key}.json"
-        history_s3 = f"{prefix}/history/{room_key}/{DATE_STR}.jsonl"
+    async def paginate_history(client, room_id: str, prefix: str, is_dm: bool = False):
+        room_key  = safe_room_key(room_id)
+        cursor_s3 = f"{prefix}/history-cursor/{room_key}.json"
 
         cursor_data = s3_get_json(cursor_s3)
 
         if not cursor_data:
+            # First time we've seen this room.
             room  = client.rooms.get(room_id)
             token = getattr(room, "prev_batch", None)
-            if token:
-                s3_put(cursor_s3, json.dumps({"token": token}).encode(), "application/json")
-                print(f"    History cursor initialised for {room_id}")
+            if not token:
+                return
+
+            if is_dm:
+                # Paginate backward through the full DM history before setting the cursor.
+                print(f"    DM first-run: fetching full history for {room_id} ...")
+                messages = []
+                back_token = token
+                pages = 0
+                while True:
+                    resp = await client.room_messages(
+                        room_id,
+                        start=back_token,
+                        limit=100,
+                        direction=MessageDirection.back,
+                    )
+                    if isinstance(resp, RoomMessagesError):
+                        print(f"    Warning: room_messages error for {room_id}: {resp}")
+                        break
+                    if not resp.chunk:
+                        break
+                    for event in resp.chunk:
+                        src = event.source if hasattr(event, "source") else {}
+                        messages.append(_event_to_record(src))
+                        await _process_event(client, src, room_id, prefix, is_dm=True)
+                    new_end = getattr(resp, "end", None)
+                    if not new_end or new_end == back_token:
+                        break
+                    back_token = new_end
+                    pages += 1
+
+                if messages:
+                    # Events arrived in reverse-chron order; reverse so oldest is first.
+                    messages.reverse()
+                    history_s3 = f"{prefix}/history/{room_key}/{DATE_STR}.jsonl"
+                    chunk = b"\n".join(json.dumps(m).encode() for m in messages) + b"\n"
+                    s3_put(history_s3, chunk, "application/x-ndjson")
+                    print(f"    DM history: {len(messages)} events ({pages} pages) for {room_id}")
+
+            # Record the forward cursor so subsequent runs pick up new messages.
+            s3_put(cursor_s3, json.dumps({"token": token}).encode(), "application/json")
+            print(f"    History cursor initialised for {room_id}")
             return
 
+        # Subsequent runs: paginate forward from the stored cursor.
         start_token = cursor_data["token"]
         messages    = []
         next_token  = start_token
+        history_s3  = f"{prefix}/history/{room_key}/{DATE_STR}.jsonl"
 
         for _ in range(100):
             resp = await client.room_messages(
@@ -591,28 +718,9 @@ data:
             if not resp.chunk:
                 break
             for event in resp.chunk:
-                src     = event.source if hasattr(event, "source") else {}
-                content = src.get("content", {})
-                messages.append({
-                    "event_id":         src.get("event_id"),
-                    "sender":           src.get("sender"),
-                    "type":             src.get("type"),
-                    "origin_server_ts": src.get("origin_server_ts"),
-                    "content":          content,
-                })
-                # Images sent by our users
-                if (
-                    src.get("type") == "m.room.message"
-                    and content.get("msgtype") == "m.image"
-                    and str(src.get("sender", "")).endswith(OUR_HOMESERVER_SUFFIX)
-                ):
-                    mxc = content.get("url", "")
-                    if mxc:
-                        await store_media(client, mxc, prefix, label="media")
-                # Profile changes
-                if src.get("type") == "m.room.member":
-                    src["room_id"] = room_id
-                    await record_profile_update(client, src, prefix)
+                src = event.source if hasattr(event, "source") else {}
+                messages.append(_event_to_record(src))
+                await _process_event(client, src, room_id, prefix, is_dm)
             new_end = getattr(resp, "end", None)
             if not new_end or new_end == next_token:
                 next_token = None
@@ -757,7 +865,7 @@ data:
             print("  Backing up history / media / profile updates...")
             for room_id in list(client.rooms.keys()):
                 try:
-                    await paginate_history(client, room_id, prefix)
+                    await paginate_history(client, room_id, prefix, is_dm=(room_id in dm_rooms))
                 except Exception as e:
                     print(f"    Warning: history error for {room_id}: {e}", file=sys.stderr)
 
