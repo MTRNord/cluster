@@ -24,15 +24,26 @@ spec:
                   mountPath: /tools
 
             - name: setup-cosign
-              image: gcr.io/projectsigstore/cosign:v3.0.5
-              command: [cp, /ko-app/cosign, /tools/cosign]
+              image: alpine:3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  wget -qO /tools/cosign https://github.com/sigstore/cosign/releases/download/v2.4.3/cosign-linux-arm64 \
+                    && chmod +x /tools/cosign
               volumeMounts:
                 - name: tools
                   mountPath: /tools
 
             - name: setup-crane
-              image: gcr.io/go-containerregistry/crane:v0.20.2
-              command: [cp, /ko-app/crane, /tools/crane]
+              image: alpine:3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  wget -qO /tmp/crane.tar.gz https://github.com/google/go-containerregistry/releases/download/v0.20.2/go-containerregistry_Linux_arm64.tar.gz \
+                    && tar -xzf /tmp/crane.tar.gz -C /tools crane \
+                    && chmod +x /tools/crane
               volumeMounts:
                 - name: tools
                   mountPath: /tools
