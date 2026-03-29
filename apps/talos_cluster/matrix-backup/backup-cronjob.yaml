@@ -29,7 +29,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pip install --quiet --target /deps 'matrix-nio[e2e]' boto3 cryptography
+                - pip install --quiet --no-cache-dir --target /deps 'matrix-nio[e2e]' boto3 cryptography
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: false

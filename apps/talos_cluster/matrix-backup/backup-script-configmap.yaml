@@ -677,7 +677,7 @@ data:
 
             # 4. SSSS bootstrap on first login (after sync so account_data is available).
             # Only reads from account_data and decrypts locally — no server writes.
-            if not session.get("ssss_bootstrapped"):
+            if not session.get("ssss_bootstrapped") or not session.get("backup_private_key"):
                 try:
                     backup_private_key_b64 = await bootstrap_crypto_from_ssss(
                         client, account["user_id"], account["ssss_key"]
