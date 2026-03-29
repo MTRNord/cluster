@@ -31,7 +31,7 @@ spec:
       hostNetwork: false
       containers:
         - name: connection-checker-ui
-          image: ghcr.io/mtrnord/matrix-connection-tester-ui:v0.3.1 # {"$imagepolicy": "flux-system:matrix-connection-tester-ui"}
+          image: ghcr.io/mtrnord/matrix-connection-tester-ui:v0.4.0 # {"$imagepolicy": "flux-system:matrix-connection-tester-ui"}
           imagePullPolicy: Always
           lifecycle:
             preStop:
@@ -124,7 +124,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: federation-tester-api
-          image: ghcr.io/mtrnord/rust-federation-tester:0.3.4 # {"$imagepolicy": "flux-system:rust-federation-tester"}
+          image: ghcr.io/mtrnord/rust-federation-tester:0.4.0 # {"$imagepolicy": "flux-system:rust-federation-tester"}
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
