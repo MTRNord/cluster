@@ -392,8 +392,10 @@ data:
             rooms = json.loads(r.read()).get("rooms", {})
         print(f"  Fetched key backup: {len(rooms)} rooms")
 
-        # Decrypt with olm PK
-        private_key_bytes = base64.b64decode(backup_private_key_b64)
+        # Decrypt with olm PK.
+        # Matrix stores the key as unpadded base64; add padding before decoding.
+        padded = backup_private_key_b64 + "=" * (-len(backup_private_key_b64) % 4)
+        private_key_bytes = base64.b64decode(padded)
         try:
             pk_dec = PkDecryption.from_private_key(private_key_bytes)
         except AttributeError:
