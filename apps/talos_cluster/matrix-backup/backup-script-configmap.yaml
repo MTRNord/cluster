@@ -316,27 +316,47 @@ data:
         return result
 
 
-    async def _decrypt_ssss_backup_key(account_data: dict, recovery_key_str: str) -> str | None:
+    def _fetch_account_data_event(access_token: str, user_id: str, event_type: str) -> dict | None:
+        """
+        Fetch a single account data event directly from the server (read-only GET).
+        Returns the content dict, or None if the event doesn't exist.
+        Incremental syncs don't re-deliver unchanged account data, so we fetch directly.
+        """
+        import urllib.request, urllib.error
+        url = f"{HOMESERVER}/_matrix/client/v3/user/{urllib.request.quote(user_id, safe='')}/account_data/{urllib.request.quote(event_type, safe='')}"
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {access_token}"})
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+            raise
+
+
+    async def _decrypt_ssss_backup_key(client: AsyncClient, user_id: str, recovery_key_str: str) -> str | None:
         """
         Decrypt and return the base64-encoded megolm backup private key from SSSS.
+        Fetches the required account data events directly from the server (read-only GETs)
+        so this works on both first run and incremental syncs.
         Returns None if SSSS data is missing or decryption fails.
         """
         raw_key = decode_recovery_key(recovery_key_str)
 
-        default_key_event = account_data.get("m.secret_storage.default_key")
-        if not default_key_event:
+        default_key_content = _fetch_account_data_event(client.access_token, user_id, "m.secret_storage.default_key")
+        if not default_key_content:
             print("  Warning: no m.secret_storage.default_key in account data")
             return None
-        key_id = getattr(default_key_event, "content", {}).get("key")
+        key_id = default_key_content.get("key")
         if not key_id:
             print("  Warning: m.secret_storage.default_key has no 'key' field")
             return None
 
-        backup_secret_event = account_data.get("m.megolm_backup.v1")
-        if not backup_secret_event:
+        backup_secret_content = _fetch_account_data_event(client.access_token, user_id, "m.megolm_backup.v1")
+        if not backup_secret_content:
             print("  Warning: no m.megolm_backup.v1 in account data")
             return None
-        encrypted_map = getattr(backup_secret_event, "content", {}).get("encrypted", {})
+        encrypted_map = backup_secret_content.get("encrypted", {})
         if key_id not in encrypted_map:
             print(f"  Warning: key_id {key_id} not found in backup secret encrypted map")
             return None
@@ -417,13 +437,13 @@ data:
             print(f"  Imported {len(sessions_to_import)} sessions from key backup.")
 
 
-    async def bootstrap_crypto_from_ssss(client: AsyncClient, account_data: dict, recovery_key_str: str):
+    async def bootstrap_crypto_from_ssss(client: AsyncClient, user_id: str, recovery_key_str: str):
         """
-        First-run only: decrypt the SSSS backup key and store it in session.json.
-        Then import the key backup (also done on every subsequent run via import_key_backup).
+        First-run only: fetch SSSS account data directly from the server (read-only GETs),
+        decrypt the backup key, and return it for storage in session.json.
         """
         print("  Bootstrapping crypto from SSSS...")
-        backup_private_key_b64 = await _decrypt_ssss_backup_key(account_data, recovery_key_str)
+        backup_private_key_b64 = await _decrypt_ssss_backup_key(client, user_id, recovery_key_str)
         if not backup_private_key_b64:
             print("  Warning: could not decrypt SSSS backup key — skipping")
             return None
@@ -438,7 +458,8 @@ data:
 
     def derive_server_hints(room) -> list:
         counter = Counter()
-        for user_id in room.joined_members:
+        # matrix-nio exposes room members as room.users (dict of user_id -> RoomMember)
+        for user_id in room.users:
             if ":" in user_id:
                 counter[user_id.split(":", 1)[1]] += 1
         return [s for s, _ in counter.most_common(5)]
@@ -657,7 +678,7 @@ data:
             if not session.get("ssss_bootstrapped"):
                 try:
                     backup_private_key_b64 = await bootstrap_crypto_from_ssss(
-                        client, account_data, account["ssss_key"]
+                        client, account["user_id"], account["ssss_key"]
                     )
                     if backup_private_key_b64:
                         session["backup_private_key"] = backup_private_key_b64
