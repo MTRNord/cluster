@@ -1,0 +1,52 @@
+# Registers QEMU x86_64 binfmt_misc handler on every arm64 node so that
+# buildkitd can transparently cross-compile linux/amd64 images.
+#
+# tonistiigi/binfmt uses the kernel "F" (fixed-binary) flag, meaning the
+# QEMU binary fd is held by the kernel and persists even if this pod restarts.
+# Registrations are cleared on node reboot only.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: binfmt
+  namespace: image-builder
+spec:
+  selector:
+    matchLabels:
+      app: binfmt
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: binfmt
+    spec:
+      # Run as quickly as possible on every node (including control-plane)
+      tolerations:
+        - operator: Exists
+      initContainers:
+        - name: binfmt-install
+          image: tonistiigi/binfmt:latest
+          args:
+            - --install
+            - qemu-x86_64
+          securityContext:
+            privileged: true
+      containers:
+        # Pause container keeps the DaemonSet pod alive so we can track which
+        # nodes have had the registration applied.
+        - name: pause
+          image: alpine:3
+          command:
+            - sleep
+            - infinity
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 1m
+              memory: 8Mi
+            limits:
+              memory: 16Mi

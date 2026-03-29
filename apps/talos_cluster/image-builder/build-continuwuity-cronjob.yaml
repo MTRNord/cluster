@@ -1,0 +1,124 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: build-continuwuity
+  namespace: image-builder
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: image-builder-cronjob
+          restartPolicy: OnFailure
+          initContainers:
+            - name: setup-buildctl
+              image: moby/buildkit:v0.16.0
+              command: [cp, /usr/bin/buildctl, /tools/buildctl]
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+
+            - name: setup-cosign
+              image: gcr.io/projectsigstore/cosign:v3.0.5
+              command: [cp, /ko-app/cosign, /tools/cosign]
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+
+            - name: setup-crane
+              image: gcr.io/go-containerregistry/crane:v0.20.2
+              command: [cp, /ko-app/crane, /tools/crane]
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+
+            - name: clone-repo
+              image: alpine/git:latest
+              command:
+                - git
+                - clone
+                - --depth=1
+                - https://github.com/MTRNord/cluster.git
+                - /workspace
+              volumeMounts:
+                - name: workspace
+                  mountPath: /workspace
+
+          containers:
+            - name: build
+              image: alpine:3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  export PATH="/tools:$PATH"
+
+                  mkdir -p /root/.docker
+                  cp /registry-secret/dockerconfig.json /root/.docker/config.json
+
+                  TAG_TS="$(date -u +%Y%m%d-%H%M%S)"
+                  TAG_SHA="sha-$(git -C /workspace rev-parse --short HEAD)"
+                  IMAGE="registry.midnightthoughts.space/mtrnord/cluster/continuwuity"
+
+                  echo "==> Building ${IMAGE}:${TAG_TS}"
+
+                  buildctl \
+                    --addr tcp://buildkitd.image-builder.svc.cluster.local:1234 \
+                    build \
+                    --frontend dockerfile.v0 \
+                    --opt platform=linux/amd64,linux/arm64 \
+                    --local context=/workspace/apps/talos_cluster/continuwuity \
+                    --local dockerfile=/workspace/apps/talos_cluster/continuwuity \
+                    --output "type=image,name=${IMAGE}:${TAG_TS},push=true" \
+                    --metadata-file /tmp/build-meta.json
+
+                  DIGEST="$(grep -o '"containerimage.digest":"sha256:[a-f0-9]*"' /tmp/build-meta.json | head -1 | cut -d'"' -f4)"
+                  echo "==> Digest: ${DIGEST}"
+
+                  crane cp "${IMAGE}:${TAG_TS}" "${IMAGE}:main"
+                  crane cp "${IMAGE}:${TAG_TS}" "${IMAGE}:${TAG_SHA}"
+
+                  COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
+                  cosign sign --yes \
+                    --key /cosign-secret/cosign.key \
+                    --new-bundle-format=false \
+                    --use-signing-config=false \
+                    --registry-referrers-mode=oci-1-1 \
+                    "${IMAGE}@${DIGEST}"
+
+                  echo "==> Done: ${IMAGE}:${TAG_TS}"
+              env:
+                - name: COSIGN_OCI_EXPERIMENTAL
+                  value: "1"
+                - name: COSIGN_EXPERIMENTAL
+                  value: "1"
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+                - name: workspace
+                  mountPath: /workspace
+                  readOnly: true
+                - name: registry-secret
+                  mountPath: /registry-secret
+                  readOnly: true
+                - name: cosign-secret
+                  mountPath: /cosign-secret
+                  readOnly: true
+
+          volumes:
+            - name: tools
+              emptyDir: {}
+            - name: workspace
+              emptyDir: {}
+            - name: registry-secret
+              secret:
+                secretName: image-builder-registry-secret
+            - name: cosign-secret
+              secret:
+                secretName: image-builder-cosign-secret

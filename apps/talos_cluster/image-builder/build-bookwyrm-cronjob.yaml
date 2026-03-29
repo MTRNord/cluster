@@ -1,0 +1,198 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: build-bookwyrm
+  namespace: image-builder
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: image-builder-cronjob
+          restartPolicy: OnFailure
+          initContainers:
+            # Step 1: Check upstream version and whether it already exists in registry.
+            # Writes the upstream version to /workspace/version.
+            # Writes /workspace/skip if the tag already exists (nothing to do).
+            - name: check-version
+              image: alpine:3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  apk add --no-cache curl >/dev/null 2>&1
+
+                  NEW=$(curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" \
+                    | grep '"tag_name"' | head -1 | cut -d'"' -f4)
+
+                  if [ -z "$NEW" ]; then
+                    echo "ERROR: could not determine upstream version" >&2
+                    exit 1
+                  fi
+
+                  echo "Upstream version: ${NEW}"
+                  echo "${NEW}" > /workspace/version
+
+                  TAGS=$(curl -sf "https://registry.midnightthoughts.space/v2/mtrnord/bookwyrm/tags/list" \
+                    | grep -o '"tags":\[[^]]*\]' || echo "")
+                  if echo "$TAGS" | grep -q "\"${NEW}\""; then
+                    echo "Tag ${NEW} already exists in registry — skipping build"
+                    touch /workspace/skip
+                  else
+                    echo "Tag ${NEW} not found in registry — will build"
+                  fi
+              volumeMounts:
+                - name: workspace
+                  mountPath: /workspace
+
+            # Step 2: Stage build tools (always runs; harmless if build is skipped)
+            - name: setup-buildctl
+              image: moby/buildkit:v0.16.0
+              command: [cp, /usr/bin/buildctl, /tools/buildctl]
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+
+            - name: setup-cosign
+              image: gcr.io/projectsigstore/cosign:v3.0.5
+              command: [cp, /ko-app/cosign, /tools/cosign]
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+
+            - name: setup-crane
+              image: gcr.io/go-containerregistry/crane:v0.20.2
+              command: [cp, /ko-app/crane, /tools/crane]
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+
+            # Step 3: Clone gitops repo to get the dockerfile.patch
+            - name: clone-gitops
+              image: alpine/git:latest
+              command:
+                - git
+                - clone
+                - --depth=1
+                - https://github.com/MTRNord/cluster.git
+                - /workspace/gitops
+              volumeMounts:
+                - name: workspace
+                  mountPath: /workspace
+
+            # Step 4: Clone upstream bookwyrm at the detected version and apply patch.
+            # Skips everything if /workspace/skip exists.
+            - name: clone-bookwyrm
+              image: alpine/git:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  if [ -f /workspace/skip ]; then
+                    echo "Skipping bookwyrm clone (tag already in registry)"
+                    exit 0
+                  fi
+
+                  VERSION="$(cat /workspace/version)"
+                  echo "Cloning bookwyrm ${VERSION}"
+
+                  git clone --depth=1 --branch "${VERSION}" \
+                    https://github.com/bookwyrm-social/bookwyrm.git \
+                    /workspace/bookwyrm
+
+                  cd /workspace/bookwyrm
+
+                  PATCH="/workspace/gitops/apps/talos_cluster/bookwyrm/dockerfile.patch"
+                  if git apply --check "$PATCH" 2>/dev/null; then
+                    git apply "$PATCH"
+                    echo "Dockerfile patch applied successfully"
+                  else
+                    echo "Patch does not apply cleanly — upstream Dockerfile likely already includes the changes, proceeding as-is"
+                  fi
+              volumeMounts:
+                - name: workspace
+                  mountPath: /workspace
+
+          containers:
+            - name: build
+              image: alpine:3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -eu
+                  export PATH="/tools:$PATH"
+
+                  if [ -f /workspace/skip ]; then
+                    echo "Nothing to build — tag already exists in registry"
+                    exit 0
+                  fi
+
+                  VERSION="$(cat /workspace/version)"
+                  IMAGE="registry.midnightthoughts.space/mtrnord/bookwyrm"
+
+                  mkdir -p /root/.docker
+                  cp /registry-secret/dockerconfig.json /root/.docker/config.json
+
+                  echo "==> Building ${IMAGE}:${VERSION}"
+
+                  buildctl \
+                    --addr tcp://buildkitd.image-builder.svc.cluster.local:1234 \
+                    build \
+                    --frontend dockerfile.v0 \
+                    --opt platform=linux/amd64,linux/arm64 \
+                    --local context=/workspace/bookwyrm \
+                    --local dockerfile=/workspace/bookwyrm \
+                    --output "type=image,name=${IMAGE}:${VERSION},push=true" \
+                    --metadata-file /tmp/build-meta.json
+
+                  DIGEST="$(grep -o '"containerimage.digest":"sha256:[a-f0-9]*"' /tmp/build-meta.json | head -1 | cut -d'"' -f4)"
+                  echo "==> Digest: ${DIGEST}"
+
+                  crane cp "${IMAGE}:${VERSION}" "${IMAGE}:latest"
+
+                  COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
+                  cosign sign --yes \
+                    --key /cosign-secret/cosign.key \
+                    --new-bundle-format=false \
+                    --use-signing-config=false \
+                    --registry-referrers-mode=oci-1-1 \
+                    "${IMAGE}@${DIGEST}"
+
+                  echo "==> Done: ${IMAGE}:${VERSION}"
+              env:
+                - name: COSIGN_OCI_EXPERIMENTAL
+                  value: "1"
+                - name: COSIGN_EXPERIMENTAL
+                  value: "1"
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
+                - name: workspace
+                  mountPath: /workspace
+                  readOnly: true
+                - name: registry-secret
+                  mountPath: /registry-secret
+                  readOnly: true
+                - name: cosign-secret
+                  mountPath: /cosign-secret
+                  readOnly: true
+
+          volumes:
+            - name: tools
+              emptyDir: {}
+            - name: workspace
+              emptyDir: {}
+            - name: registry-secret
+              secret:
+                secretName: image-builder-registry-secret
+            - name: cosign-secret
+              secret:
+                secretName: image-builder-cosign-secret
