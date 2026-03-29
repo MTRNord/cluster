@@ -1,0 +1,129 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: matrix-backup
+  namespace: matrix-backup
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  activeDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          automountServiceAccountToken: false
+          enableServiceLinks: false
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          initContainers:
+            - name: install-deps
+              image: python:3.12-slim
+              command:
+                - /bin/sh
+                - -c
+                - pip install --quiet --target /deps 'matrix-nio[e2e]' boto3 cryptography
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: false
+                capabilities:
+                  drop:
+                    - ALL
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 256Mi
+                limits:
+                  memory: 512Mi
+              volumeMounts:
+                - name: deps
+                  mountPath: /deps
+          containers:
+            - name: backup
+              image: python:3.12-slim
+              command:
+                - /bin/sh
+                - -c
+                - PYTHONPATH=/deps python /scripts/backup.py
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  memory: 512Mi
+              env:
+                - name: HOMESERVER
+                  value: "https://matrix.mtrnord.blog"
+                - name: S3_ENDPOINT
+                  value: "hel1.your-objectstorage.com"
+                - name: S3_BUCKET
+                  value: "midnightthoughts-matrix-backup"
+                - name: MTRNORD_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: mtrnord_password
+                - name: MTRNORD_SSSS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: mtrnord_ssss_recovery_key
+                - name: LEXI_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: lexi_password
+                - name: LEXI_SSSS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: lexi_ssss_recovery_key
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: s3_access_key
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: s3_secret_key
+                - name: KEY_EXPORT_PASSPHRASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: key_export_passphrase
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+                - name: crypto-store
+                  mountPath: /data/crypto
+                - name: deps
+                  mountPath: /deps
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: scripts
+              configMap:
+                name: matrix-backup-script
+            - name: crypto-store
+              emptyDir: {}
+            - name: deps
+              emptyDir: {}
+            - name: tmp
+              emptyDir: {}
