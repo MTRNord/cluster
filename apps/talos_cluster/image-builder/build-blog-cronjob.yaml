@@ -72,6 +72,7 @@ spec:
                 - -c
                 - |
                   set -eu
+                  apk add --no-cache git >/dev/null
                   export PATH="/tools:$PATH"
 
                   # Registry auth for crane and cosign (buildkitd uses its own mounted config)
