@@ -1,9 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
+  labels:
+    app: buildkitd
   name: buildkitd
   namespace: image-builder
 spec:
+  serviceName: buildkitd
+  podManagementPolicy: Parallel
   replicas: 1
   selector:
     matchLabels:
@@ -16,7 +20,7 @@ spec:
       hostUsers: false
       containers:
         - name: buildkitd
-          image: moby/buildkit:v0.29.0
+          image: moby/buildkit:master
           args:
             - --addr
             - unix:///run/buildkit/buildkitd.sock
@@ -25,8 +29,6 @@ spec:
           ports:
             - containerPort: 1234
               protocol: TCP
-          securityContext:
-            privileged: true
           readinessProbe:
             exec:
               command:
@@ -43,6 +45,8 @@ spec:
                 - workers
             initialDelaySeconds: 5
             periodSeconds: 30
+          securityContext:
+            privileged: true
           volumeMounts:
             - name: docker-config
               mountPath: /root/.docker
