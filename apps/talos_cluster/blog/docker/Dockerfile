@@ -150,9 +150,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/surveyjs.zip \
 #    && rm stop-user-enumeration.1.7.5.zip
 
 # Install Antispam Bee plugin
-RUN wget -q https://downloads.wordpress.org/plugin/antispam-bee.2.11.8.zip \
-    && unzip -q antispam-bee.2.11.8.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm antispam-bee.2.11.8.zip
+RUN wget -q https://downloads.wordpress.org/plugin/antispam-bee.2.11.10.zip \
+    && unzip -q antispam-bee.2.11.10.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm antispam-bee.2.11.10.zip
 
 # Install Gallery Block Lightbox plugin
 RUN wget -q https://downloads.wordpress.org/plugin/gallery-block-lightbox.zip \
@@ -175,9 +175,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
     && rm akismet.5.6.zip
 
 # Install Podlove Publisher
-RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.3.5.zip \
-    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.3.5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm podlove-podcasting-plugin-for-wordpress.4.3.5.zip
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.4.1.zip \
+    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.4.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-podcasting-plugin-for-wordpress.4.4.1.zip
 
 # Install Podlove Web Player
 RUN wget -q https://downloads.wordpress.org/plugin/podlove-web-player.5.9.2.zip \
