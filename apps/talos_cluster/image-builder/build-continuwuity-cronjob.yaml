@@ -17,7 +17,7 @@ spec:
           restartPolicy: OnFailure
           initContainers:
             - name: setup-buildctl
-              image: moby/buildkit:v0.16.0
+              image: moby/buildkit:v0.29.0
               command: [cp, /usr/bin/buildctl, /tools/buildctl]
               volumeMounts:
                 - name: tools
