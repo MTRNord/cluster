@@ -1,11 +1,9 @@
-// Matrix backup tool — rewrites the Python matrix-nio backup in Go using mautrix-go.
+// matrix-backup pulls E2EE key backups, room history, and media from a Matrix
+// homeserver and stores them in S3. Accounts are configured via environment
+// variables; see the deployment CronJob manifest for the full list.
 //
-// Key improvements over the Python version:
-//   - SSSS decryption uses mautrix-go's proven implementation (fixes BAD_MESSAGE_MAC)
-//   - Olm PK decryption uses mautrix-go with the goolm pure-Go backend (no libolm needed)
-//   - No runtime pip install; compiled static binary via Dockerfile multi-stage build
-//   - No SQLite/OlmMachine needed; session and sync token stored in S3
-//   - Megolm export format implemented in pure Go (PBKDF2-SHA512 + AES-CTR + HMAC-SHA256)
+// Session tokens and the device crypto store are persisted as a tarball in S3
+// so incremental sync works across CronJob runs.
 //
 // Build: CGO_ENABLED=0 go build -tags goolm -o matrix-backup .
 package main
@@ -167,6 +165,8 @@ func s3Exists(ctx context.Context, key string) bool {
 // Crypto-store tarball (persists sessions and sync tokens across CronJob runs)
 // ─────────────────────────────────────────────────────────────────────────────
 
+// downloadStore restores a previously uploaded crypto store tarball from S3.
+// Missing store (first run) is not an error — the caller starts fresh.
 func downloadStore(ctx context.Context, storeDir, s3Key string) error {
 	data, err := s3Get(ctx, s3Key)
 	if err != nil {
@@ -213,6 +213,8 @@ func downloadStore(ctx context.Context, storeDir, s3Key string) error {
 	return nil
 }
 
+// uploadStore tarballs the crypto store directory and uploads it to S3 for the
+// next run to restore.
 func uploadStore(ctx context.Context, storeDir, s3Key string) error {
 	var buf bytes.Buffer
 	gw := gzip.NewWriter(&buf)
@@ -287,6 +289,8 @@ type sessionData struct {
 	DeviceID    id.DeviceID `json:"device_id"`
 }
 
+// ensureSession loads a saved session from S3 or logs in with the account
+// password and saves the resulting session for future runs.
 func ensureSession(ctx context.Context, client *mautrix.Client, acc accountCfg, s3Key string) (*sessionData, error) {
 	var sess sessionData
 	if err := s3GetJSON(ctx, s3Key, &sess); err != nil {
@@ -307,7 +311,7 @@ func ensureSession(ctx context.Context, client *mautrix.Client, acc accountCfg, 
 			Type: mautrix.IdentifierTypeUser,
 			User: string(acc.UserID),
 		},
-		Password:   acc.Password,
+		Password:                 acc.Password,
 		InitialDeviceDisplayName: "matrix-backup",
 	})
 	if err != nil {
@@ -336,6 +340,8 @@ func ensureSession(ctx context.Context, client *mautrix.Client, acc accountCfg, 
 // Matrix API helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+// matrixGetJSON makes an authenticated GET to the homeserver and JSON-decodes
+// the response. Used for endpoints not wrapped by the mautrix client.
 func matrixGetJSON(ctx context.Context, client *mautrix.Client, path string, out interface{}) error {
 	base := strings.TrimRight(client.HomeserverURL.String(), "/")
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base+path, nil)
@@ -411,8 +417,10 @@ type exportedSessionEntry struct {
 	SessionKey                   string            `json:"session_key"`
 }
 
+// fetchAndExportKeyBackup derives the Megolm backup private key from SSSS,
+// decrypts every backed-up session, and uploads both a raw JSON archive and a
+// standard .key export file (importable by any Matrix client) to S3.
 func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recoveryKeyStr, prefix string) error {
-	// 1. Resolve the default SSSS key ID from account data.
 	var defaultKey defaultKeyEventContent
 	if err := getAccountData(ctx, client, "m.secret_storage.default_key", &defaultKey); err != nil {
 		return fmt.Errorf("get default key: %w", err)
@@ -423,23 +431,19 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 	keyID := defaultKey.Key
 	slog.Info("SSSS default key ID", "key_id", keyID)
 
-	// 2. Fetch the key metadata for the default key.
-	// The event type is m.secret_storage.key.<keyID>.
 	var keyMetadata ssss.KeyMetadata
 	if err := getAccountData(ctx, client, "m.secret_storage.key."+keyID, &keyMetadata); err != nil {
 		return fmt.Errorf("get key metadata: %w", err)
 	}
 
-	// 3. Verify the recovery key against the stored metadata and derive the raw key.
-	// VerifyRecoveryKey may return ErrUnverifiableKey alongside a valid key when
-	// no MAC/IV is stored in the metadata — treat that as success.
+	// ErrUnverifiableKey just means the metadata has no MAC to check against —
+	// the derived key is still usable.
 	sssKey, err := keyMetadata.VerifyRecoveryKey(keyID, recoveryKeyStr)
 	if err != nil && !errors.Is(err, ssss.ErrUnverifiableKey) {
 		return fmt.Errorf("verify recovery key: %w", err)
 	}
 	slog.Info("Recovery key verified (or unverifiable but accepted)")
 
-	// 4. Fetch the encrypted backup secret and decrypt with the SSSS key.
 	var backupSecret encryptedSecretContent
 	if err := getAccountData(ctx, client, "m.megolm_backup.v1", &backupSecret); err != nil {
 		return fmt.Errorf("get backup secret: %w", err)
@@ -452,11 +456,8 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 	if err != nil {
 		return fmt.Errorf("decrypt backup key from SSSS: %w", err)
 	}
-	// backupKeyRaw is the base64-encoded X25519 private key bytes.
-	backupKeyB64 := strings.TrimSpace(string(backupKeyRaw))
 
-	// 5. Decode the private key bytes and create the MegolmBackupKey.
-	privateKeyBytes, err := base64DecodeUnpadded(backupKeyB64)
+	privateKeyBytes, err := decodeBackupPrivateKey(backupKeyRaw)
 	if err != nil {
 		return fmt.Errorf("decode backup private key: %w", err)
 	}
@@ -466,14 +467,12 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 	}
 	slog.Info("Decoded megolm backup private key from SSSS")
 
-	// 6. Get the current backup version.
 	var backupVersion keyBackupVersionResp
 	if err := matrixGetJSON(ctx, client, "/_matrix/client/v3/room_keys/version", &backupVersion); err != nil {
 		return fmt.Errorf("get backup version: %w", err)
 	}
 	slog.Info("Key backup version", "version", backupVersion.Version)
 
-	// 7. Fetch all backed-up sessions.
 	var allRooms keyBackupAllRooms
 	if err := matrixGetJSON(ctx, client,
 		"/_matrix/client/v3/room_keys/keys?version="+url.QueryEscape(backupVersion.Version),
@@ -483,8 +482,6 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 	}
 	slog.Info("Fetched key backup", "rooms", len(allRooms.Rooms))
 
-	// 8. Decrypt each session using mautrix-go's Olm PK (via goolm).
-	// session_data JSON → EncryptedSessionData[MegolmSessionData] → Decrypt → MegolmSessionData
 	var sessions []exportedSessionEntry
 	decOK, decFail := 0, 0
 	for roomID, room := range allRooms.Rooms {
@@ -522,13 +519,11 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 		return nil
 	}
 
-	// 9. Archive raw session JSON for debugging / future re-import.
 	if rawJSON, err := json.MarshalIndent(sessions, "", "  "); err == nil {
 		_ = s3Put(ctx, prefix+"/backup-sessions-latest.json", rawJSON, "application/json")
 		_ = s3Put(ctx, prefix+"/backup-sessions-"+dateStr+".json", rawJSON, "application/json")
 	}
 
-	// 10. Build the standard Megolm key export file and upload.
 	exportData, err := buildMegolmExport(sessions, keyExportPass)
 	if err != nil {
 		return fmt.Errorf("build megolm export: %w", err)
@@ -543,21 +538,34 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 	return nil
 }
 
-func base64DecodeUnpadded(s string) ([]byte, error) {
-	switch len(s) % 4 {
-	case 2:
-		s += "=="
-	case 3:
-		s += "="
+// decodeBackupPrivateKey extracts the raw 32-byte Curve25519 private key from
+// whatever format the client stored it as. The spec says unpadded base64, but
+// in practice standard, URL-safe, and padded variants all appear in the wild.
+// If the bytes are already 32 bytes long they're used directly.
+func decodeBackupPrivateKey(raw []byte) ([]byte, error) {
+	if len(raw) == 32 {
+		return raw, nil
 	}
-	return base64.StdEncoding.DecodeString(s)
+	s := strings.TrimSpace(string(raw))
+	for _, enc := range []*base64.Encoding{
+		base64.RawStdEncoding,
+		base64.StdEncoding,
+		base64.RawURLEncoding,
+		base64.URLEncoding,
+	} {
+		if b, err := enc.DecodeString(s); err == nil && len(b) == 32 {
+			return b, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot decode %d-byte value as a 32-byte Curve25519 private key", len(raw))
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Standard Megolm key export format (pure Go)
-// Spec: https://spec.matrix.org/v1.9/client-server-api/#key-exports
+// Megolm key export (spec: https://spec.matrix.org/v1.9/client-server-api/#key-exports)
 // ─────────────────────────────────────────────────────────────────────────────
 
+// buildMegolmExport encodes sessions into the standard passphrase-protected key
+// export format used by all Matrix clients (PBKDF2-SHA512 + AES-256-CTR + HMAC-SHA256).
 func buildMegolmExport(sessions []exportedSessionEntry, passphrase string) ([]byte, error) {
 	salt := make([]byte, 16)
 	if _, err := rand.Read(salt); err != nil {
@@ -628,6 +636,8 @@ type roomEntry struct {
 	Encrypted      bool     `json:"encrypted"`
 }
 
+// saveRoomList builds a JSON snapshot of all joined rooms (name, type, aliases,
+// member count, encryption status) and uploads it to S3.
 func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix.RespSync, prefix string) error {
 	dmRooms := getDMRooms(syncResp)
 
@@ -675,8 +685,13 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 			Type:           rtype,
 			Aliases:        aliases,
 			CanonicalAlias: canonicalAlias,
-			MemberCount:    func() int { if joinedRoom.Summary.JoinedMemberCount != nil { return *joinedRoom.Summary.JoinedMemberCount }; return 0 }(),
-			Encrypted:      encrypted,
+			MemberCount: func() int {
+				if joinedRoom.Summary.JoinedMemberCount != nil {
+					return *joinedRoom.Summary.JoinedMemberCount
+				}
+				return 0
+			}(),
+			Encrypted: encrypted,
 		})
 		slog.Info("Room", "type", rtype, "name", name)
 	}
@@ -695,11 +710,11 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 	return nil
 }
 
+// getDMRooms returns a set of room IDs marked as direct chats in account data.
 func getDMRooms(syncResp *mautrix.RespSync) map[id.RoomID]bool {
 	dmRooms := make(map[id.RoomID]bool)
 	for _, ev := range syncResp.AccountData.Events {
 		if ev.Type == event.AccountDataDirectChats {
-			// DirectChatsEventContent is map[id.UserID][]id.RoomID
 			var direct event.DirectChatsEventContent
 			if err := json.Unmarshal(ev.Content.VeryRaw, &direct); err != nil {
 				continue
@@ -719,6 +734,8 @@ func getDMRooms(syncResp *mautrix.RespSync) map[id.RoomID]bool {
 // Media download
 // ─────────────────────────────────────────────────────────────────────────────
 
+// downloadAndStoreMedia downloads a single mxc:// URL and stores it under
+// prefix/label/server/mediaID in S3, skipping if already present.
 func downloadAndStoreMedia(ctx context.Context, client *mautrix.Client, mxcURL, prefix, label string) error {
 	if !strings.HasPrefix(mxcURL, "mxc://") {
 		return nil
@@ -820,8 +837,9 @@ var mediaMsgTypes = map[string]bool{
 	"m.audio": true,
 }
 
-// processEvent handles media downloads and profile-update tracking for one event.
-// Encrypted events are stored as-is but media/profiles are skipped (no OlmMachine).
+// processEvent downloads media and records profile changes for a single event.
+// Encrypted events are stored verbatim — without an OlmMachine we can't decrypt
+// them at backup time, so media extraction is skipped for those.
 func processEvent(ctx context.Context, client *mautrix.Client, ev *event.Event, roomID id.RoomID, prefix string, isDM bool) {
 	if ev.Type == event.EventEncrypted {
 		return
@@ -844,7 +862,9 @@ func processEvent(ctx context.Context, client *mautrix.Client, ev *event.Event, 
 	}
 
 	if ev.Type == event.EventSticker {
-		var content struct{ URL string `json:"url"` }
+		var content struct {
+			URL string `json:"url"`
+		}
 		if err := json.Unmarshal(ev.Content.VeryRaw, &content); err == nil && content.URL != "" {
 			if isDM || strings.HasSuffix(string(ev.Sender), ":"+ourServerName) {
 				if err := downloadAndStoreMedia(ctx, client, content.URL, prefix, "media"); err != nil {
@@ -870,6 +890,8 @@ type profileUpdateRecord struct {
 	AvatarNew      string `json:"avatar_new,omitempty"`
 }
 
+// recordProfileUpdate appends a JSONL entry to S3 when a room member event shows
+// a display name or avatar change for a local user. Also downloads the new avatar.
 func recordProfileUpdate(ctx context.Context, client *mautrix.Client, ev *event.Event, roomID id.RoomID, prefix string) {
 	if ev.StateKey == nil {
 		return
@@ -941,6 +963,9 @@ func eventToRecord(ev *event.Event) historyEvent {
 	}
 }
 
+// paginateRoom fetches room history and appends new events to the per-room
+// JSONL file in S3. For DMs on first run, the full history is fetched
+// backwards from the current position before normal forward pagination begins.
 func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID, prefix string, isDM bool, prevBatch string) error {
 	safeKey := strings.NewReplacer("/", "_", ":", "_").Replace(string(roomID))
 	cursorKey := prefix + "/history-cursor/" + safeKey + ".json"
@@ -1046,11 +1071,14 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 // Per-account backup
 // ─────────────────────────────────────────────────────────────────────────────
 
+// backupAccount runs the full backup pipeline for a single Matrix account:
+// restore state, sync, export E2EE keys, save room list, paginate history,
+// then persist state back to S3.
 func backupAccount(ctx context.Context, acc accountCfg) error {
 	slog.Info("=== Backing up account ===", "user_id", acc.UserID)
 
-	storeS3Key  := acc.Prefix + "/crypto-store.tar.gz"
-	sessionS3Key  := acc.Prefix + "/session.json"
+	storeS3Key := acc.Prefix + "/crypto-store.tar.gz"
+	sessionS3Key := acc.Prefix + "/session.json"
 	syncTokenS3Key := acc.Prefix + "/sync-token.json"
 
 	if err := downloadStore(ctx, acc.StoreDir, storeS3Key); err != nil {
