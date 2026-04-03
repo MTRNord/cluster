@@ -4,7 +4,7 @@ metadata:
   name: build-continuwuity
   namespace: image-builder
 spec:
-  schedule: "0 3 * * *"
+  schedule: "0 5 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
@@ -14,7 +14,7 @@ spec:
       template:
         spec:
           serviceAccountName: image-builder-cronjob
-          restartPolicy: OnFailure
+          restartPolicy: Never
           initContainers:
             - name: setup-buildctl
               image: moby/buildkit:v0.29.0
@@ -87,7 +87,7 @@ spec:
                     --opt platform=linux/amd64,linux/arm64 \
                     --local context=/workspace/apps/talos_cluster/continuwuity \
                     --local dockerfile=/workspace/apps/talos_cluster/continuwuity \
-                    --output "type=image,name=${IMAGE}:${TAG_TS},push=true" \
+                    --output "type=image,name=${IMAGE}:${TAG_TS},push=true,oci-mediatypes=true" \
                     --metadata-file /tmp/build-meta.json
 
                   DIGEST="$(grep -o '"containerimage.digest":"sha256:[a-f0-9]*"' /tmp/build-meta.json | head -1 | cut -d'"' -f4)"

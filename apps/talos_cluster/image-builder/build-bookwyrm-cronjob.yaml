@@ -161,7 +161,7 @@ spec:
                     --opt platform=linux/amd64,linux/arm64 \
                     --local context=/workspace/bookwyrm \
                     --local dockerfile=/workspace/bookwyrm \
-                    --output "type=image,name=${IMAGE}:${VERSION},push=true" \
+                    --output "type=image,name=${IMAGE}:${VERSION},push=true,oci-mediatypes=true" \
                     --metadata-file /tmp/build-meta.json
 
                   DIGEST="$(grep -o '"containerimage.digest":"sha256:[a-f0-9]*"' /tmp/build-meta.json | head -1 | cut -d'"' -f4)"
