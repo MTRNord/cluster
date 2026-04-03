@@ -109,13 +109,14 @@ func initS3(ctx context.Context) error {
 		awsconfig.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			s3AccessKey, s3SecretKey, "",
 		)),
-		awsconfig.WithBaseEndpoint("https://"+s3Endpoint),
 	)
 	if err != nil {
 		return err
 	}
+	endpoint := "https://" + s3Endpoint
 	s3c = s3.NewFromConfig(cfg, func(o *s3.Options) {
 		o.UsePathStyle = true
+		o.BaseEndpoint = &endpoint
 	})
 	return nil
 }
@@ -307,7 +308,7 @@ func ensureSession(ctx context.Context, client *mautrix.Client, acc accountCfg, 
 			User: string(acc.UserID),
 		},
 		Password:   acc.Password,
-		DeviceName: "matrix-backup",
+		InitialDeviceDisplayName: "matrix-backup",
 	})
 	if err != nil {
 		return nil, fmt.Errorf("login: %w", err)
@@ -642,7 +643,7 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		for _, ev := range joinedRoom.State.Events {
 			switch ev.Type {
 			case event.StateRoomName:
-				if c := ev.Content.AsName(); c != nil {
+				if c := ev.Content.AsRoomName(); c != nil {
 					name = c.Name
 				}
 			case event.StateCanonicalAlias:
@@ -674,7 +675,7 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 			Type:           rtype,
 			Aliases:        aliases,
 			CanonicalAlias: canonicalAlias,
-			MemberCount:    joinedRoom.Summary.JoinedMemberCount,
+			MemberCount:    func() int { if joinedRoom.Summary.JoinedMemberCount != nil { return *joinedRoom.Summary.JoinedMemberCount }; return 0 }(),
 			Encrypted:      encrypted,
 		})
 		slog.Info("Room", "type", rtype, "name", name)
@@ -854,7 +855,7 @@ func processEvent(ctx context.Context, client *mautrix.Client, ev *event.Event, 
 	}
 
 	if ev.Type == event.StateMember {
-		recordProfileUpdate(ctx, ev, roomID, prefix)
+		recordProfileUpdate(ctx, client, ev, roomID, prefix)
 	}
 }
 
@@ -869,8 +870,11 @@ type profileUpdateRecord struct {
 	AvatarNew      string `json:"avatar_new,omitempty"`
 }
 
-func recordProfileUpdate(ctx context.Context, ev *event.Event, roomID id.RoomID, prefix string) {
-	stateKey := string(ev.StateKey)
+func recordProfileUpdate(ctx context.Context, client *mautrix.Client, ev *event.Event, roomID id.RoomID, prefix string) {
+	if ev.StateKey == nil {
+		return
+	}
+	stateKey := *ev.StateKey
 	if !strings.HasSuffix(stateKey, ":"+ourServerName) {
 		return
 	}
