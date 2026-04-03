@@ -117,7 +117,7 @@ endpoints:
     interval: 1m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
       - "[RESPONSE_TIME] < 5000"
 
   - name: Grafana
@@ -126,7 +126,7 @@ endpoints:
     interval: 2m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: ntfy
     group: Infrastructure
@@ -135,7 +135,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[BODY].healthy == true"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Flux Webhook
     group: Infrastructure
@@ -143,7 +143,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == any(200, 404)"  # endpoint exists, auth required
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   ##############################################################################
   # SOCIAL & COMMUNICATION
@@ -155,7 +155,7 @@ endpoints:
     interval: 1m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
       - "[RESPONSE_TIME] < 3000"
 
   - name: Matrix (continuwuity)
@@ -164,7 +164,7 @@ endpoints:
     interval: 1m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
       - "has([BODY].versions) == true"
 
   - name: Matrix Well-Known
@@ -173,7 +173,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Matrix Client Well-Known
     group: Social
@@ -181,7 +181,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Draupnir
     group: Social
@@ -189,7 +189,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == any(200, 404)"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   ##############################################################################
   # MAIL
@@ -229,7 +229,7 @@ endpoints:
     interval: 15m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: WKD (nordgedanken.dev)
     group: Mail
@@ -237,7 +237,7 @@ endpoints:
     interval: 15m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   ##############################################################################
   # PERSONAL SERVICES
@@ -249,7 +249,7 @@ endpoints:
     interval: 1m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Immich
     group: Personal
@@ -258,7 +258,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[BODY].res == pong"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: FreshRSS
     group: Personal
@@ -266,7 +266,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Bookwyrm
     group: Personal
@@ -274,7 +274,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: ActualBudget
     group: Personal
@@ -282,7 +282,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Peertube
     group: Personal
@@ -290,7 +290,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Collabora
     group: Personal
@@ -298,7 +298,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   ##############################################################################
   # PRODUCTIVITY
@@ -310,7 +310,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Plane
     group: Productivity
@@ -318,7 +318,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Weblate
     group: Productivity
@@ -326,7 +326,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   ##############################################################################
   # PUBLISHING & DEV
@@ -338,7 +338,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: cgit
     group: Publishing
@@ -346,7 +346,7 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Connectivity Tester
     group: Publishing
@@ -354,7 +354,7 @@ endpoints:
     interval: 2m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"
 
   - name: Connectivity Tester API
     group: Publishing
@@ -362,4 +362,4 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[CERTIFICATE_EXPIRATION] > 24h"

@@ -18,40 +18,14 @@ spec:
           restartPolicy: OnFailure
           securityContext:
             runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 65532
+            runAsGroup: 65532
+            fsGroup: 65532
             seccompProfile:
               type: RuntimeDefault
-          initContainers:
-            - name: install-deps
-              image: python:3.12-slim
-              command:
-                - /bin/sh
-                - -c
-                - pip install --quiet --no-cache-dir --target /deps 'matrix-nio[e2e]' boto3 cryptography
-              securityContext:
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: false
-                capabilities:
-                  drop:
-                    - ALL
-              resources:
-                requests:
-                  cpu: 200m
-                  memory: 256Mi
-                limits:
-                  memory: 512Mi
-              volumeMounts:
-                - name: deps
-                  mountPath: /deps
           containers:
             - name: backup
-              image: python:3.12-slim
-              command:
-                - /bin/sh
-                - -c
-                - PYTHONPATH=/deps python /scripts/backup.py
+              image: registry.midnightthoughts.space/mtrnord/cluster/matrix-backup:main
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
@@ -61,7 +35,7 @@ spec:
               resources:
                 requests:
                   cpu: 100m
-                  memory: 256Mi
+                  memory: 128Mi
                 limits:
                   memory: 512Mi
               env:
@@ -107,23 +81,12 @@ spec:
                       name: matrix-backup-secret
                       key: key_export_passphrase
               volumeMounts:
-                - name: scripts
-                  mountPath: /scripts
-                  readOnly: true
-                - name: crypto-store
-                  mountPath: /data/crypto
-                - name: deps
-                  mountPath: /deps
-                  readOnly: true
+                - name: data
+                  mountPath: /data
                 - name: tmp
                   mountPath: /tmp
           volumes:
-            - name: scripts
-              configMap:
-                name: matrix-backup-script
-            - name: crypto-store
-              emptyDir: {}
-            - name: deps
+            - name: data
               emptyDir: {}
             - name: tmp
               emptyDir: {}
