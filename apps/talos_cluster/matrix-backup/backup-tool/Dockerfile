@@ -2,7 +2,7 @@
 # The goolm build tag enables mautrix-go's pure-Go Olm/Megolm implementation.
 
 # Build stage runs on the native host arch; cross-compiles via GOARCH.
-FROM --platform=$BUILDPLATFORM golang:1.23-bookworm AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS builder
 ARG TARGETARCH
 
 WORKDIR /app
