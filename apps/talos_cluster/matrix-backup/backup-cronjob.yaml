@@ -26,6 +26,7 @@ spec:
           containers:
             - name: backup
               image: registry.midnightthoughts.space/mtrnord/cluster/matrix-backup:main
+              imagePullPolicy: Always
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
