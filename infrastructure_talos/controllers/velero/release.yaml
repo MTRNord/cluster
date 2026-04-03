@@ -50,10 +50,6 @@ spec:
       # when listing node-agent pods across many pods concurrently during backup.
       clientQPS: 100
       clientBurst: 200
-      # Use Kopia file-system backup for all volumes by default.
-      # CSI snapshots (for Longhorn) run additionally when a VolumeSnapshotClass
-      # labelled velero.io/csi-volumesnapshot-class=true exists.
-      defaultVolumesToFsBackup: true
       # Increase timeout to avoid "exposed PVB is not ready" errors on slow volumes
       podVolumeOperationTimeout: 60m
       backupStorageLocation:

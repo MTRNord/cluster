@@ -14,6 +14,8 @@ spec:
       labels:
         app: continuwuity
       annotations:
+        # Explicit Kopia backup for this hcloud-volume (no CSI snapshots available)
+        backup.velero.io/backup-volumes: continuwuity-data
         # Freeze the process during Velero backup to ensure consistent RocksDB snapshot
         pre.hook.backup.velero.io/command: '["/bin/sh", "-c", "kill -STOP 1"]'
         pre.hook.backup.velero.io/timeout: "30s"
