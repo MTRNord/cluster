@@ -1446,6 +1446,7 @@ func eventToRecord(ev *event.Event, wasEncrypted bool) historyEvent {
 func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID, prefix string, isDM bool, prevBatch string, syncNextBatch string, sessions megolmSessions) error {
 	safeKey := strings.NewReplacer("/", "_", ":", "_").Replace(string(roomID))
 	cursorKey := prefix + "/history-cursor/" + safeKey + ".json"
+	dmHistoryDoneKey := prefix + "/history-cursor/" + safeKey + ".dm-done"
 
 	var cursor struct {
 		Token string `json:"token"`
@@ -1454,49 +1455,61 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 		return err
 	}
 
+	// fetchDMHistory does a full backward walk from prevBatch and stores results.
+	// Used on first-run for DMs, and also as a catch-up when a room was initially
+	// missed (e.g. getDMRooms bug meant isDM=false on first run).
+	fetchDMHistory := func(fromToken string) {
+		slog.Info("DM: fetching full history", "room_id", roomID)
+		var messages []historyEvent
+		token := fromToken
+		for {
+			resp, err := client.Messages(ctx, roomID, token, "", mautrix.DirectionBackward, nil, 100)
+			if err != nil {
+				slog.Warn("room_messages error (backward)", "room_id", roomID, "error", err)
+				break
+			}
+			if len(resp.Chunk) == 0 {
+				break
+			}
+			for _, ev := range resp.Chunk {
+				wasEncrypted := ev.Type == event.EventEncrypted
+				ev = tryDecryptEvent(ev, sessions)
+				messages = append(messages, eventToRecord(ev, wasEncrypted))
+				processEvent(ctx, client, ev, roomID, prefix, true)
+			}
+			if resp.End == "" || resp.End == token {
+				break
+			}
+			token = resp.End
+		}
+		if len(messages) > 0 {
+			for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
+				messages[i], messages[j] = messages[j], messages[i]
+			}
+			histKey := prefix + "/history/" + safeKey + "/" + runStr + "-backfill.jsonl"
+			var buf bytes.Buffer
+			for _, m := range messages {
+				line, _ := json.Marshal(m)
+				buf.Write(line)
+				buf.WriteByte('\n')
+			}
+			if err := s3PutAge(ctx, histKey, buf.Bytes()); err != nil {
+				slog.Warn("Failed to upload DM history", "room_id", roomID, "error", err)
+			} else {
+				slog.Info("DM history stored", "room_id", roomID, "events", len(messages))
+				_ = s3Put(ctx, dmHistoryDoneKey, []byte("done"), "text/plain")
+			}
+		} else {
+			// Nothing to backfill — mark as done so we don't retry every run.
+			_ = s3Put(ctx, dmHistoryDoneKey, []byte("done"), "text/plain")
+		}
+	}
+
 	if cursor.Token == "" {
 		// First time we've seen this room. For DMs, walk all the way back through
 		// history so we have a complete record from day one.
 		if isDM && prevBatch != "" {
-			slog.Info("DM first-run: fetching full history", "room_id", roomID)
-			var messages []historyEvent
-			token := prevBatch
-			for {
-				resp, err := client.Messages(ctx, roomID, token, "", mautrix.DirectionBackward, nil, 100)
-				if err != nil {
-					slog.Warn("room_messages error (backward)", "room_id", roomID, "error", err)
-					break
-				}
-				if len(resp.Chunk) == 0 {
-					break
-				}
-				for _, ev := range resp.Chunk {
-					wasEncrypted := ev.Type == event.EventEncrypted
-					ev = tryDecryptEvent(ev, sessions)
-					messages = append(messages, eventToRecord(ev, wasEncrypted))
-					processEvent(ctx, client, ev, roomID, prefix, true)
-				}
-				if resp.End == "" || resp.End == token {
-					break
-				}
-				token = resp.End
-			}
-			if len(messages) > 0 {
-				for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
-					messages[i], messages[j] = messages[j], messages[i]
-				}
-				histKey := prefix + "/history/" + safeKey + "/" + runStr + ".jsonl"
-				var buf bytes.Buffer
-				for _, m := range messages {
-					line, _ := json.Marshal(m)
-					buf.Write(line)
-					buf.WriteByte('\n')
-				}
-				if err := s3PutAge(ctx, histKey, buf.Bytes()); err != nil {
-					slog.Warn("Failed to upload DM history", "room_id", roomID, "error", err)
-				}
-				slog.Info("DM history stored", "room_id", roomID, "events", len(messages))
-			}
+			fetchDMHistory(prevBatch)
 		}
 		// Save the sync's nextBatch as the forward cursor. This means the next
 		// run will forward-paginate from here and only pick up genuinely new
@@ -1509,6 +1522,17 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 			_ = s3Put(ctx, cursorKey, cursorJSON, "application/json")
 		}
 		return nil
+	}
+
+	// Incremental run: if this is a DM but we never completed a backward history
+	// fetch (e.g. room was missed due to getDMRooms bug on first run), do it now
+	// using the cursor position as the start point for backward pagination.
+	if isDM && prevBatch != "" {
+		dmDoneData, _ := s3Get(ctx, dmHistoryDoneKey)
+		if dmDoneData == nil {
+			slog.Info("DM catch-up: no history marker found, backfilling", "room_id", roomID)
+			fetchDMHistory(cursor.Token)
+		}
 	}
 
 	// Incremental run: fetch every page forward from the saved cursor until we
