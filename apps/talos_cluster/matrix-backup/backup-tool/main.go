@@ -1042,6 +1042,12 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		var prev []roomEntry
 		if json.Unmarshal(raw, &prev) == nil {
 			for _, r := range prev {
+				// Retroactively reclassify 2-member non-space rooms as DMs.
+				// This catches rooms stored as "normal" before the member-count
+				// heuristic was added (e.g. DMs created by the other party).
+				if r.Type == "normal" && r.MemberCount > 0 && r.MemberCount <= 2 {
+					r.Type = "dm"
+				}
 				existing[r.RoomID] = r
 			}
 		}
@@ -1465,15 +1471,16 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 	// Used on first-run for DMs, and also as a catch-up when a room was initially
 	// missed (e.g. getDMRooms bug meant isDM=false on first run).
 	fetchDMHistory := func(fromToken string) {
-		slog.Info("DM: fetching full history", "room_id", roomID)
+		slog.Info("DM: fetching full history", "room_id", roomID, "from_token", fromToken)
 		var messages []historyEvent
 		token := fromToken
 		for {
 			resp, err := client.Messages(ctx, roomID, token, "", mautrix.DirectionBackward, nil, 100)
 			if err != nil {
-				slog.Warn("room_messages error (backward)", "room_id", roomID, "error", err)
+				slog.Warn("room_messages error (backward)", "room_id", roomID, "token", token, "error", err)
 				break
 			}
+			slog.Info("DM history page", "room_id", roomID, "chunk_size", len(resp.Chunk), "end", resp.End)
 			if len(resp.Chunk) == 0 {
 				break
 			}
@@ -1507,7 +1514,10 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 			}
 		} else {
 			// Nothing to backfill — mark as done so we don't retry every run.
-			_ = s3Put(ctx, dmHistoryDoneKey, []byte("done"), "text/plain")
+			slog.Info("DM history: no messages found, marking done", "room_id", roomID)
+			if err := s3Put(ctx, dmHistoryDoneKey, []byte("done"), "text/plain"); err != nil {
+				slog.Warn("Failed to write dm-done marker", "room_id", roomID, "error", err)
+			}
 		}
 	}
 
@@ -1673,9 +1683,16 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	for roomID := range dmRooms {
 		catchupDMs[roomID] = true
 	}
-	if raw, err := getDecryptedAgeFromS3(ctx, acc.Prefix+"/rooms-latest.json.age"); err == nil && raw != nil {
+	if raw, err := getDecryptedAgeFromS3(ctx, acc.Prefix+"/rooms-latest.json.age"); err != nil {
+		slog.Warn("DM catch-up: failed to read rooms list", "error", err)
+	} else if raw == nil {
+		slog.Warn("DM catch-up: rooms list not found or ageIdentity not set")
+	} else {
 		var storedRooms []roomEntry
-		if json.Unmarshal(raw, &storedRooms) == nil {
+		if err := json.Unmarshal(raw, &storedRooms); err != nil {
+			slog.Warn("DM catch-up: failed to parse rooms list", "error", err)
+		} else {
+			slog.Info("DM catch-up: loaded rooms list", "total_rooms", len(storedRooms))
 			for _, r := range storedRooms {
 				if r.Type == "dm" {
 					catchupDMs[id.RoomID(r.RoomID)] = true
@@ -1683,13 +1700,17 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 			}
 		}
 	}
+	slog.Info("DM catch-up: checking rooms", "total_dm_rooms", len(catchupDMs), "in_sync", len(syncResp.Rooms.Join))
 	for roomID := range catchupDMs {
 		if _, inSync := syncResp.Rooms.Join[roomID]; inSync {
 			continue // already handled above
 		}
 		safeKey := strings.NewReplacer("/", "_", ":", "_").Replace(string(roomID))
 		dmHistoryDoneKey := acc.Prefix + "/history-cursor/" + safeKey + ".dm-done"
-		dmDone, _ := s3Get(ctx, dmHistoryDoneKey)
+		dmDone, dmDoneErr := s3Get(ctx, dmHistoryDoneKey)
+		if dmDoneErr != nil {
+			slog.Warn("DM catch-up: error checking dm-done marker", "room_id", roomID, "error", dmDoneErr)
+		}
 		if dmDone != nil {
 			continue // already backfilled
 		}
@@ -1697,11 +1718,15 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 		var cursor struct {
 			Token string `json:"token"`
 		}
-		_ = s3GetJSON(ctx, cursorKey, &cursor)
-		if cursor.Token == "" {
-			continue // never seen this room; will be handled on first sync that includes it
+		if err := s3GetJSON(ctx, cursorKey, &cursor); err != nil {
+			slog.Warn("DM catch-up: error reading cursor", "room_id", roomID, "error", err)
+			continue
 		}
-		slog.Info("DM catch-up for room not in current sync", "room_id", roomID)
+		if cursor.Token == "" {
+			slog.Info("DM catch-up: no cursor yet, skipping", "room_id", roomID)
+			continue
+		}
+		slog.Info("DM catch-up: backfilling room", "room_id", roomID, "cursor", cursor.Token)
 		if err := paginateRoom(ctx, client, roomID, acc.Prefix, true, cursor.Token, syncResp.NextBatch, sessions); err != nil {
 			slog.Warn("DM catch-up error", "room_id", roomID, "error", err)
 		}
