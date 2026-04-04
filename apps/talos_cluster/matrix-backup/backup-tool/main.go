@@ -807,23 +807,43 @@ func calcRoomName(
 		}
 	}
 
-	heroName := func(uid id.UserID) string {
-		if n, ok := memberNames[uid]; ok {
-			return n
-		}
-		local, _, _ := uid.Parse()
-		if local != "" {
-			return local
-		}
-		return string(uid)
-	}
-
 	// Spec says heroes should already exclude self, but filter just in case.
 	var filtered []id.UserID
 	for _, h := range heroes {
 		if h != selfUserID {
 			filtered = append(filtered, h)
 		}
+	}
+
+	// Build tentative names for each hero, then disambiguate duplicates by
+	// appending the server part (e.g. "mtrnord (mtrnord.blog)").
+	tentativeNames := make(map[id.UserID]string, len(filtered))
+	for _, h := range filtered {
+		if n, ok := memberNames[h]; ok {
+			tentativeNames[h] = n
+		} else {
+			local, _, _ := h.Parse()
+			if local != "" {
+				tentativeNames[h] = local
+			} else {
+				tentativeNames[h] = string(h)
+			}
+		}
+	}
+	nameCounts := make(map[string]int, len(filtered))
+	for _, n := range tentativeNames {
+		nameCounts[n]++
+	}
+	heroName := func(uid id.UserID) string {
+		n := tentativeNames[uid]
+		if nameCounts[n] > 1 {
+			_, server, err := uid.Parse()
+			if err == nil && server != "" {
+				return n + " (" + server + ")"
+			}
+			return string(uid)
+		}
+		return n
 	}
 
 	// Total other members in the room (everyone except self).
