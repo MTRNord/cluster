@@ -43,8 +43,7 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/backup"
-	_ "maunium.net/go/mautrix/crypto/goolm" // registers goolm implementations for olm package
-	"maunium.net/go/mautrix/crypto/olm"
+	"maunium.net/go/mautrix/crypto/goolm/session"
 	"maunium.net/go/mautrix/crypto/ssss"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
@@ -503,7 +502,7 @@ type exportedSessionEntry struct {
 }
 
 // megolmSessions maps session IDs to live inbound sessions ready to decrypt.
-type megolmSessions map[id.SessionID]olm.InboundGroupSession
+type megolmSessions map[id.SessionID]*session.MegolmInboundSession
 
 // fetchAndExportKeyBackup derives the Megolm backup private key from SSSS,
 // decrypts every backed-up session, and uploads both a raw JSON archive and a
@@ -593,7 +592,7 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 			}
 
 			// Build the in-memory session for history decryption.
-			if sess, err := olm.InboundGroupSessionImport([]byte(sessionData.SessionKey)); err == nil {
+			if sess, err := session.NewMegolmInboundSessionFromExport([]byte(sessionData.SessionKey)); err == nil {
 				sessions[id.SessionID(sessionID)] = sess
 			} else {
 				slog.Warn("Failed to import Megolm session", "session_id", sessionID, "error", err)
