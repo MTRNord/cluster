@@ -945,6 +945,58 @@ type roomEntry struct {
 	CanonicalAlias string   `json:"canonical_alias,omitempty"`
 	MemberCount    int      `json:"member_count"`
 	Encrypted      bool     `json:"encrypted"`
+	ViaServers     []string `json:"via_servers,omitempty"`
+}
+
+// collectViaServers returns up to 3 server names suitable for matrix.to
+// ?via= parameters.  Priority: room-ID server → heroes → joined members from
+// state events (heroes are absent from incremental sync summaries).
+func collectViaServers(roomID id.RoomID, heroes []id.UserID, stateEvents []*event.Event) []string {
+	seen := make(map[string]bool)
+	var servers []string
+
+	add := func(s string) bool {
+		if s != "" && !seen[s] {
+			seen[s] = true
+			servers = append(servers, s)
+		}
+		return len(servers) >= 3
+	}
+
+	// Server embedded in the room ID (old-style !localpart:server).
+	if idx := strings.LastIndex(string(roomID), ":"); idx >= 0 {
+		add(string(roomID)[idx+1:])
+	}
+	// Heroes from sync summary.
+	for _, h := range heroes {
+		_, server, err := h.Parse()
+		if err == nil && add(server) {
+			return servers
+		}
+	}
+	// Joined members from state events (present even when heroes summary is empty).
+	for _, ev := range stateEvents {
+		if len(servers) >= 3 {
+			break
+		}
+		if ev.Type != event.StateMember || ev.StateKey == nil {
+			continue
+		}
+		var mc struct {
+			Membership string `json:"membership"`
+		}
+		if ev.Content.VeryRaw != nil {
+			_ = json.Unmarshal(ev.Content.VeryRaw, &mc)
+		}
+		if mc.Membership != "join" {
+			continue
+		}
+		_, server, err := id.UserID(*ev.StateKey).Parse()
+		if err == nil {
+			add(server)
+		}
+	}
+	return servers
 }
 
 // fetchRoomNameFromState fetches m.room.name then m.room.canonical_alias
@@ -995,7 +1047,7 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		}
 	}
 
-	dmRooms := getDMRooms(syncResp)
+	dmRooms := getDMRooms(ctx, client, syncResp)
 
 	for roomID, joinedRoom := range syncResp.Rooms.Join {
 		var name, canonicalAlias string
@@ -1072,6 +1124,7 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 			CanonicalAlias: canonicalAlias,
 			MemberCount:    joinedCount,
 			Encrypted:      encrypted,
+			ViaServers:     collectViaServers(roomID, joinedRoom.Summary.Heroes, joinedRoom.State.Events),
 		}
 		slog.Info("Room", "type", rtype, "name", name)
 	}
@@ -1097,19 +1150,33 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 	return nil
 }
 
-// getDMRooms returns a set of room IDs marked as direct chats in account data.
-func getDMRooms(syncResp *mautrix.RespSync) map[id.RoomID]bool {
+// getDMRooms returns the full set of room IDs marked as direct chats.
+// It fetches m.direct via the account-data API so that incremental syncs
+// (which only carry changed account-data events) don't lose the DM map.
+func getDMRooms(ctx context.Context, client *mautrix.Client, syncResp *mautrix.RespSync) map[id.RoomID]bool {
 	dmRooms := make(map[id.RoomID]bool)
+
+	populate := func(direct event.DirectChatsEventContent) {
+		for _, roomIDs := range direct {
+			for _, rid := range roomIDs {
+				dmRooms[rid] = true
+			}
+		}
+	}
+
+	// Always fetch from the API — the sync delta only carries m.direct when it
+	// actually changes, so incremental runs would otherwise see an empty map.
+	var direct event.DirectChatsEventContent
+	if err := getAccountData(ctx, client, "m.direct", &direct); err == nil {
+		populate(direct)
+		return dmRooms
+	}
+
+	// Fallback: use whatever the sync included (first run or API error).
 	for _, ev := range syncResp.AccountData.Events {
 		if ev.Type == event.AccountDataDirectChats {
-			var direct event.DirectChatsEventContent
-			if err := json.Unmarshal(ev.Content.VeryRaw, &direct); err != nil {
-				continue
-			}
-			for _, roomIDs := range direct {
-				for _, rid := range roomIDs {
-					dmRooms[rid] = true
-				}
+			if err := json.Unmarshal(ev.Content.VeryRaw, &direct); err == nil {
+				populate(direct)
 			}
 			break
 		}
@@ -1232,14 +1299,22 @@ func processEvent(ctx context.Context, client *mautrix.Client, ev *event.Event, 
 
 	if ev.Type == event.EventMessage {
 		var content struct {
-			MsgType string `json:"msgtype"`
-			URL     string `json:"url"`
+			MsgType string          `json:"msgtype"`
+			URL     string          `json:"url"`
+			File    json.RawMessage `json:"file"`
 		}
 		if err := json.Unmarshal(ev.Content.VeryRaw, &content); err == nil {
-			if mediaMsgTypes[content.MsgType] && content.URL != "" {
+			mediaURL := content.URL
+			if mediaURL == "" && content.File != nil {
+				var f struct{ URL string `json:"url"` }
+				if json.Unmarshal(content.File, &f) == nil {
+					mediaURL = f.URL
+				}
+			}
+			if mediaMsgTypes[content.MsgType] && mediaURL != "" {
 				if isDM || strings.HasSuffix(string(ev.Sender), ":"+ourServerName) {
-					if err := downloadAndStoreMedia(ctx, client, content.URL, prefix, "media"); err != nil {
-						slog.Warn("Media download failed", "url", content.URL, "error", err)
+					if err := downloadAndStoreMedia(ctx, client, mediaURL, prefix, "media"); err != nil {
+						slog.Warn("Media download failed", "url", mediaURL, "error", err)
 					}
 				}
 			}
@@ -1248,12 +1323,22 @@ func processEvent(ctx context.Context, client *mautrix.Client, ev *event.Event, 
 
 	if ev.Type == event.EventSticker {
 		var content struct {
-			URL string `json:"url"`
+			URL  string          `json:"url"`
+			File json.RawMessage `json:"file"`
 		}
-		if err := json.Unmarshal(ev.Content.VeryRaw, &content); err == nil && content.URL != "" {
-			if isDM || strings.HasSuffix(string(ev.Sender), ":"+ourServerName) {
-				if err := downloadAndStoreMedia(ctx, client, content.URL, prefix, "media"); err != nil {
-					slog.Warn("Sticker download failed", "url", content.URL, "error", err)
+		if err := json.Unmarshal(ev.Content.VeryRaw, &content); err == nil {
+			mediaURL := content.URL
+			if mediaURL == "" && content.File != nil {
+				var f struct{ URL string `json:"url"` }
+				if json.Unmarshal(content.File, &f) == nil {
+					mediaURL = f.URL
+				}
+			}
+			if mediaURL != "" {
+				if isDM || strings.HasSuffix(string(ev.Sender), ":"+ourServerName) {
+					if err := downloadAndStoreMedia(ctx, client, mediaURL, prefix, "media"); err != nil {
+						slog.Warn("Sticker download failed", "url", mediaURL, "error", err)
+					}
 				}
 			}
 		}
@@ -1542,7 +1627,7 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 		slog.Warn("Room list failed", "error", err)
 	}
 
-	dmRooms := getDMRooms(syncResp)
+	dmRooms := getDMRooms(ctx, client, syncResp)
 	for roomID, joinedRoom := range syncResp.Rooms.Join {
 		isDM := dmRooms[roomID]
 		if err := paginateRoom(ctx, client, roomID, acc.Prefix, isDM, joinedRoom.Timeline.PrevBatch, syncResp.NextBatch, sessions); err != nil {
