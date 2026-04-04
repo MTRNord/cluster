@@ -1541,9 +1541,11 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 	}
 
 	// Incremental run: if this is a DM but we never completed a backward history
-	// fetch (e.g. room was missed due to getDMRooms bug on first run), do it now
-	// using the cursor position as the start point for backward pagination.
-	if isDM && prevBatch != "" {
+	// fetch (e.g. room was missed because it wasn't in m.direct on first run),
+	// do it now using the saved cursor as the start for backward pagination.
+	// Note: prevBatch may be empty for rooms with no new events in a full_state
+	// sync, so we use cursor.Token directly rather than gating on prevBatch.
+	if isDM {
 		dmDoneData, _ := s3Get(ctx, dmHistoryDoneKey)
 		if dmDoneData == nil {
 			slog.Info("DM catch-up: no history marker found, backfilling", "room_id", roomID)
