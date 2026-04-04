@@ -1659,6 +1659,32 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 		}
 	}
 
+	// Catch-up: DM rooms absent from this sync delta (no new events) may still
+	// need their history backfilled if they were first seen before getDMRooms worked.
+	for roomID := range dmRooms {
+		if _, inSync := syncResp.Rooms.Join[roomID]; inSync {
+			continue // already handled above
+		}
+		safeKey := strings.NewReplacer("/", "_", ":", "_").Replace(string(roomID))
+		dmHistoryDoneKey := acc.Prefix + "/history-cursor/" + safeKey + ".dm-done"
+		dmDone, _ := s3Get(ctx, dmHistoryDoneKey)
+		if dmDone != nil {
+			continue // already backfilled
+		}
+		cursorKey := acc.Prefix + "/history-cursor/" + safeKey + ".json"
+		var cursor struct {
+			Token string `json:"token"`
+		}
+		_ = s3GetJSON(ctx, cursorKey, &cursor)
+		if cursor.Token == "" {
+			continue // never seen this room; will be handled on first sync that includes it
+		}
+		slog.Info("DM catch-up for room not in current sync", "room_id", roomID)
+		if err := paginateRoom(ctx, client, roomID, acc.Prefix, true, cursor.Token, syncResp.NextBatch, sessions); err != nil {
+			slog.Warn("DM catch-up error", "room_id", roomID, "error", err)
+		}
+	}
+
 	if err := uploadStore(ctx, acc.StoreDir, storeS3Key); err != nil {
 		slog.Warn("Could not upload store", "error", err)
 	}
