@@ -1673,7 +1673,7 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	for roomID := range dmRooms {
 		catchupDMs[roomID] = true
 	}
-	if raw, err := getDecryptedAgeFromS3(ctx, acc.Prefix+"/rooms-latest.json"); err == nil && raw != nil {
+	if raw, err := getDecryptedAgeFromS3(ctx, acc.Prefix+"/rooms-latest.json.age"); err == nil && raw != nil {
 		var storedRooms []roomEntry
 		if json.Unmarshal(raw, &storedRooms) == nil {
 			for _, r := range storedRooms {
