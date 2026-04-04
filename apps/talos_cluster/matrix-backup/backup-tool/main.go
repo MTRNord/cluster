@@ -1100,7 +1100,12 @@ func eventToRecord(ev *event.Event, wasEncrypted bool) historyEvent {
 // paginateRoom fetches room history and writes new events to a per-run
 // age-encrypted JSONL file in S3. For DMs on first run, the full history is
 // fetched backwards from the current position before normal forward pagination.
-func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID, prefix string, isDM bool, prevBatch string, sessions megolmSessions) error {
+//
+// syncNextBatch is the nextBatch token from the current sync response. On first
+// run we save it as the forward cursor so the next run only sees events that
+// arrive after this sync — avoiding re-fetching the events the sync already
+// returned.
+func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID, prefix string, isDM bool, prevBatch string, syncNextBatch string, sessions megolmSessions) error {
 	safeKey := strings.NewReplacer("/", "_", ":", "_").Replace(string(roomID))
 	cursorKey := prefix + "/history-cursor/" + safeKey + ".json"
 
@@ -1112,10 +1117,9 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 	}
 
 	if cursor.Token == "" {
-		if prevBatch == "" {
-			return nil
-		}
-		if isDM {
+		// First time we've seen this room. For DMs, walk all the way back through
+		// history so we have a complete record from day one.
+		if isDM && prevBatch != "" {
 			slog.Info("DM first-run: fetching full history", "room_id", roomID)
 			var messages []historyEvent
 			token := prevBatch
@@ -1156,13 +1160,24 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 				slog.Info("DM history stored", "room_id", roomID, "events", len(messages))
 			}
 		}
-		cursorJSON, _ := json.Marshal(map[string]string{"token": prevBatch})
-		_ = s3Put(ctx, cursorKey, cursorJSON, "application/json")
+		// Save the sync's nextBatch as the forward cursor. This means the next
+		// run will forward-paginate from here and only pick up genuinely new
+		// events, not the batch we already received in this sync response.
+		if syncNextBatch == "" {
+			syncNextBatch = prevBatch
+		}
+		if syncNextBatch != "" {
+			cursorJSON, _ := json.Marshal(map[string]string{"token": syncNextBatch})
+			_ = s3Put(ctx, cursorKey, cursorJSON, "application/json")
+		}
 		return nil
 	}
 
+	// Incremental run: fetch every page forward from the saved cursor until we
+	// reach the live end of the timeline.
 	var messages []historyEvent
 	nextToken := cursor.Token
+	lastGoodToken := cursor.Token
 	histKey := prefix + "/history/" + safeKey + "/" + runStr + ".jsonl"
 
 	for range 100 {
@@ -1172,6 +1187,7 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 			break
 		}
 		if len(resp.Chunk) == 0 {
+			// No events — we are already at the live end.
 			break
 		}
 		for _, ev := range resp.Chunk {
@@ -1181,10 +1197,19 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 			processEvent(ctx, client, ev, roomID, prefix, isDM)
 		}
 		if resp.End == "" || resp.End == nextToken {
+			// Reached the live end of the timeline; nextToken is the furthest
+			// position we can name.
+			lastGoodToken = nextToken
 			nextToken = ""
 			break
 		}
+		lastGoodToken = resp.End
 		nextToken = resp.End
+	}
+	// If the loop hit the 100-page cap before reaching live end, nextToken still
+	// holds the resume position for the next run.
+	if nextToken != "" {
+		lastGoodToken = nextToken
 	}
 
 	if len(messages) > 0 {
@@ -1200,8 +1225,10 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 		slog.Info("History updated", "room_id", roomID, "new_events", len(messages))
 	}
 
-	if nextToken != "" && nextToken != cursor.Token {
-		cursorJSON, _ := json.Marshal(map[string]string{"token": nextToken})
+	// Always advance the cursor so the next run never re-processes events we've
+	// already stored.
+	if lastGoodToken != cursor.Token {
+		cursorJSON, _ := json.Marshal(map[string]string{"token": lastGoodToken})
 		_ = s3Put(ctx, cursorKey, cursorJSON, "application/json")
 	}
 	return nil
@@ -1265,7 +1292,7 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	dmRooms := getDMRooms(syncResp)
 	for roomID, joinedRoom := range syncResp.Rooms.Join {
 		isDM := dmRooms[roomID]
-		if err := paginateRoom(ctx, client, roomID, acc.Prefix, isDM, joinedRoom.Timeline.PrevBatch, sessions); err != nil {
+		if err := paginateRoom(ctx, client, roomID, acc.Prefix, isDM, joinedRoom.Timeline.PrevBatch, syncResp.NextBatch, sessions); err != nil {
 			slog.Warn("History error", "room_id", roomID, "error", err)
 		}
 	}
