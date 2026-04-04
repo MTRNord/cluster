@@ -761,6 +761,116 @@ func buildMegolmExport(sessions []exportedSessionEntry, passphrase string) ([]by
 // Room list
 // ─────────────────────────────────────────────────────────────────────────────
 
+// calcRoomName implements the Matrix room display name algorithm from the spec:
+// https://spec.matrix.org/v1.11/client-server-api/#calculating-the-display-name-for-a-room
+//
+// Priority: explicit m.room.name → canonical alias → heroes list → "Empty Room".
+func calcRoomName(
+	stateEvents []*event.Event,
+	heroes []id.UserID,
+	joinedCount, invitedCount int,
+	selfUserID id.UserID,
+) string {
+	// 1. Explicit room name.
+	for _, ev := range stateEvents {
+		if ev.Type == event.StateRoomName {
+			if c := ev.Content.AsRoomName(); c != nil && c.Name != "" {
+				return c.Name
+			}
+		}
+	}
+
+	// 2. Canonical alias.
+	for _, ev := range stateEvents {
+		if ev.Type == event.StateCanonicalAlias {
+			if c := ev.Content.AsCanonicalAlias(); c != nil && c.Alias != "" {
+				return string(c.Alias)
+			}
+		}
+	}
+
+	// 3. Heroes list — build display names from member state events.
+	memberNames := make(map[id.UserID]string)
+	for _, ev := range stateEvents {
+		if ev.Type == event.StateMember && ev.StateKey != nil {
+			uid := id.UserID(*ev.StateKey)
+			if c := ev.Content.AsMember(); c != nil && c.Displayname != "" {
+				memberNames[uid] = c.Displayname
+			} else {
+				local, _, _ := uid.Parse()
+				if local != "" {
+					memberNames[uid] = local
+				} else {
+					memberNames[uid] = string(uid)
+				}
+			}
+		}
+	}
+
+	heroName := func(uid id.UserID) string {
+		if n, ok := memberNames[uid]; ok {
+			return n
+		}
+		local, _, _ := uid.Parse()
+		if local != "" {
+			return local
+		}
+		return string(uid)
+	}
+
+	// Spec says heroes should already exclude self, but filter just in case.
+	var filtered []id.UserID
+	for _, h := range heroes {
+		if h != selfUserID {
+			filtered = append(filtered, h)
+		}
+	}
+
+	// Total other members in the room (everyone except self).
+	others := joinedCount + invitedCount - 1
+	if others < 0 {
+		others = 0
+	}
+
+	if len(filtered) == 0 {
+		if others == 0 {
+			return "Empty Room"
+		}
+		// Heroes list absent but we know there are members — fall through to ID.
+		return ""
+	}
+
+	names := make([]string, len(filtered))
+	for i, h := range filtered {
+		names[i] = heroName(h)
+	}
+
+	// How many members aren't represented by the heroes list.
+	unnamed := others - len(names)
+
+	if unnamed <= 0 {
+		// All others are named.
+		switch len(names) {
+		case 1:
+			return names[0]
+		case 2:
+			return names[0] + " and " + names[1]
+		default:
+			return strings.Join(names[:len(names)-1], ", ") + ", and " + names[len(names)-1]
+		}
+	}
+
+	// Some members aren't in the heroes list.
+	switch len(names) {
+	case 1:
+		return fmt.Sprintf("%s and %d others", names[0], unnamed)
+	case 2:
+		return fmt.Sprintf("%s, %s, and %d others", names[0], names[1], unnamed)
+	default:
+		return fmt.Sprintf("%s, and %d others", strings.Join(names, ", "), unnamed)
+	}
+}
+
 type roomEntry struct {
 	RoomID         string   `json:"room_id"`
 	Name           string   `json:"name"`
@@ -811,13 +921,20 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 				}
 			}
 		}
+		joinedCount, invitedCount := 0, 0
+		if joinedRoom.Summary.JoinedMemberCount != nil {
+			joinedCount = *joinedRoom.Summary.JoinedMemberCount
+		}
+		if joinedRoom.Summary.InvitedMemberCount != nil {
+			invitedCount = *joinedRoom.Summary.InvitedMemberCount
+		}
+		if name == "" {
+			name = calcRoomName(joinedRoom.State.Events, joinedRoom.Summary.Heroes, joinedCount, invitedCount, client.UserID)
+		}
 		if name == "" {
 			name = string(roomID)
 		}
-		mc := 0
-		if joinedRoom.Summary.JoinedMemberCount != nil {
-			mc = *joinedRoom.Summary.JoinedMemberCount
-		}
+		mc := joinedCount
 		rooms = append(rooms, roomEntry{
 			RoomID:         string(roomID),
 			Name:           name,
