@@ -92,6 +92,11 @@ var (
 
 	// ageRecipients holds the parsed public keys used to encrypt history files.
 	ageRecipients []age.Recipient
+
+	// ageIdentity is the optional private key used to decrypt files written by
+	// this tool (loaded from AGE_PRIVATE_KEY).  Allows reading back previously
+	// encrypted objects (e.g. the room list) without storing plain copies in S3.
+	ageIdentity age.Identity
 )
 
 func mustEnv(key string) string {
@@ -123,8 +128,25 @@ func initAgeRecipients(s string) error {
 	return nil
 }
 
+// initAgeIdentity parses the AGE_PRIVATE_KEY value (a single AGE-SECRET-KEY-1…
+// line) and stores it for use when decrypting previously written .age files.
+func initAgeIdentity(privKey string) error {
+	privKey = strings.TrimSpace(privKey)
+	if privKey == "" {
+		return nil
+	}
+	ids, err := age.ParseIdentities(strings.NewReader(privKey))
+	if err != nil {
+		return fmt.Errorf("parse age identity: %w", err)
+	}
+	if len(ids) > 0 {
+		ageIdentity = ids[0]
+	}
+	return nil
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Age encryption
+// Age encryption / decryption
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ageEncrypt encrypts data for all ageRecipients and returns the ciphertext.
@@ -141,6 +163,24 @@ func ageEncrypt(data []byte) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+// getDecryptedAgeFromS3 fetches an .age object from S3 and decrypts it using
+// the configured ageIdentity.  Returns (nil, nil) when the object doesn't exist
+// or no identity is available.
+func getDecryptedAgeFromS3(ctx context.Context, key string) ([]byte, error) {
+	if ageIdentity == nil {
+		return nil, nil
+	}
+	enc, err := s3Get(ctx, key)
+	if err != nil || enc == nil {
+		return nil, err
+	}
+	r, err := age.Decrypt(bytes.NewReader(enc), ageIdentity)
+	if err != nil {
+		return nil, fmt.Errorf("age decrypt %s: %w", key, err)
+	}
+	return io.ReadAll(r)
 }
 
 // s3PutAge age-encrypts data then uploads it under key (appending ".age").
@@ -938,10 +978,25 @@ func fetchRoomNameFromState(ctx context.Context, client *mautrix.Client, roomID 
 
 // saveRoomList builds a JSON snapshot of all joined rooms (name, type, aliases,
 // member count, encryption status) and uploads it to S3.
+//
+// On incremental syncs the server only returns rooms with recent activity, so
+// we load the previously saved list and merge: rooms present in this sync get
+// fresh data, rooms absent from this sync are kept as-is from the prior list.
 func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix.RespSync, prefix string) error {
+	// Load the previously persisted room list so that rooms absent from this
+	// sync's delta are not lost.
+	existing := make(map[string]roomEntry)
+	if raw, err := getDecryptedAgeFromS3(ctx, prefix+"/rooms-latest.json.age"); err == nil && raw != nil {
+		var prev []roomEntry
+		if json.Unmarshal(raw, &prev) == nil {
+			for _, r := range prev {
+				existing[r.RoomID] = r
+			}
+		}
+	}
+
 	dmRooms := getDMRooms(syncResp)
 
-	var rooms []roomEntry
 	for roomID, joinedRoom := range syncResp.Rooms.Join {
 		var name, canonicalAlias string
 		var aliases []string
@@ -950,14 +1005,21 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		if dmRooms[roomID] {
 			rtype = "dm"
 		}
+
+		// ParseRaw must be called explicitly — mautrix only sets VeryRaw during
+		// JSON decode; the typed helpers (AsRoomName etc.) need Parsed != nil.
+		for _, ev := range joinedRoom.State.Events {
+			_ = ev.Content.ParseRaw(ev.Type)
+		}
+
 		for _, ev := range joinedRoom.State.Events {
 			switch ev.Type {
 			case event.StateRoomName:
-				if c := ev.Content.AsRoomName(); c != nil {
+				if c := ev.Content.AsRoomName(); c.Name != "" {
 					name = c.Name
 				}
 			case event.StateCanonicalAlias:
-				if c := ev.Content.AsCanonicalAlias(); c != nil {
+				if c := ev.Content.AsCanonicalAlias(); c.Alias != "" {
 					canonicalAlias = string(c.Alias)
 					for _, a := range c.AltAliases {
 						aliases = append(aliases, string(a))
@@ -976,6 +1038,7 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 				}
 			}
 		}
+
 		joinedCount, invitedCount := 0, 0
 		if joinedRoom.Summary.JoinedMemberCount != nil {
 			joinedCount = *joinedRoom.Summary.JoinedMemberCount
@@ -983,34 +1046,47 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		if joinedRoom.Summary.InvitedMemberCount != nil {
 			invitedCount = *joinedRoom.Summary.InvitedMemberCount
 		}
+
 		if name == "" {
 			name = calcRoomName(joinedRoom.State.Events, joinedRoom.Summary.Heroes, joinedCount, invitedCount, client.UserID)
 		}
 		if name == "" {
-			// Sync only sends changed state — large/public rooms may not include
-			// m.room.name or alias in the delta.  Fall back to a direct state fetch.
+			// Sync delta doesn't include the name — fetch it directly.
 			name = fetchRoomNameFromState(ctx, client, roomID)
+		}
+		// If we still have no name, keep whatever we had from the previous run.
+		if name == "" {
+			if prev, ok := existing[string(roomID)]; ok {
+				name = prev.Name
+			}
 		}
 		if name == "" {
 			name = string(roomID)
 		}
-		mc := joinedCount
-		rooms = append(rooms, roomEntry{
+
+		existing[string(roomID)] = roomEntry{
 			RoomID:         string(roomID),
 			Name:           name,
 			Type:           rtype,
 			Aliases:        aliases,
 			CanonicalAlias: canonicalAlias,
-			MemberCount:    mc,
+			MemberCount:    joinedCount,
 			Encrypted:      encrypted,
-		})
+		}
 		slog.Info("Room", "type", rtype, "name", name)
+	}
+
+	rooms := make([]roomEntry, 0, len(existing))
+	for _, r := range existing {
+		rooms = append(rooms, r)
 	}
 
 	data, err := json.MarshalIndent(rooms, "", "  ")
 	if err != nil {
 		return err
 	}
+	// Age-encrypted copies — readable by both the backup tool (via ageIdentity)
+	// and the external decrypt utility.
 	if err := s3PutAge(ctx, prefix+"/rooms-"+dateStr+".json", data); err != nil {
 		return err
 	}
@@ -1495,6 +1571,11 @@ func main() {
 
 	if err := initAgeRecipients(mustEnv("AGE_RECIPIENTS")); err != nil {
 		slog.Error("Failed to init age recipients", "error", err)
+		os.Exit(1)
+	}
+
+	if err := initAgeIdentity(os.Getenv("AGE_PRIVATE_KEY")); err != nil {
+		slog.Error("Failed to init age identity", "error", err)
 		os.Exit(1)
 	}
 

@@ -85,6 +85,11 @@ spec:
                     secretKeyRef:
                       name: matrix-backup-secret
                       key: age_recipients
+                - name: AGE_PRIVATE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: matrix-backup-secret
+                      key: age_private_key
               volumeMounts:
                 - name: data
                   mountPath: /data
