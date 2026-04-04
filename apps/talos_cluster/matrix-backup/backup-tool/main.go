@@ -1668,6 +1668,19 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	}
 
 	dmRooms := getDMRooms(ctx, client, syncResp)
+	// Augment dmRooms with rooms marked as "dm" in the stored rooms list.
+	// This catches rooms classified as DMs by the 2-member heuristic in
+	// saveRoomList that aren't in m.direct (e.g. created by the other party).
+	if raw, err := getDecryptedAgeFromS3(ctx, acc.Prefix+"/rooms-latest.json.age"); err == nil && raw != nil {
+		var storedRooms []roomEntry
+		if json.Unmarshal(raw, &storedRooms) == nil {
+			for _, r := range storedRooms {
+				if r.Type == "dm" {
+					dmRooms[id.RoomID(r.RoomID)] = true
+				}
+			}
+		}
+	}
 	for roomID, joinedRoom := range syncResp.Rooms.Join {
 		isDM := dmRooms[roomID]
 		if err := paginateRoom(ctx, client, roomID, acc.Prefix, isDM, joinedRoom.Timeline.PrevBatch, syncResp.NextBatch, sessions); err != nil {
