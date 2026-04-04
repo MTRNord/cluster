@@ -669,8 +669,14 @@ func tryDecryptEvent(ev *event.Event, sessions megolmSessions) *event.Event {
 	if ev.Type != event.EventEncrypted || sessions == nil {
 		return ev
 	}
+	// Events from client.Messages() only have VeryRaw set; Parsed is nil until
+	// ParseRaw is called explicitly.  AsEncrypted() returns an empty struct (not
+	// nil) when Parsed is absent, so Algorithm would be "" and we'd bail early.
+	if ev.Content.Parsed == nil {
+		_ = ev.Content.ParseRaw(ev.Type)
+	}
 	content := ev.Content.AsEncrypted()
-	if content == nil || content.Algorithm != id.AlgorithmMegolmV1 {
+	if content.Algorithm != id.AlgorithmMegolmV1 {
 		return ev
 	}
 	sess, ok := sessions[content.SessionID]
@@ -901,6 +907,35 @@ type roomEntry struct {
 	Encrypted      bool     `json:"encrypted"`
 }
 
+// fetchRoomNameFromState fetches m.room.name then m.room.canonical_alias
+// directly from the server state API.  Used when the sync delta doesn't include
+// those events (common for large/public rooms that haven't changed recently).
+func fetchRoomNameFromState(ctx context.Context, client *mautrix.Client, roomID id.RoomID) string {
+	base := url.PathEscape(string(roomID))
+
+	var nameContent struct {
+		Name string `json:"name"`
+	}
+	if err := matrixGetJSON(ctx, client,
+		"/_matrix/client/v3/rooms/"+base+"/state/m.room.name",
+		&nameContent,
+	); err == nil && nameContent.Name != "" {
+		return nameContent.Name
+	}
+
+	var aliasContent struct {
+		Alias string `json:"alias"`
+	}
+	if err := matrixGetJSON(ctx, client,
+		"/_matrix/client/v3/rooms/"+base+"/state/m.room.canonical_alias",
+		&aliasContent,
+	); err == nil && aliasContent.Alias != "" {
+		return aliasContent.Alias
+	}
+
+	return ""
+}
+
 // saveRoomList builds a JSON snapshot of all joined rooms (name, type, aliases,
 // member count, encryption status) and uploads it to S3.
 func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix.RespSync, prefix string) error {
@@ -950,6 +985,11 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		}
 		if name == "" {
 			name = calcRoomName(joinedRoom.State.Events, joinedRoom.Summary.Heroes, joinedCount, invitedCount, client.UserID)
+		}
+		if name == "" {
+			// Sync only sends changed state — large/public rooms may not include
+			// m.room.name or alias in the delta.  Fall back to a direct state fetch.
+			name = fetchRoomNameFromState(ctx, client, roomID)
 		}
 		if name == "" {
 			name = string(roomID)
