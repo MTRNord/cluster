@@ -2,6 +2,8 @@
 // homeserver and stores them in S3. Accounts are configured via environment
 // variables; see the deployment CronJob manifest for the full list.
 //
+// Room history is decrypted using the Megolm sessions fetched from the
+// server-side key backup, then re-encrypted with age before uploading to S3.
 // Session tokens and the device crypto store are persisted as a tarball in S3
 // so incremental sync works across CronJob runs.
 //
@@ -32,6 +34,7 @@ import (
 	"strings"
 	"time"
 
+	"filippo.io/age"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -40,6 +43,8 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/backup"
+	_ "maunium.net/go/mautrix/crypto/goolm" // registers goolm implementations for olm package
+	"maunium.net/go/mautrix/crypto/olm"
 	"maunium.net/go/mautrix/crypto/ssss"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
@@ -67,6 +72,7 @@ var (
 	s3SecretKey   = mustEnv("S3_SECRET_KEY")
 	keyExportPass = mustEnv("KEY_EXPORT_PASSPHRASE")
 	dateStr       = time.Now().UTC().Format("20060102")
+	runStr        = time.Now().UTC().Format("20060102-150405")
 
 	accounts = []accountCfg{
 		{
@@ -84,6 +90,9 @@ var (
 			StoreDir: "/data/crypto/lexi",
 		},
 	}
+
+	// ageRecipients holds the parsed public keys used to encrypt history files.
+	ageRecipients []age.Recipient
 )
 
 func mustEnv(key string) string {
@@ -93,6 +102,55 @@ func mustEnv(key string) string {
 		os.Exit(1)
 	}
 	return v
+}
+
+// initAgeRecipients parses a comma-separated list of age public keys and
+// populates the global ageRecipients slice.
+func initAgeRecipients(s string) error {
+	for _, raw := range strings.Split(s, ",") {
+		raw = strings.TrimSpace(raw)
+		if raw == "" {
+			continue
+		}
+		r, err := age.ParseX25519Recipient(raw)
+		if err != nil {
+			return fmt.Errorf("invalid age recipient %q: %w", raw, err)
+		}
+		ageRecipients = append(ageRecipients, r)
+	}
+	if len(ageRecipients) == 0 {
+		return fmt.Errorf("AGE_RECIPIENTS is empty — at least one public key is required")
+	}
+	return nil
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Age encryption
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ageEncrypt encrypts data for all ageRecipients and returns the ciphertext.
+func ageEncrypt(data []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	w, err := age.Encrypt(&buf, ageRecipients...)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := w.Write(data); err != nil {
+		return nil, err
+	}
+	if err := w.Close(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// s3PutAge age-encrypts data then uploads it under key (appending ".age").
+func s3PutAge(ctx context.Context, key string, data []byte) error {
+	enc, err := ageEncrypt(data)
+	if err != nil {
+		return fmt.Errorf("age encrypt %s: %w", key, err)
+	}
+	return s3Put(ctx, key+".age", enc, "application/octet-stream")
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -159,6 +217,33 @@ func s3Exists(ctx context.Context, key string) bool {
 		Key:    aws.String(key),
 	})
 	return err == nil
+}
+
+// s3DeletePrefix deletes all objects whose key starts with prefix.
+func s3DeletePrefix(ctx context.Context, prefix string) error {
+	paginator := s3.NewListObjectsV2Paginator(s3c, &s3.ListObjectsV2Input{
+		Bucket: aws.String(s3BucketName),
+		Prefix: aws.String(prefix),
+	})
+	deleted := 0
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return err
+		}
+		for _, obj := range page.Contents {
+			if _, err := s3c.DeleteObject(ctx, &s3.DeleteObjectInput{
+				Bucket: aws.String(s3BucketName),
+				Key:    obj.Key,
+			}); err != nil {
+				slog.Warn("Failed to delete S3 object", "key", *obj.Key, "error", err)
+			} else {
+				deleted++
+			}
+		}
+	}
+	slog.Info("Deleted S3 prefix", "prefix", prefix, "count", deleted)
+	return nil
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -417,59 +502,63 @@ type exportedSessionEntry struct {
 	SessionKey                   string            `json:"session_key"`
 }
 
+// megolmSessions maps session IDs to live inbound sessions ready to decrypt.
+type megolmSessions map[id.SessionID]olm.InboundGroupSession
+
 // fetchAndExportKeyBackup derives the Megolm backup private key from SSSS,
 // decrypts every backed-up session, and uploads both a raw JSON archive and a
 // standard .key export file (importable by any Matrix client) to S3.
-func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recoveryKeyStr, prefix string) error {
+// It also returns an in-memory session map for use when decrypting room history.
+func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recoveryKeyStr, prefix string) (megolmSessions, error) {
 	var defaultKey defaultKeyEventContent
 	if err := getAccountData(ctx, client, "m.secret_storage.default_key", &defaultKey); err != nil {
-		return fmt.Errorf("get default key: %w", err)
+		return nil, fmt.Errorf("get default key: %w", err)
 	}
 	if defaultKey.Key == "" {
-		return fmt.Errorf("m.secret_storage.default_key has no 'key' field")
+		return nil, fmt.Errorf("m.secret_storage.default_key has no 'key' field")
 	}
 	keyID := defaultKey.Key
 	slog.Info("SSSS default key ID", "key_id", keyID)
 
 	var keyMetadata ssss.KeyMetadata
 	if err := getAccountData(ctx, client, "m.secret_storage.key."+keyID, &keyMetadata); err != nil {
-		return fmt.Errorf("get key metadata: %w", err)
+		return nil, fmt.Errorf("get key metadata: %w", err)
 	}
 
 	// ErrUnverifiableKey just means the metadata has no MAC to check against —
 	// the derived key is still usable.
 	sssKey, err := keyMetadata.VerifyRecoveryKey(keyID, recoveryKeyStr)
 	if err != nil && !errors.Is(err, ssss.ErrUnverifiableKey) {
-		return fmt.Errorf("verify recovery key: %w", err)
+		return nil, fmt.Errorf("verify recovery key: %w", err)
 	}
 	slog.Info("Recovery key verified (or unverifiable but accepted)")
 
 	var backupSecret encryptedSecretContent
 	if err := getAccountData(ctx, client, "m.megolm_backup.v1", &backupSecret); err != nil {
-		return fmt.Errorf("get backup secret: %w", err)
+		return nil, fmt.Errorf("get backup secret: %w", err)
 	}
 	encData, ok := backupSecret.Encrypted[keyID]
 	if !ok {
-		return fmt.Errorf("backup secret not encrypted with key %q", keyID)
+		return nil, fmt.Errorf("backup secret not encrypted with key %q", keyID)
 	}
 	backupKeyRaw, err := sssKey.Decrypt("m.megolm_backup.v1", encData)
 	if err != nil {
-		return fmt.Errorf("decrypt backup key from SSSS: %w", err)
+		return nil, fmt.Errorf("decrypt backup key from SSSS: %w", err)
 	}
 
 	privateKeyBytes, err := decodeBackupPrivateKey(backupKeyRaw)
 	if err != nil {
-		return fmt.Errorf("decode backup private key: %w", err)
+		return nil, fmt.Errorf("decode backup private key: %w", err)
 	}
 	megolmKey, err := backup.MegolmBackupKeyFromBytes(privateKeyBytes)
 	if err != nil {
-		return fmt.Errorf("create megolm backup key: %w", err)
+		return nil, fmt.Errorf("create megolm backup key: %w", err)
 	}
 	slog.Info("Decoded megolm backup private key from SSSS")
 
 	var backupVersion keyBackupVersionResp
 	if err := matrixGetJSON(ctx, client, "/_matrix/client/v3/room_keys/version", &backupVersion); err != nil {
-		return fmt.Errorf("get backup version: %w", err)
+		return nil, fmt.Errorf("get backup version: %w", err)
 	}
 	slog.Info("Key backup version", "version", backupVersion.Version)
 
@@ -478,11 +567,13 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 		"/_matrix/client/v3/room_keys/keys?version="+url.QueryEscape(backupVersion.Version),
 		&allRooms,
 	); err != nil {
-		return fmt.Errorf("get backup keys: %w", err)
+		return nil, fmt.Errorf("get backup keys: %w", err)
 	}
 	slog.Info("Fetched key backup", "rooms", len(allRooms.Rooms))
 
-	var sessions []exportedSessionEntry
+	// Decrypt each session: build both the export list and the live session map.
+	sessions := make(megolmSessions)
+	var exported []exportedSessionEntry
 	decOK, decFail := 0, 0
 	for roomID, room := range allRooms.Rooms {
 		for sessionID, sessionInfo := range room.Sessions {
@@ -500,7 +591,15 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 				decFail++
 				continue
 			}
-			sessions = append(sessions, exportedSessionEntry{
+
+			// Build the in-memory session for history decryption.
+			if sess, err := olm.InboundGroupSessionImport([]byte(sessionData.SessionKey)); err == nil {
+				sessions[id.SessionID(sessionID)] = sess
+			} else {
+				slog.Warn("Failed to import Megolm session", "session_id", sessionID, "error", err)
+			}
+
+			exported = append(exported, exportedSessionEntry{
 				Algorithm:                    string(sessionData.Algorithm),
 				ForwardingCurve25519KeyChain: sessionData.ForwardingKeyChain,
 				RoomID:                       string(roomID),
@@ -512,30 +611,30 @@ func fetchAndExportKeyBackup(ctx context.Context, client *mautrix.Client, recove
 			decOK++
 		}
 	}
-	slog.Info("Session decryption complete", "ok", decOK, "failed", decFail)
+	slog.Info("Session decryption complete", "ok", decOK, "failed", decFail, "in_memory", len(sessions))
 
-	if len(sessions) == 0 {
+	if len(exported) == 0 {
 		slog.Warn("No sessions decrypted — skipping key export")
-		return nil
+		return sessions, nil
 	}
 
-	if rawJSON, err := json.MarshalIndent(sessions, "", "  "); err == nil {
-		_ = s3Put(ctx, prefix+"/backup-sessions-latest.json", rawJSON, "application/json")
-		_ = s3Put(ctx, prefix+"/backup-sessions-"+dateStr+".json", rawJSON, "application/json")
+	if rawJSON, err := json.MarshalIndent(exported, "", "  "); err == nil {
+		_ = s3PutAge(ctx, prefix+"/backup-sessions-latest.json", rawJSON)
+		_ = s3PutAge(ctx, prefix+"/backup-sessions-"+dateStr+".json", rawJSON)
 	}
 
-	exportData, err := buildMegolmExport(sessions, keyExportPass)
+	exportData, err := buildMegolmExport(exported, keyExportPass)
 	if err != nil {
-		return fmt.Errorf("build megolm export: %w", err)
+		return sessions, fmt.Errorf("build megolm export: %w", err)
 	}
-	if err := s3Put(ctx, prefix+"/crypto-keys-latest.bin", exportData, "application/octet-stream"); err != nil {
-		return err
+	if err := s3PutAge(ctx, prefix+"/crypto-keys-latest.bin", exportData); err != nil {
+		return sessions, err
 	}
-	if err := s3Put(ctx, prefix+"/crypto-keys-"+dateStr+".bin", exportData, "application/octet-stream"); err != nil {
-		return err
+	if err := s3PutAge(ctx, prefix+"/crypto-keys-"+dateStr+".bin", exportData); err != nil {
+		return sessions, err
 	}
-	slog.Info("Exported E2EE keys", "sessions", len(sessions), "bytes", len(exportData))
-	return nil
+	slog.Info("Exported E2EE keys", "sessions", len(exported), "bytes", len(exportData))
+	return sessions, nil
 }
 
 // decodeBackupPrivateKey extracts the raw 32-byte Curve25519 private key from
@@ -558,6 +657,43 @@ func decodeBackupPrivateKey(raw []byte) ([]byte, error) {
 		}
 	}
 	return nil, fmt.Errorf("cannot decode %d-byte value as a 32-byte Curve25519 private key", len(raw))
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Megolm event decryption
+// ─────────────────────────────────────────────────────────────────────────────
+
+// tryDecryptEvent attempts to decrypt an m.room.encrypted event using the
+// in-memory session map. Returns the original event unchanged if decryption
+// isn't possible (missing session, wrong algorithm, parse error).
+func tryDecryptEvent(ev *event.Event, sessions megolmSessions) *event.Event {
+	if ev.Type != event.EventEncrypted || sessions == nil {
+		return ev
+	}
+	content := ev.Content.AsEncrypted()
+	if content == nil || content.Algorithm != id.AlgorithmMegolmV1 {
+		return ev
+	}
+	sess, ok := sessions[content.SessionID]
+	if !ok {
+		return ev
+	}
+	plaintext, _, err := sess.Decrypt(content.MegolmCiphertext)
+	if err != nil {
+		slog.Debug("Megolm decrypt failed", "session_id", content.SessionID, "error", err)
+		return ev
+	}
+	var inner struct {
+		Type    string          `json:"type"`
+		Content json.RawMessage `json:"content"`
+	}
+	if err := json.Unmarshal(plaintext, &inner); err != nil {
+		return ev
+	}
+	decrypted := *ev
+	decrypted.Type = event.NewEventType(inner.Type)
+	decrypted.Content = event.Content{VeryRaw: inner.Content}
+	return &decrypted
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -679,19 +815,18 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 		if name == "" {
 			name = string(roomID)
 		}
+		mc := 0
+		if joinedRoom.Summary.JoinedMemberCount != nil {
+			mc = *joinedRoom.Summary.JoinedMemberCount
+		}
 		rooms = append(rooms, roomEntry{
 			RoomID:         string(roomID),
 			Name:           name,
 			Type:           rtype,
 			Aliases:        aliases,
 			CanonicalAlias: canonicalAlias,
-			MemberCount: func() int {
-				if joinedRoom.Summary.JoinedMemberCount != nil {
-					return *joinedRoom.Summary.JoinedMemberCount
-				}
-				return 0
-			}(),
-			Encrypted: encrypted,
+			MemberCount:    mc,
+			Encrypted:      encrypted,
 		})
 		slog.Info("Room", "type", rtype, "name", name)
 	}
@@ -700,10 +835,10 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 	if err != nil {
 		return err
 	}
-	if err := s3Put(ctx, prefix+"/rooms-"+dateStr+".json", data, "application/json"); err != nil {
+	if err := s3PutAge(ctx, prefix+"/rooms-"+dateStr+".json", data); err != nil {
 		return err
 	}
-	if err := s3Put(ctx, prefix+"/rooms-latest.json", data, "application/json"); err != nil {
+	if err := s3PutAge(ctx, prefix+"/rooms-latest.json", data); err != nil {
 		return err
 	}
 	slog.Info("Uploaded room list", "rooms", len(rooms))
@@ -765,7 +900,6 @@ func downloadAndStoreMedia(ctx context.Context, client *mautrix.Client, mxcURL, 
 		return err
 	}
 	req.Header.Set("Authorization", "Bearer "+client.AccessToken)
-
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
@@ -838,8 +972,7 @@ var mediaMsgTypes = map[string]bool{
 }
 
 // processEvent downloads media and records profile changes for a single event.
-// Encrypted events are stored verbatim — without an OlmMachine we can't decrypt
-// them at backup time, so media extraction is skipped for those.
+// The event should already be decrypted before this is called.
 func processEvent(ctx context.Context, client *mautrix.Client, ev *event.Event, roomID id.RoomID, prefix string, isDM bool) {
 	if ev.Type == event.EventEncrypted {
 		return
@@ -951,22 +1084,24 @@ type historyEvent struct {
 	Type      string          `json:"type"`
 	Timestamp int64           `json:"origin_server_ts"`
 	Content   json.RawMessage `json:"content"`
+	Encrypted bool            `json:"encrypted,omitempty"`
 }
 
-func eventToRecord(ev *event.Event) historyEvent {
+func eventToRecord(ev *event.Event, wasEncrypted bool) historyEvent {
 	return historyEvent{
 		EventID:   string(ev.ID),
 		Sender:    string(ev.Sender),
 		Type:      ev.Type.Type,
 		Timestamp: ev.Timestamp,
 		Content:   ev.Content.VeryRaw,
+		Encrypted: wasEncrypted,
 	}
 }
 
-// paginateRoom fetches room history and appends new events to the per-room
-// JSONL file in S3. For DMs on first run, the full history is fetched
-// backwards from the current position before normal forward pagination begins.
-func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID, prefix string, isDM bool, prevBatch string) error {
+// paginateRoom fetches room history and writes new events to a per-run
+// age-encrypted JSONL file in S3. For DMs on first run, the full history is
+// fetched backwards from the current position before normal forward pagination.
+func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID, prefix string, isDM bool, prevBatch string, sessions megolmSessions) error {
 	safeKey := strings.NewReplacer("/", "_", ":", "_").Replace(string(roomID))
 	cursorKey := prefix + "/history-cursor/" + safeKey + ".json"
 
@@ -995,7 +1130,9 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 					break
 				}
 				for _, ev := range resp.Chunk {
-					messages = append(messages, eventToRecord(ev))
+					wasEncrypted := ev.Type == event.EventEncrypted
+					ev = tryDecryptEvent(ev, sessions)
+					messages = append(messages, eventToRecord(ev, wasEncrypted))
 					processEvent(ctx, client, ev, roomID, prefix, true)
 				}
 				if resp.End == "" || resp.End == token {
@@ -1007,14 +1144,16 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 				for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
 					messages[i], messages[j] = messages[j], messages[i]
 				}
-				histKey := prefix + "/history/" + safeKey + "/" + dateStr + ".jsonl"
+				histKey := prefix + "/history/" + safeKey + "/" + runStr + ".jsonl"
 				var buf bytes.Buffer
 				for _, m := range messages {
 					line, _ := json.Marshal(m)
 					buf.Write(line)
 					buf.WriteByte('\n')
 				}
-				_ = s3Put(ctx, histKey, buf.Bytes(), "application/x-ndjson")
+				if err := s3PutAge(ctx, histKey, buf.Bytes()); err != nil {
+					slog.Warn("Failed to upload DM history", "room_id", roomID, "error", err)
+				}
 				slog.Info("DM history stored", "room_id", roomID, "events", len(messages))
 			}
 		}
@@ -1025,7 +1164,7 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 
 	var messages []historyEvent
 	nextToken := cursor.Token
-	histKey := prefix + "/history/" + safeKey + "/" + dateStr + ".jsonl"
+	histKey := prefix + "/history/" + safeKey + "/" + runStr + ".jsonl"
 
 	for range 100 {
 		resp, err := client.Messages(ctx, roomID, nextToken, "", mautrix.DirectionForward, nil, 100)
@@ -1037,7 +1176,9 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 			break
 		}
 		for _, ev := range resp.Chunk {
-			messages = append(messages, eventToRecord(ev))
+			wasEncrypted := ev.Type == event.EventEncrypted
+			ev = tryDecryptEvent(ev, sessions)
+			messages = append(messages, eventToRecord(ev, wasEncrypted))
 			processEvent(ctx, client, ev, roomID, prefix, isDM)
 		}
 		if resp.End == "" || resp.End == nextToken {
@@ -1048,15 +1189,15 @@ func paginateRoom(ctx context.Context, client *mautrix.Client, roomID id.RoomID,
 	}
 
 	if len(messages) > 0 {
-		existing, _ := s3Get(ctx, histKey)
 		var buf bytes.Buffer
-		buf.Write(existing)
 		for _, m := range messages {
 			line, _ := json.Marshal(m)
 			buf.Write(line)
 			buf.WriteByte('\n')
 		}
-		_ = s3Put(ctx, histKey, buf.Bytes(), "application/x-ndjson")
+		if err := s3PutAge(ctx, histKey, buf.Bytes()); err != nil {
+			slog.Warn("Failed to upload history", "room_id", roomID, "error", err)
+		}
 		slog.Info("History updated", "room_id", roomID, "new_events", len(messages))
 	}
 
@@ -1109,8 +1250,11 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	}
 	slog.Info("Sync done", "rooms", len(syncResp.Rooms.Join))
 
+	var sessions megolmSessions
 	if acc.SSSSKey != "" {
-		if err := fetchAndExportKeyBackup(ctx, client, acc.SSSSKey, acc.Prefix); err != nil {
+		var err error
+		sessions, err = fetchAndExportKeyBackup(ctx, client, acc.SSSSKey, acc.Prefix)
+		if err != nil {
 			slog.Warn("Key backup export failed", "error", err)
 		}
 	}
@@ -1122,7 +1266,7 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	dmRooms := getDMRooms(syncResp)
 	for roomID, joinedRoom := range syncResp.Rooms.Join {
 		isDM := dmRooms[roomID]
-		if err := paginateRoom(ctx, client, roomID, acc.Prefix, isDM, joinedRoom.Timeline.PrevBatch); err != nil {
+		if err := paginateRoom(ctx, client, roomID, acc.Prefix, isDM, joinedRoom.Timeline.PrevBatch, sessions); err != nil {
 			slog.Warn("History error", "room_id", roomID, "error", err)
 		}
 	}
@@ -1145,6 +1289,11 @@ func main() {
 	})))
 
 	ctx := context.Background()
+
+	if err := initAgeRecipients(mustEnv("AGE_RECIPIENTS")); err != nil {
+		slog.Error("Failed to init age recipients", "error", err)
+		os.Exit(1)
+	}
 
 	if err := initS3(ctx); err != nil {
 		slog.Error("Failed to init S3", "error", err)
