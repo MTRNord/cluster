@@ -1099,6 +1099,12 @@ func saveRoomList(ctx context.Context, client *mautrix.Client, syncResp *mautrix
 			invitedCount = *joinedRoom.Summary.InvitedMemberCount
 		}
 
+		// A 2-member non-space room is effectively a DM even if not in m.direct
+		// (e.g. when the other party created the room and didn't populate our m.direct).
+		if rtype == "normal" && joinedCount > 0 && joinedCount <= 2 {
+			rtype = "dm"
+		}
+
 		if name == "" {
 			name = calcRoomName(joinedRoom.State.Events, joinedRoom.Summary.Heroes, joinedCount, invitedCount, client.UserID)
 		}
@@ -1660,8 +1666,24 @@ func backupAccount(ctx context.Context, acc accountCfg) error {
 	}
 
 	// Catch-up: DM rooms absent from this sync delta (no new events) may still
-	// need their history backfilled if they were first seen before getDMRooms worked.
+	// need their history backfilled. Use the rooms list just written by saveRoomList
+	// (which also detects 2-member rooms as DMs) as the authoritative DM source,
+	// falling back to the API-based dmRooms map.
+	catchupDMs := make(map[id.RoomID]bool)
 	for roomID := range dmRooms {
+		catchupDMs[roomID] = true
+	}
+	if raw, err := getDecryptedAgeFromS3(ctx, acc.Prefix+"/rooms-latest.json"); err == nil && raw != nil {
+		var storedRooms []roomEntry
+		if json.Unmarshal(raw, &storedRooms) == nil {
+			for _, r := range storedRooms {
+				if r.Type == "dm" {
+					catchupDMs[id.RoomID(r.RoomID)] = true
+				}
+			}
+		}
+	}
+	for roomID := range catchupDMs {
 		if _, inSync := syncResp.Rooms.Join[roomID]; inSync {
 			continue // already handled above
 		}
