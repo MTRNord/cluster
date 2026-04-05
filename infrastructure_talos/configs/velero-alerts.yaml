@@ -34,7 +34,7 @@ spec:
         - alert: VeleroBackupMissing
           expr: |
             time() - velero_backup_last_successful_timestamp{schedule!=""} > 90000
-          for: 5m
+          for: 1h
           labels:
             severity: critical
           annotations:

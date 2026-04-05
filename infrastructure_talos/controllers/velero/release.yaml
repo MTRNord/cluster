@@ -52,6 +52,9 @@ spec:
       clientBurst: 200
       # Increase timeout to avoid "exposed PVB is not ready" errors on slow volumes
       podVolumeOperationTimeout: 60m
+      # Increase CSI snapshot timeout — Longhorn queues snapshot creation behind its
+      # concurrent task limit (5), so with many volumes the default 10m is too short.
+      csiSnapshotTimeout: 30m
       backupStorageLocation:
         - name: default
           provider: aws
