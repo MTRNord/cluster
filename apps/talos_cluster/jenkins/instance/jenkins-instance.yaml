@@ -123,22 +123,16 @@ spec:
           - name: cosign-key
             mountPath: /var/run/secrets/cosign
             readOnly: true
-          - name: docker-sock
-            mountPath: /var/run/docker.sock
-    # Volumes
-    volumes:
-      - name: registry-secret
-        secret:
-          secretName: registry-credentials
-          defaultMode: 256
-      - name: cosign-key
-        secret:
-          secretName: cosign-signing-key
-          defaultMode: 256
-      - name: docker-sock
-        hostPath:
-          path: /var/run/docker.sock
-          type: Socket
+        # Volumes
+        volumes:
+          - name: registry-secret
+            secret:
+              secretName: registry-credentials
+              defaultMode: 256
+          - name: cosign-key
+            secret:
+              secretName: cosign-signing-key
+              defaultMode: 256
 ---
 apiVersion: v1
 kind: Service
