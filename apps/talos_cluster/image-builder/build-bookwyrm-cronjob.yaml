@@ -137,17 +137,35 @@ spec:
                   podman tag "${IMAGE}:${VERSION}" "${IMAGE}:latest"
                   podman push "${IMAGE}:latest"
 
-                  DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${VERSION}" | cut -d@ -f2)"
-                  [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
-                  echo "==> Digest: ${DIGEST}"
-
+                  # Get manifest list digest and all platform digests
+                  MANIFEST_LIST_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${VERSION}" | cut -d@ -f2)"
+                  PLATFORM_DIGESTS="$(podman manifest inspect "${IMAGE}:${VERSION}" --raw | jq -r '.manifests[].digest' 2>/dev/null || echo "")"
+                  
+                  [ -z "$MANIFEST_LIST_DIGEST" ] && echo "Failed to get manifest list digest" && exit 1
+                  echo "==> Manifest List Digest: ${MANIFEST_LIST_DIGEST}"
+                  
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
                   /tmp/cosign sign --yes \
                     --key /cosign-secret/cosign.key \
                     --new-bundle-format=false \
                     --use-signing-config=false \
                     --registry-referrers-mode=oci-1-1 \
-                    "${IMAGE}@${DIGEST}"
+                    "${IMAGE}@${MANIFEST_LIST_DIGEST}"
+                  
+                  # Sign each platform digest
+                  if [ -n "$PLATFORM_DIGESTS" ]; then
+                    while IFS= read -r DIGEST; do
+                      [ -z "$DIGEST" ] && continue
+                      echo "==> Signing platform digest: ${DIGEST}"
+                      COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
+                      /tmp/cosign sign --yes \
+                        --key /cosign-secret/cosign.key \
+                        --new-bundle-format=false \
+                        --use-signing-config=false \
+                        --registry-referrers-mode=oci-1-1 \
+                        "${IMAGE}@${DIGEST}"
+                    done <<< "$PLATFORM_DIGESTS"
+                  fi
 
                   echo "==> Done: ${IMAGE}:${VERSION}"
               env:
