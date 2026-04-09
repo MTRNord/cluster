@@ -50,6 +50,8 @@ spec:
             - name: docker-config
               mountPath: /root/.docker
               readOnly: true
+            - name: containerd-sock
+              mountPath: /run/containerd
       volumes:
         - name: docker-config
           secret:
@@ -57,3 +59,7 @@ spec:
             items:
               - key: dockerconfig.json
                 path: config.json
+        - name: containerd-sock
+          hostPath:
+            path: /run/containerd
+            type: Directory
