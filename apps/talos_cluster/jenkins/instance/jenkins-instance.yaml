@@ -6,11 +6,17 @@ metadata:
 spec:
     # Enable security validation
     validateSecurityWarnings: true
-    # Configuration as Code
+    # Configuration as Code - references ConfigMap
     configurationAsCode:
         configurations:
             - name: jenkins-casc
-              content: ENC[AES256_GCM,data:lmtOI2KiZWTwq4H6oBcu0syAe9K0Zc+VQ8NhIHXmStzyGtPrlfvDZCxp2nJ6v5FZIsr7kcue+mnbtYpCFeFv1amYmqs1HDPnh/eTePt6/NAP9onaTzHtzGlVwl6gNr/5kXYZJO0dxVELHqejGwREAOyCY2+Ld1eip1UEKii0WfJAYKk1diD927YN2OKDbSv/aCI3XeLEtV9TbUCZojoazZSbfrTNwhx8XFA5D5OgQVFKCHvhOxLjAY5F4G66km5FlMGksJFcEMhpWvtT+H124RfcB5gmJalXQmhLZMocZvcHcXyDX1Ox10T/WP07be7I2lQttDi8l6rHF3cssTzL5Opw1XuJkHG3gmXoVD76Tf261vFJLUDe8FfcfDxcW3wyZvSljCJsAZ39Lrbwj76sFA1YiA7mS8EPEbR9MNWY5N7al6pIB4jShupFf7TnmcgKrNxopOlZSP40qWXH4QrGgihwF01KBuyKGV9D/5P61V9AY7TBGpYK+jTGTYKm+fvgJ2PZC+tYwcHD+9VyG0agCBTBZNM/R1TqCu5QzOdj9SJHlOM4otbZxsE/zHMZYlQVzBTlu1uNJPYNsfxsqJRyfX8zBGZsJ1kTRonYacUhE2LGopqkVvs0lOa5WHkMIsxPjPFzViDcjp6+0DGdXqii7molz84vwB+gGoPLSXwnfGCHcjXDmsNiASD4wrbDXJ4n/Ug0ch/r7sa7SonX/UIHHga7pLOFnZJw6V4QwDAv9nZh3MC4CowZxIjgCcSCewXVvt5jvak9LygapZIgdT+qR9KcSS2iOJlPyBG9JBPQP94hU2M9KafmHE1e01qxyBqptosbh4PpkVlUjrFgDtXC6qJQw43HgAyXoII2GJCHd5M+/WuCuxdSTkzVLV0ZHcF0aSKQcFIbNnuFGcbDmFflX2mha/qeeKbGRM2ieOTn7EqfPLMHmouPYlE8QwkxmZYSy6FMOjMWrSg/Bgu3S/5DGPvFTcv1KeWwUScJ7dxiOH/ujQee5NJ/mrZ4Hyl5TMlqQU0i9K87pDte7s0JXy0Gkdl6t4uttFlRSrOFNHrKDvg32ePBqPKk1CVmhnZw9edjA2dBbdhIGGHalXOkkqVFcOYCjQgfJxD+9zH3vozGDdfs1n/BQQxcvB1CbBNWWEjWgP5VCer0PVG1qA7SjcF9YUL/Qbd5j7a/5/UjqDyZnEp7ztnUkuqUn5ySTiWut/VRbuf1diDOliyeTmOgOJ+sMcMFTIt28Def1sirHlVmDFMO,iv:D6oladjgKIpT/F7H542ciASjAkz9OhdZDxUb5RPXNVQ=,tag:JN/gUMq+qwhh0Q+PgTFc9A==,type:str]
+        secret:
+            name: ""
+    # Groovy scripts (if needed)
+    groovyScripts:
+        configurations: []
+        secret:
+            name: ""
     # API settings - IMPORTANT: jenkins-operator user must have admin rights
     jenkinsAPISettings:
         authorizationStrategy: createUser
@@ -23,9 +29,6 @@ spec:
         port: 50000
     # Master/Controller pod specification
     master:
-        # Use specific LTS version instead of latest (best practice)
-        image: jenkins/jenkins:2.541.3-lts
-        imagePullPolicy: IfNotPresent
         # Security context - run as jenkins user (1000)
         securityContext:
             runAsUser: 1000
@@ -73,20 +76,16 @@ spec:
         # Container specification
         containers:
             - name: jenkins-master
-              image: jenkins/jenkins:2.440.1-lts
+              image: jenkins/jenkins:2.541.3-lts
               imagePullPolicy: IfNotPresent
               # Security context for container
               securityContext:
                 # Allow privileged for Docker socket access
                 privileged: true
                 allowPrivilegeEscalation: true
-              # Environment variables
-              env:
-                - name: JAVA_OPTS
-                  value: -Djenkins.install.runSetupWizard=false -Djenkins.model.Jenkins.crumbIssuerProxyCompatibility=true -Dorg.jenkinsci.plugins.matrixauth.inheritance.InheritParentStrategy=true
               # Liveness probe
               livenessProbe:
-                failureThreshold: 12
+                failureThreshold: 20
                 httpGet:
                     path: /login
                     port: 8080
@@ -94,26 +93,26 @@ spec:
                 initialDelaySeconds: 100
                 periodSeconds: 10
                 successThreshold: 1
-                timeoutSeconds: 5
+                timeoutSeconds: 8
               # Readiness probe
               readinessProbe:
-                failureThreshold: 10
+                failureThreshold: 60
                 httpGet:
                     path: /login
                     port: 8080
                     scheme: HTTP
-                initialDelaySeconds: 80
+                initialDelaySeconds: 120
                 periodSeconds: 10
                 successThreshold: 1
-                timeoutSeconds: 1
+                timeoutSeconds: 8
               # Resource management
               resources:
                 limits:
-                    cpu: 1500m
-                    memory: 2Gi
+                    cpu: 1000m
+                    memory: 3Gi
                 requests:
-                    cpu: 500m
-                    memory: 1Gi
+                    cpu: 250m
+                    memory: 500Mi
               # Port configuration
               ports:
                 - containerPort: 8080
@@ -141,36 +140,16 @@ spec:
                 claimName: jenkins-home
             - name: registry-secret
               secret:
-                secretName: ENC[AES256_GCM,data:7USvSu9F1aAzUvE5GsVwJJVhwAg=,iv:gjniozAMy7KJbN92QTUz/dF1GJxd4cCNMry0foTi/ig=,tag:b1j7RzItnt+Ck+gmnBBgIQ==,type:str]
-                defaultMode: ENC[AES256_GCM,data:XRRC,iv:OhIgPF2mFh3kvms/rH58YeL2pmYUeWCSO7PDuhZpUZE=,tag:M77Kj3TEHZ0/ZOClsCF2xA==,type:int]
+                secretName: registry-credentials
+                defaultMode: 256
             - name: cosign-key
               secret:
-                secretName: ENC[AES256_GCM,data:ikUpHd2Wf3Xrc6l6C6Q15cJF,iv:kyJMlr5Mt0zHnQF2zrxZOgtGrEcg9F1PW5mav2OCgTE=,tag:vVnYPpGRWVljMbfaKos8qA==,type:str]
-                defaultMode: ENC[AES256_GCM,data:d958,iv:yEtCjaXo2Ai0ARBYIT+zCNdlkgMgRI3WO5iy1VEMNn4=,tag:0t/3muHtG//KomxrpmTQyQ==,type:int]
+                secretName: cosign-signing-key
+                defaultMode: 256
             - name: docker-sock
               hostPath:
                 path: /var/run/docker.sock
                 type: Socket
-sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByOWRrKzUrSUxXUlhSdTlY
-            MkdYM0dOZ0JNaXU0cmp3MS9PcHR1LzJSN1dJCmhGYmw4TGVPNEpEWnlnQlV2Yjhh
-            Vi8yK21xZjBldXduWXhNZ3hNSFoyY1kKLS0tIGR5L1FWS2FxYkhHR3JWcXBFTjEr
-            dHkrRVI5c3FBeUxFL2ZyL09Sd2hIZ3cKsDbe8WLlZXSTWpKKY5dx21cEKOxFFtw+
-            3DUtEJqIOAYdgxoFv/+Z4E44VtzLuA0swPk3DzY+bPvax31vZMdYkg==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-04-09T20:54:47Z"
-    mac: ENC[AES256_GCM,data:Q1tSbclL62fLqa+FB1H6eFGqclWSkdVYTiOvnj8nJrWQxd1OGv/VVmTK6CRHpQKDJhro0H163X/Rmw2pUrw0DC30DAjbq+DxRDpYTr8BEcDT/u7mb1xNC093fSPcdRMvnOK+Jbq7Inv9XwlMAoG3NlNqNEgnInYxG10AnW9O4J4=,iv:xtZpt0c4mbh0XdDyOjwkwGZWD9ESycr8GyHptLfTp0M=,tag:pQVI7DcO0RidAoIUDa7oZw==,type:str]
-    pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret|content)$
-    version: 3.9.1
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -182,28 +161,8 @@ spec:
         - ReadWriteOnce
     resources:
         requests:
-            storage: 10Gi
+            storage: 20Gi
     storageClassName: longhorn-2replicas
-sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByOWRrKzUrSUxXUlhSdTlY
-            MkdYM0dOZ0JNaXU0cmp3MS9PcHR1LzJSN1dJCmhGYmw4TGVPNEpEWnlnQlV2Yjhh
-            Vi8yK21xZjBldXduWXhNZ3hNSFoyY1kKLS0tIGR5L1FWS2FxYkhHR3JWcXBFTjEr
-            dHkrRVI5c3FBeUxFL2ZyL09Sd2hIZ3cKsDbe8WLlZXSTWpKKY5dx21cEKOxFFtw+
-            3DUtEJqIOAYdgxoFv/+Z4E44VtzLuA0swPk3DzY+bPvax31vZMdYkg==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-04-09T20:54:47Z"
-    mac: ENC[AES256_GCM,data:Q1tSbclL62fLqa+FB1H6eFGqclWSkdVYTiOvnj8nJrWQxd1OGv/VVmTK6CRHpQKDJhro0H163X/Rmw2pUrw0DC30DAjbq+DxRDpYTr8BEcDT/u7mb1xNC093fSPcdRMvnOK+Jbq7Inv9XwlMAoG3NlNqNEgnInYxG10AnW9O4J4=,iv:xtZpt0c4mbh0XdDyOjwkwGZWD9ESycr8GyHptLfTp0M=,tag:pQVI7DcO0RidAoIUDa7oZw==,type:str]
-    pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret|content)$
-    version: 3.9.1
 ---
 apiVersion: v1
 kind: Service
@@ -223,26 +182,6 @@ spec:
           targetPort: 50000
           name: agent
           protocol: TCP
-sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByOWRrKzUrSUxXUlhSdTlY
-            MkdYM0dOZ0JNaXU0cmp3MS9PcHR1LzJSN1dJCmhGYmw4TGVPNEpEWnlnQlV2Yjhh
-            Vi8yK21xZjBldXduWXhNZ3hNSFoyY1kKLS0tIGR5L1FWS2FxYkhHR3JWcXBFTjEr
-            dHkrRVI5c3FBeUxFL2ZyL09Sd2hIZ3cKsDbe8WLlZXSTWpKKY5dx21cEKOxFFtw+
-            3DUtEJqIOAYdgxoFv/+Z4E44VtzLuA0swPk3DzY+bPvax31vZMdYkg==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-04-09T20:54:47Z"
-    mac: ENC[AES256_GCM,data:Q1tSbclL62fLqa+FB1H6eFGqclWSkdVYTiOvnj8nJrWQxd1OGv/VVmTK6CRHpQKDJhro0H163X/Rmw2pUrw0DC30DAjbq+DxRDpYTr8BEcDT/u7mb1xNC093fSPcdRMvnOK+Jbq7Inv9XwlMAoG3NlNqNEgnInYxG10AnW9O4J4=,iv:xtZpt0c4mbh0XdDyOjwkwGZWD9ESycr8GyHptLfTp0M=,tag:pQVI7DcO0RidAoIUDa7oZw==,type:str]
-    pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret|content)$
-    version: 3.9.1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -262,23 +201,3 @@ spec:
           timeouts:
             request: 600s
             backendRequest: 0s
-sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
-    age:
-        - recipient: age1esjyg2qfy49awv0ptkzvpk425adczjr38m37w2mmcahzc4p8n54sll2nzh
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByOWRrKzUrSUxXUlhSdTlY
-            MkdYM0dOZ0JNaXU0cmp3MS9PcHR1LzJSN1dJCmhGYmw4TGVPNEpEWnlnQlV2Yjhh
-            Vi8yK21xZjBldXduWXhNZ3hNSFoyY1kKLS0tIGR5L1FWS2FxYkhHR3JWcXBFTjEr
-            dHkrRVI5c3FBeUxFL2ZyL09Sd2hIZ3cKsDbe8WLlZXSTWpKKY5dx21cEKOxFFtw+
-            3DUtEJqIOAYdgxoFv/+Z4E44VtzLuA0swPk3DzY+bPvax31vZMdYkg==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-04-09T20:54:47Z"
-    mac: ENC[AES256_GCM,data:Q1tSbclL62fLqa+FB1H6eFGqclWSkdVYTiOvnj8nJrWQxd1OGv/VVmTK6CRHpQKDJhro0H163X/Rmw2pUrw0DC30DAjbq+DxRDpYTr8BEcDT/u7mb1xNC093fSPcdRMvnOK+Jbq7Inv9XwlMAoG3NlNqNEgnInYxG10AnW9O4J4=,iv:xtZpt0c4mbh0XdDyOjwkwGZWD9ESycr8GyHptLfTp0M=,tag:pQVI7DcO0RidAoIUDa7oZw==,type:str]
-    pgp: []
-    encrypted_regex: ^(apiKey|appUserPassword|otelUserPassword|harborAdminPassword|totpVaultKey|kimaiAppSecret|kimaiAdminPassword|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET|GITHUB_PRIVATE_KEY|woosh|root_password|rspamd_password|pgdb_password|matrix_access_token|pgdb_remote_url|hmac_secret_key|adminPassword|adminEmail|jenkinsAdminEmail|securityRealm|gerrit.config|routing_key|DATABASE_URL|SMTP_PASSWORD|SECRET_KEY_BASE|admin_password|extraCommands|key|clickhouseDatabaseURL|databaseURL|client_id|client_secret|secret_key_base|otp_secret|private_key|public_key|primaryKey|deterministicKey|keyDerivationSalt|token|clientId|secretKey|installationId|installationKey|uriOverride|adminToken.value|password.value|sql_password|erlangCookie|AUTHENTICATION_PASSWORD|ROOM_API_SECRET_KEY|adminPassword|configPassword|adminUser|configUser|MAIL_PASSWORD|APP_KEY|api_key|api_secret|keys|livekit_key|livekit_secret|secret_key|admin_pass|admin_email|mariadbPassword|mariadbRootPassword|privateKey|data|stringData|PASSWD|password|pass|postgresPassword|smtp_auth_password|addresses|smtp_auth_username|authorization_credentials|postgresqlPassword|redminePassword|smtpPassword|registration_shared_secret|shared_secret|secret|admin_token|integrationKey|integration_key|rootPassword|adminPassword|adminUser|adminEmail|emailPassword|secretKey|appId|clientSecret|webhookSecret|content)$
-    version: 3.9.1
