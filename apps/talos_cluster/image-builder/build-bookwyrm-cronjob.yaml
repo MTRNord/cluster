@@ -16,7 +16,6 @@ spec:
           serviceAccountName: image-builder-cronjob
           restartPolicy: OnFailure
           initContainers:
-            # Step 1: Check upstream version and whether it already exists in registry.
             - name: check-version
               image: alpine:3
               command:
@@ -49,7 +48,6 @@ spec:
                 - name: workspace
                   mountPath: /workspace
 
-            # Step 2: Clone gitops repo to get the dockerfile.patch
             - name: clone-gitops
               image: alpine/git:latest
               command:
@@ -62,7 +60,6 @@ spec:
                 - name: workspace
                   mountPath: /workspace
 
-            # Step 3: Clone upstream bookwyrm at the detected version and apply patch.
             - name: clone-bookwyrm
               image: alpine/git:latest
               command:
@@ -107,9 +104,11 @@ spec:
                   set -eu
                   apk add --no-cache podman cosign git >/dev/null
 
-                  # Start podman daemon
-                  podman system service unix:///run/podman/podman.sock &>/dev/null &
-                  sleep 2
+                  mkdir -p /etc/containers
+                  cat > /etc/containers/storage.conf << 'STORAGE_EOF'
+                  [storage]
+                  driver = "vfs"
+                  STORAGE_EOF
 
                   if [ -f /workspace/skip ]; then
                     echo "Nothing to build — tag already exists in registry"

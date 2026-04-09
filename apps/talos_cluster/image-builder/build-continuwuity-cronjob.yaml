@@ -16,18 +16,6 @@ spec:
           serviceAccountName: image-builder-cronjob
           restartPolicy: Never
           initContainers:
-            - name: setup-cosign
-              image: alpine:3
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  wget -qO /tools/cosign https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64 \
-                    && chmod +x /tools/cosign
-              volumeMounts:
-                - name: tools
-                  mountPath: /tools
-
             - name: clone-repo
               image: alpine/git:latest
               command:
@@ -39,6 +27,18 @@ spec:
               volumeMounts:
                 - name: workspace
                   mountPath: /workspace
+
+            - name: setup-cosign
+              image: alpine:3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  wget -qO /tools/cosign https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64 \
+                    && chmod +x /tools/cosign
+              volumeMounts:
+                - name: tools
+                  mountPath: /tools
 
           containers:
             - name: build
@@ -52,9 +52,11 @@ spec:
                   set -eu
                   apk add --no-cache podman cosign git >/dev/null
 
-                  # Start podman daemon
-                  podman system service unix:///run/podman/podman.sock &>/dev/null &
-                  sleep 2
+                  mkdir -p /etc/containers
+                  cat > /etc/containers/storage.conf << 'STORAGE_EOF'
+                  [storage]
+                  driver = "vfs"
+                  STORAGE_EOF
 
                   mkdir -p /root/.docker
                   cp /registry-secret/dockerconfig.json /root/.docker/config.json
@@ -96,6 +98,8 @@ spec:
                 - name: COSIGN_EXPERIMENTAL
                   value: "1"
               volumeMounts:
+                - name: tools
+                  mountPath: /tools
                 - name: workspace
                   mountPath: /workspace
                   readOnly: true
@@ -107,9 +111,9 @@ spec:
                   readOnly: true
 
           volumes:
-            - name: workspace
-              emptyDir: {}
             - name: tools
+              emptyDir: {}
+            - name: workspace
               emptyDir: {}
             - name: registry-secret
               secret:
