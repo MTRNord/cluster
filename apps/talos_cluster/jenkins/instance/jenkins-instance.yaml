@@ -1,185 +1,179 @@
 apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
 metadata:
-    name: jenkins
-    namespace: jenkins
+  name: jenkins
+  namespace: jenkins
 spec:
-    # Enable security validation
-    validateSecurityWarnings: true
-    # Configuration as Code - references ConfigMap
-    configurationAsCode:
-        configurations:
-            - name: jenkins-casc
-        secret:
-            name: ""
-    # Groovy scripts (if needed)
-    groovyScripts:
-        configurations: []
-        secret:
-            name: ""
-    # API settings - IMPORTANT: jenkins-operator user must have admin rights
-    jenkinsAPISettings:
-        authorizationStrategy: createUser
-    # Service configuration
-    service:
-        type: ClusterIP
-        port: 8080
-    slaveService:
-        type: ClusterIP
-        port: 50000
-    # Master/Controller pod specification
-    master:
-        # Security context - run as jenkins user (1000)
+  # Enable security validation
+  validateSecurityWarnings: true
+  # Configuration as Code - references ConfigMap
+  configurationAsCode:
+    configurations:
+      - name: jenkins-casc
+    secret:
+      name: ""
+  # Groovy scripts (if needed)
+  groovyScripts:
+    configurations: []
+    secret:
+      name: ""
+  # API settings - IMPORTANT: jenkins-operator user must have admin rights
+  jenkinsAPISettings:
+    authorizationStrategy: createUser
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 8080
+  slaveService:
+    type: ClusterIP
+    port: 50000
+  # Master/Controller pod specification
+  master:
+    # Security context - run as jenkins user (1000)
+    securityContext:
+      runAsUser: 1000
+      fsGroup: 1000
+    # Disable CSRF protection is not recommended - keep enabled (default)
+    disableCSRFProtection: false
+    # Base plugins (required by operator)
+    basePlugins:
+      - name: kubernetes
+        version: 4423.vb_59f230b_ce53
+      - name: workflow-job
+        version: 1573.v1465f6f78810
+      - name: workflow-aggregator
+        version: 608.v67378e9d3db_1
+      - name: git
+        version: 5.10.1
+      - name: job-dsl
+        version: 3654.vdf58f53e2d15
+      - name: configuration-as-code
+        version: 2065.v7a_20a_b_d84088
+      - name: kubernetes-credentials-provider
+        version: 1.303.vdfcf47fb_b_fef
+    # Additional plugins for our use case
+    plugins:
+      - name: oic-auth
+        version: 4.668.v653c6b_c6cb_f5
+      - name: matrix-auth
+        version: 3.2.9
+      - name: pipeline-stage-view
+        version: "2.39"
+      - name: generic-webhook-trigger
+        version: 2.4.1
+      - name: timestamper
+        version: "1.30"
+      - name: ansicolor
+        version: 536.v13fa_b_860c267
+      - name: docker-workflow
+        version: 634.vedc7242b_eda_7
+    # Container specification
+    containers:
+      - name: jenkins-master
+        image: jenkins/jenkins:2.541.3-lts
+        imagePullPolicy: IfNotPresent
+        # Security context for container
         securityContext:
-            runAsUser: 1000
-            fsGroup: 1000
-        # Disable CSRF protection is not recommended - keep enabled (default)
-        disableCSRFProtection: false
-        # Annotations and labels
-        annotations:
-            description: Jenkins instance for multi-arch container builds
-        labels:
-            app: jenkins
-            version: lts
-        # Base plugins (required by operator)
-        basePlugins:
-            - name: kubernetes
-              version: 4423.vb_59f230b_ce53
-            - name: workflow-job
-              version: 1573.v1465f6f78810
-            - name: workflow-aggregator
-              version: 608.v67378e9d3db_1
-            - name: git
-              version: 5.10.1
-            - name: job-dsl
-              version: 3654.vdf58f53e2d15
-            - name: configuration-as-code
-              version: 2065.v7a_20a_b_d84088
-            - name: kubernetes-credentials-provider
-              version: 1.303.vdfcf47fb_b_fef
-        # Additional plugins for our use case
-        plugins:
-            - name: oic-auth
-              version: 4.668.v653c6b_c6cb_f5
-            - name: matrix-auth
-              version: 3.2.9
-            - name: pipeline-stage-view
-              version: "2.39"
-            - name: generic-webhook-trigger
-              version: 2.4.1
-            - name: timestamper
-              version: "1.30"
-            - name: ansicolor
-              version: 536.v13fa_b_860c267
-            - name: docker-workflow
-              version: 634.vedc7242b_eda_7
-        # Container specification
-        containers:
-            - name: jenkins-master
-              image: jenkins/jenkins:2.541.3-lts
-              imagePullPolicy: IfNotPresent
-              # Security context for container
-              securityContext:
-                # Allow privileged for Docker socket access
-                privileged: true
-                allowPrivilegeEscalation: true
-              # Liveness probe
-              livenessProbe:
-                failureThreshold: 20
-                httpGet:
-                    path: /login
-                    port: 8080
-                    scheme: HTTP
-                initialDelaySeconds: 100
-                periodSeconds: 10
-                successThreshold: 1
-                timeoutSeconds: 8
-              # Readiness probe
-              readinessProbe:
-                failureThreshold: 60
-                httpGet:
-                    path: /login
-                    port: 8080
-                    scheme: HTTP
-                initialDelaySeconds: 120
-                periodSeconds: 10
-                successThreshold: 1
-                timeoutSeconds: 8
-              # Resource management
-              resources:
-                limits:
-                    cpu: 1000m
-                    memory: 3Gi
-                requests:
-                    cpu: 250m
-                    memory: 500Mi
-              # Port configuration
-              ports:
-                - containerPort: 8080
-                  name: http
-                  protocol: TCP
-                - containerPort: 50000
-                  name: agent
-                  protocol: TCP
-              # Volume mounts
-              volumeMounts:
-                - name: registry-secret
-                  mountPath: /var/run/secrets/docker.io
-                  readOnly: true
-                - name: cosign-key
-                  mountPath: /var/run/secrets/cosign
-                  readOnly: true
-                - name: docker-sock
-                  mountPath: /var/run/docker.sock
-        # Volumes
-        volumes:
-            - name: registry-secret
-              secret:
-                secretName: registry-credentials
-                defaultMode: 256
-            - name: cosign-key
-              secret:
-                secretName: cosign-signing-key
-                defaultMode: 256
-            - name: docker-sock
-              hostPath:
-                path: /var/run/docker.sock
-                type: Socket
+          # Allow privileged for Docker socket access
+          privileged: true
+          allowPrivilegeEscalation: true
+        # Liveness probe
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /login
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 100
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 8
+        # Readiness probe
+        readinessProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /login
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 8
+        # Resource management
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 3Gi
+          requests:
+            cpu: 250m
+            memory: 500Mi
+        # Port configuration
+        ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 50000
+            name: agent
+            protocol: TCP
+        # Volume mounts
+        volumeMounts:
+          - name: registry-secret
+            mountPath: /var/run/secrets/docker.io
+            readOnly: true
+          - name: cosign-key
+            mountPath: /var/run/secrets/cosign
+            readOnly: true
+          - name: docker-sock
+            mountPath: /var/run/docker.sock
+    # Volumes
+    volumes:
+      - name: registry-secret
+        secret:
+          secretName: registry-credentials
+          defaultMode: 256
+      - name: cosign-key
+        secret:
+          secretName: cosign-signing-key
+          defaultMode: 256
+      - name: docker-sock
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: jenkins
-    namespace: jenkins
+  name: jenkins
+  namespace: jenkins
 spec:
-    type: ClusterIP
-    selector:
-        jenkins.io/instance: jenkins
-    ports:
-        - port: 8080
-          targetPort: 8080
-          name: http
-          protocol: TCP
-        - port: 50000
-          targetPort: 50000
-          name: agent
-          protocol: TCP
+  type: ClusterIP
+  selector:
+    jenkins.io/instance: jenkins
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+      protocol: TCP
+    - port: 50000
+      targetPort: 50000
+      name: agent
+      protocol: TCP
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-    name: jenkins
-    namespace: jenkins
+  name: jenkins
+  namespace: jenkins
 spec:
-    parentRefs:
-        - name: envoy-gateway
-          namespace: envoy-gateway
-    hostnames:
-        - jenkins.midnightthoughts.space
-    rules:
-        - backendRefs:
-            - name: jenkins
-              port: 8080
-          timeouts:
-            request: 600s
-            backendRequest: 0s
+  parentRefs:
+    - name: envoy-gateway
+      namespace: envoy-gateway
+  hostnames:
+    - jenkins.midnightthoughts.space
+  rules:
+    - backendRefs:
+        - name: jenkins
+          port: 8080
+      timeouts:
+        request: 600s
+        backendRequest: 0s
