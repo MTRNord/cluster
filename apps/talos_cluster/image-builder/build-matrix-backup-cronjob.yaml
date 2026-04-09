@@ -38,7 +38,7 @@ spec:
                 - -c
                 - |
                   set -eu
-                  apk add --no-cache podman git iptables >/dev/null
+                  apk add --no-cache podman git iptables jq >/dev/null
                   
                   # Install cosign v3.0.6
                   wget -q https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64 -O /tmp/cosign && chmod +x /tmp/cosign
@@ -71,12 +71,29 @@ spec:
                   podman push "${IMAGE}:main"
                   podman push "${IMAGE}:${TAG_SHA}"
 
-                  # Get manifest list digest and all platform digests
-                  MANIFEST_LIST_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" | cut -d@ -f2)"
-                  PLATFORM_DIGESTS="$(podman manifest inspect "${IMAGE}:${TAG_TS}" --raw | jq -r '.manifests[].digest' 2>/dev/null || echo "")"
+                  # Pull again to refresh digest from registry
+                  podman rmi "${IMAGE}:${TAG_TS}" "${IMAGE}:main" "${IMAGE}:${TAG_SHA}" || true
+                  sleep 2
+                  podman pull "${IMAGE}:${TAG_TS}"
                   
-                  [ -z "$MANIFEST_LIST_DIGEST" ] && echo "Failed to get manifest list digest" && exit 1
+                  # Get manifest list digest with retry
+                  MANIFEST_LIST_DIGEST=""
+                  for attempt in 1 2 3 4 5; do
+                    MANIFEST_LIST_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" | cut -d@ -f2)"
+                    if [ -n "$MANIFEST_LIST_DIGEST" ]; then
+                      break
+                    fi
+                    if [ $attempt -lt 5 ]; then
+                      echo "Waiting for registry to index manifest (attempt $attempt/5)..."
+                      sleep 3
+                    fi
+                  done
+                  
+                  [ -z "$MANIFEST_LIST_DIGEST" ] && echo "Failed to get manifest list digest after retries" && exit 1
                   echo "==> Manifest List Digest: ${MANIFEST_LIST_DIGEST}"
+                  
+                  # Wait a bit more to ensure registry has the digest available for signing
+                  sleep 2
                   
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
                   /tmp/cosign sign --yes \
@@ -87,19 +104,17 @@ spec:
                     "${IMAGE}@${MANIFEST_LIST_DIGEST}"
                   
                   # Sign each platform digest
-                  if [ -n "$PLATFORM_DIGESTS" ]; then
-                    while IFS= read -r DIGEST; do
-                      [ -z "$DIGEST" ] && continue
-                      echo "==> Signing platform digest: ${DIGEST}"
-                      COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
-                      /tmp/cosign sign --yes \
-                        --key /cosign-secret/cosign.key \
-                        --new-bundle-format=false \
-                        --use-signing-config=false \
-                        --registry-referrers-mode=oci-1-1 \
-                        "${IMAGE}@${DIGEST}"
-                    done <<< "$PLATFORM_DIGESTS"
-                  fi
+                  podman manifest inspect "${IMAGE}:${TAG_TS}" | jq -r '.manifests[].digest' | while read -r DIGEST; do
+                    [ -z "$DIGEST" ] && continue
+                    echo "==> Signing platform digest: ${DIGEST}"
+                    COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
+                    /tmp/cosign sign --yes \
+                      --key /cosign-secret/cosign.key \
+                      --new-bundle-format=false \
+                      --use-signing-config=false \
+                      --registry-referrers-mode=oci-1-1 \
+                      "${IMAGE}@${DIGEST}" || true
+                  done
 
                   echo "==> Done: ${IMAGE}:${TAG_TS}"
               env:
