@@ -134,25 +134,6 @@ spec:
           secretName: cosign-signing-key
           defaultMode: 256
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: jenkins
-  namespace: jenkins
-spec:
-  type: ClusterIP
-  selector:
-    jenkins.io/instance: jenkins
-  ports:
-    - port: 8080
-      targetPort: 8080
-      name: http
-      protocol: TCP
-    - port: 50000
-      targetPort: 50000
-      name: agent
-      protocol: TCP
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -166,7 +147,7 @@ spec:
     - jenkins.midnightthoughts.space
   rules:
     - backendRefs:
-        - name: jenkins
+        - name: jenkins-operator-http-jenkins
           port: 8080
       timeouts:
         request: 600s
