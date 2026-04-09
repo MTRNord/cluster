@@ -16,13 +16,6 @@ spec:
           serviceAccountName: image-builder-cronjob
           restartPolicy: Never
           initContainers:
-            - name: setup-buildctl
-              image: moby/buildkit:v0.29.0
-              command: [cp, /usr/bin/buildctl, /tools/buildctl]
-              volumeMounts:
-                - name: tools
-                  mountPath: /tools
-
             - name: setup-cosign
               image: alpine:3
               command:
@@ -31,19 +24,6 @@ spec:
                 - |
                   wget -qO /tools/cosign https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64 \
                     && chmod +x /tools/cosign
-              volumeMounts:
-                - name: tools
-                  mountPath: /tools
-
-            - name: setup-crane
-              image: alpine:3
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  wget -qO /tmp/crane.tar.gz https://github.com/google/go-containerregistry/releases/download/v0.21.4/go-containerregistry_Linux_x86_64.tar.gz \
-                    && tar -xzf /tmp/crane.tar.gz -C /tools crane \
-                    && chmod +x /tools/crane
               volumeMounts:
                 - name: tools
                   mountPath: /tools
@@ -68,8 +48,7 @@ spec:
                 - -c
                 - |
                   set -eu
-                  apk add --no-cache git >/dev/null
-                  export PATH="/tools:$PATH"
+                  apk add --no-cache podman cosign >/dev/null
 
                   mkdir -p /root/.docker
                   cp /registry-secret/dockerconfig.json /root/.docker/config.json
@@ -80,21 +59,21 @@ spec:
 
                   echo "==> Building ${IMAGE}:${TAG_TS}"
 
-                  buildctl \
-                    --addr tcp://buildkitd.image-builder.svc.cluster.local:1234 \
-                    build \
-                    --frontend dockerfile.v0 \
-                    --opt platform=linux/amd64,linux/arm64 \
-                    --local context=/workspace/apps/talos_cluster/continuwuity \
-                    --local dockerfile=/workspace/apps/talos_cluster/continuwuity \
-                    --output "type=image,name=${IMAGE}:${TAG_TS},push=true,oci-mediatypes=true" \
-                    --metadata-file /tmp/build-meta.json
+                  podman build \
+                    --platform linux/amd64,linux/arm64 \
+                    --manifest "${IMAGE}:${TAG_TS}" \
+                    -f /workspace/apps/talos_cluster/continuwuity/Dockerfile \
+                    /workspace/apps/talos_cluster/continuwuity
 
-                  DIGEST="$(crane digest ${IMAGE}:${TAG_TS})"
-                  echo "==> Digest: ${DIGEST}"
+                  podman manifest push --all "${IMAGE}:${TAG_TS}" "docker://${IMAGE}:${TAG_TS}"
+                  podman tag "${IMAGE}:${TAG_TS}" "${IMAGE}:main"
+                  podman tag "${IMAGE}:${TAG_TS}" "${IMAGE}:${TAG_SHA}"
+                  podman push "${IMAGE}:main"
+                  podman push "${IMAGE}:${TAG_SHA}"
 
-                  crane cp "${IMAGE}:${TAG_TS}" "${IMAGE}:main"
-                  crane cp "${IMAGE}:${TAG_TS}" "${IMAGE}:${TAG_SHA}"
+                  DIGEST="$(podman inspect --format='{{.RepoDigests}}' ${IMAGE}:${TAG_TS} | grep -o 'sha256:[^@]*' | cut -d: -f2)"
+                  [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
+                  echo "==> Digest: sha256:${DIGEST}"
 
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
                   cosign sign --yes \
@@ -102,7 +81,7 @@ spec:
                     --new-bundle-format=false \
                     --use-signing-config=false \
                     --registry-referrers-mode=oci-1-1 \
-                    "${IMAGE}@${DIGEST}"
+                    "${IMAGE}@sha256:${DIGEST}"
 
                   echo "==> Done: ${IMAGE}:${TAG_TS}"
               env:
@@ -111,8 +90,6 @@ spec:
                 - name: COSIGN_EXPERIMENTAL
                   value: "1"
               volumeMounts:
-                - name: tools
-                  mountPath: /tools
                 - name: workspace
                   mountPath: /workspace
                   readOnly: true
@@ -124,9 +101,9 @@ spec:
                   readOnly: true
 
           volumes:
-            - name: tools
-              emptyDir: {}
             - name: workspace
+              emptyDir: {}
+            - name: tools
               emptyDir: {}
             - name: registry-secret
               secret:
