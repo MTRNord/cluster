@@ -67,7 +67,7 @@ spec:
                   podman push "${IMAGE}:main"
                   podman push "${IMAGE}:${TAG_SHA}"
 
-                  DIGEST="$(podman inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:main" | cut -d@ -f2)"
+                  DIGEST="$(podman inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" | cut -d@ -f2)"
                   [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
                   echo "==> Digest: ${DIGEST}"
 
