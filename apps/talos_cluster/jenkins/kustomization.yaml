@@ -4,10 +4,12 @@ metadata:
   name: jenkins
   namespace: jenkins
 
+# Stage 1: Deploy operator (creates CRD)
 resources:
   - namespace.yaml
   - helm-repository.yaml
   - operator-release.yaml
-  - registry-secret.yaml
-  - cosign-secret.yaml
-  - jenkins-instance.yaml
+
+# Stage 2: Deploy Jenkins instance (after CRD exists)
+bases:
+  - instance
