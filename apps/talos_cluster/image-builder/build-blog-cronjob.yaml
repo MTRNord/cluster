@@ -16,6 +16,16 @@ spec:
           serviceAccountName: image-builder-cronjob
           restartPolicy: Never
           initContainers:
+            - name: register-qemu
+              image: multiarch/qemu-user-static:latest
+              securityContext:
+                privileged: true
+              command:
+                - /register
+                - --reset
+                - -p
+                - "yes"
+            
             - name: clone-repo
               image: alpine/git:latest
               command:
@@ -38,7 +48,7 @@ spec:
                 - -c
                 - |
                   set -eu
-                  apk add --no-cache podman git iptables jq qemu-user-static >/dev/null
+                  apk add --no-cache podman git iptables jq >/dev/null
                   
                   # Install cosign v3.0.6
                   wget -q https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64 -O /tmp/cosign && chmod +x /tmp/cosign
