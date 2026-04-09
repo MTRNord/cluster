@@ -76,7 +76,7 @@ spec:
                   echo "==> Digest: ${DIGEST}"
 
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
-                  cosign sign --yes \
+                  /tmp/cosign sign --yes \
                     --key /cosign-secret/cosign.key \
                     --new-bundle-format=false \
                     --use-signing-config=false \

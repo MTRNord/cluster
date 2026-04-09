@@ -102,7 +102,10 @@ spec:
                 - -c
                 - |
                   set -eu
-                  apk add --no-cache podman cosign git iptables >/dev/null
+                  apk add --no-cache podman git iptables >/dev/null
+                  
+                  # Install cosign v3.0.6
+                  wget -q https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-arm64 -O /tmp/cosign && chmod +x /tmp/cosign
 
                   mkdir -p /etc/containers
                   cat > /etc/containers/storage.conf << 'STORAGE_EOF'
@@ -139,7 +142,7 @@ spec:
                   echo "==> Digest: ${DIGEST}"
 
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
-                  cosign sign --yes \
+                  /tmp/cosign sign --yes \
                     --key /cosign-secret/cosign.key \
                     --new-bundle-format=false \
                     --use-signing-config=false \
