@@ -83,9 +83,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/auto-sizes.1.7.0.zip \
     && unzip -q auto-sizes.1.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm auto-sizes.1.7.0.zip
 # Install Friends
-RUN wget -q https://downloads.wordpress.org/plugin/friends.4.0.3.zip \
-    && unzip -q friends.4.0.3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm friends.4.0.3.zip
+RUN wget -q https://downloads.wordpress.org/plugin/friends.4.0.4.zip \
+    && unzip -q friends.4.0.4.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm friends.4.0.4.zip
 # Install Image Placeholders
 RUN wget -q https://downloads.wordpress.org/plugin/dominant-color-images.1.2.1.zip \
     && unzip -q dominant-color-images.1.2.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
@@ -175,9 +175,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
     && rm akismet.5.6.zip
 
 # Install Podlove Publisher
-RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.4.1.zip \
-    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.4.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm podlove-podcasting-plugin-for-wordpress.4.4.1.zip
+RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.4.2.zip \
+    && unzip -q -o podlove-podcasting-plugin-for-wordpress.4.4.2.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm podlove-podcasting-plugin-for-wordpress.4.4.2.zip
 
 # Install Podlove Web Player
 RUN wget -q https://downloads.wordpress.org/plugin/podlove-web-player.5.9.2.zip \
