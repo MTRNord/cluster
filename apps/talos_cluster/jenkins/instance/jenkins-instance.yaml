@@ -123,8 +123,6 @@ spec:
                   protocol: TCP
               # Volume mounts
               volumeMounts:
-                - name: jenkins-home
-                  mountPath: /var/jenkins_home
                 - name: registry-secret
                   mountPath: /var/run/secrets/docker.io
                   readOnly: true
@@ -135,9 +133,6 @@ spec:
                   mountPath: /var/run/docker.sock
         # Volumes
         volumes:
-            - name: jenkins-home
-              persistentVolumeClaim:
-                claimName: jenkins-home
             - name: registry-secret
               secret:
                 secretName: registry-credentials
@@ -150,19 +145,6 @@ spec:
               hostPath:
                 path: /var/run/docker.sock
                 type: Socket
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-    name: jenkins-home
-    namespace: jenkins
-spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 20Gi
-    storageClassName: longhorn-2replicas
 ---
 apiVersion: v1
 kind: Service
