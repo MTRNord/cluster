@@ -2,6 +2,7 @@
 # The goolm build tag enables mautrix-go's pure-Go Olm/Megolm implementation.
 
 # Build stage runs on the native host arch; cross-compiles via GOARCH.
+# {"$imagepolicy": "flux-system:docker-golang-1-25-bookworm"}
 FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS builder
 ARG TARGETARCH
 
@@ -21,6 +22,7 @@ RUN CGO_ENABLED=0 GOARCH=${TARGETARCH} \
     .
 
 # Runtime stage — distroless/static has no shell, no libc, minimal attack surface.
+# {"$imagepolicy": "flux-system:gcr-distroless-static-nonroot"}
 FROM gcr.io/distroless/static:nonroot
 
 COPY --from=builder /matrix-backup /matrix-backup

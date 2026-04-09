@@ -1,9 +1,11 @@
 # Wraps the upstream continuwuity scratch-based image with a shell (debian:12-slim)
 # so that Velero pre/post backup hooks can freeze the process via SIGSTOP/SIGCONT.
+# {"$imagepolicy": "flux-system:forgejo-continuwuity-main"}
 FROM forgejo.ellis.link/continuwuation/continuwuity:main AS upstream
 
 # Build ldb and sst_dump from the exact RocksDB version continuwuity uses (10.10.1)
 # so MANIFEST format is guaranteed compatible for recovery operations.
+# {"$imagepolicy": "flux-system:docker-debian-12-slim"}
 FROM debian:12-slim AS rocksdb-tools-builder
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -27,6 +29,7 @@ RUN cmake -B build \
         -DCMAKE_CXX_FLAGS="-Wno-restrict" \
     && cmake --build build --target ldb sst_dump -j$(nproc)
 
+# {"$imagepolicy": "flux-system:docker-debian-12-slim"}
 FROM debian:12-slim
 # Runtime deps for ldb/sst_dump
 RUN apt-get update \

@@ -1,0 +1,120 @@
+---
+# Ubuntu image for blog
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: docker-ubuntu
+  namespace: flux-system
+spec:
+  image: docker.io/library/ubuntu
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: docker-ubuntu-25
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: docker-ubuntu
+  filterTags:
+    pattern: '^25\.10$'
+  policy:
+    semver:
+      range: "25.10"
+---
+# Debian image for continuwuity and matrix-backup builder
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: docker-debian
+  namespace: flux-system
+spec:
+  image: docker.io/library/debian
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: docker-debian-12-slim
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: docker-debian
+  filterTags:
+    pattern: '^12.*-slim$'
+  policy:
+    semver:
+      range: "12.*"
+---
+# Golang image for matrix-backup builder
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: docker-golang
+  namespace: flux-system
+spec:
+  image: docker.io/library/golang
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: docker-golang-1-25-bookworm
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: docker-golang
+  filterTags:
+    pattern: '^1\.25.*-bookworm$'
+  policy:
+    semver:
+      range: "1.25.*"
+---
+# Distroless static image for matrix-backup runtime
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: gcr-distroless-static
+  namespace: flux-system
+spec:
+  image: gcr.io/distroless/static
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: gcr-distroless-static-nonroot
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: gcr-distroless-static
+  filterTags:
+    pattern: '^nonroot$'
+  policy:
+    alphabetical:
+      order: asc
+---
+# Continuwuity upstream image
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: forgejo-continuwuity
+  namespace: flux-system
+spec:
+  image: forgejo.ellis.link/continuwuation/continuwuity
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: forgejo-continuwuity-main
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: forgejo-continuwuity
+  filterTags:
+    pattern: '^main$'
+  policy:
+    alphabetical:
+      order: asc

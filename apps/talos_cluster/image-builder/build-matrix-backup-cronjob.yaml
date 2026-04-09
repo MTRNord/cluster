@@ -85,7 +85,6 @@ spec:
                     build \
                     --frontend dockerfile.v0 \
                     --opt platform=linux/amd64,linux/arm64 \
-                    --no-cache \
                     --local context=/workspace/apps/talos_cluster/matrix-backup/backup-tool \
                     --local dockerfile=/workspace/apps/talos_cluster/matrix-backup/backup-tool \
                     --output "type=image,name=${IMAGE}:${TAG_TS},push=true,oci-mediatypes=true" \
