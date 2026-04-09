@@ -74,6 +74,10 @@ spec:
       - name: jenkins-master
         image: jenkins/jenkins:2.541.3-lts
         imagePullPolicy: IfNotPresent
+        # Environment variables
+        env:
+          - name: CASC_JENKINS_CONFIG
+            value: /var/lib/jenkins/casc_configs
         # Security context for container
         securityContext:
           # Allow privileged for Docker socket access
@@ -119,6 +123,9 @@ spec:
             protocol: TCP
         # Volume mounts
         volumeMounts:
+          - name: casc-config
+            mountPath: /var/lib/jenkins/casc_configs
+            readOnly: true
           - name: registry-secret
             mountPath: /var/run/secrets/docker.io
             readOnly: true
@@ -127,6 +134,9 @@ spec:
             readOnly: true
     # Volumes
     volumes:
+      - name: casc-config
+        configMap:
+          name: jenkins-casc
       - name: registry-secret
         secret:
           secretName: registry-credentials
