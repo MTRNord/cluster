@@ -130,10 +130,11 @@ spec:
                     /workspace/bookwyrm
 
                   podman manifest push --all "${IMAGE}:${VERSION}" "docker://${IMAGE}:${VERSION}"
+                  podman pull "${IMAGE}:${VERSION}"
                   podman tag "${IMAGE}:${VERSION}" "${IMAGE}:latest"
                   podman push "${IMAGE}:latest"
 
-                  DIGEST="$(podman inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${VERSION}" | cut -d@ -f2)"
+                  DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${VERSION}" | cut -d@ -f2)"
                   [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
                   echo "==> Digest: ${DIGEST}"
 

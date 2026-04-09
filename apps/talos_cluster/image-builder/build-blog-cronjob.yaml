@@ -62,12 +62,13 @@ spec:
                     /workspace/apps/talos_cluster/blog/docker
 
                   podman manifest push --all "${IMAGE}:${TAG_TS}" "docker://${IMAGE}:${TAG_TS}"
+                  podman pull "${IMAGE}:${TAG_TS}"
                   podman tag "${IMAGE}:${TAG_TS}" "${IMAGE}:latest"
                   podman tag "${IMAGE}:${TAG_TS}" "${IMAGE}:${TAG_SHA}"
                   podman push "${IMAGE}:latest"
                   podman push "${IMAGE}:${TAG_SHA}"
 
-                  DIGEST="$(podman inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" | cut -d@ -f2)"
+                  DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" | cut -d@ -f2)"
                   [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
                   echo "==> Digest: ${DIGEST}"
 
