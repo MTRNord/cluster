@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jenkins-operator
+  namespace: jenkins
+spec:
+  interval: 1h
+  releaseName: jenkins-operator
+  chart:
+    spec:
+      chart: jenkins-operator
+      sourceRef:
+        kind: HelmRepository
+        name: jenkins-operator
+        namespace: jenkins
+  values:
+    # Disable default Jenkins instance - we'll create our own via CRD
+    jenkins:
+      enabled: false
