@@ -103,7 +103,11 @@ spec:
                 - -c
                 - |
                   set -eu
-                  apk add --no-cache podman cosign >/dev/null
+                  apk add --no-cache podman cosign git >/dev/null
+
+                  # Start podman daemon
+                  podman system service unix:///run/podman/podman.sock &>/dev/null &
+                  sleep 2
 
                   if [ -f /workspace/skip ]; then
                     echo "Nothing to build — tag already exists in registry"
