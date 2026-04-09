@@ -90,6 +90,8 @@ spec:
                     --output "type=image,name=${IMAGE}:${TAG_TS},push=true,oci-mediatypes=true" \
                     --metadata-file /tmp/build-meta.json
 
+                  echo "==> Built ${IMAGE}:${TAG_TS}"
+
                   DIGEST="$(crane digest ${IMAGE}:${TAG_TS})"
                   echo "==> Digest: ${DIGEST}"
 
