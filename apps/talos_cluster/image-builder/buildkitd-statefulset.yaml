@@ -25,6 +25,8 @@ spec:
             - unix:///run/buildkit/buildkitd.sock
             - --addr
             - tcp://0.0.0.0:1234
+            - --allow-insecure-entitlement
+            - security.insecure
           ports:
             - containerPort: 1234
               protocol: TCP
@@ -52,8 +54,6 @@ spec:
               readOnly: true
             - name: containerd-sock
               mountPath: /run/containerd
-            - name: binfmt-misc
-              mountPath: /proc/sys/fs/binfmt_misc
       volumes:
         - name: docker-config
           secret:
@@ -64,8 +64,4 @@ spec:
         - name: containerd-sock
           hostPath:
             path: /run/containerd
-            type: Directory
-        - name: binfmt-misc
-          hostPath:
-            path: /proc/sys/fs/binfmt_misc
             type: Directory
