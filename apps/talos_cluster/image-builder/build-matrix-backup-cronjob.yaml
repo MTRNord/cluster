@@ -71,41 +71,64 @@ spec:
                   podman push "${IMAGE}:main"
                   podman push "${IMAGE}:${TAG_SHA}"
 
-                  # Pull again to refresh digest from registry
+                  # Pull all tags to refresh digests from registry
                   podman rmi "${IMAGE}:${TAG_TS}" "${IMAGE}:main" "${IMAGE}:${TAG_SHA}" || true
                   sleep 2
                   podman pull "${IMAGE}:${TAG_TS}"
+                  podman pull "${IMAGE}:main"
+                  podman pull "${IMAGE}:${TAG_SHA}"
                   
-                  # Get manifest list digest with retry
-                  MANIFEST_LIST_DIGEST=""
+                  # Collect all unique digests from all tags
+                  DIGESTS_TO_SIGN=""
                   for attempt in 1 2 3 4 5; do
-                    MANIFEST_LIST_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" | cut -d@ -f2)"
-                    if [ -n "$MANIFEST_LIST_DIGEST" ]; then
+                    TAG_TS_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_TS}" 2>/dev/null | cut -d@ -f2)"
+                    TAG_MAIN_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:main" 2>/dev/null | cut -d@ -f2)"
+                    TAG_SHA_DIGEST="$(podman image inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:${TAG_SHA}" 2>/dev/null | cut -d@ -f2)"
+                    
+                    if [ -n "$TAG_TS_DIGEST" ]; then
+                      DIGESTS_TO_SIGN=$(echo "$DIGESTS_TO_SIGN $TAG_TS_DIGEST" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+                    fi
+                    if [ -n "$TAG_MAIN_DIGEST" ]; then
+                      DIGESTS_TO_SIGN=$(echo "$DIGESTS_TO_SIGN $TAG_MAIN_DIGEST" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+                    fi
+                    if [ -n "$TAG_SHA_DIGEST" ]; then
+                      DIGESTS_TO_SIGN=$(echo "$DIGESTS_TO_SIGN $TAG_SHA_DIGEST" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+                    fi
+                    
+                    if [ -n "$DIGESTS_TO_SIGN" ]; then
                       break
                     fi
                     if [ $attempt -lt 5 ]; then
-                      echo "Waiting for registry to index manifest (attempt $attempt/5)..."
+                      echo "Waiting for registry to index tags (attempt $attempt/5)..."
                       sleep 3
                     fi
                   done
                   
-                  [ -z "$MANIFEST_LIST_DIGEST" ] && echo "Failed to get manifest list digest after retries" && exit 1
-                  echo "==> Manifest List Digest: ${MANIFEST_LIST_DIGEST}"
+                  [ -z "$DIGESTS_TO_SIGN" ] && echo "Failed to get tag digests after retries" && exit 1
+                  echo "==> Unique digests to sign: $DIGESTS_TO_SIGN"
                   
-                  # Wait a bit more to ensure registry has the digest available for signing
+                  # Wait a bit more to ensure registry has the digests available for signing
                   sleep 2
                   
-                  COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
-                  /tmp/cosign sign --yes \
-                    --key /cosign-secret/cosign.key \
-                    --new-bundle-format=false \
-                    --use-signing-config=false \
-                    --registry-referrers-mode=oci-1-1 \
-                    "${IMAGE}@${MANIFEST_LIST_DIGEST}"
+                  # Sign all tag digests (manifest list and/or platform-specific)
+                  for DIGEST in $DIGESTS_TO_SIGN; do
+                    echo "==> Signing tag digest: ${DIGEST}"
+                    COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
+                    /tmp/cosign sign --yes \
+                      --key /cosign-secret/cosign.key \
+                      --new-bundle-format=false \
+                      --use-signing-config=false \
+                      --registry-referrers-mode=oci-1-1 \
+                      "${IMAGE}@${DIGEST}" || true
+                  done
                   
-                  # Sign each platform digest
-                  podman manifest inspect "${IMAGE}:${TAG_TS}" | jq -r '.manifests[].digest' | while read -r DIGEST; do
+                  # Sign each platform digest from the manifest
+                  podman manifest inspect "${IMAGE}:${TAG_TS}" 2>/dev/null | jq -r '.manifests[].digest' 2>/dev/null | while read -r DIGEST; do
                     [ -z "$DIGEST" ] && continue
+                    # Skip if already signed (check if it's in our tag digests)
+                    if echo "$DIGESTS_TO_SIGN" | grep -q "$DIGEST"; then
+                      continue
+                    fi
                     echo "==> Signing platform digest: ${DIGEST}"
                     COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
                     /tmp/cosign sign --yes \
