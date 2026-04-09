@@ -98,6 +98,8 @@ spec:
           containers:
             - name: build
               image: alpine:3
+              securityContext:
+                privileged: true
               command:
                 - /bin/sh
                 - -c
