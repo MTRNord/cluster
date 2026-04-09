@@ -4,12 +4,12 @@ metadata:
   name: jenkins
   namespace: jenkins
 
-# Stage 1: Deploy operator (creates CRD)
+# Stage 1: Operator deployment resources
 resources:
   - namespace.yaml
   - helm-repository.yaml
   - operator-release.yaml
-
-# Stage 2: Deploy Jenkins instance (after CRD exists)
-bases:
   - instance
+
+# Ensure operator is fully reconciled before creating Jenkins CRD
+# (kubectl apply will still need manual stage 2, or use Flux for automatic ordering)
