@@ -18,10 +18,10 @@ spec:
   imageRepositoryRef:
     name: docker-ubuntu
   filterTags:
-    pattern: '^25\.10$'
+    pattern: '^25\.10.*'
   policy:
-    semver:
-      range: "25.10"
+    alphabetical:
+      order: desc
 ---
 # Debian image for continuwuity and matrix-backup builder
 apiVersion: image.toolkit.fluxcd.io/v1beta2
@@ -44,8 +44,8 @@ spec:
   filterTags:
     pattern: '^12.*-slim$'
   policy:
-    semver:
-      range: "12.*"
+    alphabetical:
+      order: desc
 ---
 # Golang image for matrix-backup builder
 apiVersion: image.toolkit.fluxcd.io/v1beta2
@@ -66,10 +66,10 @@ spec:
   imageRepositoryRef:
     name: docker-golang
   filterTags:
-    pattern: '^1\.25.*-bookworm$'
+    pattern: '^1\.25.*-bookworm.*'
   policy:
-    semver:
-      range: "1.25.*"
+    alphabetical:
+      order: desc
 ---
 # Distroless static image for matrix-backup runtime
 apiVersion: image.toolkit.fluxcd.io/v1beta2
