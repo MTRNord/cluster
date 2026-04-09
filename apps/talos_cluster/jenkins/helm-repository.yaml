@@ -1,15 +1,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
+kind: HelmRepository
 metadata:
   name: jenkins-operator
   namespace: jenkins
 spec:
   interval: 1h
-  url: https://github.com/jenkinsci/kubernetes-operator
-  ref:
-    branch: master
-  ignore: |
-    # exclude all
-    /*
-    # include chart directory
-    !/chart/
+  url: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
