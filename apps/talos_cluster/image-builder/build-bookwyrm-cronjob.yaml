@@ -17,8 +17,6 @@ spec:
           restartPolicy: OnFailure
           initContainers:
             # Step 1: Check upstream version and whether it already exists in registry.
-            # Writes the upstream version to /workspace/version.
-            # Writes /workspace/skip if the tag already exists (nothing to do).
             - name: check-version
               image: alpine:3
               command:
@@ -51,40 +49,7 @@ spec:
                 - name: workspace
                   mountPath: /workspace
 
-            # Step 2: Stage build tools (always runs; harmless if build is skipped)
-            - name: setup-buildctl
-              image: moby/buildkit:v0.29.0
-              command: [cp, /usr/bin/buildctl, /tools/buildctl]
-              volumeMounts:
-                - name: tools
-                  mountPath: /tools
-
-            - name: setup-cosign
-              image: alpine:3
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  wget -qO /tools/cosign https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64 \
-                    && chmod +x /tools/cosign
-              volumeMounts:
-                - name: tools
-                  mountPath: /tools
-
-            - name: setup-crane
-              image: alpine:3
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  wget -qO /tmp/crane.tar.gz https://github.com/google/go-containerregistry/releases/download/v0.21.4/go-containerregistry_Linux_x86_64.tar.gz \
-                    && tar -xzf /tmp/crane.tar.gz -C /tools crane \
-                    && chmod +x /tools/crane
-              volumeMounts:
-                - name: tools
-                  mountPath: /tools
-
-            # Step 3: Clone gitops repo to get the dockerfile.patch
+            # Step 2: Clone gitops repo to get the dockerfile.patch
             - name: clone-gitops
               image: alpine/git:latest
               command:
@@ -97,8 +62,7 @@ spec:
                 - name: workspace
                   mountPath: /workspace
 
-            # Step 4: Clone upstream bookwyrm at the detected version and apply patch.
-            # Skips everything if /workspace/skip exists.
+            # Step 3: Clone upstream bookwyrm at the detected version and apply patch.
             - name: clone-bookwyrm
               image: alpine/git:latest
               command:
@@ -125,7 +89,7 @@ spec:
                     git apply "$PATCH"
                     echo "Dockerfile patch applied successfully"
                   else
-                    echo "Patch does not apply cleanly — upstream Dockerfile likely already includes the changes, proceeding as-is"
+                    echo "Patch does not apply cleanly — proceeding as-is"
                   fi
               volumeMounts:
                 - name: workspace
@@ -139,7 +103,7 @@ spec:
                 - -c
                 - |
                   set -eu
-                  export PATH="/tools:$PATH"
+                  apk add --no-cache podman cosign >/dev/null
 
                   if [ -f /workspace/skip ]; then
                     echo "Nothing to build — tag already exists in registry"
@@ -154,20 +118,19 @@ spec:
 
                   echo "==> Building ${IMAGE}:${VERSION}"
 
-                  buildctl \
-                    --addr tcp://buildkitd.image-builder.svc.cluster.local:1234 \
-                    build \
-                    --frontend dockerfile.v0 \
-                    --opt platform=linux/amd64,linux/arm64 \
-                    --local context=/workspace/bookwyrm \
-                    --local dockerfile=/workspace/bookwyrm \
-                    --output "type=image,name=${IMAGE}:${VERSION},push=true,oci-mediatypes=true" \
-                    --metadata-file /tmp/build-meta.json
+                  podman build \
+                    --platform linux/amd64,linux/arm64 \
+                    --manifest "${IMAGE}:${VERSION}" \
+                    -f /workspace/bookwyrm/Dockerfile \
+                    /workspace/bookwyrm
 
-                  DIGEST="$(crane digest ${IMAGE}:${VERSION})"
-                  echo "==> Digest: ${DIGEST}"
+                  podman manifest push --all "${IMAGE}:${VERSION}" "docker://${IMAGE}:${VERSION}"
+                  podman tag "${IMAGE}:${VERSION}" "${IMAGE}:latest"
+                  podman push "${IMAGE}:latest"
 
-                  crane cp "${IMAGE}:${VERSION}" "${IMAGE}:latest"
+                  DIGEST="$(podman inspect --format='{{.RepoDigests}}' ${IMAGE}:${VERSION} | grep -o 'sha256:[^@]*' | cut -d: -f2)"
+                  [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
+                  echo "==> Digest: sha256:${DIGEST}"
 
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
                   cosign sign --yes \
@@ -175,7 +138,7 @@ spec:
                     --new-bundle-format=false \
                     --use-signing-config=false \
                     --registry-referrers-mode=oci-1-1 \
-                    "${IMAGE}@${DIGEST}"
+                    "${IMAGE}@sha256:${DIGEST}"
 
                   echo "==> Done: ${IMAGE}:${VERSION}"
               env:
@@ -184,8 +147,6 @@ spec:
                 - name: COSIGN_EXPERIMENTAL
                   value: "1"
               volumeMounts:
-                - name: tools
-                  mountPath: /tools
                 - name: workspace
                   mountPath: /workspace
                   readOnly: true
@@ -197,8 +158,6 @@ spec:
                   readOnly: true
 
           volumes:
-            - name: tools
-              emptyDir: {}
             - name: workspace
               emptyDir: {}
             - name: registry-secret
