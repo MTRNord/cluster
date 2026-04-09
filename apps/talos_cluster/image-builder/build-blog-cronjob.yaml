@@ -38,7 +38,7 @@ spec:
                 - -c
                 - |
                   set -eu
-                  apk add --no-cache podman cosign git >/dev/null
+                  apk add --no-cache podman cosign git iptables >/dev/null
 
                   mkdir -p /etc/containers
                   cat > /etc/containers/storage.conf << 'STORAGE_EOF'
