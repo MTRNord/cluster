@@ -158,6 +158,7 @@ spec:
                     --addr tcp://buildkitd.image-builder.svc.cluster.local:1234 \
                     build \
                     --frontend dockerfile.v0 \
+                    --opt image-resolve-mode=pull \
                     --opt platform=linux/amd64,linux/arm64 \
                     --local context=/workspace/bookwyrm \
                     --local dockerfile=/workspace/bookwyrm \
