@@ -29,12 +29,23 @@ spec:
       repositoryUrl: https://github.com/mtrnord/gitops.git
   # Backup and restore for build history
   backup:
-    enabled: true
-    destination: /backup
+    containerName: backup
+    action:
+      exec:
+        command:
+          - /home/user/bin/backup.sh
     interval: 30
+    makeBackupBeforePodDeletion: true
   restore:
-    enabled: true
-    recoveryOnce: true
+    containerName: backup
+    action:
+      exec:
+        command:
+          - /home/user/bin/restore.sh
+    getLatestAction:
+      exec:
+        command:
+          - /home/user/bin/get-latest.sh
   # Service configuration
   service:
     type: ClusterIP
