@@ -89,7 +89,7 @@ spec:
                     --addr tcp://buildkitd.image-builder.svc.cluster.local:1234 \
                     build \
                     --frontend dockerfile.v0 \
-                    --opt image-resolve-mode=pull \
+                    --no-cache \
                     --opt platform=linux/amd64,linux/arm64 \
                     --local context=/workspace/apps/talos_cluster/blog/docker \
                     --local dockerfile=/workspace/apps/talos_cluster/blog/docker \
