@@ -67,9 +67,9 @@ spec:
                   podman push "${IMAGE}:main"
                   podman push "${IMAGE}:${TAG_SHA}"
 
-                  DIGEST="$(podman inspect --format='{{.RepoDigests}}' ${IMAGE}:${TAG_TS} | grep -o 'sha256:[^@]*' | cut -d: -f2)"
+                  DIGEST="$(podman inspect --format='{{index .RepoDigests 0}}' "${IMAGE}:main" | cut -d@ -f2)"
                   [ -z "$DIGEST" ] && echo "Failed to get digest" && exit 1
-                  echo "==> Digest: sha256:${DIGEST}"
+                  echo "==> Digest: ${DIGEST}"
 
                   COSIGN_PASSWORD="$(cat /cosign-secret/cosign.password)" \
                   cosign sign --yes \
@@ -77,7 +77,7 @@ spec:
                     --new-bundle-format=false \
                     --use-signing-config=false \
                     --registry-referrers-mode=oci-1-1 \
-                    "${IMAGE}@sha256:${DIGEST}"
+                    "${IMAGE}@${DIGEST}"
 
                   echo "==> Done: ${IMAGE}:${TAG_TS}"
               env:
