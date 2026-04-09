@@ -1,6 +1,6 @@
 # Use Ubuntu as the base image
 # {"$imagepolicy": "flux-system:docker-ubuntu-25"}
-FROM ubuntu:25.10
+FROM ubuntu:25.10@sha256:4a9232cc47bf99defcc8860ef6222c99773330367fcecbf21ba2edb0b810a31e
 
 # Non-interactive frontend for apt and set timezone
 ARG DEBIAN_FRONTEND=noninteractive

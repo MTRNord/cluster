@@ -3,7 +3,7 @@
 
 # Build stage runs on the native host arch; cross-compiles via GOARCH.
 # {"$imagepolicy": "flux-system:docker-golang-1-25-bookworm"}
-FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25-bookworm@sha256:29e59af995c51a5bf63d072eca973b918e0e7af4db0e4667aa73f1b8da1a6d8c AS builder
 ARG TARGETARCH
 
 WORKDIR /app
@@ -23,7 +23,7 @@ RUN CGO_ENABLED=0 GOARCH=${TARGETARCH} \
 
 # Runtime stage — distroless/static has no shell, no libc, minimal attack surface.
 # {"$imagepolicy": "flux-system:gcr-distroless-static-nonroot"}
-FROM gcr.io/distroless/static:nonroot
+FROM gcr.io/distroless/static:nonroot@sha256:64c43684e6d2b581d1eb362ea47b6a4defee6a9cac5f7ebbda3daa67e8c9b8e6
 
 COPY --from=builder /matrix-backup /matrix-backup
 
