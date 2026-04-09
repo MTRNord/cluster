@@ -20,6 +20,21 @@ spec:
   # API settings - IMPORTANT: jenkins-operator user must have admin rights
   jenkinsAPISettings:
     authorizationStrategy: createUser
+  # Seed jobs - auto-create pipelines from gitops repo
+  seedJobs:
+    - id: gitops-pipelines
+      targets: "apps/talos_cluster/jenkins/seeds/jobs/*.groovy"
+      description: "GitOps pipelines and jobs"
+      repositoryBranch: main
+      repositoryUrl: https://github.com/mtrnord/gitops.git
+  # Backup and restore for build history
+  backup:
+    enabled: true
+    destination: /backup
+    interval: 30
+  restore:
+    enabled: true
+    recoveryOnce: true
   # Service configuration
   service:
     type: ClusterIP
@@ -74,10 +89,6 @@ spec:
       - name: jenkins-master
         image: jenkins/jenkins:2.541.3-lts
         imagePullPolicy: IfNotPresent
-        # Environment variables
-        env:
-          - name: CASC_JENKINS_CONFIG
-            value: /var/lib/jenkins/casc_configs
         # Security context for container
         securityContext:
           # Allow privileged for Docker socket access
@@ -123,20 +134,37 @@ spec:
             protocol: TCP
         # Volume mounts
         volumeMounts:
-          - name: casc-config
-            mountPath: /var/lib/jenkins/casc_configs
-            readOnly: true
           - name: registry-secret
             mountPath: /var/run/secrets/docker.io
             readOnly: true
           - name: cosign-key
             mountPath: /var/run/secrets/cosign
             readOnly: true
+      # Backup container sidecar
+      - name: backup
+        image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.4.4
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: BACKUP_DIR
+            value: /backup
+          - name: JENKINS_HOME
+            value: /var/lib/jenkins
+          - name: BACKUP_COUNT
+            value: "3"
+        volumeMounts:
+          - name: jenkins-home
+            mountPath: /var/lib/jenkins
+          - name: backup
+            mountPath: /backup
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 500Mi
     # Volumes
     volumes:
-      - name: casc-config
-        configMap:
-          name: jenkins-casc
       - name: registry-secret
         secret:
           secretName: registry-credentials
@@ -145,6 +173,9 @@ spec:
         secret:
           secretName: cosign-signing-key
           defaultMode: 256
+      - name: backup
+        persistentVolumeClaim:
+          claimName: jenkins-backup
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
