@@ -123,20 +123,32 @@ pipelineJob('gitops-multiarch-builds') {
                   fi
 
                   # Register QEMU binfmt handlers for cross-platform builds
-                  # Pin to qemu-v8.1.5 and also copy the static binary into the DinD filesystem
-                  # so BuildKit can find it at the registered path when injecting into arm64 containers
-                  docker create --name binfmt-tmp --platform linux/amd64 tonistiigi/binfmt:qemu-v8.1.5
-                  docker cp binfmt-tmp:/usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64-static || true
-                  docker rm binfmt-tmp
                   docker run --rm --privileged --platform linux/amd64 \\
                     tonistiigi/binfmt:qemu-v8.1.5 --install all
 
-                  # Create docker-container buildx builder (required for multi-platform --push)
-                  # --oci-worker-no-process-sandbox: skip BuildKit's own QEMU injection and use
-                  # the kernel binfmt F-flag fd directly, which avoids the wrong-qemu fallback
-                  # that causes "Invalid ELF image for this architecture" in nested DinD
+                  # Build a custom BuildKit image with qemu-aarch64-static baked in.
+                  # tonistiigi/binfmt embeds QEMU inside its Go binary — there is no
+                  # separate file to copy out. BuildKit reads the binfmt_misc interpreter
+                  # path (a now-deleted temp path) → gets ENOENT → falls back to scanning
+                  # /usr/bin/qemu-* → finds qemu-arm (32-bit, wrong arch) → arm64 builds
+                  # fail with "Invalid ELF image for this architecture".
+                  # Baking qemu-aarch64-static directly into the BuildKit image means the
+                  # correct 64-bit emulator is always present at the expected path.
+                  mkdir -p /tmp/buildkit-ctx
+                  cat > /tmp/buildkit-ctx/Dockerfile << 'BKEOF'
+FROM debian:12-slim AS qemu-source
+RUN apt-get update -qq && apt-get install -y --no-install-recommends qemu-user-static
+
+FROM moby/buildkit:buildx-stable-1
+COPY --from=qemu-source /usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64-static
+RUN chmod +x /usr/bin/qemu-aarch64-static
+BKEOF
+
+                  docker build --platform linux/amd64 -t buildkit-qemu:local /tmp/buildkit-ctx/
+
+                  # Create docker-container buildx builder using the custom BuildKit image
                   docker buildx create --name multiarch-builder --driver docker-container \\
-                    --buildkitd-flags '--oci-worker-no-process-sandbox' \\
+                    --driver-opt image=buildkit-qemu:local \\
                     --platform linux/amd64,linux/arm64 2>/dev/null || true
                   docker buildx use multiarch-builder
                   docker buildx inspect --bootstrap
