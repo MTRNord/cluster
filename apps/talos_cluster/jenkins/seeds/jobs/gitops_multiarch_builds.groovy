@@ -20,7 +20,7 @@ pipelineJob('gitops-multiarch-builds') {
 
   definition {
     cps {
-      script('''
+      script("""\
         pipeline {
           agent any
 
@@ -127,7 +127,7 @@ pipelineJob('gitops-multiarch-builds') {
             }
           }
         }
-      '''.stripIndent())
+      """.stripIndent())
       sandbox(true)
     }
   }
