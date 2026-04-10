@@ -39,6 +39,15 @@ pipelineJob('gitops-multiarch-builds') {
                     volumeMounts:
                     - name: docker-bin
                       mountPath: /docker-bin
+                   - name: setup-buildx
+                     image: moby/buildkit:latest
+                     command:
+                     - sh
+                     - -c
+                     - mkdir -p /docker-bin/cli-plugins && cp /buildkit /docker-bin/cli-plugins/docker-buildx && chmod +x /docker-bin/cli-plugins/docker-buildx
+                     volumeMounts:
+                     - name: docker-bin
+                       mountPath: /docker-bin
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
