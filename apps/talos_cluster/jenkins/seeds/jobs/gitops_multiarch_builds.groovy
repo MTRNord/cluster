@@ -86,6 +86,19 @@ pipelineJob('gitops-multiarch-builds') {
                   # Install git (needed for rev-parse in build scripts; not in Alpine by default)
                   apk add --no-cache git
 
+                  # dockerd inside docker:dind starts asynchronously; wait for the socket
+                  for i in \\$(seq 1 30); do
+                    if [ -S /var/run/docker.sock ]; then
+                      break
+                    fi
+                    echo "Waiting for docker daemon... (\\$i/30)"
+                    sleep 2
+                  done
+                  if [ ! -S /var/run/docker.sock ]; then
+                    echo "ERROR: docker daemon did not start within 60 seconds"
+                    exit 1
+                  fi
+
                   # Register QEMU binfmt handlers so the DinD kernel can execute arm64 binaries
                   docker run --rm --privileged tonistiigi/binfmt --install all
 
