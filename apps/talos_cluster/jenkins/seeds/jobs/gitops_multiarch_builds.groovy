@@ -11,7 +11,7 @@ pipelineJob('gitops-multiarch-builds') {
   }
 
   parameters {
-    choiceParam(name: 'BUILD_IMAGE', choices: ['matrix-backup', 'continuwuity', 'blog', 'bookwyrm', 'all'], description: 'Which image(s) to build')
+    choiceParam('BUILD_IMAGE', ['matrix-backup', 'continuwuity', 'blog', 'bookwyrm', 'all'], 'Which image(s) to build')
   }
 
   definition {
