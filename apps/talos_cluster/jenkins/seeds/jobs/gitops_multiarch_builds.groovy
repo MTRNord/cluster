@@ -16,7 +16,7 @@ pipelineJob('gitops-multiarch-builds') {
 
   definition {
     cps {
-      script('''
+      script("""
         pipeline {
           agent {
             kubernetes {
@@ -32,7 +32,7 @@ pipelineJob('gitops-multiarch-builds') {
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
-                    args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+                    args: ['\\\$(JENKINS_SECRET)', '\\\$(JENKINS_NAME)']
                     env:
                     - name: JENKINS_TUNNEL
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
@@ -175,7 +175,7 @@ pipelineJob('gitops-multiarch-builds') {
             }
           }
         }
-      '''.stripIndent())
+      """.stripIndent())
       sandbox(true)
     }
   }
