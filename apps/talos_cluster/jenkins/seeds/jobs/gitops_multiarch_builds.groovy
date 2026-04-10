@@ -140,8 +140,11 @@ FROM debian:12-slim AS qemu-source
 RUN apt-get update -qq && apt-get install -y --no-install-recommends qemu-user-static
 
 FROM moby/buildkit:buildx-stable-1
-COPY --from=qemu-source /usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64-static
-RUN chmod +x /usr/bin/qemu-aarch64-static
+# tonistiigi/binfmt registers binfmt_misc with interpreter=/usr/bin/qemu-aarch64.
+# BuildKit reads that exact path from /proc/sys/fs/binfmt_misc/qemu-aarch64 and
+# tries to open it — so the file must be named qemu-aarch64, not qemu-aarch64-static.
+COPY --from=qemu-source /usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64
+RUN chmod +x /usr/bin/qemu-aarch64
 BKEOF
 
                   docker build --platform linux/amd64 -t buildkit-qemu:local /tmp/buildkit-ctx/
