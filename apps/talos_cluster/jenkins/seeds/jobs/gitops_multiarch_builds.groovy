@@ -42,6 +42,8 @@ pipelineJob('gitops-multiarch-builds') {
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
+                    securityContext:
+                      runAsUser: 0
                     env:
                     - name: JENKINS_TUNNEL
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
@@ -117,17 +119,11 @@ pipelineJob('gitops-multiarch-builds') {
                   fi
                   echo "Docker socket ready"
                   
-                  # Verify docker binary exists
-                  echo "PATH: \\$PATH"
-                  ls -la /opt/docker-bin/ || echo "docker-bin directory not found"
-                  file /opt/docker-bin/docker || echo "docker binary not found"
-                  
-                  # Use full path to docker
+                  # Verify docker works
                   /opt/docker-bin/docker ps
 
                   # Setup multi-arch support
                   /opt/docker-bin/docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
-                  ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
                   /opt/docker-bin/docker buildx create --use --name multiarch-builder || /opt/docker-bin/docker buildx use multiarch-builder
                   /opt/docker-bin/docker buildx inspect --bootstrap
                 """
