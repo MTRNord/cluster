@@ -20,6 +20,9 @@ pipelineJob('gitops-multiarch-builds') {
         pipeline {
           agent {
             kubernetes {
+              // All sh steps run inside the docker:dind container where docker CLI,
+              // docker buildx, and dockerd are natively available. No init containers needed.
+              defaultContainer 'docker'
               yaml """
                 apiVersion: v1
                 kind: Pod
@@ -29,40 +32,17 @@ pipelineJob('gitops-multiarch-builds') {
                     job: gitops-multiarch-builds
                 spec:
                   serviceAccountName: jenkins-operator-jenkins
-                  initContainers:
-                  - name: setup-docker-tools
-                    image: docker:latest
-                    command:
-                    - sh
-                    - -c
-                    - |
-                      cp /usr/local/bin/docker /docker-bin/docker
-                      chmod +x /docker-bin/docker
-                      mkdir -p /docker-bin/cli-plugins
-                      cp /usr/local/libexec/docker/cli-plugins/docker-buildx /docker-bin/cli-plugins/docker-buildx
-                      chmod +x /docker-bin/cli-plugins/docker-buildx
-                    volumeMounts:
-                    - name: docker-bin
-                      mountPath: /docker-bin
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
-                    securityContext:
-                      runAsUser: 0
                     env:
                     - name: JENKINS_TUNNEL
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
                       value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
-                    - name: PATH
-                      value: /opt/docker-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                     volumeMounts:
                     - name: workspace
                       mountPath: /home/jenkins/agent
-                    - name: docker-sock
-                      mountPath: /var/run
-                    - name: docker-bin
-                      mountPath: /opt/docker-bin
                   - name: docker
                     image: docker:dind
                     securityContext:
@@ -71,16 +51,10 @@ pipelineJob('gitops-multiarch-builds') {
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
                     volumeMounts:
-                    - name: docker-sock
-                      mountPath: /var/run
                     - name: workspace
                       mountPath: /home/jenkins/agent
                   volumes:
                   - name: workspace
-                    emptyDir: {}
-                  - name: docker-sock
-                    emptyDir: {}
-                  - name: docker-bin
                     emptyDir: {}
                   restartPolicy: Never
               """
@@ -109,32 +83,15 @@ pipelineJob('gitops-multiarch-builds') {
             stage('Prepare Build Environment') {
               steps {
                 sh """
-                  # Link buildx plugin to a path the docker CLI will discover
-                  mkdir -p /root/.docker/cli-plugins
-                  ln -sf /opt/docker-bin/cli-plugins/docker-buildx /root/.docker/cli-plugins/docker-buildx
+                  # Install git (needed for rev-parse in build scripts; not in Alpine by default)
+                  apk add --no-cache git
 
-                  # Wait for docker socket to be available
-                  for i in \\$(seq 1 30); do
-                    if [ -S /var/run/docker.sock ]; then
-                      break
-                    fi
-                    echo "Waiting for docker socket... (\\$i/30)"
-                    sleep 1
-                  done
-                  if [ ! -S /var/run/docker.sock ]; then
-                    echo "ERROR: docker socket not available after 30 seconds"
-                    exit 1
-                  fi
-                  echo "Docker socket ready"
-
-                  # Verify docker works
-                  docker ps
-
-                  # Register QEMU binfmt handlers so the kernel can execute arm64 binaries via emulation
+                  # Register QEMU binfmt handlers so the DinD kernel can execute arm64 binaries
                   docker run --rm --privileged tonistiigi/binfmt --install all
 
-                  # Create a docker-container buildx builder (required for --push with multi-platform)
-                  docker buildx create --use --name multiarch-builder --driver docker-container --platform linux/amd64,linux/arm64 || docker buildx use multiarch-builder
+                  # Create a docker-container buildx builder (required for multi-platform --push)
+                  docker buildx create --name multiarch-builder --driver docker-container --platform linux/amd64,linux/arm64 2>/dev/null || true
+                  docker buildx use multiarch-builder
                   docker buildx inspect --bootstrap
                 """
               }
@@ -217,9 +174,6 @@ pipelineJob('gitops-multiarch-builds') {
             TAG_SHA="sha-$(git rev-parse --short HEAD)"
             IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
 
-            echo "Building multi-arch image: ${IMAGE}"
-            echo "Tags: ${TAG_TS}, main, ${TAG_SHA}"
-
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
               --tag "${IMAGE}:${TAG_TS}" \\
@@ -260,9 +214,6 @@ pipelineJob('gitops-multiarch-builds') {
             TAG_SHA="sha-$(git rev-parse --short HEAD)"
             IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
 
-            echo "Building multi-arch image: ${IMAGE}"
-            echo "Tags: main, ${TAG_SHA}"
-
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
               --tag "${IMAGE}:main" \\
@@ -296,9 +247,6 @@ pipelineJob('gitops-multiarch-builds') {
             TAG_TS=$(date -u +%Y%m%d-%H%M%S)
             TAG_SHA="sha-$(git rev-parse --short HEAD)"
             IMAGE="${REGISTRY}/mtrnord/blog"
-
-            echo "Building multi-arch image: ${IMAGE}"
-            echo "Tags: ${TAG_TS}, latest, ${TAG_SHA}"
 
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
@@ -347,9 +295,6 @@ pipelineJob('gitops-multiarch-builds') {
             fi
 
             IMAGE="${REGISTRY}/mtrnord/cluster/bookwyrm"
-
-            echo "Building multi-arch image: ${IMAGE}"
-            echo "Tags: ${VERSION}, latest"
 
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
