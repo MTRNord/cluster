@@ -91,7 +91,7 @@ pipelineJob('gitops-multiarch-builds') {
               steps {
                 sh '''
                   # Wait for docker socket to be available
-                  for i in $(seq 1 30); do
+                  for i in \$(seq 1 30); do
                     if [ -S /var/run/docker.sock ]; then
                       break
                     fi
@@ -104,7 +104,7 @@ pipelineJob('gitops-multiarch-builds') {
                   fi
                   echo "Docker socket ready"
                   docker ps
-                  
+
                   # Setup multi-arch support
                   docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
                   ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
