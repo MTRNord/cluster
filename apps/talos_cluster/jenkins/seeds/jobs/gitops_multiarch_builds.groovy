@@ -38,9 +38,6 @@ pipelineJob('gitops-multiarch-builds') {
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
                       value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
-                    volumeMounts:
-                    - name: workspace
-                      mountPath: /home/jenkins/agent
                   - name: docker
                     image: docker:dind
                     securityContext:
@@ -56,8 +53,6 @@ pipelineJob('gitops-multiarch-builds') {
                       mountPath: /var/lib/docker
                   volumes:
                   - name: docker-cache
-                    emptyDir: {}
-                  - name: workspace
                     emptyDir: {}
                   restartPolicy: Never
               '''
@@ -81,23 +76,35 @@ pipelineJob('gitops-multiarch-builds') {
             REGISTRY_URL = 'https://registry.midnightthoughts.space'
             DOCKER_CONFIG = '/var/run/secrets/docker.io'
             COSIGN_KEY_PATH = '/var/run/secrets/cosign/key'
-            DOCKER_HOST = 'unix:///var/run/docker.sock'
             PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
           }
 
           stages {
             stage('Prepare Build Environment') {
               steps {
-                container('docker') {
-                  sh '''
-                    dockerd &
-                    sleep 10
-                    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
-                    ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
-                    docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
-                    docker buildx inspect --bootstrap
-                  '''
-                }
+                sh '''
+                  # Start dockerd in the background and wait for socket
+                  dockerd > /tmp/dockerd.log 2>&1 &
+                  DOCKER_PID=$!
+                  for i in $(seq 1 30); do
+                    if [ -S /var/run/docker.sock ]; then
+                      break
+                    fi
+                    sleep 1
+                  done
+                  if [ ! -S /var/run/docker.sock ]; then
+                    echo "ERROR: docker socket not available after 30 seconds"
+                    kill $DOCKER_PID 2>/dev/null || true
+                    exit 1
+                  fi
+                  echo "Docker socket ready"
+                  
+                  # Setup multi-arch support
+                  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
+                  ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
+                  docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
+                  docker buildx inspect --bootstrap
+                '''
               }
             }
 
@@ -114,10 +121,8 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'matrix-backup' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    container('docker') {
-                      script {
-                        build_matrix_backup()
-                      }
+                    script {
+                      build_matrix_backup()
                     }
                   }
                 }
@@ -127,10 +132,8 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'continuwuity' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    container('docker') {
-                      script {
-                        build_continuwuity()
-                      }
+                    script {
+                      build_continuwuity()
                     }
                   }
                 }
@@ -140,10 +143,8 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'blog' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    container('docker') {
-                      script {
-                        build_blog()
-                      }
+                    script {
+                      build_blog()
                     }
                   }
                 }
@@ -153,10 +154,8 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'bookwyrm' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    container('docker') {
-                      script {
-                        build_bookwyrm()
-                      }
+                    script {
+                      build_bookwyrm()
                     }
                   }
                 }
@@ -184,9 +183,6 @@ pipelineJob('gitops-multiarch-builds') {
 
 def build_matrix_backup() {
   sh '''
-    dockerd &
-    sleep 10
-    
     set -eu
 
     echo "=== Building matrix-backup ==="
@@ -231,9 +227,6 @@ def build_matrix_backup() {
 
 def build_continuwuity() {
   sh '''
-    dockerd &
-    sleep 10
-    
     set -eu
 
     echo "=== Building continuwuity ==="
