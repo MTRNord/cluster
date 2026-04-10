@@ -40,6 +40,8 @@ pipelineJob('gitops-multiarch-builds') {
                     volumeMounts:
                     - name: workspace
                       mountPath: /home/jenkins/agent
+                    - name: docker-sock
+                      mountPath: /var/run
                   - name: docker
                     image: docker:dind
                     securityContext:
@@ -51,14 +53,14 @@ pipelineJob('gitops-multiarch-builds') {
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
                     volumeMounts:
-                    - name: docker-cache
-                      mountPath: /var/lib/docker
+                    - name: docker-sock
+                      mountPath: /var/run
                     - name: workspace
                       mountPath: /home/jenkins/agent
                   volumes:
                   - name: workspace
                     emptyDir: {}
-                  - name: docker-cache
+                  - name: docker-sock
                     emptyDir: {}
                   restartPolicy: Never
               '''
@@ -88,21 +90,20 @@ pipelineJob('gitops-multiarch-builds') {
             stage('Prepare Build Environment') {
               steps {
                 sh '''
-                  # Start dockerd in the background and wait for socket
-                  dockerd > /tmp/dockerd.log 2>&1 &
-                  DOCKER_PID=\$!
-                  for i in \$(seq 1 30); do
+                  # Wait for docker socket to be available
+                  for i in $(seq 1 30); do
                     if [ -S /var/run/docker.sock ]; then
                       break
                     fi
+                    echo "Waiting for docker socket... ($i/30)"
                     sleep 1
                   done
                   if [ ! -S /var/run/docker.sock ]; then
                     echo "ERROR: docker socket not available after 30 seconds"
-                    kill \$DOCKER_PID 2>/dev/null || true
                     exit 1
                   fi
                   echo "Docker socket ready"
+                  docker ps
                   
                   # Setup multi-arch support
                   docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
@@ -268,9 +269,6 @@ def build_continuwuity() {
 
 def build_blog() {
   sh '''
-    dockerd &
-    sleep 10
-    
     set -eu
 
     echo "=== Building blog ==="
@@ -315,9 +313,6 @@ def build_blog() {
 
 def build_bookwyrm() {
   sh '''
-    dockerd &
-    sleep 10
-    
     set -eu
 
     echo "=== Building bookwyrm ==="
