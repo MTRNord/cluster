@@ -37,7 +37,7 @@ pipelineJob('gitops-multiarch-builds') {
                     - name: JENKINS_TUNNEL
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
-                      value: http://jenkins:8080/
+                      value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
                     - name: DOCKER_HOST
                       value: unix:///var/run/docker.sock
                     volumeMounts:
