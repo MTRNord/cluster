@@ -46,12 +46,12 @@ pipelineJob('gitops-multiarch-builds') {
                 script {
                   echo "=== Preparing multi-arch build environment ==="
                   sh '''
-                    podman run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
+                    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
 
                     ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
 
-                    podman buildx create --use --name multiarch-builder || podman buildx use multiarch-builder
-                    podman buildx inspect --bootstrap
+                    docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
+                    docker buildx inspect --bootstrap
                   '''
                 }
               }
@@ -132,169 +132,177 @@ pipelineJob('gitops-multiarch-builds') {
 
 def build_matrix_backup() {
   echo "=== Building matrix-backup ==="
-  sh '''
-    set -eu
+  docker.image('docker:latest').inside('--privileged') {
+    sh '''
+      set -eu
 
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+      mkdir -p ~/.docker
+      cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-    TAG_TS=$(date -u +%Y%m%d-%H%M%S)
-    TAG_SHA="sha-$(git rev-parse --short HEAD)"
-    IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
+      TAG_TS=$(date -u +%Y%m%d-%H%M%S)
+      TAG_SHA="sha-$(git rev-parse --short HEAD)"
+      IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
 
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: ${TAG_TS}, main, ${TAG_SHA}"
+      echo "Building multi-arch image: ${IMAGE}"
+      echo "Tags: ${TAG_TS}, main, ${TAG_SHA}"
 
-    podman buildx build \\
-      --platform linux/amd64,linux/arm64 \\
-      --tag "${IMAGE}:${TAG_TS}" \\
-      --tag "${IMAGE}:main" \\
-      --tag "${IMAGE}:${TAG_SHA}" \\
-      --push \\
-      -f apps/talos_cluster/image-builder/matrix-backup/Dockerfile \\
-      apps/talos_cluster/image-builder/matrix-backup/
+      docker buildx build \\
+        --platform linux/amd64,linux/arm64 \\
+        --tag "${IMAGE}:${TAG_TS}" \\
+        --tag "${IMAGE}:main" \\
+        --tag "${IMAGE}:${TAG_SHA}" \\
+        --push \\
+        -f apps/talos_cluster/image-builder/matrix-backup/Dockerfile \\
+        apps/talos_cluster/image-builder/matrix-backup/
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:${TAG_TS}"
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:${TAG_TS}"
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:main"
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:main"
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
-  '''
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+    '''
+  }
 }
 
 def build_continuwuity() {
   echo "=== Building continuwuity ==="
-  sh '''
-    set -eu
+  docker.image('docker:latest').inside('--privileged') {
+    sh '''
+      set -eu
 
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+      mkdir -p ~/.docker
+      cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-    TAG_SHA="sha-$(git rev-parse --short HEAD)"
-    IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
+      TAG_SHA="sha-$(git rev-parse --short HEAD)"
+      IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
 
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: main, ${TAG_SHA}"
+      echo "Building multi-arch image: ${IMAGE}"
+      echo "Tags: main, ${TAG_SHA}"
 
-    podman buildx build \\
-      --platform linux/amd64,linux/arm64 \\
-      --tag "${IMAGE}:main" \\
-      --tag "${IMAGE}:${TAG_SHA}" \\
-      --push \\
-      -f apps/talos_cluster/image-builder/continuwuity/Dockerfile \\
-      apps/talos_cluster/image-builder/continuwuity/
+      docker buildx build \\
+        --platform linux/amd64,linux/arm64 \\
+        --tag "${IMAGE}:main" \\
+        --tag "${IMAGE}:${TAG_SHA}" \\
+        --push \\
+        -f apps/talos_cluster/image-builder/continuwuity/Dockerfile \\
+        apps/talos_cluster/image-builder/continuwuity/
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:main"
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:main"
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
-  '''
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+    '''
+  }
 }
 
 def build_blog() {
   echo "=== Building blog ==="
-  sh '''
-    set -eu
+  docker.image('docker:latest').inside('--privileged') {
+    sh '''
+      set -eu
 
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+      mkdir -p ~/.docker
+      cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-    TAG_TS=$(date -u +%Y%m%d-%H%M%S)
-    TAG_SHA="sha-$(git rev-parse --short HEAD)"
-    IMAGE="${REGISTRY}/mtrnord/blog"
+      TAG_TS=$(date -u +%Y%m%d-%H%M%S)
+      TAG_SHA="sha-$(git rev-parse --short HEAD)"
+      IMAGE="${REGISTRY}/mtrnord/blog"
 
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: ${TAG_TS}, latest, ${TAG_SHA}"
+      echo "Building multi-arch image: ${IMAGE}"
+      echo "Tags: ${TAG_TS}, latest, ${TAG_SHA}"
 
-    podman buildx build \\
-      --platform linux/amd64,linux/arm64 \\
-      --tag "${IMAGE}:${TAG_TS}" \\
-      --tag "${IMAGE}:latest" \\
-      --tag "${IMAGE}:${TAG_SHA}" \\
-      --push \\
-      -f apps/talos_cluster/image-builder/blog/Dockerfile \\
-      apps/talos_cluster/image-builder/blog/
+      docker buildx build \\
+        --platform linux/amd64,linux/arm64 \\
+        --tag "${IMAGE}:${TAG_TS}" \\
+        --tag "${IMAGE}:latest" \\
+        --tag "${IMAGE}:${TAG_SHA}" \\
+        --push \\
+        -f apps/talos_cluster/image-builder/blog/Dockerfile \\
+        apps/talos_cluster/image-builder/blog/
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:${TAG_TS}"
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:${TAG_TS}"
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:latest"
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:latest"
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
-  '''
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+    '''
+  }
 }
 
 def build_bookwyrm() {
   echo "=== Building bookwyrm ==="
-  sh '''
-    set -eu
+  docker.image('docker:latest').inside('--privileged') {
+    sh '''
+      set -eu
 
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+      mkdir -p ~/.docker
+      cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-    VERSION=$(podman run --rm curlimages/curl:latest \\
-      curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" | \\
-      grep '"tag_name"' | head -1 | cut -d'"' -f4)
+      VERSION=$(docker run --rm curlimages/curl:latest \\
+        curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" | \\
+        grep '"tag_name"' | head -1 | cut -d'"' -f4)
 
-    if [ -z "$VERSION" ]; then
-      echo "ERROR: could not determine upstream version"
-      exit 1
-    fi
+      if [ -z "$VERSION" ]; then
+        echo "ERROR: could not determine upstream version"
+        exit 1
+      fi
 
-    IMAGE="${REGISTRY}/mtrnord/cluster/bookwyrm"
+      IMAGE="${REGISTRY}/mtrnord/cluster/bookwyrm"
 
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: ${VERSION}, latest"
+      echo "Building multi-arch image: ${IMAGE}"
+      echo "Tags: ${VERSION}, latest"
 
-    podman buildx build \\
-      --platform linux/amd64,linux/arm64 \\
-      --build-arg VERSION="${VERSION}" \\
-      --tag "${IMAGE}:${VERSION}" \\
-      --tag "${IMAGE}:latest" \\
-      --push \\
-      -f apps/talos_cluster/image-builder/bookwyrm/Dockerfile \\
-      apps/talos_cluster/image-builder/bookwyrm/
+      docker buildx build \\
+        --platform linux/amd64,linux/arm64 \\
+        --build-arg VERSION="${VERSION}" \\
+        --tag "${IMAGE}:${VERSION}" \\
+        --tag "${IMAGE}:latest" \\
+        --push \\
+        -f apps/talos_cluster/image-builder/bookwyrm/Dockerfile \\
+        apps/talos_cluster/image-builder/bookwyrm/
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:${VERSION}"
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:${VERSION}"
 
-    podman run --rm \\
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-      -v ~/.docker:/root/.docker:ro \\
-      gcr.io/projectsigstore/cosign:latest \\
-      sign --key /cosign/key "${IMAGE}:latest"
-  '''
+      docker run --rm \\
+        -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+        -v ~/.docker:/root/.docker:ro \\
+        gcr.io/projectsigstore/cosign:latest \\
+        sign --key /cosign/key "${IMAGE}:latest"
+    '''
+  }
 }
