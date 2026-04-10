@@ -16,7 +16,7 @@ pipelineJob('gitops-multiarch-builds') {
 
   definition {
     cps {
-      script(/ 
+      script("""\
         pipeline {
           agent {
             kubernetes {
@@ -32,7 +32,7 @@ pipelineJob('gitops-multiarch-builds') {
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
-                    args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+                    args: ['\${JENKINS_SECRET}', '\${JENKINS_NAME}']
                     env:
                     - name: JENKINS_TUNNEL
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
@@ -84,8 +84,8 @@ pipelineJob('gitops-multiarch-builds') {
                 sh '''
                   # Start dockerd in the background and wait for socket
                   dockerd > /tmp/dockerd.log 2>&1 &
-                  DOCKER_PID=$!
-                  for i in $(seq 1 30); do
+                  DOCKER_PID=\$!
+                  for i in \$(seq 1 30); do
                     if [ -S /var/run/docker.sock ]; then
                       break
                     fi
@@ -93,7 +93,7 @@ pipelineJob('gitops-multiarch-builds') {
                   done
                   if [ ! -S /var/run/docker.sock ]; then
                     echo "ERROR: docker socket not available after 30 seconds"
-                    kill $DOCKER_PID 2>/dev/null || true
+                    kill \$DOCKER_PID 2>/dev/null || true
                     exit 1
                   fi
                   echo "Docker socket ready"
@@ -174,7 +174,7 @@ pipelineJob('gitops-multiarch-builds') {
             }
           }
         }
-      /.stripIndent())
+      """.stripIndent())
       sandbox(true)
     }
   }
