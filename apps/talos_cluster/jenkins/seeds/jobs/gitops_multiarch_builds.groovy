@@ -309,9 +309,8 @@ pipelineJob('gitops-multiarch-builds') {
             IMAGE="registry.midnightthoughts.space/mtrnord/bookwyrm"
 
             # Skip if this tag already exists in the registry (same logic as GH Actions)
-            TAGS="$(wget -qO - \'https://registry.midnightthoughts.space/v2/mtrnord/bookwyrm/tags/list\' \\
-              | grep -o \'"tags":\\[[^]]*\\]\' || echo \'\')"
-            if echo "$TAGS" | grep -q "\\\"${VERSION}\\\""; then
+            TAGS_JSON="$(wget -qO - \'https://registry.midnightthoughts.space/v2/mtrnord/bookwyrm/tags/list\' 2>/dev/null || echo \'{}\')"
+            if echo "$TAGS_JSON" | jq -e --arg v "$VERSION" \'(.tags // []) | contains([$v])\' > /dev/null 2>&1; then
               echo "Tag ${VERSION} already exists in registry — skipping build"
               exit 0
             fi
