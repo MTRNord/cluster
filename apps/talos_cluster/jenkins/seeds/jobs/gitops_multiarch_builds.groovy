@@ -31,11 +31,11 @@ pipelineJob('gitops-multiarch-builds') {
                   serviceAccountName: jenkins-operator-jenkins
                   initContainers:
                   - name: setup-docker
-                    image: docker:dind
+                    image: docker:latest
                     command:
-                    - cp
-                    - /usr/local/bin/docker
-                    - /docker-bin/docker
+                    - sh
+                    - -c
+                    - cp /usr/local/bin/docker /docker-bin/docker && chmod +x /docker-bin/docker
                     volumeMounts:
                     - name: docker-bin
                       mountPath: /docker-bin
