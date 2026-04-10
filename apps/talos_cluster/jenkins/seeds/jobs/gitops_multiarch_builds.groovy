@@ -30,21 +30,17 @@ pipelineJob('gitops-multiarch-builds') {
                 spec:
                   serviceAccountName: jenkins-operator-jenkins
                   initContainers:
-                  - name: setup-docker
+                  - name: setup-docker-tools
                     image: docker:latest
                     command:
                     - sh
                     - -c
-                    - cp /usr/local/bin/docker /docker-bin/docker && chmod +x /docker-bin/docker
-                    volumeMounts:
-                    - name: docker-bin
-                      mountPath: /docker-bin
-                  - name: setup-buildx
-                    image: moby/buildkit:latest
-                    command:
-                    - sh
-                    - -c
-                    - mkdir -p /docker-bin/cli-plugins && cp /buildkit /docker-bin/cli-plugins/docker-buildx && chmod +x /docker-bin/cli-plugins/docker-buildx
+                    - |
+                      cp /usr/local/bin/docker /docker-bin/docker
+                      chmod +x /docker-bin/docker
+                      mkdir -p /docker-bin/cli-plugins
+                      cp /usr/local/libexec/docker/cli-plugins/docker-buildx /docker-bin/cli-plugins/docker-buildx
+                      chmod +x /docker-bin/cli-plugins/docker-buildx
                     volumeMounts:
                     - name: docker-bin
                       mountPath: /docker-bin
@@ -107,13 +103,16 @@ pipelineJob('gitops-multiarch-builds') {
             REGISTRY_URL = 'https://registry.midnightthoughts.space'
             DOCKER_CONFIG = '/var/run/secrets/docker.io'
             COSIGN_KEY_PATH = '/var/run/secrets/cosign/key'
-            PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
           }
 
           stages {
             stage('Prepare Build Environment') {
               steps {
                 sh """
+                  # Link buildx plugin to a path the docker CLI will discover
+                  mkdir -p /root/.docker/cli-plugins
+                  ln -sf /opt/docker-bin/cli-plugins/docker-buildx /root/.docker/cli-plugins/docker-buildx
+
                   # Wait for docker socket to be available
                   for i in \\$(seq 1 30); do
                     if [ -S /var/run/docker.sock ]; then
@@ -127,14 +126,16 @@ pipelineJob('gitops-multiarch-builds') {
                     exit 1
                   fi
                   echo "Docker socket ready"
-                  
-                  # Verify docker works
-                  /opt/docker-bin/docker ps
 
-                  # Setup multi-arch support
-                  /opt/docker-bin/docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
-                  /opt/docker-bin/docker buildx create --use --name multiarch-builder || /opt/docker-bin/docker buildx use multiarch-builder
-                  /opt/docker-bin/docker buildx inspect --bootstrap
+                  # Verify docker works
+                  docker ps
+
+                  # Register QEMU binfmt handlers so the kernel can execute arm64 binaries via emulation
+                  docker run --rm --privileged tonistiigi/binfmt --install all
+
+                  # Create a docker-container buildx builder (required for --push with multi-platform)
+                  docker buildx create --use --name multiarch-builder --driver docker-container --platform linux/amd64,linux/arm64 || docker buildx use multiarch-builder
+                  docker buildx inspect --bootstrap
                 """
               }
             }
@@ -195,188 +196,185 @@ pipelineJob('gitops-multiarch-builds') {
           }
 
           post {
-            always {
-              deleteDir()
-            }
             success {
-              echo "✓ Build pipeline completed successfully!"
+              echo "Build pipeline completed successfully!"
             }
             failure {
-              echo "✗ Build pipeline failed!"
+              echo "Build pipeline failed!"
             }
           }
+        }
+
+        def build_matrix_backup() {
+          sh \'\'\'
+            set -eu
+
+            echo "=== Building matrix-backup ==="
+            mkdir -p ~/.docker
+            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+
+            TAG_TS=$(date -u +%Y%m%d-%H%M%S)
+            TAG_SHA="sha-$(git rev-parse --short HEAD)"
+            IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
+
+            echo "Building multi-arch image: ${IMAGE}"
+            echo "Tags: ${TAG_TS}, main, ${TAG_SHA}"
+
+            docker buildx build \\
+              --platform linux/amd64,linux/arm64 \\
+              --tag "${IMAGE}:${TAG_TS}" \\
+              --tag "${IMAGE}:main" \\
+              --tag "${IMAGE}:${TAG_SHA}" \\
+              --push \\
+              -f apps/talos_cluster/image-builder/matrix-backup/Dockerfile \\
+              apps/talos_cluster/image-builder/matrix-backup/
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:${TAG_TS}"
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:main"
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+          \'\'\'
+        }
+
+        def build_continuwuity() {
+          sh \'\'\'
+            set -eu
+
+            echo "=== Building continuwuity ==="
+            mkdir -p ~/.docker
+            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+
+            TAG_SHA="sha-$(git rev-parse --short HEAD)"
+            IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
+
+            echo "Building multi-arch image: ${IMAGE}"
+            echo "Tags: main, ${TAG_SHA}"
+
+            docker buildx build \\
+              --platform linux/amd64,linux/arm64 \\
+              --tag "${IMAGE}:main" \\
+              --tag "${IMAGE}:${TAG_SHA}" \\
+              --push \\
+              -f apps/talos_cluster/image-builder/continuwuity/Dockerfile \\
+              apps/talos_cluster/image-builder/continuwuity/
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:main"
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+          \'\'\'
+        }
+
+        def build_blog() {
+          sh \'\'\'
+            set -eu
+
+            echo "=== Building blog ==="
+            mkdir -p ~/.docker
+            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+
+            TAG_TS=$(date -u +%Y%m%d-%H%M%S)
+            TAG_SHA="sha-$(git rev-parse --short HEAD)"
+            IMAGE="${REGISTRY}/mtrnord/blog"
+
+            echo "Building multi-arch image: ${IMAGE}"
+            echo "Tags: ${TAG_TS}, latest, ${TAG_SHA}"
+
+            docker buildx build \\
+              --platform linux/amd64,linux/arm64 \\
+              --tag "${IMAGE}:${TAG_TS}" \\
+              --tag "${IMAGE}:latest" \\
+              --tag "${IMAGE}:${TAG_SHA}" \\
+              --push \\
+              -f apps/talos_cluster/image-builder/blog/Dockerfile \\
+              apps/talos_cluster/image-builder/blog/
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:${TAG_TS}"
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:latest"
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+          \'\'\'
+        }
+
+        def build_bookwyrm() {
+          sh \'\'\'
+            set -eu
+
+            echo "=== Building bookwyrm ==="
+            mkdir -p ~/.docker
+            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
+
+            VERSION=$(docker run --rm curlimages/curl:latest \\
+              curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" | \\
+              grep '"tag_name"' | head -1 | cut -d'"' -f4)
+
+            if [ -z "$VERSION" ]; then
+              echo "ERROR: could not determine upstream version"
+              exit 1
+            fi
+
+            IMAGE="${REGISTRY}/mtrnord/cluster/bookwyrm"
+
+            echo "Building multi-arch image: ${IMAGE}"
+            echo "Tags: ${VERSION}, latest"
+
+            docker buildx build \\
+              --platform linux/amd64,linux/arm64 \\
+              --build-arg VERSION="${VERSION}" \\
+              --tag "${IMAGE}:${VERSION}" \\
+              --tag "${IMAGE}:latest" \\
+              --push \\
+              -f apps/talos_cluster/image-builder/bookwyrm/Dockerfile \\
+              apps/talos_cluster/image-builder/bookwyrm/
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:${VERSION}"
+
+            docker run --rm \\
+              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
+              -v ~/.docker:/root/.docker:ro \\
+              gcr.io/projectsigstore/cosign:latest \\
+              sign --key /cosign/key "${IMAGE}:latest"
+          \'\'\'
         }
       '''.stripIndent())
       sandbox(true)
     }
   }
-}
-
-def build_matrix_backup() {
-  sh '''
-    set -eu
-
-    echo "=== Building matrix-backup ==="
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
-
-    TAG_TS=$(date -u +%Y%m%d-%H%M%S)
-    TAG_SHA="sha-$(git rev-parse --short HEAD)"
-    IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
-
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: ${TAG_TS}, main, ${TAG_SHA}"
-
-    /opt/docker-bin/docker buildx build \
-      --platform linux/amd64,linux/arm64 \
-      --tag "${IMAGE}:${TAG_TS}" \
-      --tag "${IMAGE}:main" \
-      --tag "${IMAGE}:${TAG_SHA}" \
-      --push \
-      -f apps/talos_cluster/image-builder/matrix-backup/Dockerfile \
-      apps/talos_cluster/image-builder/matrix-backup/
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:${TAG_TS}"
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:main"
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
-  '''
-}
-
-def build_continuwuity() {
-  sh '''
-    set -eu
-
-    echo "=== Building continuwuity ==="
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
-
-    TAG_SHA="sha-$(git rev-parse --short HEAD)"
-    IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
-
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: main, ${TAG_SHA}"
-
-    /opt/docker-bin/docker buildx build \
-      --platform linux/amd64,linux/arm64 \
-      --tag "${IMAGE}:main" \
-      --tag "${IMAGE}:${TAG_SHA}" \
-      --push \
-      -f apps/talos_cluster/image-builder/continuwuity/Dockerfile \
-      apps/talos_cluster/image-builder/continuwuity/
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:main"
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
-  '''
-}
-
-def build_blog() {
-  sh '''
-    set -eu
-
-    echo "=== Building blog ==="
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
-
-    TAG_TS=$(date -u +%Y%m%d-%H%M%S)
-    TAG_SHA="sha-$(git rev-parse --short HEAD)"
-    IMAGE="${REGISTRY}/mtrnord/blog"
-
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: ${TAG_TS}, latest, ${TAG_SHA}"
-
-    /opt/docker-bin/docker buildx build \
-      --platform linux/amd64,linux/arm64 \
-      --tag "${IMAGE}:${TAG_TS}" \
-      --tag "${IMAGE}:latest" \
-      --tag "${IMAGE}:${TAG_SHA}" \
-      --push \
-      -f apps/talos_cluster/image-builder/blog/Dockerfile \
-      apps/talos_cluster/image-builder/blog/
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:${TAG_TS}"
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:latest"
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
-  '''
-}
-
-def build_bookwyrm() {
-  sh '''
-    set -eu
-
-    echo "=== Building bookwyrm ==="
-    mkdir -p ~/.docker
-    cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
-
-    VERSION=$(docker run --rm curlimages/curl:latest \
-      curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" | \
-      grep '"tag_name"' | head -1 | cut -d'"' -f4)
-
-    if [ -z "$VERSION" ]; then
-      echo "ERROR: could not determine upstream version"
-      exit 1
-    fi
-
-    IMAGE="${REGISTRY}/mtrnord/cluster/bookwyrm"
-
-    echo "Building multi-arch image: ${IMAGE}"
-    echo "Tags: ${VERSION}, latest"
-
-    /opt/docker-bin/docker buildx build \
-      --platform linux/amd64,linux/arm64 \
-      --build-arg VERSION="${VERSION}" \
-      --tag "${IMAGE}:${VERSION}" \
-      --tag "${IMAGE}:latest" \
-      --push \
-      -f apps/talos_cluster/image-builder/bookwyrm/Dockerfile \
-      apps/talos_cluster/image-builder/bookwyrm/
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:${VERSION}"
-
-    /opt/docker-bin/docker run --rm \
-      -v ${COSIGN_KEY_PATH}:/cosign/key:ro \
-      -v ~/.docker:/root/.docker:ro \
-      gcr.io/projectsigstore/cosign:latest \
-      sign --key /cosign/key "${IMAGE}:latest"
-  '''
 }
