@@ -210,13 +210,17 @@ pipelineJob('gitops-multiarch-builds') {
 
             DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/matrix-backup-meta.json)"
             echo "Signing ${IMAGE}@${DIGEST}"
-            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
-            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            { set +x; } 2>/dev/null
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)"
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)"
+            COSIGN_EXPERIMENTAL=1 COSIGN_OCI_EXPERIMENTAL=1 \\
+            COSIGN_PRIVATE_KEY="$COSIGN_PRIVATE_KEY" COSIGN_PASSWORD="$COSIGN_PASSWORD" \\
             cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
               --new-bundle-format=false \\
               --use-signing-config=false \\
               --registry-referrers-mode=oci-1-1 \\
               "${IMAGE}@${DIGEST}"
+            { set -x; } 2>/dev/null
           \'\'\'
         }
 
@@ -244,13 +248,17 @@ pipelineJob('gitops-multiarch-builds') {
 
             DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/continuwuity-meta.json)"
             echo "Signing ${IMAGE}@${DIGEST}"
-            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
-            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            { set +x; } 2>/dev/null
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)"
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)"
+            COSIGN_EXPERIMENTAL=1 COSIGN_OCI_EXPERIMENTAL=1 \\
+            COSIGN_PRIVATE_KEY="$COSIGN_PRIVATE_KEY" COSIGN_PASSWORD="$COSIGN_PASSWORD" \\
             cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
               --new-bundle-format=false \\
               --use-signing-config=false \\
               --registry-referrers-mode=oci-1-1 \\
               "${IMAGE}@${DIGEST}"
+            { set -x; } 2>/dev/null
           \'\'\'
         }
 
@@ -278,13 +286,17 @@ pipelineJob('gitops-multiarch-builds') {
 
             DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/blog-meta.json)"
             echo "Signing ${IMAGE}@${DIGEST}"
-            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
-            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            { set +x; } 2>/dev/null
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)"
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)"
+            COSIGN_EXPERIMENTAL=1 COSIGN_OCI_EXPERIMENTAL=1 \\
+            COSIGN_PRIVATE_KEY="$COSIGN_PRIVATE_KEY" COSIGN_PASSWORD="$COSIGN_PASSWORD" \\
             cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
               --new-bundle-format=false \\
               --use-signing-config=false \\
               --registry-referrers-mode=oci-1-1 \\
               "${IMAGE}@${DIGEST}"
+            { set -x; } 2>/dev/null
           \'\'\'
         }
 
@@ -341,13 +353,17 @@ pipelineJob('gitops-multiarch-builds') {
 
             DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/bookwyrm-meta.json)"
             echo "Signing ${IMAGE}@${DIGEST}"
-            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
-            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            { set +x; } 2>/dev/null
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)"
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)"
+            COSIGN_EXPERIMENTAL=1 COSIGN_OCI_EXPERIMENTAL=1 \\
+            COSIGN_PRIVATE_KEY="$COSIGN_PRIVATE_KEY" COSIGN_PASSWORD="$COSIGN_PASSWORD" \\
             cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
               --new-bundle-format=false \\
               --use-signing-config=false \\
               --registry-referrers-mode=oci-1-1 \\
               "${IMAGE}@${DIGEST}"
+            { set -x; } 2>/dev/null
           \'\'\'
         }
       '''.stripIndent())
