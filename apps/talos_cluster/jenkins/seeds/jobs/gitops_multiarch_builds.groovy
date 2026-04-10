@@ -89,7 +89,7 @@ pipelineJob('gitops-multiarch-builds') {
           stages {
             stage('Prepare Build Environment') {
               steps {
-                def exec = """
+                def exec = '''
                   # Wait for docker socket to be available
                   for i in $(seq 1 30); do
                     if [ -S /var/run/docker.sock ]; then
@@ -110,7 +110,7 @@ pipelineJob('gitops-multiarch-builds') {
                   ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
                   docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
                   docker buildx inspect --bootstrap
-                """
+                '''
 
                 sh exec
               }
