@@ -28,7 +28,7 @@ pipelineJob('gitops-multiarch-builds') {
                     jenkins: agent
                     job: gitops-multiarch-builds
                 spec:
-                  serviceAccountName: jenkins
+                  serviceAccountName: jenkins-operator-jenkins
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
