@@ -53,9 +53,25 @@ pipelineJob('gitops-multiarch-builds') {
                     volumeMounts:
                     - name: workspace
                       mountPath: /home/jenkins/agent
+                    - name: registry-secret
+                      mountPath: /var/run/secrets/docker.io/config.json
+                      subPath: dockerconfig.json
+                      readOnly: true
+                    - name: cosign-key
+                      mountPath: /var/run/secrets/cosign/key
+                      subPath: cosign.key
+                      readOnly: true
                   volumes:
                   - name: workspace
                     emptyDir: {}
+                  - name: registry-secret
+                    secret:
+                      secretName: registry-credentials
+                      defaultMode: 256
+                  - name: cosign-key
+                    secret:
+                      secretName: cosign-signing-key
+                      defaultMode: 256
                   restartPolicy: Never
               """
             }
@@ -112,7 +128,9 @@ pipelineJob('gitops-multiarch-builds') {
 
             stage('Clone Repository') {
               steps {
-                checkout scm
+                // checkout scm is only available in Multibranch/Pipeline-from-SCM jobs.
+                // This is an inline CPS pipeline, so clone explicitly.
+                git url: 'https://github.com/MTRNord/cluster.git', branch: 'main'
               }
             }
 
