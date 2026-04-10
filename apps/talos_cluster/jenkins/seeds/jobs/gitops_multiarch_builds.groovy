@@ -46,9 +46,6 @@ pipelineJob('gitops-multiarch-builds') {
                     image: docker:dind
                     securityContext:
                       privileged: true
-                    command:
-                    - cat
-                    tty: true
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
