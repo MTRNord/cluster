@@ -32,12 +32,14 @@ pipelineJob('gitops-multiarch-builds') {
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
-                    args: ['\${JENKINS_SECRET}', '\${JENKINS_NAME}']
                     env:
                     - name: JENKINS_TUNNEL
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
                       value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
+                    volumeMounts:
+                    - name: workspace
+                      mountPath: /home/jenkins/agent
                   - name: docker
                     image: docker:dind
                     securityContext:
@@ -51,7 +53,11 @@ pipelineJob('gitops-multiarch-builds') {
                     volumeMounts:
                     - name: docker-cache
                       mountPath: /var/lib/docker
+                    - name: workspace
+                      mountPath: /home/jenkins/agent
                   volumes:
+                  - name: workspace
+                    emptyDir: {}
                   - name: docker-cache
                     emptyDir: {}
                   restartPolicy: Never
