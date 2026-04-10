@@ -91,11 +91,11 @@ pipelineJob('gitops-multiarch-builds') {
               steps {
                 def exec = """
                   # Wait for docker socket to be available
-                  for i in \$(seq 1 30); do
+                  for i in \\$(seq 1 30); do
                     if [ -S /var/run/docker.sock ]; then
                       break
                     fi
-                    echo "Waiting for docker socket... (\$i/30)"
+                    echo "Waiting for docker socket... (\\$i/30)"
                     sleep 1
                   done
                   if [ ! -S /var/run/docker.sock ]; then
