@@ -47,13 +47,15 @@ pipelineJob('gitops-multiarch-builds') {
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
                       value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
+                    - name: PATH
+                      value: /opt/docker-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
                     volumeMounts:
                     - name: workspace
                       mountPath: /home/jenkins/agent
                     - name: docker-sock
                       mountPath: /var/run
                     - name: docker-bin
-                      mountPath: /usr/local/bin
+                      mountPath: /opt/docker-bin
                   - name: docker
                     image: docker:dind
                     securityContext:
