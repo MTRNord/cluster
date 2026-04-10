@@ -123,7 +123,9 @@ pipelineJob('gitops-multiarch-builds') {
                   fi
 
                   # Register QEMU binfmt handlers for cross-platform builds
-                  docker run --rm --privileged tonistiigi/binfmt --install all
+                  # Pin to qemu-v8.1.5 — newer releases have regressions with Debian 12 arm64
+                  docker run --rm --privileged --platform linux/amd64 \\
+                    tonistiigi/binfmt:qemu-v8.1.5 --install all
 
                   # Create docker-container buildx builder (required for multi-platform --push)
                   docker buildx create --name multiarch-builder --driver docker-container \\
