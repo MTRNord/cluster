@@ -38,25 +38,26 @@ pipelineJob('gitops-multiarch-builds') {
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
                       value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
-                    - name: DOCKER_HOST
-                      value: unix:///var/run/docker.sock
                     volumeMounts:
-                    - name: docker-sock
-                      mountPath: /var/run
-                  - name: dind
+                    - name: workspace
+                      mountPath: /home/jenkins/agent
+                  - name: docker
                     image: docker:dind
                     securityContext:
                       privileged: true
-                    args:
-                    - --storage-driver=overlay2
+                    command:
+                    - cat
+                    tty: true
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
                     volumeMounts:
-                    - name: docker-sock
-                      mountPath: /var/run
+                    - name: docker-cache
+                      mountPath: /var/lib/docker
                   volumes:
-                  - name: docker-sock
+                  - name: docker-cache
+                    emptyDir: {}
+                  - name: workspace
                     emptyDir: {}
                   restartPolicy: Never
               '''
@@ -80,19 +81,19 @@ pipelineJob('gitops-multiarch-builds') {
             REGISTRY_URL = 'https://registry.midnightthoughts.space'
             DOCKER_CONFIG = '/var/run/secrets/docker.io'
             COSIGN_KEY_PATH = '/var/run/secrets/cosign/key'
+            DOCKER_HOST = 'unix:///var/run/docker.sock'
             PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
           }
 
           stages {
             stage('Prepare Build Environment') {
               steps {
-                script {
-                  echo "=== Preparing multi-arch build environment ==="
+                container('docker') {
                   sh '''
+                    dockerd &
+                    sleep 10
                     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
-
                     ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
-
                     docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
                     docker buildx inspect --bootstrap
                   '''
@@ -113,8 +114,10 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'matrix-backup' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_matrix_backup()
+                    container('docker') {
+                      script {
+                        build_matrix_backup()
+                      }
                     }
                   }
                 }
@@ -124,8 +127,10 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'continuwuity' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_continuwuity()
+                    container('docker') {
+                      script {
+                        build_continuwuity()
+                      }
                     }
                   }
                 }
@@ -135,8 +140,10 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'blog' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_blog()
+                    container('docker') {
+                      script {
+                        build_blog()
+                      }
                     }
                   }
                 }
@@ -146,8 +153,10 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'bookwyrm' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_bookwyrm()
+                    container('docker') {
+                      script {
+                        build_bookwyrm()
+                      }
                     }
                   }
                 }
@@ -175,6 +184,9 @@ pipelineJob('gitops-multiarch-builds') {
 
 def build_matrix_backup() {
   sh '''
+    dockerd &
+    sleep 10
+    
     set -eu
 
     echo "=== Building matrix-backup ==="
@@ -219,6 +231,9 @@ def build_matrix_backup() {
 
 def build_continuwuity() {
   sh '''
+    dockerd &
+    sleep 10
+    
     set -eu
 
     echo "=== Building continuwuity ==="
@@ -255,6 +270,9 @@ def build_continuwuity() {
 
 def build_blog() {
   sh '''
+    dockerd &
+    sleep 10
+    
     set -eu
 
     echo "=== Building blog ==="
@@ -299,6 +317,9 @@ def build_blog() {
 
 def build_bookwyrm() {
   sh '''
+    dockerd &
+    sleep 10
+    
     set -eu
 
     echo "=== Building bookwyrm ==="
