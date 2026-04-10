@@ -20,7 +20,46 @@ pipelineJob('gitops-multiarch-builds') {
         pipeline {
           agent {
             kubernetes {
-              label 'build-agent'
+              yaml '''
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  labels:
+                    jenkins: agent
+                    job: gitops-multiarch-builds
+                spec:
+                  serviceAccountName: jenkins
+                  containers:
+                  - name: jnlp
+                    image: jenkins/inbound-agent:3248.v65ecb_254c298-6
+                    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+                    env:
+                    - name: JENKINS_TUNNEL
+                      value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
+                    - name: JENKINS_URL
+                      value: http://jenkins:8080/
+                    - name: DOCKER_HOST
+                      value: unix:///var/run/docker.sock
+                    volumeMounts:
+                    - name: docker-sock
+                      mountPath: /var/run
+                  - name: dind
+                    image: docker:dind
+                    securityContext:
+                      privileged: true
+                    args:
+                    - --storage-driver=overlay2
+                    env:
+                    - name: DOCKER_TLS_CERTDIR
+                      value: ""
+                    volumeMounts:
+                    - name: docker-sock
+                      mountPath: /var/run
+                  volumes:
+                  - name: docker-sock
+                    emptyDir: {}
+                  restartPolicy: Never
+              '''
             }
           }
 
