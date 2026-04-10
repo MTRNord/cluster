@@ -123,12 +123,20 @@ pipelineJob('gitops-multiarch-builds') {
                   fi
 
                   # Register QEMU binfmt handlers for cross-platform builds
-                  # Pin to qemu-v8.1.5 — newer releases have regressions with Debian 12 arm64
+                  # Pin to qemu-v8.1.5 and also copy the static binary into the DinD filesystem
+                  # so BuildKit can find it at the registered path when injecting into arm64 containers
+                  docker create --name binfmt-tmp --platform linux/amd64 tonistiigi/binfmt:qemu-v8.1.5
+                  docker cp binfmt-tmp:/usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64-static || true
+                  docker rm binfmt-tmp
                   docker run --rm --privileged --platform linux/amd64 \\
                     tonistiigi/binfmt:qemu-v8.1.5 --install all
 
                   # Create docker-container buildx builder (required for multi-platform --push)
+                  # --oci-worker-no-process-sandbox: skip BuildKit's own QEMU injection and use
+                  # the kernel binfmt F-flag fd directly, which avoids the wrong-qemu fallback
+                  # that causes "Invalid ELF image for this architecture" in nested DinD
                   docker buildx create --name multiarch-builder --driver docker-container \\
+                    --buildkitd-flags '--oci-worker-no-process-sandbox' \\
                     --platform linux/amd64,linux/arm64 2>/dev/null || true
                   docker buildx use multiarch-builder
                   docker buildx inspect --bootstrap
