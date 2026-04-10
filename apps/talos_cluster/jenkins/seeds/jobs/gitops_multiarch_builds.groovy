@@ -29,6 +29,16 @@ pipelineJob('gitops-multiarch-builds') {
                     job: gitops-multiarch-builds
                 spec:
                   serviceAccountName: jenkins-operator-jenkins
+                  initContainers:
+                  - name: setup-docker
+                    image: docker:dind
+                    command:
+                    - cp
+                    - /usr/local/bin/docker
+                    - /docker-bin/docker
+                    volumeMounts:
+                    - name: docker-bin
+                      mountPath: /docker-bin
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:3248.v65ecb_254c298-6
@@ -42,6 +52,8 @@ pipelineJob('gitops-multiarch-builds') {
                       mountPath: /home/jenkins/agent
                     - name: docker-sock
                       mountPath: /var/run
+                    - name: docker-bin
+                      mountPath: /usr/local/bin
                   - name: docker
                     image: docker:dind
                     securityContext:
@@ -58,6 +70,8 @@ pipelineJob('gitops-multiarch-builds') {
                   - name: workspace
                     emptyDir: {}
                   - name: docker-sock
+                    emptyDir: {}
+                  - name: docker-bin
                     emptyDir: {}
                   restartPolicy: Never
               """
