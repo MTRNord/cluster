@@ -49,13 +49,10 @@ pipelineJob('gitops-multiarch-builds') {
                 script {
                   echo "=== Preparing multi-arch build environment ==="
                   sh '''
-                    # Register QEMU handlers for multi-arch builds
                     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
 
-                    # Verify QEMU is registered
                     ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
 
-                    # Enable buildx for multi-arch support
                     docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
                     docker buildx inspect --bootstrap
                   '''
@@ -142,11 +139,9 @@ def build_matrix_backup() {
     sh '''
       set -eu
 
-      # Configure Docker login
       mkdir -p ~/.docker
       cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-      # Get image metadata
       TAG_TS=$(date -u +%Y%m%d-%H%M%S)
       TAG_SHA="sha-$(git rev-parse --short HEAD)"
       IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
@@ -154,7 +149,6 @@ def build_matrix_backup() {
       echo "Building multi-arch image: ${IMAGE}"
       echo "Tags: ${TAG_TS}, main, ${TAG_SHA}"
 
-      # Build and push multi-arch image
       docker buildx build \\
         --platform linux/amd64,linux/arm64 \\
         --tag "${IMAGE}:${TAG_TS}" \\
@@ -164,7 +158,6 @@ def build_matrix_backup() {
         -f apps/talos_cluster/image-builder/matrix-backup/Dockerfile \\
         apps/talos_cluster/image-builder/matrix-backup/
 
-      # Sign all pushed digests with cosign
       docker run --rm \\
         -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
         -v ~/.docker:/root/.docker:ro \\
@@ -192,18 +185,15 @@ def build_continuwuity() {
     sh '''
       set -eu
 
-      # Configure Docker login
       mkdir -p ~/.docker
       cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-      # Get image metadata
       TAG_SHA="sha-$(git rev-parse --short HEAD)"
       IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
 
       echo "Building multi-arch image: ${IMAGE}"
       echo "Tags: main, ${TAG_SHA}"
 
-      # Build and push multi-arch image
       docker buildx build \\
         --platform linux/amd64,linux/arm64 \\
         --tag "${IMAGE}:main" \\
@@ -212,7 +202,6 @@ def build_continuwuity() {
         -f apps/talos_cluster/image-builder/continuwuity/Dockerfile \\
         apps/talos_cluster/image-builder/continuwuity/
 
-      # Sign all pushed digests with cosign
       docker run --rm \\
         -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
         -v ~/.docker:/root/.docker:ro \\
@@ -234,11 +223,9 @@ def build_blog() {
     sh '''
       set -eu
 
-      # Configure Docker login
       mkdir -p ~/.docker
       cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-      # Get image metadata
       TAG_TS=$(date -u +%Y%m%d-%H%M%S)
       TAG_SHA="sha-$(git rev-parse --short HEAD)"
       IMAGE="${REGISTRY}/mtrnord/blog"
@@ -246,7 +233,6 @@ def build_blog() {
       echo "Building multi-arch image: ${IMAGE}"
       echo "Tags: ${TAG_TS}, latest, ${TAG_SHA}"
 
-      # Build and push multi-arch image
       docker buildx build \\
         --platform linux/amd64,linux/arm64 \\
         --tag "${IMAGE}:${TAG_TS}" \\
@@ -256,7 +242,6 @@ def build_blog() {
         -f apps/talos_cluster/image-builder/blog/Dockerfile \\
         apps/talos_cluster/image-builder/blog/
 
-      # Sign all pushed digests with cosign
       docker run --rm \\
         -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
         -v ~/.docker:/root/.docker:ro \\
@@ -284,11 +269,9 @@ def build_bookwyrm() {
     sh '''
       set -eu
 
-      # Configure Docker login
       mkdir -p ~/.docker
       cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-      # Get upstream version
       VERSION=$(docker run --rm curlimages/curl:latest \\
         curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" | \\
         grep '"tag_name"' | head -1 | cut -d'"' -f4)
@@ -303,7 +286,6 @@ def build_bookwyrm() {
       echo "Building multi-arch image: ${IMAGE}"
       echo "Tags: ${VERSION}, latest"
 
-      # Build and push multi-arch image
       docker buildx build \\
         --platform linux/amd64,linux/arm64 \\
         --build-arg VERSION="${VERSION}" \\
@@ -313,7 +295,6 @@ def build_bookwyrm() {
         -f apps/talos_cluster/image-builder/bookwyrm/Dockerfile \\
         apps/talos_cluster/image-builder/bookwyrm/
 
-      # Sign all pushed digests with cosign
       docker run --rm \\
         -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
         -v ~/.docker:/root/.docker:ro \\
