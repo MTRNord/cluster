@@ -6,7 +6,6 @@ pipelineJob('gitops-multiarch-builds') {
 
   triggers {
     githubPush()
-    // Check for updates daily at 3 AM UTC
     cron('H 3 * * *')
   }
 
@@ -20,8 +19,6 @@ pipelineJob('gitops-multiarch-builds') {
         pipeline {
           agent {
             kubernetes {
-              // All sh steps run inside the docker:dind container where docker CLI,
-              // docker buildx, and dockerd are natively available. No init containers needed.
               defaultContainer 'docker'
               yaml """
                 apiVersion: v1
@@ -57,9 +54,13 @@ pipelineJob('gitops-multiarch-builds') {
                       mountPath: /var/run/secrets/docker.io/config.json
                       subPath: dockerconfig.json
                       readOnly: true
-                    - name: cosign-key
+                    - name: cosign-secret
                       mountPath: /var/run/secrets/cosign/key
                       subPath: cosign.key
+                      readOnly: true
+                    - name: cosign-secret
+                      mountPath: /var/run/secrets/cosign/password
+                      subPath: cosign.password
                       readOnly: true
                   volumes:
                   - name: workspace
@@ -68,7 +69,7 @@ pipelineJob('gitops-multiarch-builds') {
                     secret:
                       secretName: registry-credentials
                       defaultMode: 256
-                  - name: cosign-key
+                  - name: cosign-secret
                     secret:
                       secretName: cosign-signing-key
                       defaultMode: 256
@@ -90,17 +91,23 @@ pipelineJob('gitops-multiarch-builds') {
 
           environment {
             REGISTRY = 'registry.midnightthoughts.space'
-            REGISTRY_URL = 'https://registry.midnightthoughts.space'
+            // docker CLI reads credentials from $DOCKER_CONFIG/config.json
             DOCKER_CONFIG = '/var/run/secrets/docker.io'
-            COSIGN_KEY_PATH = '/var/run/secrets/cosign/key'
           }
 
           stages {
             stage('Prepare Build Environment') {
               steps {
                 sh """
-                  # Install git (needed for rev-parse in build scripts; not in Alpine by default)
-                  apk add --no-cache git
+                  apk add --no-cache git jq wget
+
+                  # Allow git to operate on the workspace regardless of owner uid
+                  git config --global --add safe.directory '*'
+
+                  # Download cosign (same version as GitHub Actions)
+                  wget -qO /usr/local/bin/cosign \\
+                    https://github.com/sigstore/cosign/releases/download/v3.0.5/cosign-linux-amd64
+                  chmod +x /usr/local/bin/cosign
 
                   # dockerd inside docker:dind starts asynchronously; wait for the socket
                   for i in \\$(seq 1 30); do
@@ -115,11 +122,12 @@ pipelineJob('gitops-multiarch-builds') {
                     exit 1
                   fi
 
-                  # Register QEMU binfmt handlers so the DinD kernel can execute arm64 binaries
+                  # Register QEMU binfmt handlers for cross-platform builds
                   docker run --rm --privileged tonistiigi/binfmt --install all
 
-                  # Create a docker-container buildx builder (required for multi-platform --push)
-                  docker buildx create --name multiarch-builder --driver docker-container --platform linux/amd64,linux/arm64 2>/dev/null || true
+                  # Create docker-container buildx builder (required for multi-platform --push)
+                  docker buildx create --name multiarch-builder --driver docker-container \\
+                    --platform linux/amd64,linux/arm64 2>/dev/null || true
                   docker buildx use multiarch-builder
                   docker buildx inspect --bootstrap
                 """
@@ -128,8 +136,8 @@ pipelineJob('gitops-multiarch-builds') {
 
             stage('Clone Repository') {
               steps {
-                // checkout scm is only available in Multibranch/Pipeline-from-SCM jobs.
-                // This is an inline CPS pipeline, so clone explicitly.
+                // checkout scm only works in Multibranch/Pipeline-from-SCM jobs;
+                // this is an inline CPS pipeline so we clone explicitly.
                 git url: 'https://github.com/MTRNord/cluster.git', branch: 'main'
               }
             }
@@ -141,42 +149,31 @@ pipelineJob('gitops-multiarch-builds') {
                     expression { params.BUILD_IMAGE == 'matrix-backup' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_matrix_backup()
-                    }
+                    script { build_matrix_backup() }
                   }
                 }
-
                 stage('continuwuity') {
                   when {
                     expression { params.BUILD_IMAGE == 'continuwuity' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_continuwuity()
-                    }
+                    script { build_continuwuity() }
                   }
                 }
-
                 stage('blog') {
                   when {
                     expression { params.BUILD_IMAGE == 'blog' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_blog()
-                    }
+                    script { build_blog() }
                   }
                 }
-
                 stage('bookwyrm') {
                   when {
                     expression { params.BUILD_IMAGE == 'bookwyrm' || params.BUILD_IMAGE == 'all' }
                   }
                   steps {
-                    script {
-                      build_bookwyrm()
-                    }
+                    script { build_bookwyrm() }
                   }
                 }
               }
@@ -184,169 +181,174 @@ pipelineJob('gitops-multiarch-builds') {
           }
 
           post {
-            success {
-              echo "Build pipeline completed successfully!"
-            }
-            failure {
-              echo "Build pipeline failed!"
-            }
+            success { echo "Build pipeline completed successfully!" }
+            failure  { echo "Build pipeline failed!" }
           }
         }
 
+        // ---------------------------------------------------------------------------
+        // matrix-backup — Dockerfile: apps/talos_cluster/matrix-backup/backup-tool/
+        // ---------------------------------------------------------------------------
         def build_matrix_backup() {
           sh \'\'\'
             set -eu
-
             echo "=== Building matrix-backup ==="
-            mkdir -p ~/.docker
-            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-            TAG_TS=$(date -u +%Y%m%d-%H%M%S)
+            TAG_TS="$(date -u +%Y%m%d-%H%M%S)"
             TAG_SHA="sha-$(git rev-parse --short HEAD)"
-            IMAGE="${REGISTRY}/mtrnord/cluster/matrix-backup"
+            IMAGE="registry.midnightthoughts.space/mtrnord/cluster/matrix-backup"
 
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
               --tag "${IMAGE}:${TAG_TS}" \\
               --tag "${IMAGE}:main" \\
               --tag "${IMAGE}:${TAG_SHA}" \\
+              --metadata-file /tmp/matrix-backup-meta.json \\
               --push \\
-              -f apps/talos_cluster/image-builder/matrix-backup/Dockerfile \\
-              apps/talos_cluster/image-builder/matrix-backup/
+              -f apps/talos_cluster/matrix-backup/backup-tool/Dockerfile \\
+              apps/talos_cluster/matrix-backup/backup-tool/
 
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:${TAG_TS}"
-
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:main"
-
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+            DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/matrix-backup-meta.json)"
+            echo "Signing ${IMAGE}@${DIGEST}"
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
+              --new-bundle-format=false \\
+              --use-signing-config=false \\
+              --registry-referrers-mode=oci-1-1 \\
+              "${IMAGE}@${DIGEST}"
           \'\'\'
         }
 
+        // ---------------------------------------------------------------------------
+        // continuwuity — Dockerfile: apps/talos_cluster/continuwuity/
+        // ---------------------------------------------------------------------------
         def build_continuwuity() {
           sh \'\'\'
             set -eu
-
             echo "=== Building continuwuity ==="
-            mkdir -p ~/.docker
-            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
+            TAG_TS="$(date -u +%Y%m%d-%H%M%S)"
             TAG_SHA="sha-$(git rev-parse --short HEAD)"
-            IMAGE="${REGISTRY}/mtrnord/cluster/continuwuity"
+            IMAGE="registry.midnightthoughts.space/mtrnord/cluster/continuwuity"
 
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
               --tag "${IMAGE}:main" \\
+              --tag "${IMAGE}:${TAG_TS}" \\
               --tag "${IMAGE}:${TAG_SHA}" \\
+              --metadata-file /tmp/continuwuity-meta.json \\
               --push \\
-              -f apps/talos_cluster/image-builder/continuwuity/Dockerfile \\
-              apps/talos_cluster/image-builder/continuwuity/
+              -f apps/talos_cluster/continuwuity/Dockerfile \\
+              apps/talos_cluster/continuwuity/
 
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:main"
-
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+            DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/continuwuity-meta.json)"
+            echo "Signing ${IMAGE}@${DIGEST}"
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
+              --new-bundle-format=false \\
+              --use-signing-config=false \\
+              --registry-referrers-mode=oci-1-1 \\
+              "${IMAGE}@${DIGEST}"
           \'\'\'
         }
 
+        // ---------------------------------------------------------------------------
+        // blog — Dockerfile: apps/talos_cluster/blog/docker/
+        // ---------------------------------------------------------------------------
         def build_blog() {
           sh \'\'\'
             set -eu
-
             echo "=== Building blog ==="
-            mkdir -p ~/.docker
-            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-            TAG_TS=$(date -u +%Y%m%d-%H%M%S)
+            TAG_TS="$(date -u +%Y%m%d-%H%M%S)"
             TAG_SHA="sha-$(git rev-parse --short HEAD)"
-            IMAGE="${REGISTRY}/mtrnord/blog"
+            IMAGE="registry.midnightthoughts.space/mtrnord/blog"
 
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
-              --tag "${IMAGE}:${TAG_TS}" \\
               --tag "${IMAGE}:latest" \\
+              --tag "${IMAGE}:${TAG_TS}" \\
               --tag "${IMAGE}:${TAG_SHA}" \\
+              --metadata-file /tmp/blog-meta.json \\
               --push \\
-              -f apps/talos_cluster/image-builder/blog/Dockerfile \\
-              apps/talos_cluster/image-builder/blog/
+              -f apps/talos_cluster/blog/docker/Dockerfile \\
+              apps/talos_cluster/blog/docker/
 
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:${TAG_TS}"
-
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:latest"
-
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:${TAG_SHA}"
+            DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/blog-meta.json)"
+            echo "Signing ${IMAGE}@${DIGEST}"
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
+              --new-bundle-format=false \\
+              --use-signing-config=false \\
+              --registry-referrers-mode=oci-1-1 \\
+              "${IMAGE}@${DIGEST}"
           \'\'\'
         }
 
+        // ---------------------------------------------------------------------------
+        // bookwyrm — clones upstream source, applies our patch, skips if tag exists
+        // Mirrors the logic in .github/workflows/build-bookwyrm.yaml
+        // ---------------------------------------------------------------------------
         def build_bookwyrm() {
           sh \'\'\'
             set -eu
-
             echo "=== Building bookwyrm ==="
-            mkdir -p ~/.docker
-            cp ${DOCKER_CONFIG}/config.json ~/.docker/config.json 2>/dev/null || true
 
-            VERSION=$(docker run --rm curlimages/curl:latest \\
-              curl -sf "https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest" | \\
-              grep '"tag_name"' | head -1 | cut -d'"' -f4)
-
+            # Determine latest upstream release
+            VERSION="$(wget -qO - \'https://api.github.com/repos/bookwyrm-social/bookwyrm/releases/latest\' \\
+              | jq -r \'.tag_name\')"
             if [ -z "$VERSION" ]; then
-              echo "ERROR: could not determine upstream version"
+              echo "ERROR: could not determine upstream bookwyrm version"
               exit 1
             fi
+            echo "Upstream version: ${VERSION}"
 
-            IMAGE="${REGISTRY}/mtrnord/cluster/bookwyrm"
+            IMAGE="registry.midnightthoughts.space/mtrnord/bookwyrm"
+
+            # Skip if this tag already exists in the registry (same logic as GH Actions)
+            TAGS="$(wget -qO - \'https://registry.midnightthoughts.space/v2/mtrnord/bookwyrm/tags/list\' \\
+              | grep -o \'"tags":\\[[^]]*\\]\' || echo \'\')"
+            if echo "$TAGS" | grep -q "\\\"${VERSION}\\\""; then
+              echo "Tag ${VERSION} already exists in registry — skipping build"
+              exit 0
+            fi
+            echo "Tag ${VERSION} not found in registry — building"
+
+            # Clone bookwyrm source at the release tag
+            rm -rf /tmp/bookwyrm
+            git clone --depth=1 --branch "${VERSION}" \\
+              https://github.com/bookwyrm-social/bookwyrm.git /tmp/bookwyrm
+
+            # Apply our Dockerfile patch (tolerates if it doesn\'t apply cleanly)
+            PATCH="$(pwd)/apps/talos_cluster/bookwyrm/dockerfile.patch"
+            cd /tmp/bookwyrm
+            if git apply --check "$PATCH" 2>/dev/null; then
+              git apply "$PATCH"
+              echo "Dockerfile patch applied"
+            else
+              echo "Patch does not apply cleanly — proceeding without it"
+            fi
 
             docker buildx build \\
               --platform linux/amd64,linux/arm64 \\
-              --build-arg VERSION="${VERSION}" \\
               --tag "${IMAGE}:${VERSION}" \\
               --tag "${IMAGE}:latest" \\
+              --metadata-file /tmp/bookwyrm-meta.json \\
               --push \\
-              -f apps/talos_cluster/image-builder/bookwyrm/Dockerfile \\
-              apps/talos_cluster/image-builder/bookwyrm/
+              .
 
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:${VERSION}"
-
-            docker run --rm \\
-              -v ${COSIGN_KEY_PATH}:/cosign/key:ro \\
-              -v ~/.docker:/root/.docker:ro \\
-              gcr.io/projectsigstore/cosign:latest \\
-              sign --key /cosign/key "${IMAGE}:latest"
+            DIGEST="$(jq -r \'."containerimage.digest"\' /tmp/bookwyrm-meta.json)"
+            echo "Signing ${IMAGE}@${DIGEST}"
+            COSIGN_PRIVATE_KEY="$(cat /var/run/secrets/cosign/key)" \\
+            COSIGN_PASSWORD="$(cat /var/run/secrets/cosign/password)" \\
+            cosign sign --yes --key env://COSIGN_PRIVATE_KEY \\
+              --new-bundle-format=false \\
+              --use-signing-config=false \\
+              --registry-referrers-mode=oci-1-1 \\
+              "${IMAGE}@${DIGEST}"
           \'\'\'
         }
       '''.stripIndent())
