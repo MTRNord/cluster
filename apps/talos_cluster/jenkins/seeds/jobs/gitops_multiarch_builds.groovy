@@ -116,13 +116,20 @@ pipelineJob('gitops-multiarch-builds') {
                     exit 1
                   fi
                   echo "Docker socket ready"
-                  docker ps
+                  
+                  # Verify docker binary exists
+                  echo "PATH: \\$PATH"
+                  ls -la /opt/docker-bin/ || echo "docker-bin directory not found"
+                  file /opt/docker-bin/docker || echo "docker binary not found"
+                  
+                  # Use full path to docker
+                  /opt/docker-bin/docker ps
 
                   # Setup multi-arch support
-                  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
+                  /opt/docker-bin/docker run --rm --privileged multiarch/qemu-user-static --reset -p yes || true
                   ls -la /proc/sys/fs/binfmt_misc/ || echo "binfmt_misc not available"
-                  docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
-                  docker buildx inspect --bootstrap
+                  /opt/docker-bin/docker buildx create --use --name multiarch-builder || /opt/docker-bin/docker buildx use multiarch-builder
+                  /opt/docker-bin/docker buildx inspect --bootstrap
                 """
               }
             }
