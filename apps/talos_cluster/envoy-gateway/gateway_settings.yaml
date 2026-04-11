@@ -246,9 +246,9 @@ spec:
         certificateRefs:
           - kind: Secret
             name: mta-sts.lists.midnightthoughts.space-tls
-    - name: https-autoconfig-phorge
+    - name: https-wildcard-phorge-mtrnord-blog
       protocol: HTTPS
-      hostname: "autoconfig.phorge.mtrnord.blog"
+      hostname: "*.phorge.mtrnord.blog"
       port: 443
       allowedRoutes:
         namespaces:
@@ -257,31 +257,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: autoconfig.phorge.mtrnord.blog-tls
-    - name: https-autodiscover-phorge
-      protocol: HTTPS
-      hostname: "autodiscover.phorge.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: autodiscover.phorge.mtrnord.blog-tls
-    - name: https-mta-sts-phorge
-      protocol: HTTPS
-      hostname: "mta-sts.phorge.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: mta-sts.phorge.mtrnord.blog-tls
+            name: wildcard.phorge.mtrnord.blog-tls
     - name: https-openpgpkey.nordgedanken.dev
       protocol: HTTPS
       hostname: "openpgpkey.nordgedanken.dev"
@@ -425,9 +401,9 @@ spec:
           selector:
             matchLabels:
               app: authentik
-    - name: https-mtrnord-blog-gts
+    - name: https-wildcard-mtrnord-blog
       protocol: HTTPS
-      hostname: "gts.mtrnord.blog"
+      hostname: "*.mtrnord.blog"
       port: 443
       allowedRoutes:
         namespaces:
@@ -436,10 +412,10 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: gts.mtrnord.blog-tls
-    - name: https-mtrnord-blog-peertube
+            name: wildcard.mtrnord.blog-tls
+    - name: https-wildcard-convex-mtrnord-blog
       protocol: HTTPS
-      hostname: "peertube.mtrnord.blog"
+      hostname: "*.convex.mtrnord.blog"
       port: 443
       allowedRoutes:
         namespaces:
@@ -448,55 +424,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: peertube.mtrnord.blog-tls
-    - name: https-mtrnord-blog-convex
-      protocol: HTTPS
-      hostname: "convex.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: convex.mtrnord.blog-tls
-    - name: https-mtrnord-blog-convex-api
-      protocol: HTTPS
-      hostname: "api.convex.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: api.convex.mtrnord.blog-tls
-    - name: https-mtrnord-blog-convex-dashboard
-      protocol: HTTPS
-      hostname: "dashboard.convex.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: dashboard.convex.mtrnord.blog-tls
-    - name: https-mtrnord-blog-books
-      protocol: HTTPS
-      hostname: "books.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: books.mtrnord.blog-tls
+            name: wildcard.convex.mtrnord.blog-tls
     - name: https-midnightthoughts-collabora
       protocol: HTTPS
       hostname: "collabora.midnightthoughts.space"
@@ -521,9 +449,9 @@ spec:
         certificateRefs:
           - kind: Secret
             name: webhook.kubernetes.midnightthoughts.space-tls
-    - name: https-api-connectivity-tester-mtrnord-blog
+    - name: https-wildcard-connectivity-tester-mtrnord-blog
       protocol: HTTPS
-      hostname: "api.connectivity-tester.mtrnord.blog"
+      hostname: "*.connectivity-tester.mtrnord.blog"
       port: 443
       allowedRoutes:
         namespaces:
@@ -532,10 +460,10 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: api.connectivity-tester.mtrnord.blog-tls
-    - name: https-api-stage-connectivity-tester-mtrnord-blog
+            name: wildcard.connectivity-tester.mtrnord.blog-tls
+    - name: https-wildcard-stage-connectivity-tester-mtrnord-blog
       protocol: HTTPS
-      hostname: "api.stage.connectivity-tester.mtrnord.blog"
+      hostname: "*.stage.connectivity-tester.mtrnord.blog"
       port: 443
       allowedRoutes:
         namespaces:
@@ -544,79 +472,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: api.stage.connectivity-tester.mtrnord.blog-tls
-    - name: https-stage-connectivity-tester-mtrnord-blog
-      protocol: HTTPS
-      hostname: "stage.connectivity-tester.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: stage.connectivity-tester.mtrnord.blog-tls
-    - name: https-connectivity-tester-mtrnord-blog
-      protocol: HTTPS
-      hostname: "connectivity-tester.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: connectivity-tester.mtrnord.blog-tls
-    - name: https-beta-connectivity-tester-mtrnord-blog
-      protocol: HTTPS
-      hostname: "beta.connectivity-tester.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: beta.connectivity-tester.mtrnord.blog-tls
-    - name: https-federationtester-mtrnord-blog
-      protocol: HTTPS
-      hostname: "federationtester.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: federationtester.mtrnord.blog-tls
-    - name: https-weblate-mtrnord-blog
-      protocol: HTTPS
-      hostname: "weblate.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: weblate.mtrnord.blog-tls
-    - name: https-immich-mtrnord-blog
-      protocol: HTTPS
-      hostname: "immich.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: immich.mtrnord.blog-tls
+            name: wildcard.stage.connectivity-tester.mtrnord.blog-tls
     - name: https-mtrnord-blog-root
       protocol: HTTPS
       hostname: "mtrnord.blog"
@@ -629,42 +485,6 @@ spec:
         certificateRefs:
           - kind: Secret
             name: mtrnord.blog-tls
-    - name: https-mtrnord-blog-matrix
-      protocol: HTTPS
-      hostname: "matrix.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: matrix.mtrnord.blog-tls
-    - name: https-rss-mtrnord-blog
-      protocol: HTTPS
-      hostname: "rss.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: rss.mtrnord.blog-tls
-    - name: https-notify-mtrnord-blog
-      protocol: HTTPS
-      hostname: "notify.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: notify.mtrnord.blog-tls
     - name: https-midnightthoughts-rspamd
       protocol: HTTPS
       hostname: "rspamd.midnightthoughts.space"
@@ -845,9 +665,9 @@ spec:
         certificateRefs:
           - kind: Secret
             name: jenkins.midnightthoughts.space-tls
-    - name: https-mtrnord-blog-wanderer
+    - name: https-wildcard-wanderer-mtrnord-blog
       protocol: HTTPS
-      hostname: "wanderer.mtrnord.blog"
+      hostname: "*.wanderer.mtrnord.blog"
       port: 443
       allowedRoutes:
         namespaces:
@@ -856,19 +676,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: wanderer.mtrnord.blog-tls
-    - name: https-mtrnord-blog-wanderer-api
-      protocol: HTTPS
-      hostname: "api.wanderer.mtrnord.blog"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: api.wanderer.mtrnord.blog-tls
+            name: wildcard.wanderer.mtrnord.blog-tls
     - name: http
       protocol: HTTP
       port: 80
