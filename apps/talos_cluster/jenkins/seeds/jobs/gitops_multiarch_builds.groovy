@@ -121,7 +121,7 @@ pipelineJob('gitops-multiarch-builds') {
 
                   # Download cosign (same version as GitHub Actions)
                   wget -qO /usr/local/bin/cosign \\
-                    https://github.com/sigstore/cosign/releases/download/v3.0.5/cosign-linux-amd64
+                    https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64
                   chmod +x /usr/local/bin/cosign
 
                   # dockerd inside docker:dind starts asynchronously; wait for the socket
