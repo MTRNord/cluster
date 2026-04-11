@@ -845,6 +845,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: jenkins.midnightthoughts.space-tls
+    - name: https-mtrnord-blog-wanderer
+      protocol: HTTPS
+      hostname: "wanderer.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: wanderer.mtrnord.blog-tls
     - name: http
       protocol: HTTP
       port: 80

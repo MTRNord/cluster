@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wanderer-db
+  namespace: wanderer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wanderer-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wanderer-db
+    spec:
+      containers:
+        - name: pocketbase
+          image: flomp/wanderer-db:latest
+          ports:
+            - containerPort: 8090
+          env:
+            - name: MEILI_URL
+              value: "http://wanderer-search:7700"
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: MEILI_MASTER_KEY
+            - name: POCKETBASE_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_ENCRYPTION_KEY
+            - name: ORIGIN
+              value: "https://wanderer.mtrnord.blog"
+            - name: POCKETBASE_SMTP_ENABLED
+              value: "true"
+            - name: POCKETBASE_SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_SMTP_HOST
+            - name: POCKETBASE_SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_SMTP_PORT
+            - name: POCKETBASE_SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_SMTP_USERNAME
+            - name: POCKETBASE_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_SMTP_PASSWORD
+            - name: POCKETBASE_SMTP_SENDER_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_SMTP_SENDER_ADDRESS
+            - name: POCKETBASE_SMTP_SENDER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: POCKETBASE_SMTP_SENDER_NAME
+          volumeMounts:
+            - name: data
+              mountPath: /pb_data
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8090
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8090
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: wanderer-pocketbase-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wanderer-db
+  namespace: wanderer
+spec:
+  selector:
+    app: wanderer-db
+  ports:
+    - port: 8090
+      targetPort: 8090

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wanderer-search
+  namespace: wanderer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wanderer-search
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wanderer-search
+    spec:
+      containers:
+        - name: meilisearch
+          image: getmeili/meilisearch:v1.11.3
+          ports:
+            - containerPort: 7700
+          env:
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: MEILI_MASTER_KEY
+            - name: MEILI_NO_ANALYTICS
+              value: "true"
+          volumeMounts:
+            - name: data
+              mountPath: /meili_data
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 7700
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 7700
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: wanderer-meilisearch-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wanderer-search
+  namespace: wanderer
+spec:
+  selector:
+    app: wanderer-search
+  ports:
+    - port: 7700
+      targetPort: 7700

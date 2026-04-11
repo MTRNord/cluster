@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wanderer-web
+  namespace: wanderer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wanderer-web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wanderer-web
+    spec:
+      containers:
+        - name: web
+          image: flomp/wanderer-web:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ORIGIN
+              value: "https://wanderer.mtrnord.blog"
+            - name: PUBLIC_POCKETBASE_URL
+              value: "https://wanderer.mtrnord.blog"
+            - name: MEILI_URL
+              value: "http://wanderer-search:7700"
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wanderer-secrets
+                  key: MEILI_MASTER_KEY
+            - name: PUBLIC_DISABLE_SIGNUP
+              value: "true"
+            - name: PUBLIC_PRIVATE_INSTANCE
+              value: "true"
+            - name: BODY_SIZE_LIMIT
+              value: "Infinity"
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 10
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: wanderer-uploads
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wanderer-web
+  namespace: wanderer
+spec:
+  selector:
+    app: wanderer-web
+  ports:
+    - port: 3000
+      targetPort: 3000
