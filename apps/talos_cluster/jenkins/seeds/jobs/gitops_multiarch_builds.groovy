@@ -126,25 +126,18 @@ pipelineJob('gitops-multiarch-builds') {
                   docker run --rm --privileged --platform linux/amd64 \\
                     tonistiigi/binfmt:qemu-v8.1.5 --install all
 
-                  # Build a custom BuildKit image with qemu-aarch64-static baked in.
-                  # tonistiigi/binfmt embeds QEMU inside its Go binary — there is no
-                  # separate file to copy out. BuildKit reads the binfmt_misc interpreter
-                  # path (a now-deleted temp path) → gets ENOENT → falls back to scanning
-                  # /usr/bin/qemu-* → finds qemu-arm (32-bit, wrong arch) → arm64 builds
-                  # fail with "Invalid ELF image for this architecture".
-                  # Baking qemu-aarch64-static directly into the BuildKit image means the
-                  # correct 64-bit emulator is always present at the expected path.
+                  # Build a custom BuildKit image with the correctly-named QEMU emulator.
+                  # BuildKit's getEmulator() calls exec.LookPath("buildkit-qemu-aarch64")
+                  # — the binary MUST have the "buildkit-" prefix, not "qemu-aarch64".
+                  # Source: tonistiigi/binfmt:buildkit-* (the buildkit variant) ships
+                  # pre-built static x86_64 binaries with the correct naming convention.
                   mkdir -p /tmp/buildkit-ctx
                   cat > /tmp/buildkit-ctx/Dockerfile << 'BKEOF'
-FROM debian:12-slim AS qemu-source
-RUN apt-get update -qq && apt-get install -y --no-install-recommends qemu-user-static
+FROM tonistiigi/binfmt:buildkit-v10.2.1-64 AS binfmt
 
 FROM moby/buildkit:buildx-stable-1
-# tonistiigi/binfmt registers binfmt_misc with interpreter=/usr/bin/qemu-aarch64.
-# BuildKit reads that exact path from /proc/sys/fs/binfmt_misc/qemu-aarch64 and
-# tries to open it — so the file must be named qemu-aarch64, not qemu-aarch64-static.
-COPY --from=qemu-source /usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64
-RUN chmod +x /usr/bin/qemu-aarch64
+COPY --from=binfmt /buildkit-qemu-aarch64 /usr/bin/buildkit-qemu-aarch64
+COPY --from=binfmt /buildkit-qemu-arm     /usr/bin/buildkit-qemu-arm
 BKEOF
 
                   docker build --platform linux/amd64 -t buildkit-qemu:local /tmp/buildkit-ctx/
