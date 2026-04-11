@@ -23,7 +23,12 @@ spec:
     alphabetical:
       order: desc
 ---
-# Debian image for continuwuity and matrix-backup builder
+# Debian image for continuwuity builder
+# IMPORTANT: Flux's image-reflector-controller runs on amd64 nodes and records the
+# per-arch amd64 manifest digest when scanning Docker Hub. Dockerfiles that use
+# multi-arch builds MUST use the {"$imagepolicy": "...:tag"} marker (tag-only update)
+# and pin the manifest list digest manually — never the full marker which overwrites
+# with an amd64-only digest that breaks linux/arm64 BuildKit builds.
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
 metadata:
