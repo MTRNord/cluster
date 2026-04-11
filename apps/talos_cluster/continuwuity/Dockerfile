@@ -1,7 +1,7 @@
 # Wraps the upstream continuwuity scratch-based image with a shell (debian:12-slim)
 # so that Velero pre/post backup hooks can freeze the process via SIGSTOP/SIGCONT.
 # {"$imagepolicy": "flux-system:forgejo-continuwuity-main"}
-FROM forgejo.ellis.link/continuwuation/continuwuity:main@sha256:070b2f916bef7d542171acd0add0a28efd6af9c9bff83c64b26a289637477d9d AS upstream
+FROM forgejo.ellis.link/continuwuation/continuwuity:main@sha256:a31118e10a3e4d48a7b67de690c72ea8f3198ace7fc6f25b77c85eaec1f2ce64 AS upstream
 
 # Build ldb and sst_dump from the exact RocksDB version continuwuity uses (10.10.1)
 # so MANIFEST format is guaranteed compatible for recovery operations.

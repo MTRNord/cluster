@@ -23,7 +23,7 @@ RUN CGO_ENABLED=0 GOARCH=${TARGETARCH} \
 
 # Runtime stage — distroless/static has no shell, no libc, minimal attack surface.
 # {"$imagepolicy": "flux-system:gcr-distroless-static-nonroot"}
-FROM gcr.io/distroless/static:nonroot@sha256:64c43684e6d2b581d1eb362ea47b6a4defee6a9cac5f7ebbda3daa67e8c9b8e6
+FROM gcr.io/distroless/static:nonroot@sha256:e3f945647ffb95b5839c07038d64f9811adf17308b9121d8a2b87b6a22a80a39
 
 COPY --from=builder /matrix-backup /matrix-backup
 

@@ -10,7 +10,7 @@ pipelineJob('gitops-multiarch-builds') {
   }
 
   parameters {
-    choiceParam('BUILD_IMAGE', ['matrix-backup', 'continuwuity', 'blog', 'bookwyrm', 'all'], 'Which image(s) to build')
+    choiceParam('BUILD_IMAGE', ['all', 'matrix-backup', 'continuwuity', 'blog', 'bookwyrm'], 'Which image(s) to build')
   }
 
   definition {
@@ -37,6 +37,12 @@ pipelineJob('gitops-multiarch-builds') {
                       value: jenkins-operator-slave-jenkins.jenkins.svc.cluster.local:50000
                     - name: JENKINS_URL
                       value: http://jenkins-operator-http-jenkins.jenkins.svc.cluster.local:8080/
+                    resources:
+                      requests:
+                        cpu: 100m
+                        memory: 256Mi
+                      limits:
+                        memory: 512Mi
                     volumeMounts:
                     - name: workspace
                       mountPath: /home/jenkins/agent
@@ -47,6 +53,13 @@ pipelineJob('gitops-multiarch-builds') {
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
+                    resources:
+                      requests:
+                        cpu: 2000m
+                        memory: 6Gi
+                      limits:
+                        cpu: 4000m
+                        memory: 12Gi
                     volumeMounts:
                     - name: workspace
                       mountPath: /home/jenkins/agent
@@ -86,6 +99,8 @@ pipelineJob('gitops-multiarch-builds') {
 
           triggers {
             githubPush()
+            // pollSCM as fallback in case the GitHub webhook is not reachable
+            pollSCM('H/15 * * * *')
             cron('H 3 * * *')
           }
 
@@ -122,29 +137,17 @@ pipelineJob('gitops-multiarch-builds') {
                     exit 1
                   fi
 
-                  # Register QEMU binfmt handlers for cross-platform builds
+                  # Register QEMU binfmt handlers so the kernel can run arm64 binaries
+                  # on this amd64 node. The F-flag keeps the interpreter fd open kernel-side
+                  # so it persists even after the container exits.
                   docker run --rm --privileged --platform linux/amd64 \\
                     tonistiigi/binfmt:qemu-v8.1.5 --install all
 
-                  # Build a custom BuildKit image with the correctly-named QEMU emulator.
-                  # BuildKit's getEmulator() calls exec.LookPath("buildkit-qemu-aarch64")
-                  # — the binary MUST have the "buildkit-" prefix, not "qemu-aarch64".
-                  # Source: tonistiigi/binfmt:buildkit-* (the buildkit variant) ships
-                  # pre-built static x86_64 binaries with the correct naming convention.
-                  mkdir -p /tmp/buildkit-ctx
-                  cat > /tmp/buildkit-ctx/Dockerfile << 'BKEOF'
-FROM tonistiigi/binfmt:buildkit-v10.2.1-64 AS binfmt
-
-FROM moby/buildkit:buildx-stable-1
-COPY --from=binfmt /buildkit-qemu-aarch64 /usr/bin/buildkit-qemu-aarch64
-COPY --from=binfmt /buildkit-qemu-arm     /usr/bin/buildkit-qemu-arm
-BKEOF
-
-                  docker build --platform linux/amd64 -t buildkit-qemu:local /tmp/buildkit-ctx/
-
-                  # Create docker-container buildx builder using the custom BuildKit image
+                  # Create docker-container buildx builder.
+                  # moby/buildkit:buildx-stable-1 already ships buildkit-qemu-aarch64 so
+                  # no custom image is needed — the per-arch digest bug in Dockerfiles was
+                  # the root cause of the earlier "Invalid ELF image" failures, not QEMU.
                   docker buildx create --name multiarch-builder --driver docker-container \\
-                    --driver-opt image=buildkit-qemu:local \\
                     --platform linux/amd64,linux/arm64 2>/dev/null || true
                   docker buildx use multiarch-builder
                   docker buildx inspect --bootstrap
