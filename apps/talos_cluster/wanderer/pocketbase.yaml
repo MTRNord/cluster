@@ -15,6 +15,10 @@ spec:
       labels:
         app: wanderer-db
     spec:
+      initContainers:
+        - name: wait-for-meilisearch
+          image: busybox:1.36
+          command: ['sh', '-c', 'until wget -qO- http://wanderer-search:7700/health; do echo waiting for meilisearch; sleep 2; done']
       containers:
         - name: pocketbase
           image: flomp/wanderer-db:latest
