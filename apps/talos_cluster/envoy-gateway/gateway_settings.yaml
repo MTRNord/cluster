@@ -857,6 +857,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: wanderer.mtrnord.blog-tls
+    - name: https-mtrnord-blog-wanderer-api
+      protocol: HTTPS
+      hostname: "api.wanderer.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: api.wanderer.mtrnord.blog-tls
     - name: http
       protocol: HTTP
       port: 80
