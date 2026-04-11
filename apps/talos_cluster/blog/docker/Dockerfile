@@ -84,9 +84,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/auto-sizes.1.7.0.zip \
     && unzip -q auto-sizes.1.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
     && rm auto-sizes.1.7.0.zip
 # Install Friends
-RUN wget -q https://downloads.wordpress.org/plugin/friends.4.0.4.zip \
-    && unzip -q friends.4.0.4.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm friends.4.0.4.zip
+RUN wget -q https://downloads.wordpress.org/plugin/friends.4.0.5.zip \
+    && unzip -q friends.4.0.5.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm friends.4.0.5.zip
 # Install Image Placeholders
 RUN wget -q https://downloads.wordpress.org/plugin/dominant-color-images.1.2.1.zip \
     && unzip -q dominant-color-images.1.2.1.zip -d /var/www/html/wordpress/wp-content/plugins/ \
