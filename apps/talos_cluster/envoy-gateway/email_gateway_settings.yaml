@@ -1,0 +1,216 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: email-proxy-config
+  namespace: envoy-gateway
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      useListenerPortAsContainerPort: true
+      envoyService:
+        type: ClusterIP
+      envoyDaemonSet:
+        patch:
+          type: StrategicMerge
+          value:
+            spec:
+              template:
+                spec:
+                  hostNetwork: true
+                  dnsPolicy: ClusterFirstWithHostNet
+        container:
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+  logging:
+    level:
+      default: info
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: GatewayClass
+metadata:
+  name: email-gateway-class
+  namespace: envoy-gateway
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: email-proxy-config
+    namespace: envoy-gateway
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: email-gateway
+  namespace: envoy-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+spec:
+  gatewayClassName: email-gateway-class
+  infrastructure:
+    annotations:
+      external-dns.alpha.kubernetes.io/access: public
+  # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
+  listeners:
+    - name: smtp
+      protocol: TCP
+      port: 25
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: All
+    - name: submissions
+      protocol: TCP
+      port: 465
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: All
+    - name: submission
+      protocol: TCP
+      port: 587
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: All
+    - name: imap
+      protocol: TCP
+      port: 143
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: All
+    - name: imaps
+      protocol: TCP
+      port: 993
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: All
+    - name: https-stalwart-nordgedanken
+      protocol: HTTPS
+      hostname: "stalwart.nordgedanken.dev"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: stalwart.nordgedanken.dev-tls
+    - name: https-webmail-midnightthoughts
+      protocol: HTTPS
+      hostname: "webmail.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: webmail.midnightthoughts.space-tls
+    - name: https-autoconfig-midnightthoughts
+      protocol: HTTPS
+      hostname: "autoconfig.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autoconfig.midnightthoughts.space-tls
+    - name: https-autodiscover-midnightthoughts
+      protocol: HTTPS
+      hostname: "autodiscover.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autodiscover.midnightthoughts.space-tls
+    - name: https-autoconfig-lists-midnightthoughts
+      protocol: HTTPS
+      hostname: "autoconfig.lists.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autoconfig.lists.midnightthoughts.space-tls
+    - name: https-autodiscover-lists-midnightthoughts
+      protocol: HTTPS
+      hostname: "autodiscover.lists.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autodiscover.lists.midnightthoughts.space-tls
+    - name: https-mta-sts-lists-midnightthoughts
+      protocol: HTTPS
+      hostname: "mta-sts.lists.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: mta-sts.lists.midnightthoughts.space-tls
+    - name: https-autoconfig-phorge-mtrnord-blog
+      protocol: HTTPS
+      hostname: "autoconfig.phorge.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autoconfig.phorge.mtrnord.blog-tls
+    - name: https-autodiscover-phorge-mtrnord-blog
+      protocol: HTTPS
+      hostname: "autodiscover.phorge.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: autodiscover.phorge.mtrnord.blog-tls
+    - name: https-mta-sts-phorge-mtrnord-blog
+      protocol: HTTPS
+      hostname: "mta-sts.phorge.mtrnord.blog"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: mta-sts.phorge.mtrnord.blog-tls
