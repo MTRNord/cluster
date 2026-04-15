@@ -3,6 +3,8 @@ kind: HTTPRoute
 metadata:
   name: stalwart-admin
   namespace: stalwart
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: stalwart.nordgedanken.dev,webmail.midnightthoughts.space,mta-sts.midnightthoughts.space,autoconfig.midnightthoughts.space,autodiscover.midnightthoughts.space,autoconfig.lists.midnightthoughts.space,autodiscover.lists.midnightthoughts.space,mta-sts.lists.midnightthoughts.space,autoconfig.phorge.mtrnord.blog,autodiscover.phorge.mtrnord.blog,mta-sts.phorge.mtrnord.blog
 spec:
   parentRefs:
     - name: email-gateway
