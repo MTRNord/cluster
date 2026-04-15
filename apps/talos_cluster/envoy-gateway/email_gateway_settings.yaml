@@ -55,6 +55,7 @@ spec:
   gatewayClassName: email-gateway-class
   infrastructure:
     annotations:
+      external-dns.alpha.kubernetes.io/hostname: stalwart.nordgedanken.dev,webmail.midnightthoughts.space,mta-sts.midnightthoughts.space,autoconfig.midnightthoughts.space,autodiscover.midnightthoughts.space,autoconfig.lists.midnightthoughts.space,autodiscover.lists.midnightthoughts.space,mta-sts.lists.midnightthoughts.space,autoconfig.phorge.mtrnord.blog,autodiscover.phorge.mtrnord.blog,mta-sts.phorge.mtrnord.blog
       external-dns.alpha.kubernetes.io/access: public
   # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
   listeners:
