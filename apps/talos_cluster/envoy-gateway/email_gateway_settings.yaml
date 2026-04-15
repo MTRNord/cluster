@@ -5,6 +5,7 @@ metadata:
   namespace: envoy-gateway
 spec:
   ipFamily: DualStack
+  routingType: Service
   extraArgs:
     - --use-dynamic-base-id
   provider:
@@ -12,7 +13,7 @@ spec:
     kubernetes:
       useListenerPortAsContainerPort: true
       envoyService:
-        type: ClusterIP
+        type: LoadBalancer
         patch:
           type: StrategicMerge
           value:
@@ -73,36 +74,35 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
 spec:
-  addresses:
-    - type: IPAddress
-      value: 65.21.7.19
-    - type: IPAddress
-      value: 2a01:4f9:c010:88a1::1
-    - type: IPAddress
-      value: 157.180.84.123
-    - type: IPAddress
-      value: 2a01:4f9:c012:96a5::1
-    - type: IPAddress
-      value: 46.225.115.168
-    - type: IPAddress
-      value: 2a01:4f8:1c18:222e::1
-    - type: IPAddress
-      value: 116.203.40.165
-    - type: IPAddress
-      value: 2a01:4f8:1c0c:66d3::1
-    - type: IPAddress
-      value: 46.225.148.120
-    - type: IPAddress
-      value: 2a01:4f8:c014:3000::1
-    - type: IPAddress
-      value: 138.199.144.31
-    - type: IPAddress
-      value: 2a01:4f8:c014:1a0e::1
+  # addresses:
+  #   - type: IPAddress
+  #     value: 65.21.7.19
+  #   - type: IPAddress
+  #     value: 2a01:4f9:c010:88a1::1
+  #   - type: IPAddress
+  #     value: 157.180.84.123
+  #   - type: IPAddress
+  #     value: 2a01:4f9:c012:96a5::1
+  #   - type: IPAddress
+  #     value: 46.225.115.168
+  #   - type: IPAddress
+  #     value: 2a01:4f8:1c18:222e::1
+  #   - type: IPAddress
+  #     value: 116.203.40.165
+  #   - type: IPAddress
+  #     value: 2a01:4f8:1c0c:66d3::1
+  #   - type: IPAddress
+  #     value: 46.225.148.120
+  #   - type: IPAddress
+  #     value: 2a01:4f8:c014:3000::1
+  #   - type: IPAddress
+  #     value: 138.199.144.31
+  #   - type: IPAddress
+  #     value: 2a01:4f8:c014:1a0e::1
   gatewayClassName: email-gateway-class
   infrastructure:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: stalwart.nordgedanken.dev,webmail.midnightthoughts.space,mta-sts.midnightthoughts.space,autoconfig.midnightthoughts.space,autodiscover.midnightthoughts.space,autoconfig.lists.midnightthoughts.space,autodiscover.lists.midnightthoughts.space,mta-sts.lists.midnightthoughts.space,autoconfig.phorge.mtrnord.blog,autodiscover.phorge.mtrnord.blog,mta-sts.phorge.mtrnord.blog
-      external-dns.alpha.kubernetes.io/access: public
   # no wildcards due to Envoy bug: https://github.com/envoyproxy/gateway/issues/2675#issuecomment-1960449002
   listeners:
     - name: smtp
