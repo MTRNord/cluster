@@ -219,3 +219,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: mta-sts.phorge.mtrnord.blog-tls
+    - name: https-midnightthoughts-mta-sts
+      protocol: HTTPS
+      hostname: "mta-sts.midnightthoughts.space"
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: "All"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: mta-sts.midnightthoughts.space

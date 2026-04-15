@@ -390,18 +390,6 @@ spec:
         certificateRefs:
           - kind: Secret
             name: morg-statistics.midnightthoughts.space
-    - name: https-midnightthoughts-mta-sts
-      protocol: HTTPS
-      hostname: "mta-sts.midnightthoughts.space"
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: "All"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: mta-sts.midnightthoughts.space
     - name: https-midnightthoughts-lists
       protocol: HTTPS
       hostname: "lists.midnightthoughts.space"
