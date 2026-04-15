@@ -4,6 +4,8 @@ metadata:
   name: email-proxy-config
   namespace: envoy-gateway
 spec:
+  extraArgs:
+    - --use-dynamic-base-id
   provider:
     type: Kubernetes
     kubernetes:
