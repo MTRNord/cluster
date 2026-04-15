@@ -64,9 +64,9 @@ RUN wget -q https://downloads.wordpress.org/theme/twentytwentyfive.1.4.zip \
     && rm twentytwentyfive.1.4.zip
 
 # Install WP Super Cache plugin
-RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.0.3.zip \
-    && unzip -q wp-super-cache.3.0.3.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm wp-super-cache.3.0.3.zip
+RUN wget -q https://downloads.wordpress.org/plugin/wp-super-cache.3.1.0.zip \
+    && unzip -q wp-super-cache.3.1.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm wp-super-cache.3.1.0.zip
 # Install Redis Object Cache plugin
 RUN wget -q https://downloads.wordpress.org/plugin/redis-cache.2.7.0.zip \
     && unzip -q redis-cache.2.7.0.zip -d /var/www/html/wordpress/wp-content/plugins/ \
