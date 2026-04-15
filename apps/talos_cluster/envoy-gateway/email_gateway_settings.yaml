@@ -12,6 +12,23 @@ spec:
       useListenerPortAsContainerPort: true
       envoyService:
         type: ClusterIP
+        patch:
+          type: StrategicMerge
+          value:
+            spec:
+              externalIPs:
+                - 65.21.7.19
+                - 2a01:4f9:c010:88a1::1
+                - 157.180.84.123
+                - 2a01:4f9:c012:96a5::1
+                - 46.225.115.168
+                - 2a01:4f8:1c18:222e::1
+                - 116.203.40.165
+                - 2a01:4f8:1c0c:66d3::1
+                - 46.225.148.120
+                - 2a01:4f8:c014:3000::1
+                - 138.199.144.31
+                - 2a01:4f8:c014:1a0e::1
       envoyDaemonSet:
         patch:
           type: StrategicMerge
