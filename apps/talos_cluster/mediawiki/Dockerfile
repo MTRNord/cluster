@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
        https://github.com/wikimedia/mediawiki-extensions-CodeMirror.git \
        /var/www/html/extensions/CodeMirror \
   && rm -rf /var/www/html/extensions/CodeMirror/.git \
-  && docker-php-ext-enable apcu \
+  && pecl install redis \
+  && docker-php-ext-enable apcu redis \
   && apt-get purge -y git && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* /tmp/pear
 
