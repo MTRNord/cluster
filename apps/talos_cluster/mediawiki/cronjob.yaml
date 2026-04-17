@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: mediawiki-runJobs
+  name: mediawiki-runjobs
   namespace: mediawiki
 spec:
   schedule: "*/5 * * * *"
@@ -17,12 +17,12 @@ spec:
           securityContext:
             runAsNonRoot: false
           containers:
-            - name: runJobs
+            - name: runjobs
               image: registry.midnightthoughts.space/mtrnord/mediawiki:1.45.3 # {"$imagepolicy": "flux-system:mediawiki"}
               command:
                 - php
                 - ./maintenance/run.php
-                - runJobs
+                - runjobs
                 - --maxtime=240
               envFrom:
                 - secretRef:
