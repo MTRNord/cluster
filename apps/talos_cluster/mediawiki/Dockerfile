@@ -27,12 +27,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
        https://gerrit.wikimedia.org/r/mediawiki/extensions/cldr \
        /var/www/html/extensions/CLDR \
   && rm -rf /var/www/html/extensions/CLDR/.git \
-  && for EXT in EmailAuth GPGMail RealMe; do \
-       git clone --depth 1 \
-         "https://gerrit.wikimedia.org/r/mediawiki/extensions/${EXT}" \
-         "/var/www/html/extensions/${EXT}" \
-       && rm -rf "/var/www/html/extensions/${EXT}/.git"; \
-     done \
+  && git clone --depth 1 \
+       https://gerrit.wikimedia.org/r/mediawiki/extensions/GPGMail \
+       /var/www/html/extensions/GPGMail \
+  && rm -rf /var/www/html/extensions/GPGMail/.git \
   && apt-get purge -y git && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 
