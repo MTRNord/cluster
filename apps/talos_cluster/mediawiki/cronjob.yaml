@@ -1,0 +1,81 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mediawiki-runJobs
+  namespace: mediawiki
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: false
+          containers:
+            - name: runJobs
+              image: registry.midnightthoughts.space/mtrnord/mediawiki:1.45.3 # {"$imagepolicy": "flux-system:mediawiki"}
+              command:
+                - php
+                - ./maintenance/run.php
+                - runJobs
+                - --maxtime=240
+              envFrom:
+                - secretRef:
+                    name: mediawiki-cred
+              env:
+                - name: MW_DB_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: mediawiki-cred
+                      key: db-name
+                - name: MW_DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: mediawiki-cred
+                      key: username
+                - name: MW_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mediawiki-cred
+                      key: password
+                - name: MW_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: mediawiki-cred
+                      key: wg-secret-key
+                - name: MW_UPGRADE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: mediawiki-cred
+                      key: wg-upgrade-key
+                - name: MW_SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mediawiki-cred
+                      key: smtp-password
+              volumeMounts:
+                - name: mediawiki-config
+                  mountPath: /var/www/html/LocalSettings.php
+                  subPath: LocalSettings.php
+                  readOnly: true
+                - name: mediawiki-images
+                  mountPath: /var/www/html/images
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "50m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "200m"
+          volumes:
+            - name: mediawiki-config
+              configMap:
+                name: mediawiki-config
+            - name: mediawiki-images
+              persistentVolumeClaim:
+                claimName: mediawiki-images

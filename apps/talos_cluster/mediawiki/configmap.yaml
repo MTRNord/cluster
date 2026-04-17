@@ -53,13 +53,21 @@ data:
         'password' => getenv('MW_SMTP_PASSWORD') ?: '',
     ];
 
-    # Caching
-    $wgMainCacheType    = CACHE_NONE;
-    $wgSessionCacheType = CACHE_DB;
+    # Caching — Valkey for shared object/session/parser cache, APCu for localisation
+    $wgObjectCaches['redis'] = [
+        'class'      => 'RedisBagOStuff',
+        'servers'    => ['mediawiki-valkey.mediawiki.svc.cluster.local:6379'],
+        'persistent' => true,
+    ];
+    $wgMainCacheType    = 'redis';
+    $wgSessionCacheType = 'redis';
+    $wgParserCacheType  = 'redis';
 
-    # Performance
-    $wgParserCacheType  = CACHE_DB;
-    $wgJobRunRate        = 1;
+    # APCu for localisation cache (in-process, fastest for single-language wiki)
+    $wgLocalisationCacheConf = ['store' => 'accel'];
+
+    # Run jobs via CronJob, not on page requests
+    $wgJobRunRate = 0;
 
     # === Spam prevention ===
     # Disable public account creation — admins create accounts manually

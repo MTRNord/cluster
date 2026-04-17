@@ -1,3 +1,27 @@
+# Valkey (shared cache)
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: valkey
+  namespace: flux-system
+spec:
+  image: docker.io/valkey/valkey
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: valkey
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: valkey
+  filterTags:
+    pattern: '^\d+-alpine$'
+  policy:
+    alphabetical:
+      order: desc
+---
 # Custom MediaWiki image (registry.midnightthoughts.space)
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
