@@ -1,0 +1,149 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tlsa-updater
+  namespace: stalwart
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tlsa-updater
+  namespace: stalwart
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["stalwart-mail-cert"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tlsa-updater
+  namespace: stalwart
+subjects:
+  - kind: ServiceAccount
+    name: tlsa-updater
+    namespace: stalwart
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: tlsa-updater
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tlsa-updater
+  namespace: stalwart
+spec:
+  schedule: "17 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: tlsa-updater
+          restartPolicy: OnFailure
+          containers:
+            - name: tlsa-updater
+              image: alpine:3
+              env:
+                - name: PDNS_URL
+                  value: "http://10.0.64.129:8081"
+                - name: PDNS_ZONE
+                  value: "midnightthoughts.space."
+                - name: MAIL_HOST
+                  value: "mail.midnightthoughts.space."
+                - name: PDNS_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: tlsa-updater-pdns
+                      key: api-key
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  apk add -q --no-cache openssl curl jq
+
+                  TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+                  CA=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+                  SECRET=$(curl -sf --cacert "$CA" \
+                    -H "Authorization: Bearer $TOKEN" \
+                    "https://kubernetes.default.svc/api/v1/namespaces/stalwart/secrets/stalwart-mail-cert")
+
+                  # Full cert chain (leaf + intermediates)
+                  CERT_CHAIN=$(echo "$SECRET" | jq -r '.data["tls.crt"]' | base64 -d)
+
+                  # Split full chain into individual cert files
+                  echo "$CERT_CHAIN" | awk '
+                    /-----BEGIN CERTIFICATE-----/ { n++ }
+                    { print > "/tmp/cert-" n ".pem" }
+                  '
+
+                  RECORDS_JSON="[]"
+                  IDX=1
+                  while [ -f "/tmp/cert-${IDX}.pem" ]; do
+                    openssl x509 -in "/tmp/cert-${IDX}.pem" -outform DER -out "/tmp/cert-${IDX}.der" 2>/dev/null
+                    openssl x509 -in "/tmp/cert-${IDX}.pem" -pubkey -noout 2>/dev/null \
+                      | openssl pkey -pubin -outform DER -out "/tmp/cert-${IDX}.spki.der" 2>/dev/null
+
+                    H01=$(openssl dgst -sha256 "/tmp/cert-${IDX}.der" | awk '{print $2}')
+                    H02=$(openssl dgst -sha512 "/tmp/cert-${IDX}.der" | awk '{print $2}')
+                    H11=$(openssl dgst -sha256 "/tmp/cert-${IDX}.spki.der" | awk '{print $2}')
+                    H12=$(openssl dgst -sha512 "/tmp/cert-${IDX}.spki.der" | awk '{print $2}')
+
+                    echo "Cert $IDX: 3/2 0 1=$H01"
+
+                    if [ "$IDX" -eq 1 ]; then
+                      # Leaf cert: DANE-EE (3 x x) + PKIX-EE (2 x x)
+                      NEW=$(jq -n \
+                        --arg h01 "$H01" --arg h02 "$H02" \
+                        --arg h11 "$H11" --arg h12 "$H12" \
+                        '[
+                          {content: ("3 0 1 " + $h01), disabled: false},
+                          {content: ("3 0 2 " + $h02), disabled: false},
+                          {content: ("3 1 1 " + $h11), disabled: false},
+                          {content: ("3 1 2 " + $h12), disabled: false},
+                          {content: ("2 0 1 " + $h01), disabled: false},
+                          {content: ("2 0 2 " + $h02), disabled: false},
+                          {content: ("2 1 1 " + $h11), disabled: false},
+                          {content: ("2 1 2 " + $h12), disabled: false}
+                        ]')
+                    else
+                      # Intermediate certs: PKIX-EE (2 x x) only
+                      NEW=$(jq -n \
+                        --arg h01 "$H01" --arg h02 "$H02" \
+                        --arg h11 "$H11" --arg h12 "$H12" \
+                        '[
+                          {content: ("2 0 1 " + $h01), disabled: false},
+                          {content: ("2 0 2 " + $h02), disabled: false},
+                          {content: ("2 1 1 " + $h11), disabled: false},
+                          {content: ("2 1 2 " + $h12), disabled: false}
+                        ]')
+                    fi
+
+                    RECORDS_JSON=$(printf '%s\n%s' "$RECORDS_JSON" "$NEW" | jq -s '.[0] + .[1]')
+                    IDX=$((IDX + 1))
+                  done
+
+                  echo "Total TLSA records: $(echo "$RECORDS_JSON" | jq 'length')"
+
+                  for PORT in 25 465 587 143 993; do
+                    NAME="_${PORT}._tcp.${MAIL_HOST}"
+                    echo "Updating $NAME ..."
+                    BODY=$(jq -n \
+                      --arg name "$NAME" \
+                      --argjson records "$RECORDS_JSON" \
+                      '{rrsets: [{name: $name, type: "TLSA", ttl: 300, changetype: "REPLACE", records: $records}]}')
+                    curl -sf -X PATCH \
+                      -H "X-API-Key: $PDNS_API_KEY" \
+                      -H "Content-Type: application/json" \
+                      -d "$BODY" \
+                      "${PDNS_URL}/api/v1/servers/localhost/zones/${PDNS_ZONE}" > /dev/null
+                    echo "  OK"
+                  done
+
+                  echo "TLSA update complete"
