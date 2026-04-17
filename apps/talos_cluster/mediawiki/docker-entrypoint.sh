@@ -1,4 +1,9 @@
 #!/bin/bash
 set -e
-php-fpm8.3 --daemonize
-exec apache2-foreground
+
+# Start PHP-FPM as a daemon
+/usr/local/sbin/php-fpm --daemonize
+
+# Source Apache environment variables then run Apache in foreground
+. /etc/apache2/envvars
+exec /usr/sbin/apache2 -DFOREGROUND
