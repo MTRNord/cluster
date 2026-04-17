@@ -14,4 +14,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get purge -y git && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* /tmp/pear
 
-COPY php-custom.ini /usr/local/etc/php/conf.d/mediawiki-custom.ini
+COPY php-custom.ini /usr/local/etc/php/conf.d/zz-mediawiki-custom.ini
