@@ -45,12 +45,20 @@ data:
     $wgPasswordSender      = 'support@midnightthoughts.space';
 
     $wgSMTP = [
-        'host'     => 'ssl://mail.midnightthoughts.space',
+        'host'     => 'stalwart-mail.stalwart.svc.cluster.local',
         'IDHost'   => 'wiki.mtrnord.blog',
-        'port'     => 465,
+        'port'     => 2587,
         'auth'     => true,
         'username' => 'support@midnightthoughts.space',
         'password' => getenv('MW_SMTP_PASSWORD') ?: '',
+        // port 2587 is an internal-only listener with no PROXY protocol requirement;
+        // cert is for mail.midnightthoughts.space so peer verification is disabled
+        'socket_options' => [
+            'ssl' => [
+                'verify_peer'      => false,
+                'verify_peer_name' => false,
+            ],
+        ],
     ];
 
     # Caching — Valkey for shared object/session/parser cache, APCu for localisation

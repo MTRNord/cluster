@@ -22,6 +22,18 @@ spec:
     - kustomize:
         patches:
           - target:
+              version: v1
+              kind: Service
+              name: stalwart-mail
+            patch: |
+              - op: add
+                path: /spec/ports/-
+                value:
+                  name: submission-internal
+                  port: 2587
+                  protocol: TCP
+                  targetPort: 2587
+          - target:
               group: monitoring.coreos.com
               version: v1
               kind: ServiceMonitor
@@ -215,6 +227,9 @@ spec:
               trusted-networks:
                 - 10.0.0.0/8
                 - fd00::/8
+          submission-internal:
+            bind: ["[::]:2587"]
+            protocol: smtp
           submissions:
             bind: ["[::]:465"]
             protocol: smtp
