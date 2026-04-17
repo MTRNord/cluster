@@ -19,6 +19,7 @@ spec:
       containers:
         - name: mediawiki
           image: registry.midnightthoughts.space/mtrnord/mediawiki:1.45.3 # {"$imagepolicy": "flux-system:mediawiki"}
+          imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
