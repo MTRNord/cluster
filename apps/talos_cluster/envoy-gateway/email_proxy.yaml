@@ -1,0 +1,32 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: email-direct-proxy
+spec:
+  ipFamily: DualStack
+  extraArgs:
+    - --use-dynamic-base-id
+  logging:
+    level:
+      default: info
+  routingType: Service
+  provider:
+    type: Kubernetes
+    kubernetes:
+      useListenerPortAsContainerPort: true
+      envoyService:
+        type: ClusterIP
+      envoyDaemonSet:
+        container:
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+        patch:
+          type: StrategicMerge
+          value:
+            spec:
+              template:
+                spec:
+                  hostNetwork: true
+                  dnsPolicy: ClusterFirstWithHostNet
