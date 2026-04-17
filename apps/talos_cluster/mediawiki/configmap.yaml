@@ -63,10 +63,18 @@ data:
     $wgSessionCacheType = 'redis';
     $wgParserCacheType  = 'redis';
 
-    # APCu for localisation cache (in-process, fastest for single-language wiki)
-    $wgLocalisationCacheConf = ['store' => 'accel'];
+# Run jobs via CronJob, not on page requests
+    # Localisation cache — 'array' stores PHP static arrays in $wgCacheDirectory,
+    # picked up by OPcache on subsequent requests (fastest option)
+    $wgCacheDirectory = '/tmp/mediawiki-cache';
+    $wgLocalisationCacheConf = [
+        'class'          => LocalisationCache::class,
+        'store'          => 'array',
+        'storeClass'     => false,
+        'storeDirectory' => false,
+        'manualRecache'  => false,
+    ];
 
-    # Run jobs via CronJob, not on page requests
     $wgJobRunRate = 0;
 
     # === Spam prevention ===
