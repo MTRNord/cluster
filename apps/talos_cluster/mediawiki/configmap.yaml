@@ -45,12 +45,19 @@ data:
     $wgPasswordSender      = 'support@midnightthoughts.space';
 
     $wgSMTP = [
-        'host'     => 'stalwart-mail.stalwart.svc.cluster.local',
+        'host'     => 'tls://stalwart-mail.stalwart.svc.cluster.local',
         'IDHost'   => 'wiki.mtrnord.blog',
         'port'     => 587,
         'auth'     => true,
         'username' => 'support@midnightthoughts.space',
         'password' => getenv('MW_SMTP_PASSWORD') ?: '',
+        // cert is issued for mail.midnightthoughts.space, not the internal service name
+        'socket_options' => [
+            'ssl' => [
+                'verify_peer'      => false,
+                'verify_peer_name' => false,
+            ],
+        ],
     ];
 
     # Caching — Valkey for shared object/session/parser cache, APCu for localisation
