@@ -88,6 +88,10 @@ data:
 
     $wgShowExceptionDetails = true;
 
+    # Trust X-Forwarded-For from Envoy Gateway (pod CIDR and private network)
+    $wgUsePrivateIPs = true;
+    $wgTrustedProxies = ['10.0.128.0/17', '10.0.96.0/19', 'fd00:10:244::/56', 'fd00:10:96::/112'];
+
     # === Spam prevention ===
     # Disable public account creation — admins create accounts manually
     $wgGroupPermissions['*']['createaccount'] = false;
