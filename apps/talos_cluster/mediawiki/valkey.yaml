@@ -20,7 +20,7 @@ spec:
         fsGroup: 999
       containers:
         - name: valkey
-          image: valkey/valkey:8-alpine # {"$imagepolicy": "flux-system:valkey"}
+          image: docker.io/valkey/valkey:7-alpine # {"$imagepolicy": "flux-system:valkey"}
           ports:
             - containerPort: 6379
           securityContext:
