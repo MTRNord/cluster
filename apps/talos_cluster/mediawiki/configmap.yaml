@@ -138,9 +138,23 @@ data:
     # === Content / navigation extensions ===
     wfLoadExtension('ArticleCreationWorkflow');
     wfLoadExtension('CLDR');
+    wfLoadExtension('Disambiguator');
     wfLoadExtension('CreditsSource');
     wfLoadExtension('NearbyPages');
     wfLoadExtension('RSS');
+    wfLoadExtension('MultimediaViewer');
+    wfLoadExtension('RevisionSlider');
+    wfLoadExtension('ReadingLists');
+
+    # RelatedArticles — use TextExtracts for descriptions; no CirrusSearch on this wiki
+    wfLoadExtension('RelatedArticles');
+    $wgRelatedArticlesUseCirrusSearch = false;
+    $wgRelatedArticlesDescriptionSource = 'textextracts';
+    $wgRelatedArticlesFooterAllowedSkins = ['vector', 'vector-2022'];
+    wfLoadExtension('TextExtracts');
+    wfLoadExtension('Thanks');
+    wfLoadExtension('TorBlock');
+    wfLoadExtension('SecureLinkFixer');
 
     # === ContactPage ===
     wfLoadExtension('ContactPage');
@@ -172,3 +186,27 @@ data:
     $wgGroupPermissions['*']['read']   = true;
     $wgGroupPermissions['*']['edit']   = false;
     $wgGroupPermissions['user']['edit'] = true;
+
+    # === Extensions pending MW 1.46 upgrade ===
+    # Uncomment each block and add the clone to the Dockerfile when upgrading.
+    #
+    # EasyTimeline — timeline diagrams via Ploticus
+    #   Dockerfile: git clone --branch REL1_46 https://gerrit.wikimedia.org/r/mediawiki/extensions/timeline extensions/EasyTimeline
+    #   System packages: ploticus perl poppler-utils
+    #   wfLoadExtension('EasyTimeline');
+    #
+    # EmailAuth — require email verification token on each login
+    #   Dockerfile: git clone --branch REL1_46 https://gerrit.wikimedia.org/r/mediawiki/extensions/EmailAuth extensions/EmailAuth
+    #   wfLoadExtension('EmailAuth');
+    #
+    # PropertySuggester — Wikibase property suggestions (only useful if Wikibase is deployed)
+    #   Dockerfile: git clone --branch REL1_46 https://gerrit.wikimedia.org/r/mediawiki/extensions/PropertySuggester extensions/PropertySuggester
+    #   wfLoadExtension('PropertySuggester');
+    #
+    # RealMe — links user pages to verified real-world identity
+    #   Dockerfile: git clone --branch REL1_46 https://gerrit.wikimedia.org/r/mediawiki/extensions/RealMe extensions/RealMe
+    #   wfLoadExtension('RealMe');
+    #
+    # TocTree — floating/expandable table of contents (replaces built-in TOC)
+    #   Dockerfile: git clone --branch REL1_46 https://gerrit.wikimedia.org/r/mediawiki/extensions/TocTree extensions/TocTree
+    #   wfLoadExtension('TocTree');
