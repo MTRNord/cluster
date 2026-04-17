@@ -35,12 +35,23 @@ data:
     # Logo / favicon (update after initial setup)
     $wgLogo = "$wgResourceBasePath/resources/assets/wiki.png";
 
-    # Email (optional — configure SMTP if you want email notifications)
-    $wgEnableEmail      = false;
-    $wgEnableUserEmail  = false;
-    $wgEnotifUserTalk   = false;
-    $wgEnotifWatchlist  = false;
-    $wgEmailAuthentication = false;
+    # Email
+    $wgEnableEmail         = true;
+    $wgEnableUserEmail     = true;
+    $wgEnotifUserTalk      = true;
+    $wgEnotifWatchlist     = true;
+    $wgEmailAuthentication = true;
+    $wgEmergencyContact    = 'support@midnightthoughts.space';
+    $wgPasswordSender      = 'support@midnightthoughts.space';
+
+    $wgSMTP = [
+        'host'     => 'ssl://mail.midnightthoughts.space',
+        'IDHost'   => 'wiki.mtrnord.blog',
+        'port'     => 465,
+        'auth'     => true,
+        'username' => 'support@midnightthoughts.space',
+        'password' => getenv('MW_SMTP_PASSWORD') ?: '',
+    ];
 
     # Caching
     $wgMainCacheType    = CACHE_NONE;

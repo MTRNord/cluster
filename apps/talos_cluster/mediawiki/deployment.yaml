@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   name: mediawiki-cred
                   key: wg-upgrade-key
+            - name: MW_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: smtp-password
           volumeMounts:
             - name: mediawiki-config
               mountPath: /var/www/html/LocalSettings.php
