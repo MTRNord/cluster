@@ -1,0 +1,47 @@
+# Custom MediaWiki image (registry.midnightthoughts.space)
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: mediawiki
+  namespace: flux-system
+spec:
+  image: registry.midnightthoughts.space/mtrnord/mediawiki
+  interval: 1h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: mediawiki
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: mediawiki
+  filterTags:
+    pattern: '^\d+\.\d+\.\d+$'
+  policy:
+    semver:
+      range: ">=1.45.0"
+---
+# MariaDB upstream image (Docker Hub)
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: docker-mariadb
+  namespace: flux-system
+spec:
+  image: docker.io/library/mariadb
+  interval: 6h
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: docker-mariadb-12
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: docker-mariadb
+  filterTags:
+    pattern: '^12\.\d+\.\d+$'
+  policy:
+    semver:
+      range: ">=12.0.0 <13.0.0"

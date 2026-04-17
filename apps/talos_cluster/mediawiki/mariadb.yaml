@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mediawiki-mariadb-config
+  namespace: mediawiki
+data:
+  performance.cnf: |
+    [mysqld]
+    innodb_buffer_pool_size = 256M
+    innodb_log_file_size = 64M
+    max_allowed_packet = 64M
+    max_connections = 50
+    table_open_cache = 512
+    tmp_table_size = 32M
+    max_heap_table_size = 32M
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mediawiki-mariadb
+  namespace: mediawiki
+spec:
+  serviceName: mediawiki-mariadb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediawiki-mariadb
+  template:
+    metadata:
+      labels:
+        app: mediawiki-mariadb
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: mariadb
+          image: mariadb:12.3.1 # {"$imagepolicy": "flux-system:docker-mariadb-12"}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: admin-password
+            - name: MARIADB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: username
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: password
+            - name: MARIADB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: db-name
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+          volumeMounts:
+            - name: mariadb-data
+              mountPath: /var/lib/mysql
+            - name: mariadb-config
+              mountPath: /etc/mysql/conf.d
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "400m"
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: mariadb-config
+          configMap:
+            name: mediawiki-mariadb-config
+  volumeClaimTemplates:
+    - metadata:
+        name: mariadb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediawiki-mariadb
+  namespace: mediawiki
+spec:
+  type: ClusterIP
+  selector:
+    app: mediawiki-mariadb
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

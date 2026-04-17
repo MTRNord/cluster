@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediawiki
+  namespace: mediawiki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediawiki
+  template:
+    metadata:
+      labels:
+        app: mediawiki
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 33
+      containers:
+        - name: mediawiki
+          image: registry.midnightthoughts.space/mtrnord/mediawiki:1.45.3 # {"$imagepolicy": "flux-system:mediawiki"}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: false
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: MW_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: db-name
+            - name: MW_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: username
+            - name: MW_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: password
+            - name: MW_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: wg-secret-key
+            - name: MW_UPGRADE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mediawiki-cred
+                  key: wg-upgrade-key
+          volumeMounts:
+            - name: mediawiki-config
+              mountPath: /var/www/html/LocalSettings.php
+              subPath: LocalSettings.php
+              readOnly: true
+            - name: mediawiki-images
+              mountPath: /var/www/html/images
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api.php?action=query&meta=siteinfo&format=json
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api.php?action=query&meta=siteinfo&format=json
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: mediawiki-config
+          configMap:
+            name: mediawiki-config
+        - name: mediawiki-images
+          persistentVolumeClaim:
+            claimName: mediawiki-images
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediawiki
+  namespace: mediawiki
+spec:
+  type: ClusterIP
+  selector:
+    app: mediawiki
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
