@@ -1,12 +1,38 @@
 ARG MEDIAWIKI_VERSION=1.45.3
 FROM mediawiki:${MEDIAWIKI_VERSION} AS mediawiki-src
 
-# Add CodeMirror while git is available in the source image
+# Clone extensions not shipped in the MW tarball
 RUN apt-get update && apt-get install -y --no-install-recommends git \
   && git clone --depth 1 --branch REL1_45 \
        https://github.com/wikimedia/mediawiki-extensions-CodeMirror.git \
        /var/www/html/extensions/CodeMirror \
   && rm -rf /var/www/html/extensions/CodeMirror/.git \
+  && for EXT in \
+       ArticleCreationWorkflow \
+       Babel \
+       BetaFeatures \
+       ContactPage \
+       CreditsSource \
+       GuidedTour \
+       LoginNotify \
+       NearbyPages \
+       RSS \
+     ; do \
+       git clone --depth 1 --branch REL1_45 \
+         "https://gerrit.wikimedia.org/r/mediawiki/extensions/${EXT}" \
+         "/var/www/html/extensions/${EXT}" \
+       && rm -rf "/var/www/html/extensions/${EXT}/.git"; \
+     done \
+  && git clone --depth 1 --branch REL1_45 \
+       https://gerrit.wikimedia.org/r/mediawiki/extensions/cldr \
+       /var/www/html/extensions/CLDR \
+  && rm -rf /var/www/html/extensions/CLDR/.git \
+  && for EXT in EmailAuth GPGMail RealMe; do \
+       git clone --depth 1 \
+         "https://gerrit.wikimedia.org/r/mediawiki/extensions/${EXT}" \
+         "/var/www/html/extensions/${EXT}" \
+       && rm -rf "/var/www/html/extensions/${EXT}/.git"; \
+     done \
   && apt-get purge -y git && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 
@@ -14,7 +40,11 @@ FROM php:8.3-fpm-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apache2 \
+    ghostscript \
+    gnupg \
+    imagemagick \
     librsvg2-bin \
+    poppler-utils \
     python3-pygments \
     libicu-dev \
     libonig-dev \

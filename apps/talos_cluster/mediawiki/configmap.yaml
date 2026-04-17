@@ -123,8 +123,39 @@ data:
     wfLoadExtension('CodeMirror');
     wfLoadExtension('ParserFunctions');
     wfLoadExtension('Cite');
+    wfLoadExtension('CiteThisPage');
     wfLoadExtension('SyntaxHighlight_GeSHi');
     wfLoadExtension('TemplateStyles');
+
+    # === User / account extensions ===
+    wfLoadExtension('Babel');
+    wfLoadExtension('BetaFeatures');
+    wfLoadExtension('EmailAuth');
+    wfLoadExtension('GPGMail');
+    wfLoadExtension('GuidedTour');
+    wfLoadExtension('LoginNotify');
+    wfLoadExtension('RealMe');
+
+    # === Content / navigation extensions ===
+    wfLoadExtension('ArticleCreationWorkflow');
+    wfLoadExtension('CLDR');
+    wfLoadExtension('CreditsSource');
+    wfLoadExtension('NearbyPages');
+    wfLoadExtension('RSS');
+
+    # === ContactPage ===
+    wfLoadExtension('ContactPage');
+    $wgContactConfig['default'] = [
+        'RecipientUser'  => 'MTRNord',
+        'SenderName'     => 'Wiki Contact Form',
+        'SenderEmail'    => 'support@midnightthoughts.space',
+        'RequireDetails' => true,
+        'IncludeIP'      => false,
+    ];
+
+    # === PdfHandler ===
+    wfLoadExtension('PdfHandler');
+    $wgFileExtensions[] = 'pdf';
 
     # === Skin ===
     wfLoadSkin('Vector');
