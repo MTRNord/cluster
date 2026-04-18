@@ -20,6 +20,10 @@ spec:
       enabled: true
     agent:
       gracefulShutdownTimeout: 90s
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   affinity:
     antiAffinityEnabled: true
   storage:
