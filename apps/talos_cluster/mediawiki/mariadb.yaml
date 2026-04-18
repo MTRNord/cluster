@@ -4,6 +4,8 @@ metadata:
   name: mediawiki-db
   namespace: mediawiki
 spec:
+  maxScaleRef:
+    name: mediawiki-maxscale
   rootPasswordSecretKeyRef:
     name: mediawiki-cred
     key: admin-password
@@ -14,39 +16,40 @@ spec:
     key: password
   image: "docker.io/library/mariadb:12.2"
   replicas: 3
-  galera:
+  replication:
     enabled: true
-    recovery:
-      enabled: true
-    agent:
-      gracefulShutdownTimeout: 90s
+    semiSyncEnabled: false
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
+  podDisruptionBudget:
+    maxUnavailable: 1
   affinity:
     antiAffinityEnabled: true
   storage:
     size: 2Gi
     storageClassName: longhorn
   myCnf: |
-    [mysqld]
-    innodb_buffer_pool_size = 128M
-    max_allowed_packet = 64M
-    max_connections = 50
-    skip_name_resolve = ON
-    slow_query_log = ON
-    long_query_time = 1
+    [mariadb]
+    bind-address=*
+    default_storage_engine=InnoDB
+    innodb_buffer_pool_size=128M
+    max_allowed_packet=64M
+    max_connections=50
+    skip_name_resolve=ON
+    slow_query_log=ON
+    long_query_time=1
   livenessProbe:
-    initialDelaySeconds: 120
-    periodSeconds: 20
+    periodSeconds: 10
     timeoutSeconds: 10
-    failureThreshold: 10
   readinessProbe:
-    initialDelaySeconds: 120
-    periodSeconds: 20
+    periodSeconds: 10
     timeoutSeconds: 10
-    failureThreshold: 10
+  startupProbe:
+    failureThreshold: 30
+    periodSeconds: 10
+    timeoutSeconds: 10
   resources:
     requests:
       memory: 512Mi
@@ -54,3 +57,19 @@ spec:
     limits:
       memory: 1Gi
       cpu: 400m
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MaxScale
+metadata:
+  name: mediawiki-maxscale
+  namespace: mediawiki
+spec:
+  replicas: 2
+  mariaDbRef:
+    name: mediawiki-db
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
