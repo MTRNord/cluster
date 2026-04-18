@@ -1,0 +1,53 @@
+/*
+ * Notice/callout boxes — info, warning, deprecated, maintenance.
+ * Structural colours via CSS vars; accent colours with explicit dark overrides.
+ */
+
+.mw-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75em;
+    border: 1px solid var(--border-color-base, #a2a9b1);
+    border-left-width: 4px;
+    background: var(--background-color-neutral-subtle, #f8f9fa);
+    color: var(--color-base, #202122);
+    padding: 0.6em 0.9em;
+    margin: 0.8em 0;
+    font-size: 95%;
+    line-height: 1.5;
+}
+.mw-notice-badge {
+    font-weight: bold;
+    font-size: 90%;
+    white-space: nowrap;
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.mw-notice-body { flex: 1; }
+.mw-notice-title { font-weight: bold; margin-bottom: 2px; }
+
+/* info — blue */
+.mw-notice-info  { border-left-color: #3366cc; }
+.mw-notice-info  .mw-notice-badge { background: #3366cc; color: #fff; }
+
+/* warning — yellow */
+.mw-notice-warning { border-left-color: #ac6600; }
+.mw-notice-warning .mw-notice-badge { background: #ffd966; color: #202122; }
+
+/* deprecated — red */
+.mw-notice-deprecated { border-left-color: #c00; }
+.mw-notice-deprecated .mw-notice-badge { background: #c00; color: #fff; }
+
+/* maintenance — orange */
+.mw-notice-maintenance { border-left-color: #d35400; }
+.mw-notice-maintenance .mw-notice-badge { background: #d35400; color: #fff; }
+
+/* Dark — warning badge needs lighter text */
+@media screen {
+    html.skin-theme-clientpref-night .mw-notice-warning .mw-notice-badge { background: #7a5200; color: #ffe99a; }
+}
+@media screen and (prefers-color-scheme: dark) {
+    html.skin-theme-clientpref-os .mw-notice-warning .mw-notice-badge { background: #7a5200; color: #ffe99a; }
+}

@@ -1,0 +1,51 @@
+<templatestyles src="Template:Infobox network/styles.css" /><div class="infobox-network">
+<div class="infobox-network-title">{{{name|Network}}}</div>{{#if:{{{subtitle|}}}|<div class="infobox-network-subtitle">{{{subtitle}}}</div>}}<table>
+{{#if:{{{purpose|}}}|<tr><td class="infobox-label">Purpose</td><td>{{{purpose}}}</td></tr>}}
+{{#if:{{{type|}}}|<tr><td class="infobox-label">Type</td><td>{{{type}}}</td></tr>}}
+{{#if:{{{cidr|}}}|<tr><td colspan="2" class="infobox-network-section">Addressing</td></tr><tr><td class="infobox-label">IPv4 CIDR</td><td><code>{{{cidr}}}</code></td></tr>}}
+{{#if:{{{cidr6|}}}|<tr><td class="infobox-label">IPv6 CIDR</td><td><code>{{{cidr6}}}</code></td></tr>}}
+{{#if:{{{gateway|}}}|<tr><td class="infobox-label">Gateway</td><td><code>{{{gateway}}}</code></td></tr>}}
+{{#if:{{{vlan_id|}}}|<tr><td class="infobox-label">VLAN ID</td><td>{{{vlan_id}}}</td></tr>}}
+{{#if:{{{dhcp|}}}|<tr><td class="infobox-label">DHCP</td><td>{{{dhcp}}}</td></tr>}}
+{{#if:{{{assigned_to|}}}|<tr><td colspan="2" class="infobox-network-section">Assignment</td></tr><tr><td class="infobox-label">Assigned to</td><td>{{{assigned_to}}}</td></tr>}}
+{{#if:{{{since|}}}|<tr><td colspan="2" class="infobox-network-section">History</td></tr><tr><td class="infobox-label">In use since</td><td>{{{since}}}</td></tr>}}
+{{#if:{{{notes|}}}|<tr><td colspan="2" class="infobox-network-section">Notes</td></tr><tr><td colspan="2" style="padding:4px 6px;">{{{notes}}}</td></tr>}}
+</table></div><noinclude>
+== Usage ==
+<pre>
+{{Infobox network
+| name        = Node subnet
+| subtitle    = Hetzner Cloud worker nodes
+| purpose     = Kubernetes worker node IPs
+| type        = IPv4
+| cidr        = 10.0.64.0/19
+| gateway     = 10.0.64.1
+| assigned_to = [[cluster-2025-worker-nbg-v2-1]], [[cluster-2025-worker-nbg-v2-2]]
+| since       = 2025-01-01
+| notes       = Allocated within the 10.0.0.0/16 Hetzner private network.
+}}
+</pre>
+
+All parameters are optional.
+
+<templatedata>
+{
+    "description": "Infobox for network segments, subnets, and VLANs.",
+    "params": {
+        "name":        { "label": "Name",        "type": "string", "required": true },
+        "subtitle":    { "label": "Subtitle",    "type": "string" },
+        "purpose":     { "label": "Purpose",     "type": "string" },
+        "type":        { "label": "IP version",  "type": "string", "suggestedvalues": ["IPv4","IPv6","Dual-stack"] },
+        "cidr":        { "label": "IPv4 CIDR",   "type": "string" },
+        "cidr6":       { "label": "IPv6 CIDR",   "type": "string" },
+        "gateway":     { "label": "Gateway",     "type": "string" },
+        "vlan_id":     { "label": "VLAN ID",     "type": "number" },
+        "dhcp":        { "label": "DHCP",        "type": "string", "description": "e.g. 'Yes', 'No', or DHCP range." },
+        "assigned_to": { "label": "Assigned to", "type": "string", "description": "Wikilinks to nodes or services using this subnet." },
+        "since":       { "label": "In use since","type": "date" },
+        "notes":       { "label": "Notes",       "type": "string" }
+    },
+    "format": "block"
+}
+</templatedata>
+</noinclude>
