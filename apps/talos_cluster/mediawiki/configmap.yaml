@@ -71,6 +71,14 @@ data:
     $wgSessionCacheType = 'redis';
     $wgParserCacheType  = 'redis';
 
+    # Job queue — store jobs in Redis instead of MariaDB; processed by CronJob (not a daemon)
+    $wgJobTypeConf['default'] = [
+        'class'       => 'JobQueueRedis',
+        'redisServer' => 'mediawiki-valkey.mediawiki.svc.cluster.local:6379',
+        'redisConfig' => ['persistent' => true],
+        'daemonized'  => false,
+    ];
+
     # Run jobs via CronJob, not on page requests
     # Localisation cache — 'array' stores PHP static arrays in $wgCacheDirectory,
     # picked up by OPcache on subsequent requests (fastest option)
