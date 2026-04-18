@@ -4,6 +4,11 @@ metadata:
   name: mediawiki-config
   namespace: mediawiki
 data:
+  robots.txt: |
+    User-agent: *
+    Allow: /wiki/
+    Allow: /load.php
+    Disallow: /
   LocalSettings.php: |
     <?php
     # This file is mounted from a ConfigMap.

@@ -62,6 +62,10 @@ spec:
               mountPath: /var/www/html/LocalSettings.php
               subPath: LocalSettings.php
               readOnly: true
+            - name: mediawiki-config
+              mountPath: /var/www/html/robots.txt
+              subPath: robots.txt
+              readOnly: true
             - name: mediawiki-images
               mountPath: /var/www/html/images
           resources:
