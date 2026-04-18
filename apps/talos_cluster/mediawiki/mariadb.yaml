@@ -130,3 +130,42 @@ spec:
     - protocol: TCP
       port: 3306
       targetPort: 3306
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: mediawiki-db
+  namespace: mediawiki
+spec:
+  rootPasswordSecretKeyRef:
+    name: mediawiki-cred
+    key: admin-password
+  database: mediawiki
+  username: mediawiki
+  passwordSecretKeyRef:
+    name: mediawiki-cred
+    key: password
+  image:
+    repository: docker.io/library/mariadb
+    tag: "12.2"
+  replicas: 3
+  galera:
+    enabled: true
+  storage:
+    size: 2Gi
+    storageClassName: longhorn
+  myCnf: |
+    [mysqld]
+    innodb_buffer_pool_size = 256M
+    max_allowed_packet = 64M
+    max_connections = 50
+    skip_name_resolve = ON
+    slow_query_log = ON
+    long_query_time = 1
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 400m
