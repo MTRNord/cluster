@@ -55,3 +55,10 @@ spec:
       - name: cosign-pubkey
         mountPath: /var/lib/registry/_cosign/cosign.pub
         subPath: cosign.pub
+
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: longhorn
+      accessMode: ReadWriteOnce
+      mountPath: /var/lib/registry
