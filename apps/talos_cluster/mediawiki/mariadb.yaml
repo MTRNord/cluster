@@ -166,6 +166,16 @@ spec:
     skip_name_resolve = ON
     slow_query_log = ON
     long_query_time = 1
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 20
+    timeoutSeconds: 10
+    failureThreshold: 10
+  readinessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 20
+    timeoutSeconds: 10
+    failureThreshold: 10
   resources:
     requests:
       memory: 512Mi
