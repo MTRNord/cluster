@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
        GuidedTour \
        LoginNotify \
        NearbyPages \
+       MobileFrontend \
        ReadingLists \
        RelatedArticles \
        RevisionSlider \
@@ -32,6 +33,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
        https://gerrit.wikimedia.org/r/mediawiki/extensions/cldr \
        /var/www/html/extensions/CLDR \
   && rm -rf /var/www/html/extensions/CLDR/.git \
+  && git clone --depth 1 --branch REL1_45 \
+       https://gerrit.wikimedia.org/r/mediawiki/skins/MinervaNeue \
+       /var/www/html/skins/MinervaNeue \
+  && rm -rf /var/www/html/skins/MinervaNeue/.git \
   && git clone --depth 1 \
        https://gerrit.wikimedia.org/r/mediawiki/extensions/GPGMail \
        /var/www/html/extensions/GPGMail \

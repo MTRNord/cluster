@@ -1,0 +1,73 @@
+<templatestyles src="Template:License/styles.css" />{{#switch: {{{1|}}}
+| cc-by =
+<table class="mw-license-box mw-license-cc-by"><tr>
+<td class="mw-license-badge">CC<br/>BY</td>
+<td class="mw-license-desc">[https://creativecommons.org/licenses/by/4.0/ CC BY 4.0] — Free to share and adapt with attribution.</td>
+</tr></table>
+| cc-by-sa =
+<table class="mw-license-box mw-license-cc-by-sa"><tr>
+<td class="mw-license-badge">CC<br/>BY-SA</td>
+<td class="mw-license-desc">[https://creativecommons.org/licenses/by-sa/4.0/ CC BY-SA 4.0] — Share and adapt with attribution; derivatives under same license.</td>
+</tr></table>
+| cc-by-nc =
+<table class="mw-license-box mw-license-cc-by-nc"><tr>
+<td class="mw-license-badge">CC<br/>BY-NC</td>
+<td class="mw-license-desc">[https://creativecommons.org/licenses/by-nc/4.0/ CC BY-NC 4.0] — Non-commercial use only, with attribution.</td>
+</tr></table>
+| cc-by-nc-sa =
+<table class="mw-license-box mw-license-cc-by-nc-sa"><tr>
+<td class="mw-license-badge">CC<br/>BY-NC-SA</td>
+<td class="mw-license-desc">[https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0] — Non-commercial, attribution, same license.</td>
+</tr></table>
+| cc-by-nd =
+<table class="mw-license-box mw-license-cc-by-nd"><tr>
+<td class="mw-license-badge">CC<br/>BY-ND</td>
+<td class="mw-license-desc">[https://creativecommons.org/licenses/by-nd/4.0/ CC BY-ND 4.0] — Redistribution with attribution; no derivatives.</td>
+</tr></table>
+| cc-by-nc-nd =
+<table class="mw-license-box mw-license-cc-by-nc-nd"><tr>
+<td class="mw-license-badge">CC<br/>BY-NC-ND</td>
+<td class="mw-license-desc">[https://creativecommons.org/licenses/by-nc-nd/4.0/ CC BY-NC-ND 4.0] — Non-commercial, attribution, no derivatives.</td>
+</tr></table>
+| cc0 =
+<table class="mw-license-box mw-license-cc0"><tr>
+<td class="mw-license-badge">CC0</td>
+<td class="mw-license-desc">[https://creativecommons.org/publicdomain/zero/1.0/ CC0 1.0] — No rights reserved. Public domain dedication.</td>
+</tr></table>
+| arr =
+<table class="mw-license-box mw-license-arr"><tr>
+<td class="mw-license-badge">©</td>
+<td class="mw-license-desc">All rights reserved. No reuse without permission.</td>
+</tr></table>
+| #default =
+<span style="color:red">Unknown license: <code>{{{1}}}</code></span>
+}}<noinclude>
+== Usage ==
+<pre>{{License|cc-by}}</pre>
+
+<templatedata>
+{
+    "description": "Displays a license notice box for the page, styled like Babel boxes.",
+    "params": {
+        "1": {
+            "label": "License",
+            "description": "The license identifier for this page.",
+            "type": "string",
+            "required": true,
+            "suggestedvalues": [
+                "cc-by",
+                "cc-by-sa",
+                "cc-by-nc",
+                "cc-by-nc-sa",
+                "cc-by-nd",
+                "cc-by-nc-nd",
+                "cc0",
+                "arr"
+            ],
+            "example": "cc-by-sa"
+        }
+    },
+    "format": "inline"
+}
+</templatedata>
+</noinclude>
