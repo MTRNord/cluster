@@ -149,12 +149,14 @@ spec:
   replicas: 3
   galera:
     enabled: true
+  affinity:
+    antiAffinityEnabled: true
   storage:
     size: 2Gi
     storageClassName: longhorn
   myCnf: |
     [mysqld]
-    innodb_buffer_pool_size = 256M
+    innodb_buffer_pool_size = 128M
     max_allowed_packet = 64M
     max_connections = 50
     skip_name_resolve = ON
@@ -162,8 +164,8 @@ spec:
     long_query_time = 1
   resources:
     requests:
-      memory: 256Mi
+      memory: 512Mi
       cpu: 100m
     limits:
-      memory: 512Mi
+      memory: 1Gi
       cpu: 400m
