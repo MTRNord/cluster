@@ -170,9 +170,12 @@ data:
     wfLoadExtension('PdfHandler');
     $wgFileExtensions[] = 'pdf';
 
-    # === Skin ===
+    # === Skins ===
     wfLoadSkin('Vector');
+    wfLoadSkin('MinervaNeue');
     $wgDefaultSkin = 'vector-2022';
+    wfLoadExtension('MobileFrontend');
+    $wgMFDefaultSkinClass = 'SkinMinerva';
 
     # === Misc ===
     $wgRightsPage    = "";

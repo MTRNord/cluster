@@ -41,6 +41,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
 
 FROM php:8.3-fpm-bookworm
 
+# Slow stable layer: compile PHP extensions (only changes if extensions/versions change)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libicu-dev \
+    libonig-dev \
+    liblua5.1-dev \
+  && docker-php-ext-install -j$(nproc) calendar intl mbstring mysqli opcache \
+  && pecl install apcu redis LuaSandbox \
+  && docker-php-ext-enable apcu redis luasandbox \
+  && apt-get purge -y --auto-remove libicu-dev libonig-dev liblua5.1-dev \
+  && rm -rf /var/lib/apt/lists/* /tmp/pear
+
+# Runtime packages + Apache (add new deps here without busting the layer above)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apache2 \
     ghostscript \
@@ -49,17 +61,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     librsvg2-bin \
     poppler-utils \
     python3-pygments \
-    libicu-dev \
-    libonig-dev \
-    liblua5.1-dev \
-  && docker-php-ext-install -j$(nproc) calendar intl mbstring mysqli opcache \
-  && pecl install apcu redis \
-  && docker-php-ext-enable apcu redis \
-  && pecl install LuaSandbox \
-  && docker-php-ext-enable luasandbox \
   && a2enmod rewrite proxy_fcgi setenvif mpm_event \
   && a2dismod mpm_prefork || true \
-  && rm -rf /var/lib/apt/lists/* /tmp/pear
+  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=mediawiki-src /var/www/html /var/www/html
 COPY --from=mediawiki-src /var/www/data /var/www/data
