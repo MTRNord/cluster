@@ -1,0 +1,73 @@
+.infobox-server {
+    float: right;
+    clear: right;
+    margin: 0 0 1em 1.5em;
+    border: 1px solid var(--border-color-base, #a2a9b1);
+    background: var(--background-color-neutral-subtle, #f8f9fa);
+    color: var(--color-base, #202122);
+    font-size: 88%;
+    line-height: 1.5;
+    width: 22em;
+}
+.infobox-server-title {
+    background: #3366cc;
+    color: #fff;
+    font-size: 115%;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 8px;
+}
+.infobox-server-subtitle {
+    background: var(--background-color-neutral, #eaecf0);
+    color: var(--color-subtle, #54595d);
+    text-align: center;
+    font-style: italic;
+    padding: 3px 8px;
+    border-bottom: 1px solid var(--border-color-base, #a2a9b1);
+}
+.infobox-server-image {
+    text-align: center;
+    padding: 6px;
+    border-bottom: 1px solid var(--border-color-subtle, #c8ccd1);
+}
+.infobox-server table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.infobox-server td {
+    padding: 3px 6px;
+    vertical-align: top;
+    border-top: 1px solid var(--border-color-subtle, #c8ccd1);
+}
+.infobox-server .infobox-label {
+    font-weight: bold;
+    width: 40%;
+    color: var(--color-subtle, #54595d);
+}
+.infobox-server-section {
+    background: var(--background-color-neutral, #eaecf0);
+    color: var(--color-base, #202122);
+    font-weight: bold;
+    text-align: center;
+    padding: 2px 6px;
+    border-top: 1px solid var(--border-color-base, #a2a9b1);
+}
+
+/* Status badges — light mode */
+.infobox-status-active         { color: #2a7a2a; font-weight: bold; }
+.infobox-status-maintenance    { color: #b36200; font-weight: bold; }
+.infobox-status-decommissioned { color: #c00;    font-weight: bold; }
+
+/* Status badges — manual Night toggle */
+@media screen {
+    html.skin-theme-clientpref-night .infobox-status-active         { color: #6ecf6e; }
+    html.skin-theme-clientpref-night .infobox-status-maintenance    { color: #ffb347; }
+    html.skin-theme-clientpref-night .infobox-status-decommissioned { color: #ff6b6b; }
+}
+
+/* Status badges — OS dark preference */
+@media screen and (prefers-color-scheme: dark) {
+    html.skin-theme-clientpref-os .infobox-status-active         { color: #6ecf6e; }
+    html.skin-theme-clientpref-os .infobox-status-maintenance    { color: #ffb347; }
+    html.skin-theme-clientpref-os .infobox-status-decommissioned { color: #ff6b6b; }
+}

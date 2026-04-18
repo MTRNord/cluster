@@ -1,0 +1,81 @@
+<templatestyles src="Template:Infobox server/styles.css" /><div class="infobox-server">
+<div class="infobox-server-title">{{{name|Server}}}</div>{{#if:{{{subtitle|}}}|<div class="infobox-server-subtitle">{{{subtitle}}}</div>}}{{#if:{{{image|}}}|<div class="infobox-server-image">[[File:{{{image}}}|220px]]{{#if:{{{caption|}}}|<br/><small>{{{caption}}}</small>}}</div>}}<table>
+{{#if:{{{status|}}}|<tr><td class="infobox-label">Status</td><td>{{#switch:{{{status}}}|active=<span class="infobox-status-active">● Active</span>|maintenance=<span class="infobox-status-maintenance">● Maintenance</span>|decommissioned=<span class="infobox-status-decommissioned">● Decommissioned</span>|{{{status}}}}}</td></tr>}}
+{{#if:{{{type|}}}|<tr><td class="infobox-label">Type</td><td>{{{type}}}</td></tr>}}
+{{#if:{{{purpose|}}}|<tr><td class="infobox-label">Purpose</td><td>{{{purpose}}}</td></tr>}}
+{{#if:{{{hostname|}}}|<tr><td class="infobox-label">Hostname</td><td><code>{{{hostname}}}</code></td></tr>}}
+{{#if:{{{ipv4|}}}|<tr><td class="infobox-label">IPv4</td><td><code>{{{ipv4}}}</code></td></tr>}}
+{{#if:{{{ipv6|}}}|<tr><td class="infobox-label">IPv6</td><td><code>{{{ipv6}}}</code></td></tr>}}
+{{#if:{{{location|}}}|<tr><td class="infobox-label">Location</td><td>{{{location}}}</td></tr>}}
+{{#if:{{{provider|}}}|<tr><td class="infobox-label">Provider</td><td>{{{provider}}}</td></tr>}}
+{{#if:{{{os|}}}|<tr><td class="infobox-label">OS</td><td>{{{os}}}</td></tr>}}
+{{#if:{{{software|}}}|<tr><td colspan="2" class="infobox-server-section">Software</td></tr><tr><td class="infobox-label">Software</td><td>{{{software}}}</td></tr>}}
+{{#if:{{{software_version|}}}|<tr><td class="infobox-label">Version</td><td>{{{software_version}}}</td></tr>}}
+{{#if:{{{software2|}}}|<tr><td class="infobox-label">{{{software2_label|Software 2}}}</td><td>{{{software2}}}</td></tr>}}
+{{#if:{{{upstream|}}}|<tr><td class="infobox-label">Upstream DNS</td><td>{{{upstream}}}</td></tr>}}
+{{#if:{{{zones|}}}|<tr><td class="infobox-label">Zones</td><td>{{{zones}}}</td></tr>}}
+{{#if:{{{since|}}}|<tr><td colspan="2" class="infobox-server-section">History</td></tr><tr><td class="infobox-label">Online since</td><td>{{{since}}}</td></tr>}}
+{{#if:{{{notes|}}}|<tr><td colspan="2" class="infobox-server-section">Notes</td></tr><tr><td colspan="2" style="padding:4px 6px;">{{{notes}}}</td></tr>}}
+</table></div><noinclude>
+== Usage ==
+
+<pre>
+{{Infobox server
+| name             = dns-a
+| subtitle         = Primary DNS resolver
+| status           = active
+| type             = DNS server
+| purpose          = Authoritative + recursive DNS for cluster
+| hostname         = dns-a.midnightthoughts.space
+| ipv4             = 10.0.64.129
+| ipv6             =
+| location         = Nuremberg, DE (Hetzner)
+| provider         = Hetzner
+| os               = Fedora 43 (LXC)
+| software         = Unbound / BIND
+| software_version = 1.19.0
+| upstream         = 1.1.1.1, 8.8.8.8
+| zones            = midnightthoughts.space, mtrnord.blog
+| since            = 2025-01-01
+| notes            = Also serves as registry mirror endpoint.
+}}
+</pre>
+
+All parameters are optional — omit any you don't need and the row won't appear.
+
+=== Status values ===
+* <code>active</code> — green badge
+* <code>maintenance</code> — orange badge
+* <code>decommissioned</code> — red badge
+* Any other text is shown as-is.
+
+<templatedata>
+{
+    "description": "Infobox for infrastructure servers and nodes. All parameters are optional.",
+    "params": {
+        "name":             { "label": "Name",             "type": "string",  "required": true,  "description": "Server or node name shown in the header." },
+        "subtitle":         { "label": "Subtitle",         "type": "string",  "description": "Short descriptor shown below the header, e.g. 'Primary DNS resolver'." },
+        "image":            { "label": "Image",            "type": "wiki-file-name", "description": "Optional image filename (without File: prefix)." },
+        "caption":          { "label": "Caption",          "type": "string",  "description": "Caption for the image." },
+        "status":           { "label": "Status",           "type": "string",  "suggestedvalues": ["active","maintenance","decommissioned"] },
+        "type":             { "label": "Type",             "type": "string",  "description": "e.g. DNS server, web server, database." },
+        "purpose":          { "label": "Purpose",          "type": "string" },
+        "hostname":         { "label": "Hostname",         "type": "string" },
+        "ipv4":             { "label": "IPv4 address",     "type": "string" },
+        "ipv6":             { "label": "IPv6 address",     "type": "string" },
+        "location":         { "label": "Location",         "type": "string",  "description": "Datacenter or city." },
+        "provider":         { "label": "Provider",         "type": "string" },
+        "os":               { "label": "Operating system", "type": "string" },
+        "software":         { "label": "Software",         "type": "string" },
+        "software_version": { "label": "Software version", "type": "string" },
+        "software2":        { "label": "Software 2",       "type": "string" },
+        "software2_label":  { "label": "Software 2 label", "type": "string" },
+        "upstream":         { "label": "Upstream DNS",     "type": "string",  "description": "Upstream resolvers (DNS servers only)." },
+        "zones":            { "label": "Zones",            "type": "string",  "description": "DNS zones served (DNS servers only)." },
+        "since":            { "label": "Online since",     "type": "date" },
+        "notes":            { "label": "Notes",            "type": "string" }
+    },
+    "format": "block"
+}
+</templatedata>
+</noinclude>
