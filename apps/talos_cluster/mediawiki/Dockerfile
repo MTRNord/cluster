@@ -66,7 +66,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     librsvg2-bin \
     poppler-utils \
     python3-pygments \
-  && a2enmod rewrite proxy_fcgi setenvif mpm_event \
+  && a2enmod rewrite proxy_fcgi setenvif mpm_event headers \
   && a2dismod mpm_prefork || true \
   && rm -rf /var/lib/apt/lists/*
 
