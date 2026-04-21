@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends git \
        RevisionSlider \
        RSS \
        TorBlock \
+        Translate \
+        UniversalLanguageSelector \
      ; do \
        git clone --depth 1 --branch REL1_45 \
          "https://gerrit.wikimedia.org/r/mediawiki/extensions/${EXT}" \
