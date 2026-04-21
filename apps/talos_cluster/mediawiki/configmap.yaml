@@ -20,6 +20,9 @@ data:
     $wgScriptPath = "";
     $wgArticlePath = "/wiki/$1";
 
+    # Site content language
+    $wgLanguageCode = 'en';
+
     # Database
     $wgDBtype     = "mysql";
     $wgDBserver   = "mediawiki-maxscale.mediawiki.svc.cluster.local";
@@ -141,9 +144,33 @@ data:
     wfLoadExtension('GuidedTour');
     wfLoadExtension('LoginNotify');
 
+    # === Language / Translation ===
+
+    wfLoadExtension('CLDR');
+
+    $wgDefaultUserOptions['usenewrc'] = 1;
+
+    # Load Translate extension for structured translation workflows
+    wfLoadExtension('Translate');
+    $wgGroupPermissions['user']['translate'] = true;
+    $wgGroupPermissions['user']['translate-messagereview'] = true;
+    $wgGroupPermissions['user']['translate-groupreview'] = true;
+    $wgGroupPermissions['user']['translate-import'] = true;
+    $wgGroupPermissions['sysop']['pagetranslation'] = true;
+    $wgGroupPermissions['sysop']['translate-manage'] = true;
+    $wgEnablePageTranslation = true;
+    $wgTranslateDocumentationLanguageCode = 'qqq';
+    $wgExtraLanguageNames['qqq'] = 'Message documentation'; # No linguistic content. Used for documenting messages
+
+    # Load UniversalLanguageSelector for language selection UI
+    wfLoadExtension('UniversalLanguageSelector');
+    $wgULSEnable = true;
+    $wgULSPosition = 'personal';
+    $wgULSGeoService = false;  // Disable GeoIP-based language suggestions
+    $wgULSAnonCanChangeLanguage = true;  // Allow anonymous users to change UI language
+
     # === Content / navigation extensions ===
     wfLoadExtension('ArticleCreationWorkflow');
-    wfLoadExtension('CLDR');
     wfLoadExtension('Disambiguator');
     wfLoadExtension('CreditsSource');
     wfLoadExtension('NearbyPages');
