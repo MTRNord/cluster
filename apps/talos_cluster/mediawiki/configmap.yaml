@@ -181,10 +181,14 @@ data:
     # === Parser & Template Extensions ===
     wfLoadExtension('ParserFunctions');
     wfLoadExtension('Scribunto');
-    $wgScribuntoDefaultEngine = 'luastandalone';
-    $wgScribuntoEngineConf['luastandalone'] = [
-        'memoryLimit' => 52428800,  // 50 MB (default is 52MB)
-        'cpuLimit' => 30,            // 30 seconds (increased from default 10s)
+    $wgScribuntoUseGeSHi = true;
+    $wgScribuntoUseCodeEditor = true;
+    $wgScribuntoSlowFunctionThreshold = 0.99;
+
+    $wgScribuntoDefaultEngine = 'luasandbox';
+    $wgScribuntoEngineConf['luasandbox'] = [
+        'memoryLimit' => 52428800,  // 50 MB (default is 50MB)
+        'cpuLimit' => 30,            // 30 seconds (increased from default 7s)
     ];
     wfLoadExtension('JsonConfig');
     $wgJsonConfigEnableLuaSupport = true;
