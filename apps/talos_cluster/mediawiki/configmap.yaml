@@ -150,6 +150,42 @@ data:
 
     $wgDefaultUserOptions['usenewrc'] = 1;
 
+    $wgUseInstantCommons = true;
+
+    # === Parser & Template Extensions ===
+    wfLoadExtension('ParserFunctions');
+    wfLoadExtension('Scribunto');
+    $wgScribuntoDefaultEngine = 'luastandalone';
+    wfLoadExtension('JsonConfig');
+    $wgJsonConfigEnableLuaSupport = true;
+    $wgJsonConfigModels['Tabular.JsonConfig'] = 'JsonConfig\JCTabularContent';
+    $wgJsonConfigs['Tabular.JsonConfig'] = [
+            'namespace' => 486,
+            'nsName' => 'Data',
+            // page name must end in .tab, and contain at least one symbol
+            'pattern' => '/.\.tab$/',
+            'license' => 'CC0-1.0',
+            'isLocal' => false,
+    ];
+
+    $wgJsonConfigModels['Map.JsonConfig'] = 'JsonConfig\JCMapDataContent';
+    $wgJsonConfigs['Map.JsonConfig'] = [
+            'namespace' => 486,
+            'nsName' => 'Data',
+            // page name must end in .map, and contain at least one symbol
+            'pattern' => '/.\.map$/',
+            'license' => 'CC0-1.0',
+            'isLocal' => false,
+    ];
+    $wgJsonConfigInterwikiPrefix = "commons";
+
+    $wgJsonConfigs['Tabular.JsonConfig']['remote'] = [
+            'url' => 'https://commons.wikimedia.org/w/api.php'
+    ];
+    $wgJsonConfigs['Map.JsonConfig']['remote'] = [
+            'url' => 'https://commons.wikimedia.org/w/api.php'
+    ];
+
     # Load Translate extension for structured translation workflows
     wfLoadExtension('Translate');
     $wgGroupPermissions['user']['translate'] = true;
