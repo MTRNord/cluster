@@ -97,6 +97,24 @@ data:
 
     $wgShowExceptionDetails = true;
 
+    # === Import timeouts for large Wikipedia imports ===
+    # Increase PHP execution time for imports
+    set_time_limit(900); # 15 minutes
+    ini_set('max_execution_time', 900);
+    
+    # Increase socket timeout for fetching remote content
+    ini_set('default_socket_timeout', 300);
+    
+    # Allow imports from Wikipedia and other major sources
+    $wgImportSources = [
+        'wikipedia'    => 'https://en.wikipedia.org',
+        'wikipedia_de' => 'https://de.wikipedia.org',
+    ];
+    
+    # Allow local file imports for bulk operations
+    $wgImportSources[] = 'interwiki';
+    $wgImportAllowAll = true;
+
     # === IP Forwarding from Envoy Gateway ===
     # Trust X-Forwarded-For from Envoy Gateway (pod CIDR and private network)
     $wgUsePrivateIPs = true;
