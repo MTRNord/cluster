@@ -101,16 +101,16 @@ data:
     # Increase PHP execution time for imports
     set_time_limit(900); # 15 minutes
     ini_set('max_execution_time', 900);
-    
+
     # Increase socket timeout for fetching remote content
     ini_set('default_socket_timeout', 300);
-    
+
     # Allow imports from Wikipedia and other major sources
     $wgImportSources = [
         'wikipedia'    => 'https://en.wikipedia.org',
         'wikipedia_de' => 'https://de.wikipedia.org',
     ];
-    
+
     # Allow local file imports for bulk operations
     $wgImportSources[] = 'interwiki';
     $wgImportAllowAll = true;
@@ -119,11 +119,11 @@ data:
     # Trust X-Forwarded-For from Envoy Gateway (pod CIDR and private network)
     $wgUsePrivateIPs = true;
     $wgTrustedProxies = ['10.0.128.0/17', '10.0.96.0/19', 'fd00:10:244::/56', 'fd00:10:96::/112'];
-    
+
     # Tell MediaWiki to read client IP from X-Forwarded-For header
     # (Envoy Gateway adds this header with the real client IP)
     $wgUseXForwardedFor = true;
-    
+
     # Also read protocol from header (HTTP vs HTTPS)
     $wgHttp['withHttps'] = true;
 
@@ -182,6 +182,10 @@ data:
     wfLoadExtension('ParserFunctions');
     wfLoadExtension('Scribunto');
     $wgScribuntoDefaultEngine = 'luastandalone';
+    $wgScribuntoEngineConf['luastandalone'] = [
+        'memoryLimit' => 52428800,  // 50 MB (default is 52MB)
+        'cpuLimit' => 30,            // 30 seconds (increased from default 10s)
+    ];
     wfLoadExtension('JsonConfig');
     $wgJsonConfigEnableLuaSupport = true;
     $wgJsonConfigModels['Tabular.JsonConfig'] = 'JsonConfig\JCTabularContent';
@@ -284,6 +288,8 @@ data:
     $wgGroupPermissions['*']['read']   = true;
     $wgGroupPermissions['*']['edit']   = false;
     $wgGroupPermissions['user']['edit'] = true;
+
+    wfLoadExtension('TitleBlacklist');
 
     # === Extensions pending MW 1.46 upgrade ===
     # Uncomment each block and add the clone to the Dockerfile when upgrading.
