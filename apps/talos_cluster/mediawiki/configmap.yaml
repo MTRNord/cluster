@@ -97,9 +97,17 @@ data:
 
     $wgShowExceptionDetails = true;
 
+    # === IP Forwarding from Envoy Gateway ===
     # Trust X-Forwarded-For from Envoy Gateway (pod CIDR and private network)
     $wgUsePrivateIPs = true;
     $wgTrustedProxies = ['10.0.128.0/17', '10.0.96.0/19', 'fd00:10:244::/56', 'fd00:10:96::/112'];
+    
+    # Tell MediaWiki to read client IP from X-Forwarded-For header
+    # (Envoy Gateway adds this header with the real client IP)
+    $wgUseXForwardedFor = true;
+    
+    # Also read protocol from header (HTTP vs HTTPS)
+    $wgHttp['withHttps'] = true;
 
     # === Spam prevention ===
     # Disable public account creation — admins create accounts manually
