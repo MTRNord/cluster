@@ -290,6 +290,21 @@ data:
     $wgGroupPermissions['user']['edit'] = true;
 
     wfLoadExtension('TitleBlacklist');
+    $wgTitleBlacklistSources = [
+      [
+        'type' => 'localpage',
+        'src'  => 'MediaWiki:Titleblacklist'
+      ],
+      [
+        'type' => 'url',
+        'src'  => 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Titleblacklist&action=raw'
+      ],
+      [
+        'type' => 'url',
+        'src'  => 'https://meta.wikimedia.org/w/index.php?title=Title_blacklist&action=raw'
+      ],
+    ];
+
 
     # === Extensions pending MW 1.46 upgrade ===
     # Uncomment each block and add the clone to the Dockerfile when upgrading.
