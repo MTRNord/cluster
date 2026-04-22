@@ -161,11 +161,27 @@ data:
 
     # === Editing extensions ===
     wfLoadExtension('TemplateData');
-    wfLoadExtension('VisualEditor');
-    # VisualEditor needs the internal Parsoid endpoint to avoid SSL loopback in K8s
-    $wgVirtualRestConfig['modules']['parsoid'] = [
-        'url' => 'http://mediawiki.mediawiki.svc.cluster.local/rest.php',
+    wfLoadExtension(
+      'Parsoid',
+      "$IP/vendor/wikimedia/parsoid/extension.json"
+    );
+    $wgParsoidSettings = [
+        'useSelser' => true,
+        'linting' => true
     ];
+    $wgVisualEditorParsoidAutoConfig = false; // to make linting work
+    wfLoadExtension('Linter');
+    wfLoadExtension('VisualEditor');
+    $wgVirtualRestConfig['modules']['parsoid'] = [
+        'url' => 'https://wiki.mtrnord.blog/rest.php',
+        'domain' => 'wiki.mtrnord.blog',
+        'forwardCookies' => true,
+        'restbaseCompat' => false,
+        'timeout' => 30,
+    ];
+    $wgVisualEditorEnableWikitext = true;
+    $wgDefaultUserOptions['visualeditor-newwikitext'] = 1;
+    wfLoadExtension('DiscussionTools');
 
     wfLoadExtension('WikiEditor');
     wfLoadExtension('CodeMirror');
@@ -259,6 +275,9 @@ data:
     wfLoadExtension('MultimediaViewer');
     wfLoadExtension('RevisionSlider');
     wfLoadExtension('ReadingLists');
+
+    wfLoadExtension('AutoCreateCategoryPages');
+    wfLoadExtension('HitCounters');
 
     # RelatedArticles — use TextExtracts for descriptions; no CirrusSearch on this wiki
     wfLoadExtension('RelatedArticles');
