@@ -41,37 +41,37 @@ data:
     $wgUploadDirectory = "/var/www/html/images";
     $wgMaxUploadSize  = 50 * 1024 * 1024; # 50 MB
     $wgUseInstantCommons = true;
-    wfLoadExtension( 'UploadWizard' );
+    wfLoadExtension( 'MediaUploader' );
 
     $wgUploadWizardConfig = array(
       'debug' => false,
       'altUploadForm' => 'Special:Upload',
-      'licenses' => array(
-        'cc-by-nc-sa-4.0' => [
-          'msg' => 'mwe-upwiz-license-cc-by-nc-sa-4.0',
-          'icons' => [ 'cc-by', 'cc-nc', 'cc-sa' ],
-          'url' => '//creativecommons.org/licenses/by-nc-sa/4.0/',
-          'languageCodePrefix' => 'deed.'
-        ],
-      ),
+      # 'licenses' => array(
+      #   'cc-by-nc-sa-4.0' => [
+      #     'msg' => 'mwe-upwiz-license-cc-by-nc-sa-4.0',
+      #     'icons' => [ 'cc-by', 'cc-nc', 'cc-sa' ],
+      #     'url' => '//creativecommons.org/licenses/by-nc-sa/4.0/',
+      #     'languageCodePrefix' => 'deed.'
+      #   ],
+      # ),
 
-      'licensing' => array(
-        'defaultType' => 'ownwork',
-        'ownWorkDefault' => 'choice',
-        'ownWork' => array(
-          'type' => 'or',
-          'template' => 'self',
-          'defaults' => 'cc-by-nc-sa-4.0',
-          'licenses' => array(
-            'cc-by-nc-sa-4.0',
-            'cc-by-sa-4.0',
-            'cc-by-sa-3.0',
-            'cc-by-4.0',
-            'cc-by-3.0',
-            'cc-zero'
-          )
-        ),
-      ),
+      # 'licensing' => array(
+      #   'defaultType' => 'ownwork',
+      #   'ownWorkDefault' => 'choice',
+      #   'ownWork' => array(
+      #     'type' => 'or',
+      #     'template' => 'self',
+      #     'defaults' => 'cc-by-nc-sa-4.0',
+      #     'licenses' => array(
+      #       'cc-by-nc-sa-4.0',
+      #       'cc-by-sa-4.0',
+      #       'cc-by-sa-3.0',
+      #       'cc-by-4.0',
+      #       'cc-by-3.0',
+      #       'cc-zero'
+      #     )
+      #   ),
+      # ),
     );
 
     // Needed to make UploadWizard work in IE, see https://phabricator.wikimedia.org/T41877
