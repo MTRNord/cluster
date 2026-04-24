@@ -171,9 +171,9 @@ RUN wget -q https://downloads.wordpress.org/plugin/google-sitemap-generator.4.1.
     && rm google-sitemap-generator.4.1.23.zip
 
 # Install Akismet
-RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.6.zip \
-    && unzip -q -o akismet.5.6.zip -d /var/www/html/wordpress/wp-content/plugins/ \
-    && rm akismet.5.6.zip
+RUN wget -q https://downloads.wordpress.org/plugin/akismet.5.7.zip \
+    && unzip -q -o akismet.5.7.zip -d /var/www/html/wordpress/wp-content/plugins/ \
+    && rm akismet.5.7.zip
 
 # Install Podlove Publisher
 RUN wget -q https://downloads.wordpress.org/plugin/podlove-podcasting-plugin-for-wordpress.4.4.2.zip \
